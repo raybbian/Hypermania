@@ -1,0 +1,483 @@
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Net.WebSockets;
+using System.Numerics;
+using System.Threading;
+using System.Threading.Tasks;
+using MemoryPack;
+using Netcode.Rollback;
+using Netcode.Rollback.Network;
+using UnityEngine;
+
+namespace Netcode.Puncher
+{
+    public enum ClientState
+    {
+        Initialized,
+        Matchmaking,
+        MatchmakingReady,
+        MatchmakingFinished,
+        AttemptDirect,
+        AttemptUPnP,
+        AttemptPunchthrough,
+        Connected,
+        Disposed,
+    }
+
+    public enum WsEventKind
+    {
+        JoinedRoom,
+        YouAre,
+        PeerJoined,
+        PeerLeft,
+    }
+
+    public readonly struct WsEvent
+    {
+        public readonly WsEventKind Kind;
+        public readonly ulong RoomId;
+        public readonly uint Handle;
+
+        private WsEvent(WsEventKind type, ulong roomId, uint handle)
+        {
+            Kind = type;
+            RoomId = roomId;
+            Handle = handle;
+        }
+
+        public static WsEvent JoinedRoom(ulong roomId) => new WsEvent(WsEventKind.JoinedRoom, roomId, 0);
+        public static WsEvent YouAre(uint handle) => new WsEvent(WsEventKind.YouAre, 0, handle);
+        public static WsEvent PeerJoined(uint handle) => new WsEvent(WsEventKind.PeerJoined, 0, handle);
+        public static WsEvent PeerLeft(uint handle) => new WsEvent(WsEventKind.PeerLeft, 0, handle);
+    }
+
+    public sealed class SynapseClient : IDisposable, INonBlockingSocket<EndPoint>
+    {
+        private const byte WS_JOINED_ROOM = 1;
+        private const byte WS_YOU_ARE = 2;
+        private const byte WS_PEER_JOINED = 3;
+        private const byte WS_PEER_LEFT = 4;
+
+        private const byte UDP_FOUND_PEER = 0x1;
+        private const byte UDP_WAITING = 0x2;
+
+        public const int RECV_BUFFER_SIZE = 4096;
+        public const int IDEAL_MAX_UDP_PACKET_SIZE = 508;
+
+        // identity
+        public Guid ClientGuid { get; }
+        public string ClientIdDecimal { get; }
+
+        // server configuration
+        private readonly Uri _baseHttpWs;
+        private readonly IPEndPoint _punchEp;
+        private readonly IPEndPoint _relayEp;
+
+        // matchmaking websocket
+        private ClientWebSocket _ws;
+        private CancellationTokenSource _wsCts;
+
+        // pump buffers/state
+        private readonly byte[] _wsBuf = new byte[2048];
+
+        // udp
+        private readonly UdpClient _udp;
+
+        // state
+        public ClientState State { get; private set; }
+
+        // rollback recv buffer
+        private readonly byte[] _buffer;
+
+        public SynapseClient(string host, int httpPort = 9000, int punchPort = 9001, int relayPort = 9002)
+        {
+            _baseHttpWs = new Uri($"ws://{host}:{httpPort}");
+            _punchEp = new IPEndPoint(DnsSafeResolve(host), punchPort);
+            _relayEp = new IPEndPoint(DnsSafeResolve(host), relayPort);
+
+            _buffer = new byte[RECV_BUFFER_SIZE];
+
+            ClientGuid = Guid.NewGuid();
+            ClientIdDecimal = GuidToU128Decimal(ClientGuid);
+
+            _udp = new UdpClient(0);
+            _udp.Client.Blocking = false;
+
+            State = ClientState.Initialized;
+        }
+
+        public void Dispose()
+        {
+            if (State == ClientState.Disposed) return;
+            State = ClientState.Disposed;
+
+            try { _wsCts?.Cancel(); } catch { }
+
+            try { _ws?.Dispose(); } catch { }
+            _ws = null;
+
+            try { _wsCts?.Dispose(); } catch { }
+            _wsCts = null;
+
+            try { _udp?.Close(); } catch { }
+            try { _udp?.Dispose(); } catch { }
+        }
+
+        #region Matchmaking
+
+        public async Task CreateRoomAsync(CancellationToken ct = default)
+        {
+            EnsureState(ClientState.Initialized);
+            await ConnectWsAsync(new Uri(_baseHttpWs, $"/create_room?client_id={ClientIdDecimal}"), ct);
+        }
+
+        public async Task JoinRoomAsync(ulong roomId, CancellationToken ct = default)
+        {
+            EnsureState(ClientState.Initialized);
+            await ConnectWsAsync(new Uri(_baseHttpWs, $"/join_room/{roomId}?client_id={ClientIdDecimal}"), ct);
+        }
+
+        public async Task LeaveRoomAsync(CancellationToken ct = default)
+        {
+            if (State == ClientState.Disposed) return;
+
+            try { _wsCts?.Cancel(); } catch { }
+
+            var ws = _ws;
+            _ws = null;
+
+            if (ws != null)
+            {
+                try
+                {
+                    if (ws.State == WebSocketState.Open || ws.State == WebSocketState.CloseReceived)
+                        await ws.CloseAsync(WebSocketCloseStatus.NormalClosure, "leave", ct);
+                }
+                catch { }
+                finally
+                {
+                    try { ws.Dispose(); } catch { }
+                }
+            }
+
+            try { _wsCts?.Dispose(); } catch { }
+            _wsCts = null;
+            State = ClientState.Initialized;
+        }
+
+        private async Task ConnectWsAsync(Uri wsUri, CancellationToken ct)
+        {
+            _ws = new ClientWebSocket();
+            _ws.Options.KeepAliveInterval = TimeSpan.FromSeconds(10);
+
+            _wsCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            await _ws.ConnectAsync(wsUri, _wsCts.Token);
+        }
+
+        public List<WsEvent> PumpWebSocket()
+        {
+            var events = new List<WsEvent>(8);
+
+            if (State == ClientState.Disposed) return events;
+
+            var ws = _ws;
+            if (ws == null) return events;
+
+            if (ws.State != WebSocketState.Open && ws.State != WebSocketState.CloseReceived)
+                return events;
+
+            // Drain all messages that are already completed "now".
+            while (true)
+            {
+                if (_wsCts == null) break;
+                if (ws.State != WebSocketState.Open && ws.State != WebSocketState.CloseReceived) break;
+
+                Task<WebSocketReceiveResult> recvTask =
+                    ws.ReceiveAsync(new ArraySegment<byte>(_wsBuf), _wsCts.Token);
+
+                // If it didn't complete immediately, stop; we'll get it next frame.
+                if (!recvTask.IsCompleted)
+                    break;
+
+                if (recvTask.IsCanceled || recvTask.IsFaulted)
+                    break;
+
+                WebSocketReceiveResult res = recvTask.Result;
+
+                if (res.MessageType == WebSocketMessageType.Close)
+                    break;
+
+                if (res.MessageType != WebSocketMessageType.Binary)
+                    continue;
+
+                if (!res.EndOfMessage)
+                    throw new InvalidOperationException("WS message fragmented; implement reassembly.");
+
+                if (TryHandleWsBinaryToEvents(_wsBuf, res.Count, events))
+                {
+                    // handled
+                }
+            }
+            return events;
+        }
+
+        private bool TryHandleWsBinaryToEvents(byte[] data, int n, List<WsEvent> outEvents)
+        {
+            if (n < 1) return false;
+
+            byte tag = data[0];
+            switch (tag)
+            {
+                case WS_JOINED_ROOM:
+                    {
+                        if (n < 1 + 8) return false;
+                        ulong room = ReadU64BE(data, 1);
+
+                        State = ClientState.Matchmaking;
+
+                        outEvents.Add(WsEvent.JoinedRoom(room));
+                        return true;
+                    }
+                case WS_YOU_ARE:
+                    {
+                        if (n < 1 + 4) return false;
+                        uint handle = ReadU32BE(data, 1);
+
+                        outEvents.Add(WsEvent.YouAre(handle));
+                        return true;
+                    }
+                case WS_PEER_JOINED:
+                    {
+                        if (n < 1 + 4) return false;
+                        uint h = ReadU32BE(data, 1);
+
+                        EnsureState(ClientState.Matchmaking);
+                        State = ClientState.MatchmakingReady;
+
+                        outEvents.Add(WsEvent.PeerJoined(h));
+                        return true;
+                    }
+                case WS_PEER_LEFT:
+                    {
+                        if (n < 1 + 4) return false;
+                        uint h = ReadU32BE(data, 1);
+
+                        if (State == ClientState.MatchmakingReady)
+                            State = ClientState.Matchmaking;
+
+                        outEvents.Add(WsEvent.PeerLeft(h));
+                        return true;
+                    }
+                default:
+                    return false;
+            }
+        }
+
+        #endregion
+
+        #region Connecting
+
+        public async Task<IPEndPoint> ConnectAsync(CancellationToken ct = default)
+        {
+            var st = State;
+            if (st != ClientState.Matchmaking && st != ClientState.MatchmakingReady)
+                throw new InvalidOperationException("Client must be matchmaking to start connecting.");
+
+            var peerEp = await GetPeerEpAsync(ct);
+            State = ClientState.MatchmakingFinished;
+
+            State = ClientState.Connected;
+            return _relayEp;
+        }
+
+        private async Task<IPEndPoint> GetPeerEpAsync(CancellationToken ct)
+        {
+            byte[] clientIdPkt = BuildClientIdPacket();
+
+            const int SEND_INTERVAL_MS = 100;
+            const int RECV_TIMEOUT_MS = 300;
+
+            while (true)
+            {
+                ct.ThrowIfCancellationRequested();
+                if (State == ClientState.Disposed)
+                    throw new ObjectDisposedException(nameof(SynapseClient));
+
+                await _udp.SendAsync(clientIdPkt, clientIdPkt.Length, _punchEp);
+
+                var recvTask = _udp.ReceiveAsync();
+                var delayTask = Task.Delay(RECV_TIMEOUT_MS, ct);
+
+                var done = await Task.WhenAny(recvTask, delayTask);
+                if (done != recvTask)
+                {
+                    await Task.Delay(SEND_INTERVAL_MS, ct);
+                    continue;
+                }
+
+                UdpReceiveResult recv = recvTask.Result;
+
+                if (!EndPointMatches(recv.RemoteEndPoint, _punchEp))
+                    continue;
+
+                byte[] data = recv.Buffer;
+                int n = data?.Length ?? 0;
+                if (n < 1) continue;
+
+                byte tag = data[0];
+
+                if (tag == UDP_WAITING)
+                {
+                    await Task.Delay(SEND_INTERVAL_MS, ct);
+                    continue;
+                }
+
+                if (tag != UDP_FOUND_PEER) continue;
+                if (n < 2) continue;
+
+                byte ipVer = data[1];
+
+                if (ipVer == 4)
+                {
+                    if (n < 8) continue;
+
+                    var ipBytes = new byte[4];
+                    Buffer.BlockCopy(data, 2, ipBytes, 0, 4);
+                    ushort port = ReadU16BE(data, 6);
+
+                    return new IPEndPoint(new IPAddress(ipBytes), port);
+                }
+
+                if (ipVer == 6)
+                {
+                    if (n < 20) continue;
+
+                    var ipBytes = new byte[16];
+                    Buffer.BlockCopy(data, 2, ipBytes, 0, 16);
+                    ushort port = ReadU16BE(data, 18);
+
+                    return new IPEndPoint(new IPAddress(ipBytes), port);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Rollback
+
+        public void SendTo(in Message message, EndPoint addr)
+        {
+            byte[] payload = MemoryPackSerializer.Serialize(message);
+            if (payload.Length > IDEAL_MAX_UDP_PACKET_SIZE)
+            {
+                Debug.Log($"Sending UDP packet of size {payload.Length} bytes, which is larger than ideal ({IDEAL_MAX_UDP_PACKET_SIZE}).");
+            }
+
+            _udp.Client.SendTo(payload, SocketFlags.None, addr);
+        }
+
+        public List<(EndPoint addr, Message message)> ReceiveAllMessages()
+        {
+            var received = new List<(EndPoint, Message)>();
+
+            while (true)
+            {
+                EndPoint remote = new IPEndPoint(IPAddress.Any, 0);
+                try
+                {
+                    int bytes = _udp.Client.ReceiveFrom(_buffer, 0, _buffer.Length, SocketFlags.None, ref remote);
+                    if (bytes <= 0) continue;
+                    if (bytes > RECV_BUFFER_SIZE)
+                        throw new InvalidOperationException("Received more bytes than buffer size.");
+
+                    Message? message = MemoryPackSerializer.Deserialize<Message>(_buffer.AsSpan().Slice(0, bytes));
+                    if (message != null) received.Add((remote, message.Value));
+                }
+                catch (SocketException ex) when (ex.SocketErrorCode == SocketError.WouldBlock)
+                {
+                    return received;
+                }
+                catch (SocketException ex) when (ex.SocketErrorCode == SocketError.ConnectionReset)
+                {
+                    continue;
+                }
+                catch (SocketException ex)
+                {
+                    throw new InvalidOperationException(
+                        $"{ex.SocketErrorCode}: {ex.Message} on {_udp.Client.LocalEndPoint}", ex);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Utils
+
+        private static bool EndPointMatches(IPEndPoint a, IPEndPoint b)
+            => a.Port == b.Port && a.Address.Equals(b.Address);
+
+        private void EnsureState(ClientState expected)
+        {
+            if (State != expected)
+                throw new InvalidOperationException($"expected state {expected} but was {State}.");
+        }
+
+        private static string GuidToU128Decimal(Guid g)
+        {
+            string hex = g.ToString("N"); // 32 hex chars
+            byte[] be16 = new byte[16];
+            for (int i = 0; i < 16; i++)
+                be16[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+
+            byte[] le = new byte[17];
+            for (int i = 0; i < 16; i++) le[i] = be16[15 - i];
+            le[16] = 0;
+
+            var bi = new BigInteger(le);
+            return bi.ToString();
+        }
+
+        private byte[] BuildClientIdPacket()
+            => U128DecimalTo16BytesBE(ClientIdDecimal);
+
+        private static byte[] U128DecimalTo16BytesBE(string dec)
+        {
+            BigInteger bi = BigInteger.Parse(dec);
+
+            byte[] le = bi.ToByteArray(isUnsigned: true, isBigEndian: false);
+
+            var be16 = new byte[16];
+            int copy = Math.Min(le.Length, 16);
+            for (int i = 0; i < copy; i++)
+                be16[15 - i] = le[i];
+
+            return be16;
+        }
+
+        private static ushort ReadU16BE(byte[] b, int o)
+            => (ushort)((b[o] << 8) | b[o + 1]);
+
+        private static uint ReadU32BE(byte[] b, int o)
+            => ((uint)b[o] << 24) | ((uint)b[o + 1] << 16) | ((uint)b[o + 2] << 8) | b[o + 3];
+
+        private static ulong ReadU64BE(byte[] b, int o)
+            => ((ulong)b[o] << 56) | ((ulong)b[o + 1] << 48) | ((ulong)b[o + 2] << 40) | ((ulong)b[o + 3] << 32)
+             | ((ulong)b[o + 4] << 24) | ((ulong)b[o + 5] << 16) | ((ulong)b[o + 6] << 8) | b[o + 7];
+
+        private static IPAddress DnsSafeResolve(string host)
+        {
+            if (IPAddress.TryParse(host, out var ip)) return ip;
+
+            var addrs = Dns.GetHostAddresses(host);
+            foreach (var a in addrs)
+                if (a.AddressFamily == AddressFamily.InterNetwork)
+                    return a;
+
+            return addrs.Length > 0 ? addrs[0] : IPAddress.Loopback;
+        }
+
+        #endregion
+    }
+}

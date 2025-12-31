@@ -268,6 +268,6 @@ namespace Netcode.Rollback
         /// This method should return all messages received since the last time this method was called
         /// </summary>
         /// <returns>An iterator of pairs (addr, message) indicating the source and content of the message</returns>
-        public abstract IEnumerable<(TAddress addr, Message message)> ReceiveAllMessages();
+        public abstract List<(TAddress addr, Message message)> ReceiveAllMessages();
     }
 }

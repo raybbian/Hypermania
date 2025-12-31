@@ -108,14 +108,14 @@ fn bind_addr(port: u16) -> SocketAddr {
 
 #[repr(u8)]
 enum WsEventType {
-    RoomCreated = 1,
+    JoinedRoom = 1,
     YouAre = 2,
     PeerJoined = 3,
     PeerLeft = 4,
 }
 
 enum WsEvent {
-    RoomCreated(RoomId),
+    JoinedRoom(RoomId),
     YouAre(Handle),
     PeerJoined(Handle),
     PeerLeft(Handle),
@@ -124,9 +124,9 @@ enum WsEvent {
 impl WsEvent {
     fn encode(&self) -> Vec<u8> {
         match *self {
-            WsEvent::RoomCreated(room_id) => {
+            WsEvent::JoinedRoom(room_id) => {
                 let mut out = Vec::with_capacity(1 + 8);
-                out.push(WsEventType::RoomCreated as u8);
+                out.push(WsEventType::JoinedRoom as u8);
                 out.extend_from_slice(&room_id.to_be_bytes());
                 out
             }
@@ -283,13 +283,6 @@ async fn ws_join_room(
         .or_insert(ClientState::new(room_id));
     drop(state);
 
-    let state = st.room_state.read().await;
-    let Some(room) = state.rooms.get(&room_id) else {
-        return Err(ApiError::NotFound("room not found"));
-    };
-    state.send_to(room.host, WsEvent::PeerJoined(1).into_message());
-    drop(state);
-
     Ok(ws.on_upgrade(move |socket| client_ws_loop(socket, st, client_id, room_id, 1)))
 }
 
@@ -317,13 +310,21 @@ async fn client_ws_loop(
     });
 
     let rs = st.room_state.read().await;
-    rs.send_to(client_id, WsEvent::RoomCreated(room_id).into_message());
+    rs.send_to(client_id, WsEvent::JoinedRoom(room_id).into_message());
     rs.send_to(client_id, WsEvent::YouAre(handle as u32).into_message());
 
-    // FIXME: should send for all players
     if handle != 0 {
+        // if we are not host, notify ourself that there is a host and the host that we have joined
         rs.send_to(client_id, WsEvent::PeerJoined(0).into_message());
+        rs.send_to(
+            rs.rooms
+                .get(&room_id)
+                .expect("to join a room it must exist")
+                .host,
+            WsEvent::PeerJoined(1).into_message(),
+        );
     }
+
     drop(rs);
 
     while let Some(item) = ws_rx.next().await {

@@ -1,23 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Threading.Tasks;
+using Netcode.Puncher;
 using Netcode.Rollback;
-using Netcode.Rollback.Network;
 using Netcode.Rollback.Sessions;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("Testing")]
-    public ulong EditorRoomId;
-    public Task JoinRoomFromEditorAsync(ulong roomId)
-    {
-        if (_synapse == null) throw new InvalidOperationException("_synapse is null. Enter Play Mode first.");
-        return _synapse.JoinRoomAsync(roomId);
-    }
-
     [Header("Servers")]
     public string ServerIp = "144.126.152.174";
     public int HttpPort = 9000;
@@ -31,46 +21,20 @@ public class GameManager : MonoBehaviour
     private GameState _curState;
     private P2PSession<GameState, Input, EndPoint> _session;
     private SynapseClient _synapse;
-    private volatile int _handle;
-    private volatile int _opponentHandle;
-    private volatile bool _playing;
 
-    async void Awake()
+    private int? _handle;
+    private int? _opponentHandle;
+    private ulong? _roomId;
+
+    private bool _playing;
+
+    void Awake()
     {
         _synapse = new SynapseClient(ServerIp, HttpPort, PunchPort, RelayPort);
         _playing = false;
-        _handle = -1;
-        _opponentHandle = -1;
-
-        _synapse.OnYouAre += h => Debug.Log($"My handle: {h}");
-        _synapse.OnPeerFound += ep => Debug.Log($"Peer found: {ep}");
-        _synapse.OnPeerJoined += h => Debug.Log($"Peer joined {h}");
-        _synapse.OnPeerLeft += h => Debug.Log($"Peer left {h}");
-        _synapse.OnRoomCreated += room => Debug.Log($"Room: {room}");
-
-        _synapse.OnPeerJoined += h =>
-        {
-            _opponentHandle = (int)h;
-            _synapse.StartPunching(localUdpPort: 0);
-        };
-        _synapse.OnPeerLeft += h =>
-        {
-            _opponentHandle = -1;
-            _synapse.StopUdp();
-            _playing = false;
-        };
-        _synapse.OnYouAre += h => _handle = (int)h;
-        _synapse.OnPeerFound += ep =>
-        {
-            _curState = GameState.New();
-            SessionBuilder<Input, EndPoint> builder = new SessionBuilder<Input, EndPoint>().WithNumPlayers(2).WithFps(50);
-            builder.AddPlayer(new PlayerType<EndPoint> { Kind = PlayerKind.Local, Address = null }, new PlayerHandle(_handle));
-            builder.AddPlayer(new PlayerType<EndPoint> { Kind = PlayerKind.Remote, Address = ep }, new PlayerHandle(_opponentHandle));
-            _session = builder.StartP2PSession<GameState>(_synapse);
-            _playing = true;
-        };
-
-        await _synapse.CreateRoomAsync();
+        _handle = null;
+        _roomId = null;
+        _opponentHandle = null;
     }
 
     async void OnDestroy()
@@ -80,16 +44,87 @@ public class GameManager : MonoBehaviour
             await _synapse.LeaveRoomAsync();
             _synapse.Dispose();
         }
-        _handle = -1;
-        _opponentHandle = -1;
-        _playing = false;
+        _handle = null;
+        _opponentHandle = null;
+        _roomId = null;
         _session = null;
+        _playing = false;
         _curState = GameState.New();
     }
 
     void FixedUpdate()
     {
-        if (!_playing) { return; }
+        NetworkingLoop();
+        if (!_playing)
+        {
+            return;
+        }
+        GameLoop();
+    }
+
+    void NetworkingLoop()
+    {
+        List<WsEvent> events = _synapse.PumpWebSocket();
+        foreach (WsEvent ev in events)
+        {
+            switch (ev.Kind)
+            {
+                case WsEventKind.JoinedRoom:
+                    _roomId = null;
+                    Debug.Log($"Joined room {ev.RoomId}");
+                    break;
+                case WsEventKind.PeerLeft:
+                    _opponentHandle = null;
+                    Debug.Log($"Peer {ev.Handle} left");
+                    break;
+                case WsEventKind.PeerJoined:
+                    _opponentHandle = (int)ev.Handle;
+                    Debug.Log($"Peer {ev.Handle} joined");
+                    break;
+                case WsEventKind.YouAre:
+                    _handle = (int)ev.Handle;
+                    Debug.Log($"You are {ev.Handle}");
+                    break;
+            }
+        }
+    }
+
+    public async void CreateRoom()
+    {
+        Debug.Log("creating room...");
+        await _synapse.CreateRoomAsync();
+    }
+
+    public async void JoinRoom(ulong roomId)
+    {
+        Debug.Log($"joining room {roomId}...");
+        await _synapse.JoinRoomAsync(roomId);
+    }
+
+    public async void LeaveRoom()
+    {
+        Debug.Log($"leaving room...");
+        await _synapse.LeaveRoomAsync();
+        _roomId = null;
+        _handle = null;
+        _opponentHandle = null;
+    }
+
+    public async void StartGame()
+    {
+        if (_handle == null || _opponentHandle == null || _roomId == null) return;
+
+        EndPoint ep = await _synapse.ConnectAsync();
+        _curState = GameState.New();
+        SessionBuilder<Input, EndPoint> builder = new SessionBuilder<Input, EndPoint>().WithNumPlayers(2).WithFps(50);
+        builder.AddPlayer(new PlayerType<EndPoint> { Kind = PlayerKind.Local, Address = null }, new PlayerHandle(_handle.Value));
+        builder.AddPlayer(new PlayerType<EndPoint> { Kind = PlayerKind.Remote, Address = ep }, new PlayerHandle(_opponentHandle.Value));
+        _session = builder.StartP2PSession<GameState>(_synapse);
+        _playing = true;
+    }
+
+    void GameLoop()
+    {
         InputFlags[] inputs = new InputFlags[2];
 
         InputFlags f1Input = InputFlags.None;
