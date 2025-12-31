@@ -10,7 +10,6 @@ namespace Netcode.Rollback.Sessions
 {
     public class PlayerRegisty<TInput, TAddress> 
         where TInput : IInput<TInput>
-        where TAddress: struct
     {
         public Dictionary<PlayerHandle, PlayerType<TAddress>> Handles;
         public Dictionary<TAddress, UdpProtocol<TInput, TAddress>> Remotes;
@@ -75,7 +74,6 @@ namespace Netcode.Rollback.Sessions
     public class P2PSession<TState, TInput, TAddress>
         where TState : struct
         where TInput : struct, IInput<TInput>
-        where TAddress: struct
     {
         const uint MIN_RECOMMENDATION = 3;
         const int RECOMMENDATION_INTERVAL = 60;
@@ -131,7 +129,7 @@ namespace Netcode.Rollback.Sessions
             _lastSentChecksumFrame = Frame.NullFrame;
         }
 
-        public void AddLocalInput(PlayerHandle playerHandle, in TInput input)
+        public void AddLocalInput(PlayerHandle playerHandle, TInput input)
         {
             if (!_playerRegistry.IsLocal(playerHandle))
             {
@@ -142,7 +140,7 @@ namespace Netcode.Rollback.Sessions
                 Frame = _syncLayer.CurrentFrame,
                 Input = input
             };
-            _localInputs.Add(playerHandle, playerInput);
+            _localInputs[playerHandle] = playerInput;
         }
 
         public List<RollbackRequest<TState, TInput>> AdvanceFrame()
@@ -520,7 +518,7 @@ namespace Netcode.Rollback.Sessions
             }
         }
 
-        private void HandleEvent(in Event<TInput> ev, PlayerHandle[] playerHandles, in TAddress addr)
+        private void HandleEvent(in Event<TInput> ev, PlayerHandle[] playerHandles, TAddress addr)
         {
             switch (ev.Kind)
             {

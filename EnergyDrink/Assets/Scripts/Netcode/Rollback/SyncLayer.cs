@@ -9,7 +9,7 @@ namespace Netcode.Rollback
     {
         // TODO: lock?
         public Arc<GameState<TState>> State;
-        public void Save(Frame frame, in TState? data, ulong? checksum)
+        public void Save(Frame frame, in TState data, ulong checksum)
         {
             State.Value.Frame = frame;
             State.Value.Data = data;
@@ -19,22 +19,22 @@ namespace Netcode.Rollback
 
     public struct SavedStates<TState> where TState : struct
     {
-        public List<GameStateCell<TState>> States;
+        public GameStateCell<TState>[] States;
         public SavedStates(uint maxPrediction)
         {
             int numCells = (int)maxPrediction + 1;
-            List<GameStateCell<TState>> states = new List<GameStateCell<TState>>();
+            GameStateCell<TState>[] states = new GameStateCell<TState>[numCells];
             for (int i = 0; i < numCells; i++)
             {
-                states.Add(new GameStateCell<TState>
+                states[i] = new GameStateCell<TState>
                 {
                     State = new Arc<GameState<TState>>(new GameState<TState>
                     {
                         Frame = Frame.NullFrame,
-                        Data = null,
-                        Checksum = null
+                        Data = default,
+                        Checksum = default
                     })
-                });
+                };
             }
             States = states;
         }
@@ -42,7 +42,7 @@ namespace Netcode.Rollback
         public GameStateCell<TState> GetCell(Frame frame)
         {
             Assert.IsTrue(frame != Frame.NullFrame);
-            int pos = frame.No % States.Count;
+            int pos = frame.No % States.Length;
             return States[pos];
         }
     }

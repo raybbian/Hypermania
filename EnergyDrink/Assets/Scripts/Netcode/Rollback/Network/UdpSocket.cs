@@ -13,12 +13,12 @@ namespace Netcode.Rollback.Network
         public const int IDEAL_MAX_UDP_PACKET_SIZE = 508;
     }
 
-    public class UdpSocket
+    public class UdpSocket: INonBlockingSocket<EndPoint>, IDisposable
     {
         private readonly Socket _socket;
         private readonly byte[] _buffer;
 
-        public UdpSocket(Socket socket)
+        private UdpSocket(Socket socket)
         {
             _socket = socket ?? throw new ArgumentNullException(nameof(socket));
             _buffer = new byte[UdpSocketConstants.RECV_BUFFER_SIZE];
@@ -33,7 +33,7 @@ namespace Netcode.Rollback.Network
             return new UdpSocket(socket);
         }
 
-        public void SendTo(in Message message, in IPEndPoint addr)
+        public void SendTo(in Message message, EndPoint addr)
         {
             byte[] payload = MemoryPackSerializer.Serialize(message);
             if (payload.Length > UdpSocketConstants.IDEAL_MAX_UDP_PACKET_SIZE)
@@ -44,14 +44,13 @@ namespace Netcode.Rollback.Network
             _socket.SendTo(payload, SocketFlags.None, addr);
         }
 
-        public IEnumerable<(IPEndPoint addr, Message message)> ReceiveAllMessages()
+        public IEnumerable<(EndPoint addr, Message message)> ReceiveAllMessages()
         {
-            var received = new List<(IPEndPoint, Message)>();
+            var received = new List<(EndPoint, Message)>();
 
             while (true)
             {
                 EndPoint remote = new IPEndPoint(IPAddress.Any, 0);
-
                 try
                 {
                     int bytes = _socket.ReceiveFrom(_buffer, 0, _buffer.Length, SocketFlags.None, ref remote);
@@ -60,7 +59,7 @@ namespace Netcode.Rollback.Network
                         throw new InvalidOperationException("Received more bytes than buffer size.");
 
                     Message? message = MemoryPackSerializer.Deserialize<Message>(_buffer.AsSpan().Slice(0, bytes));
-                    if (message != null) { received.Add(((IPEndPoint)remote, message.Value)); }
+                    if (message != null) { received.Add((remote, message.Value)); }
                 }
                 catch (SocketException ex) when (ex.SocketErrorCode == SocketError.WouldBlock) { return received; }
                 catch (SocketException ex) when (ex.SocketErrorCode == SocketError.ConnectionReset) { continue; }

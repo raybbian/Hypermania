@@ -1,11 +1,20 @@
 using System;
-using UnityEngine;
+using Netcode.Rollback;
+using MemoryPack;
+
+[MemoryPackable]
+public partial struct Input : IInput<Input>
+{
+    public InputFlags Flags;
+    public bool Equals(Input other) { return Flags == other.Flags; }
+    public Input(InputFlags flags) { Flags = flags; }
+}
 
 // Input is an enum that uses the Flags attribute, which means that it can use bitwise operations on initialization and when checking whether certain enum values are present in an Input.
 // For example, if the user presses left and up, we would set the Input = Input.Left | Input.Up, which sets the bits accordingly.
 // To check if the user has pressed down, we can use userInput.HasFlag(Input.Down).
 [Flags]
-public enum Input
+public enum InputFlags
 {
     None = 0,
     Up = 1 << 1,
@@ -16,18 +25,4 @@ public enum Input
     MediumAttack = 1 << 6,
     HeavyAttack = 1 << 7,
     Grab = 1 << 8
-}
-public class InputReader
-{
-    public static Input ReadKeyboardWASD()
-    {
-        Input input = Input.None;
-
-        if (UnityEngine.Input.GetKey(KeyCode.W)) input |= Input.Up;
-        if (UnityEngine.Input.GetKey(KeyCode.S)) input |= Input.Down;
-        if (UnityEngine.Input.GetKey(KeyCode.A)) input |= Input.Left;
-        if (UnityEngine.Input.GetKey(KeyCode.D)) input |= Input.Right;
-
-        return input;
-    }
 }

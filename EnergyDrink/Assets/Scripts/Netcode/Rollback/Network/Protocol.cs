@@ -248,7 +248,7 @@ namespace Netcode.Rollback.Network
             _state == ProtocolState.Running || _state == ProtocolState.Disconnected || _state == ProtocolState.Shutdown;
         public bool IsRunning => _state == ProtocolState.Running;
 
-        public bool IsHandlingMessage(in TAddress addr) => _peerAddr.Equals(addr);
+        public bool IsHandlingMessage(TAddress addr) => _peerAddr.Equals(addr);
 
         public ConnectionStatus PeerConnectStatus(PlayerHandle handle) => _peerConnectStatus[handle.Id];
 

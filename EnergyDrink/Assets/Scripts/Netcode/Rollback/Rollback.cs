@@ -73,7 +73,7 @@ namespace Netcode.Rollback
         Spectator,
     }
 
-    public struct PlayerType<TAddress> where TAddress: struct
+    public struct PlayerType<TAddress> 
     {
         public PlayerKind Kind;
         public TAddress Address;
@@ -247,7 +247,7 @@ namespace Netcode.Rollback
         public LoadGameState GetLoadGameStateReq() =>
             Kind == RollbackRequestKind.LoadGameStateReq ? _loadStateReq : throw new InvalidOperationException("body type mismatch");
 
-        public AdvanceFrame GetSyncRequest() =>
+        public AdvanceFrame GetAdvanceFrameRequest() =>
             Kind == RollbackRequestKind.AdvanceFrameReq ? _advanceFrameReq : throw new InvalidOperationException("body type mismatch");
     }
 
@@ -262,7 +262,7 @@ namespace Netcode.Rollback
         /// </summary>
         /// <param name="message">The message to send</param>
         /// <param name="addr">The address to send it to</param>
-        public abstract void SendTo(in Message message, in TAddress addr);
+        public abstract void SendTo(in Message message, TAddress addr);
 
         /// <summary>
         /// This method should return all messages received since the last time this method was called

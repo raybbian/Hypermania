@@ -32,12 +32,12 @@ namespace Netcode.Rollback.Sessions
             _localInputs = new Dictionary<PlayerHandle, PlayerInput<TInput>>();
         }
 
-        public void AddLocalInput(PlayerHandle handle, in TInput input)
+        public void AddLocalInput(PlayerHandle handle, TInput input)
         {
             if (handle.Id >= _numPlayers) { throw new InvalidOperationException("player handle is invalid"); }
 
             PlayerInput<TInput> playerInput = new PlayerInput<TInput> { Frame = _syncLayer.CurrentFrame, Input = input };
-            _localInputs.Add(handle, playerInput);
+            _localInputs[handle] = playerInput;
         }
 
         public List<RollbackRequest<TState, TInput>> AdvanceFrame()

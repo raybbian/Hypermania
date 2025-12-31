@@ -10,7 +10,6 @@ namespace Netcode.Rollback.Sessions
     }
     public class SessionBuilder<TInput, TAddress>
         where TInput : struct, IInput<TInput>
-        where TAddress: struct
     {
         const int DEFAULT_PLAYERS = 2;
         const bool DEFAULT_SAVE_MODE = false;
@@ -208,7 +207,7 @@ namespace Netcode.Rollback.Sessions
             return new P2PSession<TState, TInput, TAddress>(_numPlayers, _maxPrediction, socket, _playerRegistry, _sparseSaving, _desyncDetection, _inputDelay);
         }
 
-        public SpectatorSession<TState, TInput, TAddress> StartSpectatorSession<TState>(in TAddress hostAddr, INonBlockingSocket<TAddress> socket)
+        public SpectatorSession<TState, TInput, TAddress> StartSpectatorSession<TState>(TAddress hostAddr, INonBlockingSocket<TAddress> socket)
             where TState : struct
         {
             PlayerHandle[] handles = new PlayerHandle[_numPlayers];
@@ -229,7 +228,7 @@ namespace Netcode.Rollback.Sessions
             return new SyncTestSession<TState, TInput, TAddress>(_numPlayers, _maxPrediction, _checkDist, _inputDelay);
         }
 
-        private UdpProtocol<TInput, TAddress> CreateEndpoint(List<PlayerHandle> handles, in TAddress peerAddr, int localPlayers)
+        private UdpProtocol<TInput, TAddress> CreateEndpoint(List<PlayerHandle> handles, TAddress peerAddr, int localPlayers)
         {
             UdpProtocol<TInput, TAddress> endpoint = new UdpProtocol<TInput, TAddress>(
                 handles.ToArray(),

@@ -1,7 +1,5 @@
-
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
+using MemoryPack;
 
 public enum FighterState
 {
@@ -15,9 +13,9 @@ public enum FighterState
     Grabbing
 }
 
-public struct FighterInfo
+[MemoryPackable]
+public partial struct FighterInfo
 {
-    public GameObject Go;
     public Vector2 Position;
     public Vector2 Velocity;
     public float Speed;
@@ -25,11 +23,9 @@ public struct FighterInfo
     public int StateFrameCount;
     public Vector2 FacingDirection;
 
-    public FighterInfo(GameObject go, Vector2 position, Vector2 velocity, float speed, FighterState state, int stateFrameCount, Vector2 facingDirection)
+    public FighterInfo(Vector2 position, Vector2 velocity, float speed, FighterState state, int stateFrameCount, Vector2 facingDirection)
     {
-        Go = go;
         Position = position;
-        go.transform.position = Position;
         Velocity = velocity;
         Speed = speed;
         State = state;
@@ -37,32 +33,33 @@ public struct FighterInfo
         FacingDirection = facingDirection;
     }
 
-    public void HandleInput(Input input, float deltaTime)
+    public void HandleInput(Input input)
     {
         // Horizontal movement
         Velocity.x = 0;
-        if (input.HasFlag(Input.Left))
+        if (input.Flags.HasFlag(InputFlags.Left))
             Velocity.x = -Speed;
-        if (input.HasFlag(Input.Right))
+        if (input.Flags.HasFlag(InputFlags.Right))
             Velocity.x = Speed;
 
         // Vertical movement only if grounded
-        if (input.HasFlag(Input.Up) && Position.y <= Globals.GROUND)
+        if (input.Flags.HasFlag(InputFlags.Up) && Position.y <= Globals.GROUND)
         {
             Velocity.y = Speed * 1.5f;
         }
-        UpdatePhysics(deltaTime);
+        UpdatePhysics();
     }
-    public void UpdatePhysics(float deltaTime)
+
+    public void UpdatePhysics()
     {
         // Apply gravity if not grounded
         if (Position.y > Globals.GROUND || Velocity.y > 0)
         {
-            Velocity.y += Globals.GRAVITY * deltaTime;
+            Velocity.y += Globals.GRAVITY * 1 / 60;
         }
 
         // Update Position
-        Position += Velocity * deltaTime;
+        Position += Velocity * 1 / 60;
 
         // Floor collision
         if (Position.y <= Globals.GROUND)
@@ -74,12 +71,9 @@ public struct FighterInfo
                 Velocity.y = 0;
         }
 
-        // Update GameObject
-        if (Go != null)
-            Go.transform.position = Position;
-
         UpdateState();
     }
+
     public void UpdateState()
     {
         if (Velocity.y > 0)

@@ -124,7 +124,7 @@ namespace Netcode.Rollback.Sessions
             return res;
         }
 
-        public void HandleEvent(Event<TInput> ev, in TAddress addr)
+        public void HandleEvent(Event<TInput> ev, TAddress addr)
         {
             switch (ev.Kind)
             {

@@ -5,8 +5,8 @@ namespace Netcode.Rollback
     public struct GameState<TState> where TState: struct
     {
         public Frame Frame;
-        public TState? Data;
-        public ulong? Checksum;
+        public TState Data;
+        public ulong Checksum;
     }
     public struct PlayerInput<TInput> where TInput: IInput<TInput>
     {

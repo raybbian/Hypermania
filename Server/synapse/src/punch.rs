@@ -1,11 +1,8 @@
-use std::{collections::HashMap, net::SocketAddr, time::Duration};
-use tokio::{
-    net::UdpSocket,
-    time::{self, Instant},
-};
+use std::net::SocketAddr;
+use tokio::{net::UdpSocket, time::Instant};
 
 use crate::{
-    AppState, ClientId,
+    AppState,
     utils::{UdpClientState, parse_client_id},
 };
 
@@ -40,115 +37,95 @@ fn encode_socket<'a>(peer: SocketAddr, out: &'a mut [u8]) -> &'a [u8] {
     }
 }
 
-pub async fn punch_coordinator(bind: SocketAddr, st: AppState) -> anyhow::Result<()> {
+pub async fn udp_coordinator(bind: SocketAddr, st: AppState) -> anyhow::Result<()> {
     const RX_BUF_SIZE: usize = 2048;
     const TX_BUF_SIZE: usize = 64;
-    const STALE_AFTER: Duration = Duration::from_secs(60);
-    const CLEANUP_EVERY: Duration = Duration::from_secs(5);
 
     let sock = UdpSocket::bind(bind).await?;
     let mut rx = [0u8; RX_BUF_SIZE];
     let mut tx = [0u8; TX_BUF_SIZE];
 
-    let mut punch_clients: HashMap<ClientId, UdpClientState> = HashMap::new();
-    let mut addr_to_client: HashMap<SocketAddr, ClientId> = HashMap::new();
-
-    let mut cleanup_tick = time::interval(CLEANUP_EVERY);
-    cleanup_tick.set_missed_tick_behavior(time::MissedTickBehavior::Delay);
-    cleanup_tick.tick().await;
-    let mut stale_ids = Vec::new();
-
     loop {
-        tokio::select! {
-            biased;
-            _ = cleanup_tick.tick() => {
-                let now = Instant::now();
-                for (&client_id, ep) in punch_clients.iter() {
-                    if now.duration_since(ep.last_seen) > STALE_AFTER {
-                        stale_ids.push(client_id);
-                    }
-                }
-                for client_id in stale_ids.iter() {
-                    if let Some(ep) = punch_clients.remove(&client_id) {
-                        addr_to_client.remove(&ep.udp_addr);
-                    }
-                }
-                tracing::debug!("Cleaned {} stale punch clients", stale_ids.len());
+        let (n, src) = sock.recv_from(&mut rx).await?;
 
-                stale_ids.clear();
-            }
+        let Some(client_id) = parse_client_id(&rx[..n]) else {
+            continue;
+        };
 
-            res = sock.recv_from(&mut rx) => {
-                let (n, src) = match res {
-                    Ok(v) => v,
-                    Err(_) => continue,
-                };
-
-                let Some(client_id) = parse_client_id(&rx[..n]) else {
-                    continue;
-                };
-
-                tracing::debug!("Received punch from client {} from address {}", client_id, src);
-
-                match punch_clients.get_mut(&client_id) {
-                    Some(e) => {
-                        if e.udp_addr != src {
-                            tracing::debug!("Punch client {client_id} migrated from address {} to {}", e.udp_addr, src);
-
-                            addr_to_client.remove(&e.udp_addr);
-                            addr_to_client.insert(src, client_id);
-                            e.udp_addr = src;
-                        }
-                        e.last_seen = Instant::now();
-                    }
-                    None => {
-                        punch_clients.insert(
-                            client_id,
-                            UdpClientState {
-                                udp_addr: src,
-                                last_seen: Instant::now(),
-                            },
+        tracing::debug!(
+            "Received udp from client {} from address {}",
+            client_id,
+            src
+        );
+        let _ = {
+            let now = Instant::now();
+            let mut udp_state = st.udp_state.write().await;
+            match udp_state.udp_addrs.remove(&client_id) {
+                Some(mut ep) => {
+                    if ep.udp_addr != src {
+                        let old = ep.udp_addr;
+                        tracing::debug!(
+                            "Udp client {client_id} migrated from address {} to {}",
+                            old,
+                            src
                         );
-                        addr_to_client.insert(src, client_id);
+
+                        udp_state.addr_to_client.remove(&old);
+                        udp_state.addr_to_client.insert(src, client_id);
+                        ep.udp_addr = src;
                     }
+                    ep.last_seen = now;
+
+                    udp_state.udp_addrs.insert(client_id, ep);
                 }
-
-                let maybe_pairs: Option<[(SocketAddr, SocketAddr); 2]> = {
-                    let inner = st.inner.read().await;
-                    let Some(client) = inner.clients.get(&client_id) else {
-                        continue;
-                    };
-                    let Some(room) = inner.rooms.get(&client.room) else {
-                        continue;
-                    };
-                    let Some(guest_id) = room.client else {
-                        continue;
-                    };
-                    let host_id = room.host;
-                    let Some(host_punch) = punch_clients.get(&host_id) else {
-                        continue;
-                    };
-                    let Some(guest_punch) = punch_clients.get(&guest_id) else {
-                        continue;
-                    };
-                    Some([
-                        (host_punch.udp_addr, guest_punch.udp_addr),
-                        (guest_punch.udp_addr, host_punch.udp_addr),
-                    ])
-                };
-
-                if let Some(pairs) = maybe_pairs {
-                    for (dst, peer) in pairs {
-                        tracing::debug!("Forwarding punch peer {} for client {}", peer, client_id);
-
-                        let pkt = encode_socket(peer, &mut tx);
-                        let _ = sock.send_to(pkt, dst).await;
-                    }
-                } else {
-                    let pkt = encode_waiting(&mut tx);
-                    let _ = sock.send_to(pkt, src).await;
+                None => {
+                    udp_state.udp_addrs.insert(
+                        client_id,
+                        UdpClientState {
+                            udp_addr: src,
+                            last_seen: now,
+                        },
+                    );
+                    udp_state.addr_to_client.insert(src, client_id);
                 }
             }
+        };
+
+        let maybe_pairs: Option<[(SocketAddr, SocketAddr); 2]> = {
+            let room_state = st.room_state.read().await;
+            let udp_state = st.udp_state.read().await;
+            let Some(client) = room_state.clients.get(&client_id) else {
+                continue;
+            };
+            let Some(room) = room_state.rooms.get(&client.room) else {
+                continue;
+            };
+            let Some(guest_id) = room.client else {
+                continue;
+            };
+            let host_id = room.host;
+            let Some(host_udp) = udp_state.udp_addrs.get(&host_id) else {
+                continue;
+            };
+            let Some(guest_udp) = udp_state.udp_addrs.get(&guest_id) else {
+                continue;
+            };
+            Some([
+                (host_udp.udp_addr, guest_udp.udp_addr),
+                (guest_udp.udp_addr, host_udp.udp_addr),
+            ])
+        };
+
+        if let Some(pairs) = maybe_pairs {
+            for (dst, peer) in pairs {
+                tracing::debug!("Forwarding punch peer {} for client {}", peer, client_id);
+
+                let pkt = encode_socket(peer, &mut tx);
+                let _ = sock.send_to(pkt, dst).await;
+            }
+        } else {
+            let pkt = encode_waiting(&mut tx);
+            let _ = sock.send_to(pkt, src).await;
         }
     }
 }

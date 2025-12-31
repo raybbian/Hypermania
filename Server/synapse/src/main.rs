@@ -1,19 +1,22 @@
 use axum::{
-    Json, Router,
-    extract::{Path, State},
-    routing::post,
+    Router,
+    extract::{
+        Path, Query, State,
+        ws::{Message, WebSocket, WebSocketUpgrade},
+    },
+    response::Response,
+    routing::get,
 };
-use serde::{Deserialize, Serialize};
+use clap::Parser;
+use futures_util::{sink::SinkExt, stream::StreamExt};
+use serde::Deserialize;
+use std::net::SocketAddr;
 use std::{collections::HashMap, sync::Arc};
-use tokio::sync::RwLock;
+use tokio::sync::{RwLock, mpsc};
 use tower_http::trace::TraceLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-use crate::{
-    error::{ApiError, ApiResult},
-    punch::punch_coordinator,
-    relay::relay_server,
-};
+use crate::{error::ApiError, punch::udp_coordinator, relay::relay_server, utils::UdpClientState};
 
 mod error;
 mod punch;
@@ -23,18 +26,31 @@ mod utils;
 type RoomId = u64;
 type ClientId = u128;
 type ClientString = String;
+type Handle = u32;
 
 #[derive(Clone)]
 struct AppState {
-    inner: Arc<RwLock<AppStateInner>>,
+    room_state: Arc<RwLock<AppRoomState>>,
+    udp_state: Arc<RwLock<AppUdpState>>,
 }
 
-struct AppStateInner {
+impl AppState {
+    async fn cleanup_udp(&self, client_id: ClientId) {
+        let mut udp_state = self.udp_state.write().await;
+        if let Some(ep) = udp_state.udp_addrs.remove(&client_id) {
+            udp_state.addr_to_client.remove(&ep.udp_addr);
+        }
+    }
+}
+
+struct AppRoomState {
+    next_room_id: RoomId,
     rooms: HashMap<RoomId, RoomState>,
     clients: HashMap<ClientId, ClientState>,
+    ws_peers: HashMap<ClientId, mpsc::UnboundedSender<Message>>,
 }
 
-impl AppStateInner {
+impl AppRoomState {
     pub fn get_peer(&self, client_id: ClientId) -> Option<ClientId> {
         let client = self.clients.get(&client_id)?;
         let room = self.rooms.get(&client.room)?;
@@ -46,6 +62,17 @@ impl AppStateInner {
         };
         Some(other_id)
     }
+
+    pub fn send_to(&self, dst: ClientId, msg: Message) {
+        if let Some(tx) = self.ws_peers.get(&dst) {
+            let _ = tx.send(msg);
+        }
+    }
+}
+
+struct AppUdpState {
+    udp_addrs: HashMap<ClientId, UdpClientState>,
+    addr_to_client: HashMap<SocketAddr, ClientId>,
 }
 
 #[derive(Default)]
@@ -64,9 +91,6 @@ impl ClientState {
     }
 }
 
-use clap::Parser;
-use std::net::SocketAddr;
-
 #[derive(Parser, Debug, Clone)]
 #[command(name = "rendezvous-server")]
 struct Args {
@@ -82,14 +106,74 @@ fn bind_addr(port: u16) -> SocketAddr {
     SocketAddr::from(([0, 0, 0, 0], port))
 }
 
+#[repr(u8)]
+enum WsEventType {
+    RoomCreated = 1,
+    YouAre = 2,
+    PeerJoined = 3,
+    PeerLeft = 4,
+}
+
+enum WsEvent {
+    RoomCreated(RoomId),
+    YouAre(Handle),
+    PeerJoined(Handle),
+    PeerLeft(Handle),
+}
+
+impl WsEvent {
+    fn encode(&self) -> Vec<u8> {
+        match *self {
+            WsEvent::RoomCreated(room_id) => {
+                let mut out = Vec::with_capacity(1 + 8);
+                out.push(WsEventType::RoomCreated as u8);
+                out.extend_from_slice(&room_id.to_be_bytes());
+                out
+            }
+            WsEvent::YouAre(handle) => {
+                let mut out = Vec::with_capacity(1 + 4);
+                out.push(WsEventType::YouAre as u8);
+                out.extend_from_slice(&handle.to_be_bytes());
+                out
+            }
+            WsEvent::PeerJoined(handle) => {
+                let mut out = Vec::with_capacity(1 + 4);
+                out.push(WsEventType::PeerJoined as u8);
+                out.extend_from_slice(&handle.to_be_bytes());
+                out
+            }
+            WsEvent::PeerLeft(handle) => {
+                let mut out = Vec::with_capacity(1 + 4);
+                out.push(WsEventType::PeerLeft as u8);
+                out.extend_from_slice(&handle.to_be_bytes());
+                out
+            }
+        }
+    }
+
+    fn into_message(self) -> Message {
+        Message::Binary(self.encode().into())
+    }
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
-    let rooms = HashMap::new();
-    let clients = HashMap::new();
-    let inner = Arc::new(RwLock::new(AppStateInner { rooms, clients }));
-    let state = AppState { inner };
+    let room_state = Arc::new(RwLock::new(AppRoomState {
+        next_room_id: 0,
+        rooms: HashMap::new(),
+        clients: HashMap::new(),
+        ws_peers: HashMap::new(),
+    }));
+    let udp_state = Arc::new(RwLock::new(AppUdpState {
+        udp_addrs: HashMap::new(),
+        addr_to_client: HashMap::new(),
+    }));
+    let state = AppState {
+        room_state,
+        udp_state,
+    };
 
     tracing_subscriber::registry()
         .with(
@@ -115,14 +199,13 @@ async fn main() -> anyhow::Result<()> {
         args.relay_port
     );
 
-    tokio::spawn(punch_coordinator(punch_addr, state.clone()));
+    tokio::spawn(udp_coordinator(punch_addr, state.clone()));
     tokio::spawn(relay_server(relay_addr, state.clone()));
 
     let app = Router::new()
         .layer(TraceLayer::new_for_http())
-        .route("/create_room", post(create_room))
-        .route("/join_room/{room_id}", post(join_room))
-        .route("/leave_room", post(leave_room))
+        .route("/create_room", get(ws_create_room))
+        .route("/join_room/{room_id}", get(ws_join_room))
         .with_state(state);
 
     let listener = tokio::net::TcpListener::bind(http_addr).await?;
@@ -131,24 +214,25 @@ async fn main() -> anyhow::Result<()> {
 }
 
 #[derive(Deserialize)]
-struct CreateRoomReq {
+struct WsClientParams {
     client_id: ClientString,
 }
 
-#[derive(Serialize)]
-struct CreateRoomResp {
-    room_id: RoomId,
-}
-
-async fn create_room(
+async fn ws_create_room(
+    ws: WebSocketUpgrade,
     State(st): State<AppState>,
-    Json(req): Json<CreateRoomReq>,
-) -> ApiResult<CreateRoomResp> {
-    let Ok(client_id) = req.client_id.parse::<u128>() else {
+    Query(q): Query<WsClientParams>,
+) -> Result<Response, ApiError> {
+    let Ok(client_id) = q.client_id.parse::<u128>() else {
         return Err(ApiError::BadRequest("could not parse client id"));
     };
-    let mut state = st.inner.write().await;
-    let room_id = state.rooms.len() as u64;
+
+    let mut state = st.room_state.write().await;
+    let room_id = state.next_room_id;
+    state.next_room_id = state
+        .next_room_id
+        .checked_add(1)
+        .ok_or(ApiError::Conflict("room id overflow"))?;
 
     state.rooms.insert(
         room_id,
@@ -162,28 +246,22 @@ async fn create_room(
         .entry(client_id)
         .and_modify(|e| e.room = room_id)
         .or_insert(ClientState::new(room_id));
+    drop(state);
 
-    Ok(Json(CreateRoomResp { room_id }))
+    Ok(ws.on_upgrade(move |socket| client_ws_loop(socket, st, client_id, room_id, 0)))
 }
 
-#[derive(Deserialize)]
-struct JoinRoomReq {
-    client_id: ClientString,
-}
-
-#[derive(Serialize)]
-struct JoinRoomResp {}
-
-async fn join_room(
+async fn ws_join_room(
+    ws: WebSocketUpgrade,
     State(st): State<AppState>,
     Path(room_id): Path<u64>,
-    Json(req): Json<JoinRoomReq>,
-) -> ApiResult<JoinRoomResp> {
-    let Ok(client_id) = req.client_id.parse::<u128>() else {
+    Query(q): Query<WsClientParams>,
+) -> Result<Response, ApiError> {
+    let Ok(client_id) = q.client_id.parse::<u128>() else {
         return Err(ApiError::BadRequest("could not parse client id"));
     };
-    let mut state = st.inner.write().await;
 
+    let mut state = st.room_state.write().await;
     if state
         .clients
         .get(&client_id)
@@ -197,55 +275,123 @@ async fn join_room(
     if room.client.is_some() {
         return Err(ApiError::Conflict("room is full"));
     }
-
     room.client = Some(client_id);
     state
         .clients
         .entry(client_id)
         .and_modify(|e| e.room = room_id)
         .or_insert(ClientState::new(room_id));
+    drop(state);
 
-    Ok(Json(JoinRoomResp {}))
-}
-
-#[derive(Deserialize)]
-struct LeaveRoomReq {
-    client_id: ClientString,
-}
-
-async fn leave_room(State(st): State<AppState>, Json(req): Json<LeaveRoomReq>) -> ApiResult<()> {
-    let Ok(client_id) = req.client_id.parse::<u128>() else {
-        return Err(ApiError::BadRequest("could not parse client id"));
+    let state = st.room_state.read().await;
+    let Some(room) = state.rooms.get(&room_id) else {
+        return Err(ApiError::NotFound("room not found"));
     };
-    let mut state = st.inner.write().await;
+    state.send_to(room.host, WsEvent::PeerJoined(1).into_message());
+    drop(state);
+
+    Ok(ws.on_upgrade(move |socket| client_ws_loop(socket, st, client_id, room_id, 1)))
+}
+
+async fn client_ws_loop(
+    socket: WebSocket,
+    st: AppState,
+    client_id: ClientId,
+    room_id: RoomId,
+    handle: u8,
+) {
+    let (mut ws_tx, mut ws_rx) = socket.split();
+    let (tx, mut rx) = mpsc::unbounded_channel::<Message>();
+
+    {
+        let mut rs = st.room_state.write().await;
+        rs.ws_peers.insert(client_id, tx);
+    }
+
+    let writer = tokio::spawn(async move {
+        while let Some(msg) = rx.recv().await {
+            if ws_tx.send(msg).await.is_err() {
+                break;
+            }
+        }
+    });
+
+    let rs = st.room_state.read().await;
+    rs.send_to(client_id, WsEvent::RoomCreated(room_id).into_message());
+    rs.send_to(client_id, WsEvent::YouAre(handle as u32).into_message());
+
+    // FIXME: should send for all players
+    if handle != 0 {
+        rs.send_to(client_id, WsEvent::PeerJoined(0).into_message());
+    }
+    drop(rs);
+
+    while let Some(item) = ws_rx.next().await {
+        match item {
+            Ok(Message::Close(_)) => break,
+            Ok(_) => {}
+            Err(_) => break,
+        }
+    }
+
+    leave_room_on_disconnect(&st, client_id).await;
+    writer.abort();
+}
+
+async fn leave_room_on_disconnect(st: &AppState, client_id: ClientId) {
+    let mut state = st.room_state.write().await;
+
+    state.ws_peers.remove(&client_id);
+
     let Some(client_state) = state.clients.get(&client_id) else {
-        return Err(ApiError::NotFound("client not in a room"));
+        drop(state);
+        st.cleanup_udp(client_id).await;
+        return;
     };
     let cur_room = client_state.room;
+
+    let mut notify: Vec<(ClientId, Message)> = Vec::new();
+
     let Some(room) = state.rooms.get_mut(&cur_room) else {
-        return Err(ApiError::NotFound("client's room no longer exists"));
+        state.clients.remove(&client_id);
+        drop(state);
+        st.cleanup_udp(client_id).await;
+        return;
     };
 
     if room.client.is_some_and(|id| id == client_id) {
-        // client was the client of the room
+        // guest left -> notify host
+        let host = room.host;
+        notify.push((host, WsEvent::PeerLeft(1).into_message()));
         room.client = None;
     } else {
+        // host left
         if client_id != room.host {
-            return Err(ApiError::Internal("client's cached room was incorrect"));
+            state.clients.remove(&client_id);
+            drop(state);
+            st.cleanup_udp(client_id).await;
+            return;
         }
-        // client was the host of the room
+
         match room.client {
-            // if there was a peer, that peer becomes the host
             Some(peer) => {
+                // transfer host -> peer, notify new host
                 room.host = peer;
                 room.client = None;
+                notify.push((peer, WsEvent::PeerLeft(0).into_message()));
+                notify.push((peer, WsEvent::YouAre(0).into_message()));
             }
-            // otherwise, the room is empty, and should be removed
             None => {
                 state.rooms.remove(&cur_room);
             }
         }
     }
+
+    for (dst, msg) in notify {
+        state.send_to(dst, msg);
+    }
+
     state.clients.remove(&client_id);
-    Ok(Json(()))
+    drop(state);
+    st.cleanup_udp(client_id).await;
 }

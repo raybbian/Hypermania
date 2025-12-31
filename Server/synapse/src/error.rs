@@ -47,5 +47,3 @@ impl From<anyhow::Error> for ApiError {
         ApiError::Internal("unexpected error")
     }
 }
-
-pub type ApiResult<T> = Result<Json<T>, ApiError>;
