@@ -52,7 +52,7 @@ public sealed class SteamMatchmakingClient : INonBlockingSocket<CSteamID>
         Debug.Log($"[Matchmaking] Lobby created: {_currentLobby.m_SteamID}");
 
         SteamMatchmaking.SetLobbyData(_currentLobby, "version", "1");
-        SteamMatchmaking.SetLobbyData(_currentLobby, "game", "EnergyDrink");
+        SteamMatchmaking.SetLobbyData(_currentLobby, "game", "HyperMania");
         SteamMatchmaking.SetLobbyData(_currentLobby, "maxMembers", maxMembers.ToString());
 
         RefreshPeerFromLobby();
