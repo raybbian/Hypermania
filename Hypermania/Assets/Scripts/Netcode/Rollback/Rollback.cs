@@ -11,7 +11,6 @@ namespace Netcode.Rollback
 
         public PlayerHandle(int id)
         {
-            if (id < 0) throw new ArgumentOutOfRangeException("id cannot be neg");
             Id = id;
         }
 
