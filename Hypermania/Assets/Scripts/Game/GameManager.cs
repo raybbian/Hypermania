@@ -18,7 +18,7 @@ namespace Game
         private P2PClient _p2pClient;
         private List<(PlayerHandle handle, PlayerKind playerKind, SteamNetworkingIdentity netId)> _players;
 
-        public const int TPS = 64;
+        public const int TPS = 60;
 
         void OnEnable()
         {
