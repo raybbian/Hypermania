@@ -29,6 +29,7 @@ namespace Game.Sim
         public sfloat Health;
         public int ComboedCount;
         public InputHistory InputH;
+        public int Lives;
 
         public CharacterState State { get; private set; }
         public Frame StateStart { get; private set; }
@@ -50,7 +51,7 @@ namespace Game.Sim
             || State == CharacterState.SuperAerial
             || State == CharacterState.SpecialAerial;
 
-        public static FighterState Create(SVector2 position, FighterFacing facingDirection, CharacterConfig config)
+        public static FighterState Create(SVector2 position, FighterFacing facingDirection, CharacterConfig config, int lives)
         {
             FighterState state = new FighterState();
             state.Position = position;
@@ -64,7 +65,25 @@ namespace Game.Sim
             // TODO: character dependent?
             state.Health = config.Health;
             state.FacingDir = facingDirection;
+            state.Lives = lives;
             return state;
+        }
+
+        // Reset all player positions and states, except for lives.
+        public void RoundReset(SVector2 position, FighterFacing facingDirection, CharacterConfig config, Frame frame)
+        {
+            Position = position;
+            Velocity = SVector2.zero;
+            State = CharacterState.Idle;
+            StateStart = Frame.FirstFrame;
+            StateEnd = Frame.Infinity;
+            ImmunityEnd = Frame.FirstFrame;
+            ComboedCount = 0;
+            InputH.Clear(); // The game may read input from a previous match to incorrect start an attack.
+            // TODO: character dependent?
+            Health = config.Health;
+            FacingDir = facingDirection;
+            FacingDir = facingDirection;
         }
 
         public void DoFrameStart()
