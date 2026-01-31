@@ -30,12 +30,14 @@ namespace Game.Sim
             _next = 0;
             _count = 0;
         }
+
         public void Clear()
         {
             Array.Clear(_buffer, 0, _buffer.Length);
             _next = 0;
             _count = 0;
         }
+
         public void PushInput(GameInput input)
         {
             _buffer[_next] = input;

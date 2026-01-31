@@ -17,7 +17,7 @@ namespace Game.Sim
         Fighting,
         Mania,
         RoundStart,
-        MatchEnd
+        MatchEnd,
     }
 
     [MemoryPackable]
@@ -108,7 +108,7 @@ namespace Game.Sim
             (GameInput input, InputStatus status)[] inputs,
             CharacterConfig[] characters,
             GlobalConfig config
-            )
+        )
         {
             if (GameMode == GameMode.RoundStart)
             {

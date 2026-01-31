@@ -51,7 +51,12 @@ namespace Game.Sim
             || State == CharacterState.SuperAerial
             || State == CharacterState.SpecialAerial;
 
-        public static FighterState Create(SVector2 position, FighterFacing facingDirection, CharacterConfig config, int lives)
+        public static FighterState Create(
+            SVector2 position,
+            FighterFacing facingDirection,
+            CharacterConfig config,
+            int lives
+        )
         {
             FighterState state = new FighterState();
             state.Position = position;
