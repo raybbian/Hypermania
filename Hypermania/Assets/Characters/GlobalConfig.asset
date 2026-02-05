@@ -15,9 +15,11 @@ MonoBehaviour:
   Gravity:
     rawValue: 3248488448
   GroundY:
-    rawValue: 3225419776
+    rawValue: 0
   WallsX:
     rawValue: 1094713344
   ClankTicks: 30
   _configs:
-  - {fileID: 11400000, guid: 1e6472018f0802edf8647882acc6eb72, type: 2}
+    values:
+    - {fileID: 11400000, guid: 1e6472018f0802edf8647882acc6eb72, type: 2}
+    - {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}

@@ -31,5 +31,6 @@ namespace Game
     public enum Character
     {
         SampleFighter,
+        Nythea,
     }
 }

@@ -843,7 +843,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 1
-  m_SortingLayerID: 0
+  m_SortingLayerID: -98416079
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!224 &1330759815
@@ -971,7 +971,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000
+  m_ApplyToSortingLayers: 00000000314a22faeb766bcb592feca95bd2606d973c1dae619d95bb3ffd8643
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -1173,15 +1173,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 593b24fc0b39d1082a5b28d0cdfdd4db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FighterIndicatorManager: {fileID: 1480199432}
-  Healthbars:
+  _fighterIndicatorManager: {fileID: 1480199432}
+  _healthbars:
   - {fileID: 6182732088500465543}
   - {fileID: 1338470268}
-  Manias:
+  _manias:
   - {fileID: 2299268217255093533}
   - {fileID: 1065061062}
-  CameraControl: {fileID: 562816628700700721}
-  ComboViews:
+  _zoom: 2
+  _cameraControl: {fileID: 562816628700700721}
+  _comboViews:
   - {fileID: 2098230095}
   - {fileID: 2106073376}
   _overlayView: {fileID: 1260646850}
@@ -1353,9 +1354,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91e01c6518ae235428334e902b0cde91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraSpeed: 10
+  CameraSpeed: 12
+  MaxZoom: 2.5
+  MinZoom: 1.8
   Config: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
-  Margin: 2
+  Margin: 0.5
+  Padding: 0.5
 --- !u!4 &562816628700700722
 Transform:
   m_ObjectHideFlags: 0

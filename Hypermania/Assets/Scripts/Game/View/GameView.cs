@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Design;
 using Game.Sim;
+using Game.View.Fighters;
 using UnityEngine;
 
 namespace Game.View
@@ -17,40 +18,43 @@ namespace Game.View
         private CharacterConfig[] _characters;
 
         [SerializeField]
-        private FighterIndicatorManager FighterIndicatorManager;
-        public HealthBarView[] Healthbars;
+        private FighterIndicatorManager _fighterIndicatorManager;
 
         [SerializeField]
-        public ManiaView[] Manias;
-
-        private float Zoom = 5f;
+        private HealthBarView[] _healthbars;
 
         [SerializeField]
-        private CameraControl CameraControl;
+        private ManiaView[] _manias;
 
         [SerializeField]
-        private ComboCountView[] ComboViews;
+        private float _zoom = 1.6f;
+
+        [SerializeField]
+        private CameraControl _cameraControl;
+
+        [SerializeField]
+        private ComboCountView[] _comboViews;
 
         [SerializeField]
         private InfoOverlayView _overlayView;
 
         public void OnValidate()
         {
-            if (Healthbars == null)
+            if (_healthbars == null)
             {
                 throw new InvalidOperationException("Healthbars should exist");
             }
-            if (Healthbars.Length != 2)
+            if (_healthbars.Length != 2)
             {
                 throw new InvalidOperationException("Healthbar length should be 2");
             }
-            if (CameraControl == null)
+            if (_cameraControl == null)
             {
                 throw new InvalidOperationException("Camera control must be assigned to the game view!");
             }
             for (int i = 0; i < 2; i++)
             {
-                if (Healthbars[i] == null)
+                if (_healthbars[i] == null)
                 {
                     throw new InvalidOperationException("Healthbars must be assigned to the game view!");
                 }
@@ -80,8 +84,8 @@ namespace Game.View
                 _fighters[i].transform.SetParent(transform, true);
                 _fighters[i].Init(characters[i]);
 
-                Manias[i].Init();
-                Healthbars[i].SetMaxHealth((float)characters[i].Health);
+                _manias[i].Init();
+                _healthbars[i].SetMaxHealth((float)characters[i].Health);
             }
             _conductor.Init();
         }
@@ -91,7 +95,7 @@ namespace Game.View
             for (int i = 0; i < _characters.Length; i++)
             {
                 _fighters[i].Render(state.Frame, state.Fighters[i]);
-                Manias[i].Render(state.Frame, state.Manias[i]);
+                _manias[i].Render(state.Frame, state.Manias[i]);
             }
             _conductor.RequestSlice(state.Frame);
 
@@ -99,20 +103,24 @@ namespace Game.View
             for (int i = 0; i < _characters.Length; i++)
             {
                 interestPoints.Add((Vector2)state.Fighters[i].Position);
+                // ensure that fighter heads are included
+                interestPoints.Add(
+                    (Vector2)state.Fighters[i].Position + new Vector2(0, (float)_characters[i].CharacterHeight)
+                );
             }
 
             for (int i = 0; i < _characters.Length; i++)
             {
-                Healthbars[i].SetHealth((int)state.Fighters[i].Health);
+                _healthbars[i].SetHealth((int)state.Fighters[i].Health);
             }
 
-            CameraControl.UpdateCamera(interestPoints, Zoom, Time.deltaTime);
-            FighterIndicatorManager.Track(_fighters);
+            _cameraControl.UpdateCamera(interestPoints, _zoom);
+            _fighterIndicatorManager.Track(state.Fighters);
 
             for (int i = 0; i < _characters.Length; i++)
             {
                 int combo = state.Fighters[i ^ 1].ComboedCount;
-                ComboViews[i].SetComboCount(combo);
+                _comboViews[i].SetComboCount(combo);
             }
             _overlayView.Render(overlayDetails);
         }
@@ -123,7 +131,7 @@ namespace Game.View
             {
                 _fighters[i].DeInit();
                 Destroy(_fighters[i].gameObject);
-                Manias[i].DeInit();
+                _manias[i].DeInit();
             }
             _fighters = null;
             _characters = null;

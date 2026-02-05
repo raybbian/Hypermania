@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Design;
+using Game.View.Fighters;
 using UnityEngine;
 
 namespace Game.View

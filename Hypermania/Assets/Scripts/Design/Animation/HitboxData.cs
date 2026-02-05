@@ -106,7 +106,7 @@ namespace Design.Animation
         }
     }
 
-    [CreateAssetMenu(menuName = "Hypermania/Character Animation Hitbox Data")]
+    [CreateAssetMenu(menuName = "Hypermania/Move Data")]
     [Serializable]
     public class HitboxData : ScriptableObject
     {

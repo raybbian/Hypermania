@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c583f4d586bd352e804995b1a0fad08, type: 3}
+  m_Name: NytheaConfig
+  m_EditorClassIdentifier: 
+  Character: 1
+  Prefab: {fileID: 5766376669795590084, guid: 692614c6f0138c5709de58dbca0159e4, type: 3}
+  AnimationController: {fileID: 22100000, guid: b2247d1bd644d04a3a78e3aa68904cb8, type: 2}
+  CharacterHeight:
+    rawValue: 1071225242
+  Speed:
+    rawValue: 1084227584
+  JumpVelocity:
+    rawValue: 1090519040
+  Health:
+    rawValue: 1120403456
+  NumAirDashes: 2
+  Hitboxes:
+    values:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 11400000, guid: 6935d7dcf4841d9cf948ff0efee3d2cb, type: 2}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}

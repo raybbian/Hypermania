@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Game;
 using UnityEngine;
+using Utils.EnumArray;
 using Utils.SoftFloat;
 
 namespace Design
@@ -14,18 +15,11 @@ namespace Design
         public int ClankTicks = 30;
 
         [SerializeField]
-        private List<CharacterConfig> _configs;
+        private EnumArray<Character, CharacterConfig> _configs;
 
-        public CharacterConfig Get(Character character)
+        public CharacterConfig CharacterConfig(Character character)
         {
-            foreach (CharacterConfig config in _configs)
-            {
-                if (config.Character == character)
-                {
-                    return config;
-                }
-            }
-            return null;
+            return _configs[character];
         }
     }
 }
