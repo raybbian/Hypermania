@@ -67,6 +67,11 @@ MonoBehaviour:
     - {fileID: 2695417746142566024, guid: 51eee259c0ace2d32b76f07064a7080f, type: 3}
     - {fileID: 2695417746142566024, guid: dcc143f976a280614bf17e0cd17d2b44, type: 3}
     - {fileID: 2695417746142566024, guid: 09c66dd508b6cc0868f969f8848f4f72, type: 3}
+    Inputs:
+    - {fileID: 2695417746142566024, guid: f7c9bc73b1eb5de4ba34ad6670a921b5, type: 3}
+    - {fileID: 2695417746142566024, guid: 5b8014baa1715924986b5dbf93711a72, type: 3}
+    - {fileID: 2695417746142566024, guid: 82d2be797a457574484df7dfb781e9be, type: 3}
+    - {fileID: 2695417746142566024, guid: aadb7f7b93beba2429a19db05e433658, type: 3}
 --- !u!222 &5468672741909906833
 CanvasRenderer:
   m_ObjectHideFlags: 0

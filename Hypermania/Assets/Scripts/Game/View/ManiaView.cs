@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Sim;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
@@ -13,6 +14,7 @@ namespace Game.View
         public float ScrollSpeed;
         public Transform[] Anchors;
         public GameObject[] Notes;
+        public GameObject[] Inputs;
 
         public void Validate()
         {
@@ -28,6 +30,10 @@ namespace Game.View
             {
                 throw new InvalidOperationException("Must set note prefabs");
             }
+            if (Inputs == null || Inputs.Length == 0)
+            {
+                throw new InvalidOperationException("Must set input prefabs");
+            }
         }
     }
 
@@ -36,11 +42,21 @@ namespace Game.View
         [SerializeField]
         public ManiaViewConfig Config;
         private Dictionary<int, GameObject> _activeNotes;
+        private GameObject[] Inputs;
 
         public void Init()
         {
             _activeNotes = new Dictionary<int, GameObject>();
             gameObject.SetActive(false);
+            for (int i = 0; i < Config.Anchors.Length; i++)
+            {
+                float x = Config.Anchors[i].localPosition.x;
+                float y = Config.Anchors[i].localPosition.y;
+                Config
+                    .Inputs[i]
+                    .gameObject.transform.SetLocalPositionAndRotation(new Vector3(x, y, -1), Quaternion.identity);
+                Config.Inputs[i].gameObject.SetActive(true);
+            }
         }
 
         public void DeInit()
@@ -62,6 +78,11 @@ namespace Game.View
             gameObject.SetActive(state.EndFrame != Frame.NullFrame);
 
             Dictionary<int, GameObject> renderedNow = new Dictionary<int, GameObject>();
+
+            for (int i = 0; i < state.Channels.Length; i++)
+            {
+                Config.Inputs[i].gameObject.GetComponent<SpriteSwitcher>().ChangeSprite(state.Channels[i].pressed);
+            }
 
             for (int i = 0; i < state.Config.NumKeys; i++)
             {

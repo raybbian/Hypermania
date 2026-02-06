@@ -13,10 +13,12 @@ namespace Game.Sim
         public int Length;
     }
 
+    // Each channel for ManiaView (up, down, left, right)
     [MemoryPackable]
     public partial struct ManiaNoteChannel
     {
         public Deque<ManiaNote> Notes;
+        public bool pressed;
     }
 
     public enum ManiaEventKind
@@ -119,6 +121,7 @@ namespace Game.Sim
             for (int i = 0; i < config.NumKeys; i++)
             {
                 sim.Channels[i] = new ManiaNoteChannel { Notes = new Deque<ManiaNote>(MAX_NOTES) };
+                sim.Channels[i].pressed = false;
             }
             sim.EndFrame = Frame.NullFrame;
             return sim;
@@ -141,14 +144,14 @@ namespace Game.Sim
                 return;
             for (int i = 0; i < Channels.Length; i++)
             {
+                bool hasInput = input.HasInput(_channelInput[i]);
+                Channels[i].pressed = hasInput;
                 if (Channels[i].Notes.Count == 0)
                 {
                     continue;
                 }
                 ManiaNote note = Channels[i].Notes.Front();
                 Frame noteTick = note.Tick;
-                bool hasInput = input.HasInput(_channelInput[i]);
-
                 if (hasInput && frame < noteTick - Config.MissTotalRange)
                 {
                     // tried to hit note way too early
