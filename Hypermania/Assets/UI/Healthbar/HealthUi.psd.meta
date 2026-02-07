@@ -108,7 +108,7 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 1499
+      x: 3557
       y: 4
       width: 160
       height: 316
@@ -120,7 +120,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 1145, y: -191}
+    uvTransform: {x: 3203, y: -191}
     spritePosition: {x: 354, y: 195}
   - name: disc
     originalName: 
@@ -131,8 +131,8 @@ ScriptedImporter:
     rect:
       serializedVersion: 2
       x: 4
-      y: 538
-      width: 494
+      y: 588
+      width: 440
       height: 440
     spriteID: 14f9e7f37fa962388ba42396bbf61054
     spriteBone: []
@@ -142,8 +142,8 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: -4, y: 511}
-    spritePosition: {x: 8, y: 27}
+    uvTransform: {x: 4, y: 588}
+    spritePosition: {x: 62, y: 27}
   - name: metalContainer
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -152,7 +152,7 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 4
+      x: 2062
       y: 328
       width: 1580
       height: 202
@@ -164,7 +164,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: -447, y: 183}
+    uvTransform: {x: 1611, y: 183}
     spritePosition: {x: 451, y: 145}
   - name: healthbar
     originalName: 
@@ -174,7 +174,7 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 4
+      x: 2062
       y: 4
       width: 1487
       height: 316
@@ -186,8 +186,30 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: -482, y: -63}
+    uvTransform: {x: 1576, y: -63}
     spritePosition: {x: 486, y: 67}
+  - name: Background
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 4
+      width: 2050
+      height: 576
+    spriteID: 6ac2c0f21ee8fddb3aa749ec5d2e0400
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 4}
+    spritePosition: {x: 0, y: 0}
   spriteImportData: []
   rigSpriteImportData: []
   sharedRigSpriteImportData: []
@@ -247,7 +269,7 @@ ScriptedImporter:
   characterMode: 1
   documentPivot: {x: 0, y: 0}
   documentAlignment: 7
-  importHiddenLayers: 0
+  importHiddenLayers: 1
   layerMappingOption: 2
   generatePhysicsShape: 0
   paperDollMode: 0
@@ -269,17 +291,17 @@ ScriptedImporter:
     parentIndex: -1
     spriteID: a6d0e0e4fbe111435969c4e8257a5210
     layerID: 5
-    mosaicPosition: {x: 1499, y: 4}
+    mosaicPosition: {x: 3557, y: 4}
     flatten: 0
     isImported: 1
-    isVisible: 1
+    isVisible: 0
   - name: disc
     spriteName: disc
     isGroup: 0
     parentIndex: -1
     spriteID: 14f9e7f37fa962388ba42396bbf61054
     layerID: 4
-    mosaicPosition: {x: 4, y: 538}
+    mosaicPosition: {x: 4, y: 588}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -289,29 +311,29 @@ ScriptedImporter:
     parentIndex: -1
     spriteID: dc47e4e81d6b809328e5692ccdd84ac8
     layerID: 3
-    mosaicPosition: {x: 4, y: 328}
+    mosaicPosition: {x: 2062, y: 328}
     flatten: 0
     isImported: 1
-    isVisible: 1
+    isVisible: 0
   - name: healthbar
     spriteName: healthbar
     isGroup: 0
     parentIndex: -1
     spriteID: 99861b17046e37d02abc16d7f336305d
     layerID: 2
-    mosaicPosition: {x: 4, y: 4}
+    mosaicPosition: {x: 2062, y: 4}
     flatten: 0
     isImported: 1
-    isVisible: 1
+    isVisible: 0
   - name: Background
-    spriteName: 
+    spriteName: Background
     isGroup: 0
     parentIndex: -1
     spriteID: 6ac2c0f21ee8fddb3aa749ec5d2e0400
     layerID: 1
-    mosaicPosition: {x: 0, y: 0}
+    mosaicPosition: {x: 4, y: 4}
     flatten: 0
-    isImported: 0
+    isImported: 1
     isVisible: 0
   mosaicPSDLayers: []
   rigPSDLayers: []

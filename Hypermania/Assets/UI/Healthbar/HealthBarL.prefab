@@ -220,7 +220,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2095519542658102754}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -229,8 +229,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -7.7, y: -0.07999992}
-  m_SizeDelta: {x: 4.94, y: 4.4}
+  m_AnchoredPosition: {x: -7.16, y: -0.07999992}
+  m_SizeDelta: {x: 4.4, y: 4.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8215062343792660842
 CanvasRenderer:
@@ -370,7 +370,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7204083693599365165}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -11780.758}
   m_LocalScale: {x: 40, y: 40, z: 40}
   m_ConstrainProportionsScale: 0
@@ -450,6 +450,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 797086c2262141166a507f6228d843f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _disk: {fileID: 2095519542658102754}
+  _diskSpinSpeed: 90
+  _audioSource: {fileID: 0}
+  _fftSize: 1024
+  _fftWindow: 5
+  _bassLowHz: 60
+  _bassHighHz: 250
+  _scaleBase: 1
+  _scaleRange: 0.1
+  _floorFollow: 0.5
+  _peakDecay: 0.25
+  _attack: 30
+  _release: 30
+  _compress: 0.6
 --- !u!1 &8988234078481623545
 GameObject:
   m_ObjectHideFlags: 0
