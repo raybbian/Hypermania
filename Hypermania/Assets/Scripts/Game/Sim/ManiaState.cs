@@ -120,8 +120,7 @@ namespace Game.Sim
             sim.Channels = new ManiaNoteChannel[config.NumKeys];
             for (int i = 0; i < config.NumKeys; i++)
             {
-                sim.Channels[i] = new ManiaNoteChannel { Notes = new Deque<ManiaNote>(MAX_NOTES) };
-                sim.Channels[i].pressed = false;
+                sim.Channels[i] = new ManiaNoteChannel { Notes = new Deque<ManiaNote>(MAX_NOTES), pressed = false };
             }
             sim.EndFrame = Frame.NullFrame;
             return sim;
