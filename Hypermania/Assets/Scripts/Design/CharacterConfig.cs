@@ -17,6 +17,7 @@ namespace Design
         public sfloat Speed;
         public sfloat JumpVelocity;
         public sfloat Health;
+        public sfloat BurstMax;
         public int NumAirDashes;
         public EnumArray<CharacterState, HitboxData> Hitboxes;
 

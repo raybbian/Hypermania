@@ -42,7 +42,7 @@ namespace Game.Sim
 
         public static GameInput None => new GameInput(InputFlags.None);
 
-        [MethodImplAttribute(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasInput(InputFlags input)
         {
             return (Flags & input) != 0;
@@ -52,9 +52,6 @@ namespace Game.Sim
     // Input is an enum that uses the Flags attribute, which means that it can use bitwise operations on initialization and when checking whether certain enum values are present in an Input.
     // For example, if the user presses left and up, we would set the Input = Input.Left | Input.Up, which sets the bits accordingly.
     // To check if the user has pressed down, we can use userInput.HasFlag(Input.Down).
-
-    // Note: Bitwise operators work better than .HasFlag() here, we're running input every frame.
-    // We also use the same enums when checking for input, so bitwise operators work well here.
     [Flags]
     public enum InputFlags : int
     {
@@ -65,9 +62,9 @@ namespace Game.Sim
         Right = 1 << 4,
         LightAttack = 1 << 5,
         MediumAttack = 1 << 6,
-        SpecialAttack = 1 << 7,
-        SuperAttack = 1 << 8,
-        Grab = 1 << 9,
+        HeavyAttack = 1 << 7,
+        SpecialAttack = 1 << 8,
+        Burst = 1 << 9,
         Mania1 = 1 << 10,
         Mania2 = 1 << 11,
         Mania3 = 1 << 12,

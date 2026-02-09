@@ -27,7 +27,9 @@ namespace Game
             if (Keyboard.current.kKey.isPressed)
                 input |= InputFlags.MediumAttack;
             if (Keyboard.current.lKey.isPressed)
-                input |= InputFlags.SuperAttack;
+                input |= InputFlags.HeavyAttack;
+            if (Keyboard.current.oKey.isPressed)
+                input |= InputFlags.Burst;
 
             // Mania Keys
             if (Keyboard.current.aKey.isPressed)

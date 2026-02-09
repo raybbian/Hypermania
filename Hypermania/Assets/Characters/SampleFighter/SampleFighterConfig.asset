@@ -23,6 +23,8 @@ MonoBehaviour:
     rawValue: 1088421888
   Health:
     rawValue: 1120403456
+  BurstMax:
+    rawValue: 0
   NumAirDashes: 1
   Hitboxes:
     values:
@@ -45,5 +47,6 @@ MonoBehaviour:
     - {fileID: 0}
     - {fileID: 11400000, guid: b2f4fe070c89a2345ad14d39b6cb9829, type: 2}
     - {fileID: 11400000, guid: b2f4fe070c89a2345ad14d39b6cb9829, type: 2}
+    - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}

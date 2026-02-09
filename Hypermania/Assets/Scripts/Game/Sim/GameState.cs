@@ -293,7 +293,7 @@ namespace Game.Sim
                 foreach ((var owners, var collision) in PhysicsCtx.HurtHitCollisions)
                 {
                     //owners[0] hits owners[1]
-                    HandleCollision(collision, config);
+                    HandleCollision(collision, config, characters);
 
                     var attackerBox = collision.BoxA.Owner == owners.Item1 ? collision.BoxA : collision.BoxB;
                     //to start a rhythm combo, we must sure that the move was not traded
@@ -330,26 +330,26 @@ namespace Game.Sim
             }
             else if (clank.HasValue)
             {
-                HandleCollision(clank.Value, config);
+                HandleCollision(clank.Value, config, characters);
             }
             else if (collide.HasValue)
             {
-                HandleCollision(collide.Value, config);
+                HandleCollision(collide.Value, config, characters);
             }
 
             // Clear the physics context for the next frame, which will then re-add boxes and solve for collisions again
             PhysicsCtx.Clear();
         }
 
-        private void HandleCollision(Physics<BoxProps>.Collision c, GlobalConfig config)
+        private void HandleCollision(Physics<BoxProps>.Collision c, GlobalConfig config, CharacterConfig[] characters)
         {
             if (c.BoxA.Data.Kind == HitboxKind.Hitbox && c.BoxB.Data.Kind == HitboxKind.Hurtbox)
             {
-                Fighters[c.BoxB.Owner].ApplyHit(Frame, c.BoxA.Data);
+                Fighters[c.BoxB.Owner].ApplyHit(Frame, c.BoxA.Data, characters[c.BoxB.Owner]);
             }
             else if (c.BoxA.Data.Kind == HitboxKind.Hurtbox && c.BoxB.Data.Kind == HitboxKind.Hitbox)
             {
-                Fighters[c.BoxA.Owner].ApplyHit(Frame, c.BoxB.Data);
+                Fighters[c.BoxA.Owner].ApplyHit(Frame, c.BoxB.Data, characters[c.BoxA.Owner]);
             }
             else if (c.BoxA.Data.Kind == HitboxKind.Hitbox && c.BoxB.Data.Kind == HitboxKind.Hitbox)
             {

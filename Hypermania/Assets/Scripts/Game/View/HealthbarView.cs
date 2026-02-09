@@ -3,12 +3,14 @@ using UnityEngine.UI;
 
 namespace Game.View
 {
-    [RequireComponent(typeof(Slider))]
     public class HealthBarView : MonoBehaviour
     {
         [Header("UI")]
         [SerializeField]
         private GameObject _disk;
+
+        [SerializeField]
+        private Slider _slider;
 
         [Header("Spin")]
         [SerializeField]
@@ -54,7 +56,6 @@ namespace Game.View
         [SerializeField]
         private float _compress = 0.6f; // 0..1, higher = more compression
 
-        private Slider _slider;
         private float _floor = 0.00001f;
         private float _peak = 0.00002f;
         private float _smoothed;
@@ -63,8 +64,6 @@ namespace Game.View
 
         void Awake()
         {
-            _slider = GetComponent<Slider>();
-
             _diskBaseScale = _disk.transform.localScale;
             _fftSize = Mathf.ClosestPowerOfTwo(Mathf.Clamp(_fftSize, 64, 8192));
             _spectrum = new float[_fftSize];
