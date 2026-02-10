@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-415802795558061501
+--- !u!114 &-2288590139901314697
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Fresnel
-  m_Shader: {fileID: -6465566751694194690, guid: 7880d3f4017691f4d94e22635b2f6b81, type: 3}
+  m_Name: block_glow
+  m_Shader: {fileID: -6465566751694194690, guid: d01b5ae6a41788a4cbf7ec1a2f8834b2, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -37,24 +37,44 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _Layer1:
-        m_Texture: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Layer2:
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 10307, guid: 0000000000000000f000000000000000, type: 0}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _MaskLayer:
-        m_Texture: {fileID: 2800000, guid: 0207a1bcfac9c25c58c3f2c7e9c300c0, type: 3}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_5bf54b9a9c5141dfb3bd941aaade3a93_Texture_1_Texture2D:
-        m_Texture: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ShieldTexture:
+        m_Texture: {fileID: 2800000, guid: 97af6e0ec830b924faf3ad4be1bec427, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -71,13 +91,28 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _ColorT: 0
-    - _GlowIntensity: 1
+    - _BumpScale: 1
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 1
+    - _DstBlend: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _Metallic: 0
+    - _Mode: 0
+    - _OcclusionStrength: 1
+    - _Parallax: 0.02
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZWrite: 1
     m_Colors:
-    - _ShieldColor: {r: 0, g: 0.78039217, b: 1, a: 1}
-    - _ShieldColor1: {r: 0, g: 0.74698067, b: 2, a: 1}
-    - _ShieldColor2: {r: 3.365405, g: 2.9987872, b: 0.93342364, a: 1}
+    - _BackColor: {r: 1, g: 0.79137665, b: 0, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EmissionColor: {r: 4, g: 0.14339566, b: 0.14339566, a: 1}
+    - _FrontColor: {r: 0, g: 0.7272457, b: 2.9960785, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
