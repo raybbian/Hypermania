@@ -1292,12 +1292,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91e01c6518ae235428334e902b0cde91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CameraSpeed: 12
-  MaxZoom: 2.5
-  MinZoom: 1.8
-  Config: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
-  Margin: 0.5
-  Padding: 0.5
+  _shakeWindow: 6
+  _shakeScale: 0.02
+  _cameraSpeed: 10
+  _maxZoom: 2.5
+  _minZoom: 1.5
+  _config: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
+  _margin: 0
+  _padding: 0
 --- !u!4 &562816628700700722
 Transform:
   m_ObjectHideFlags: 0

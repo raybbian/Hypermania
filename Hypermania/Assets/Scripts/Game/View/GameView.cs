@@ -15,6 +15,7 @@ namespace Game.View
     {
         private Conductor _conductor;
         private HashSet<SfxEvent> _sfx;
+        private HashSet<CameraShakeEvent> _cameraShakes;
         private Frame _rollbackStart;
 
         public FighterView[] Fighters => _fighters;
@@ -119,6 +120,7 @@ namespace Game.View
             }
             _conductor.Init();
             _sfx = new HashSet<SfxEvent>();
+            _cameraShakes = new HashSet<CameraShakeEvent>();
             _rollbackStart = Frame.NullFrame;
         }
 
@@ -163,8 +165,11 @@ namespace Game.View
                 throw new InvalidOperationException("rollback start frame cannot be null");
             }
             _sfxManager.InvalidateAndPlay(_rollbackStart, state.Frame, _sfx);
+            _cameraControl.InvalidateAndApplyShake(_rollbackStart, state.Frame, _cameraShakes);
+            _cameraControl.ApplyShake(state.Frame);
             _rollbackStart = Frame.NullFrame;
             _sfx.Clear();
+            _cameraShakes.Clear();
         }
 
         public void RollbackRender(in GameState state)
@@ -175,6 +180,7 @@ namespace Game.View
                 _rollbackStart = state.Frame;
             }
             DoSfx(state);
+            DoCameraShake(state);
         }
 
         private void DoSfx(in GameState state)
@@ -207,6 +213,24 @@ namespace Game.View
             _fighters = null;
             _characters = null;
             _sfx = null;
+        }
+
+        private void DoCameraShake(in GameState state)
+        {
+            for (int i = 0; i < _characters.Length; i++)
+            {
+                if (state.Fighters[i].State == CharacterState.Hit && state.Frame == state.Fighters[i].StateStart)
+                {
+                    _cameraShakes.Add(
+                        new CameraShakeEvent
+                        {
+                            StartFrame = state.Frame,
+                            Intensity = 1f,
+                            Hash = i,
+                        }
+                    );
+                }
+            }
         }
     }
 }
