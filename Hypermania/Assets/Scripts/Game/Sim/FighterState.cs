@@ -336,6 +336,44 @@ namespace Game.Sim
             {
                 return;
             }
+
+            bool holdingBack;
+            if (FacingDir == FighterFacing.Left)
+            {
+                holdingBack = InputH.IsHeld(InputFlags.Right);
+            }
+            else
+            {
+                holdingBack = InputH.IsHeld(InputFlags.Left);
+            }
+            bool holdingDown = InputH.IsHeld(InputFlags.Down);
+
+            bool standBlock = props.AttackKind != AttackKind.Low;
+            bool crouchBlock = props.AttackKind != AttackKind.Overhead;
+            
+            bool blockSuccess = false;
+            if (holdingBack)
+            {
+                if (holdingDown && crouchBlock)
+                {
+                    blockSuccess = true;
+                }
+                else if (!holdingDown && standBlock)
+                {
+                    blockSuccess = true;
+                }
+            }
+
+            if (blockSuccess)
+            {
+                // True: Crouch blocking, False: Stand blocking
+                State = holdingDown ? CharacterState.BlockCrouch : CharacterState.BlockStand;
+                StateStart = frame;
+                StateEnd = frame + props.BlockstunTicks + 1;
+                ImmunityEnd = frame + 7;
+                return;
+            }
+            
             State = CharacterState.Hit;
             StateStart = frame;
             // Apply Hit/collision stuff is done after the player is actionable, so if the player needs to be

@@ -26,6 +26,8 @@ namespace Game
         Ultimate = 19,
         Death = 20,
         Burst = 21,
+        BlockStand = 22,
+        BlockCrouch = 23,
     }
 
     [Serializable]

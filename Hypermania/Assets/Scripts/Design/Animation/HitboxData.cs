@@ -11,12 +11,19 @@ namespace Design.Animation
         Hurtbox,
         Hitbox,
     }
-
+    [Serializable]
+    public enum AttackKind
+    {
+        Medium,
+        Overhead,
+        Low,
+    }
     [Serializable]
     public struct BoxProps : IEquatable<BoxProps>
     {
         // NOTE: ensure that any new fields added above are added to the equals and hashcode implementation!!!
         public HitboxKind Kind;
+        public AttackKind AttackKind;
         public int Damage;
         public int HitstunTicks;
         public int BlockstunTicks;
@@ -25,6 +32,7 @@ namespace Design.Animation
 
         public bool Equals(BoxProps other) =>
             Kind == other.Kind
+            && AttackKind == other.AttackKind
             && HitstunTicks == other.HitstunTicks
             && Damage == other.Damage
             && BlockstunTicks == other.BlockstunTicks
@@ -34,7 +42,7 @@ namespace Design.Animation
         public override bool Equals(object obj) => obj is BoxProps other && Equals(other);
 
         public override int GetHashCode() =>
-            HashCode.Combine(Kind, HitstunTicks, Damage, BlockstunTicks, StartsRhythmCombo, Knockback);
+            HashCode.Combine(Kind, AttackKind, HitstunTicks, Damage, BlockstunTicks, StartsRhythmCombo, Knockback);
 
         public static bool operator ==(BoxProps a, BoxProps b) => a.Equals(b);
 
