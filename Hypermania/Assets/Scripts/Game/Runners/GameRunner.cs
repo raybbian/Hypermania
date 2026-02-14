@@ -22,6 +22,9 @@ namespace Game.Runners
         [SerializeField]
         protected bool _drawHitboxes;
 
+        [SerializeField]
+        protected ControlsConfig _controlsConfig;
+
         /// <summary>
         /// The current state of the runner. If you derive from this class, it must be initialized on Init();
         /// </summary>
@@ -57,6 +60,12 @@ namespace Game.Runners
             _inputBuffer = new InputBuffer();
             _time = 0;
             _initialized = true;
+
+            //
+            if (_controlsConfig != null)
+            {
+                _inputBuffer = new InputBuffer(_controlsConfig);
+            }
         }
 
         public abstract void Poll(float deltaTime);
