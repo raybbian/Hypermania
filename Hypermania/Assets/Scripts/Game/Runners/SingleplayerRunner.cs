@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Design;
 using Game.Sim;
 using Game.View;
+using Game.View.Overlay;
 using Netcode.P2P;
 using Netcode.Rollback;
 using Netcode.Rollback.Sessions;
@@ -74,7 +75,7 @@ namespace Game.Runners
             }
 
             _session.AddLocalInput(new PlayerHandle(0), _inputBuffer.Poll());
-            _session.AddLocalInput(new PlayerHandle(1), GameInput.None);
+            _session.AddLocalInput(new PlayerHandle(1), new GameInput(InputFlags.Right));
 
             List<RollbackRequest<GameState, GameInput>> requests = _session.AdvanceFrame();
             foreach (RollbackRequest<GameState, GameInput> request in requests)

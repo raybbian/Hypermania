@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using Utils;
 
-namespace Game.View
+namespace Game.View.Overlay
 {
     [RequireComponent(typeof(TextMeshProUGUI))]
     public class RoundTimerView : MonoBehaviour

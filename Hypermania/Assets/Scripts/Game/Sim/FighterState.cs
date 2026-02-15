@@ -46,6 +46,9 @@ namespace Game.Sim
         public FighterLocation LastLocation;
         public Frame LocationSt { get; private set; }
 
+        public BoxProps HitProps { get; private set; }
+        public SVector2 HitLocation { get; private set; }
+
         public bool IsAerial =>
             State == CharacterState.LightAerial
             || State == CharacterState.MediumAerial
@@ -100,6 +103,8 @@ namespace Game.Sim
             {
                 ComboedCount = 0;
             }
+            HitLocation = SVector2.zero;
+            HitProps = new BoxProps();
         }
 
         public FighterLocation Location(GlobalConfig config)
@@ -330,12 +335,15 @@ namespace Game.Sim
             }
         }
 
-        public HitOutcome ApplyHit(Frame frame, BoxProps props, CharacterConfig config)
+        public HitOutcome ApplyHit(Frame frame, BoxProps props, CharacterConfig config, SVector2 location)
         {
             if (ImmunityEnd > frame)
             {
                 return new HitOutcome { Kind = HitKind.None };
             }
+
+            HitProps = props;
+            HitLocation = location;
 
             bool holdingBack =
                 FacingDir == FighterFacing.Left ? InputH.IsHeld(InputFlags.Right) : InputH.IsHeld(InputFlags.Left);

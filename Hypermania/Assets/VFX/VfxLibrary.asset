@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 966bfeb7ffb6586cca95f38a03e5a1f6, type: 3}
+  m_Name: VfxLibrary
+  m_EditorClassIdentifier: 
+  Library:
+    values:
+    - Effect: {fileID: 4696631248389831294, guid: e4ac134936150764f97aac7c4d5eead2, type: 3}
