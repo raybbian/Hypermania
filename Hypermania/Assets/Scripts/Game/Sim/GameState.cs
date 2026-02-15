@@ -338,11 +338,23 @@ namespace Game.Sim
         {
             if (c.BoxA.Data.Kind == HitboxKind.Hitbox && c.BoxB.Data.Kind == HitboxKind.Hurtbox)
             {
-                return Fighters[c.BoxB.Owner].ApplyHit(Frame, c.BoxA.Data, characters[c.BoxB.Owner], c.BoxB.Box.Pos);
+                return Fighters[c.BoxB.Owner]
+                    .ApplyHit(
+                        Frame,
+                        c.BoxA.Data,
+                        characters[c.BoxB.Owner],
+                        c.BoxB.Box.ClosestPointToCenter(c.BoxA.Box)
+                    );
             }
             else if (c.BoxA.Data.Kind == HitboxKind.Hurtbox && c.BoxB.Data.Kind == HitboxKind.Hitbox)
             {
-                return Fighters[c.BoxA.Owner].ApplyHit(Frame, c.BoxB.Data, characters[c.BoxA.Owner], c.BoxA.Box.Pos);
+                return Fighters[c.BoxA.Owner]
+                    .ApplyHit(
+                        Frame,
+                        c.BoxB.Data,
+                        characters[c.BoxA.Owner],
+                        c.BoxA.Box.ClosestPointToCenter(c.BoxB.Box)
+                    );
             }
             else if (c.BoxA.Data.Kind == HitboxKind.Hitbox && c.BoxB.Data.Kind == HitboxKind.Hitbox)
             {
@@ -352,17 +364,22 @@ namespace Game.Sim
             }
             else if (c.BoxA.Data.Kind == HitboxKind.Hurtbox && c.BoxB.Data.Kind == HitboxKind.Hurtbox)
             {
-                // TODO: more advanced pushing/hitbox handling, e.g. if someone airborne they shouldn't be able to be
-                // pushed
+                sfloat aPushFactor =
+                    Fighters[c.BoxA.Owner].Location(config) == FighterLocation.Grounded ? (sfloat)1f : (sfloat)0.1f;
+                sfloat bPushFactor =
+                    Fighters[c.BoxB.Owner].Location(config) == FighterLocation.Grounded ? (sfloat)1f : (sfloat)0.1f;
+
+                sfloat aPush = aPushFactor / (aPushFactor + bPushFactor);
+                sfloat bPush = bPushFactor / (aPushFactor + bPushFactor);
                 if (c.BoxA.Box.Pos.x < c.BoxB.Box.Pos.x)
                 {
-                    Fighters[c.BoxA.Owner].Position.x -= c.OverlapX / 2;
-                    Fighters[c.BoxB.Owner].Position.x += c.OverlapX / 2;
+                    Fighters[c.BoxA.Owner].Position.x -= c.OverlapX * aPush;
+                    Fighters[c.BoxB.Owner].Position.x += c.OverlapX * bPush;
                 }
                 else
                 {
-                    Fighters[c.BoxA.Owner].Position.x += c.OverlapX / 2;
-                    Fighters[c.BoxB.Owner].Position.x -= c.OverlapX / 2;
+                    Fighters[c.BoxA.Owner].Position.x += c.OverlapX * aPush;
+                    Fighters[c.BoxB.Owner].Position.x -= c.OverlapX * bPush;
                 }
             }
             return new HitOutcome { Kind = HitKind.None };

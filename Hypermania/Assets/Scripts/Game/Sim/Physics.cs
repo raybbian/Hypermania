@@ -60,6 +60,21 @@ namespace Game.Sim
                 overlapX = ox;
                 return true;
             }
+
+            public SVector2 ClosestPointToCenter(Box other)
+            {
+                SVector2 half = Size * (sfloat)0.5f;
+
+                sfloat minX = Pos.x - half.x;
+                sfloat maxX = Pos.x + half.x;
+                sfloat minY = Pos.y - half.y;
+                sfloat maxY = Pos.y + half.y;
+
+                sfloat cx = Mathsf.Clamp(other.Pos.x, minX, maxX);
+                sfloat cy = Mathsf.Clamp(other.Pos.y, minY, maxY);
+
+                return new SVector2(cx, cy);
+            }
         }
 
         private readonly Pool<BoxEntry> _boxPool;

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using Design;
 using Game.Sim;
 using Game.View.Events;
+using Game.View.Events.Vfx;
 using Game.View.Fighters;
 using Game.View.Mania;
+using Game.View.Overlay;
 using UnityEngine;
 using Utils;
 
@@ -143,7 +145,7 @@ namespace Game.View
 
         private void DoViewEvents(in GameState state)
         {
-            // TODO: add hit events, have each manager create the proper fx
+            // TODO: refactor me, im thinking some listener pattern
             for (int i = 0; i < _characters.Length; i++)
             {
                 if (state.Fighters[i].State == CharacterState.Hit && state.Frame == state.Fighters[i].StateStart)

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Utils.EnumArray;
 
-namespace Game.View
+namespace Game.View.Events
 {
     [Serializable]
     public enum SfxKind

@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using Game.Sim;
-using Game.View.Fighters;
 using UnityEngine;
 
-namespace Game.View
+namespace Game.View.Overlay
 {
     public class FighterIndicatorManager : MonoBehaviour
     {

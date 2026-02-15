@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace Game.View
+namespace Game.View.Overlay
 {
     [RequireComponent(typeof(TextMeshProUGUI))]
     public class InfoOverlayView : MonoBehaviour

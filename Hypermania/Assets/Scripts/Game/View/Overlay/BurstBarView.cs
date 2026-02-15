@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.View
+namespace Game.View.Overlay
 {
     public class BurstBarView : MonoBehaviour
     {
