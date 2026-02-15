@@ -9,10 +9,10 @@ using Utils.EnumArray;
 public class ControlsConfig : ScriptableObject
 {
     [SerializeField]
-    protected EnumArray<InputFlags, Binding> controlScheme;
+    private EnumArray<InputFlags, Binding> _controlScheme;
 
-    [SerializeField]
-    protected Dictionary<InputFlags, Key> defaultBindings = new Dictionary<InputFlags, Key>
+    // Dictionary for default bindings
+    private readonly Dictionary<InputFlags, Key> _defaultBindings = new()
     {
         { InputFlags.None, Key.None },
         { InputFlags.Up, Key.W },
@@ -32,14 +32,26 @@ public class ControlsConfig : ScriptableObject
         { InputFlags.Mania6, Key.L },
     };
 
-    public EnumArray<InputFlags, Binding> GetControlScheme()
+    // Sets Default Bindings onEnable to avoid Null Primary bindings
+    private void OnEnable()
     {
-        return controlScheme;
+        _controlScheme ??= new EnumArray<InputFlags, Binding>();
+
+        foreach (InputFlags flag in Enum.GetValues(typeof(InputFlags)))
+        {
+            if (_controlScheme[flag] == null)
+            {
+                _controlScheme[flag] = new Binding(_defaultBindings.GetValueOrDefault(flag, Key.None), Key.None);
+            }
+        }
     }
 
-    public Key GetDefaultBinding(InputFlags inputFlag)
+    /**
+     * Getter to return array of InputFlags and Bindings
+     */
+    public EnumArray<InputFlags, Binding> GetControlScheme()
     {
-        return defaultBindings[inputFlag];
+        return _controlScheme;
     }
 }
 
@@ -47,18 +59,34 @@ public class ControlsConfig : ScriptableObject
 public class Binding
 {
     [SerializeField]
-    protected Key primaryKey;
+    private Key _primaryKey;
 
     [SerializeField]
-    protected Key altKey;
+    private Key _altKey;
 
+    /**
+     * Base Binding Constructor
+     *
+     * Constructs a Binding Structure to store control binds
+     *
+     * @param primaryKey - Stores the primary key
+     * @param altKey - Stores an alternate key
+     *
+     */
+    public Binding(Key primaryKey, Key altKey)
+    {
+        _primaryKey = primaryKey;
+        _altKey = altKey;
+    }
+
+    // Getters to Return keys stored in Binding Structure
     public Key GetPrimaryKey()
     {
-        return primaryKey;
+        return _primaryKey;
     }
 
     public Key GetAltKey()
     {
-        return altKey;
+        return _altKey;
     }
 }

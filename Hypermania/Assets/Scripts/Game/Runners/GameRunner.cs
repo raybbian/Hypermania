@@ -57,15 +57,9 @@ namespace Game.Runners
             _characters[1] = nytheaConfig;
             _curState = GameState.Create(_config, _characters);
             _view.Init(_characters);
-            _inputBuffer = new InputBuffer();
+            _inputBuffer = new InputBuffer(_controlsConfig);
             _time = 0;
             _initialized = true;
-
-            //
-            if (_controlsConfig != null)
-            {
-                _inputBuffer = new InputBuffer(_controlsConfig);
-            }
         }
 
         public abstract void Poll(float deltaTime);

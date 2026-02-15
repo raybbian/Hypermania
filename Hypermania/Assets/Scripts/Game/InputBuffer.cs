@@ -8,16 +8,22 @@ namespace Game
 {
     public class InputBuffer
     {
-        protected ControlsConfig controlsConfig;
-        protected EnumArray<InputFlags, Binding> controlScheme;
+        private ControlsConfig _controlsConfig;
+        private EnumArray<InputFlags, Binding> _controlScheme;
 
+        /**
+         * Base InputBuffer Constructor
+         *
+         * Constructs an InputBuffer to accept user input
+         *
+         * @param config - The Scriptable ControlsConfig Object to Reference
+         *
+         */
         public InputBuffer(ControlsConfig config)
         {
-            controlsConfig = config;
-            controlScheme = controlsConfig.GetControlScheme();
+            _controlsConfig = config;
+            _controlScheme = _controlsConfig.GetControlScheme();
         }
-
-        public InputBuffer() { }
 
         InputFlags input = InputFlags.None;
 
@@ -27,24 +33,19 @@ namespace Game
             {
                 if (flag == InputFlags.None)
                 {
-                    continue; //The None Input Flag does not need to be set for Key Pressed
+                    continue; // Skips the None InputFlag (Does Not Have a Key Press)
                 }
 
-                //Checks if there are 0 inputs in the config
-                if (controlScheme[flag].GetPrimaryKey() == Key.None && controlScheme[flag].GetAltKey() == Key.None)
-                {
-                    if (Keyboard.current[controlsConfig.GetDefaultBinding(flag)].isPressed)
-                        input |= flag; //Switches to Default Bindings
-                }
-                else if //Checks if either primary/alt button set by controlConfig is pressed; Skips if not set
-                (
+                // Checks if either the primary or alt button set in config is pressed
+                // Ignores keys set to none
+                if (
                     (
-                        controlScheme[flag].GetPrimaryKey() != Key.None
-                        && Keyboard.current[controlScheme[flag].GetPrimaryKey()].isPressed
+                        _controlScheme[flag].GetPrimaryKey() != Key.None
+                        && Keyboard.current[_controlScheme[flag].GetPrimaryKey()].isPressed
                     )
                     || (
-                        controlScheme[flag].GetAltKey() != Key.None
-                        && Keyboard.current[controlScheme[flag].GetAltKey()].isPressed
+                        _controlScheme[flag].GetAltKey() != Key.None
+                        && Keyboard.current[_controlScheme[flag].GetAltKey()].isPressed
                     )
                 )
                 {
