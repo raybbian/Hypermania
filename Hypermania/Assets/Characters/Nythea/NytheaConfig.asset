@@ -30,6 +30,10 @@ MonoBehaviour:
   BackDashDistance:
     rawValue: 1109393408
   NumAirDashes: 2
+  ForwardAirDashDistance:
+    rawValue: 1110704128
+  BackAirDashDistance:
+    rawValue: 1109393408
   Hitboxes:
     values:
     - {fileID: 0}
@@ -44,6 +48,8 @@ MonoBehaviour:
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 11400000, guid: 0d95c1ae31236b6b8a26cd6e3243d85c, type: 2}
+    - {fileID: 0}
+    - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}

@@ -21,6 +21,8 @@ namespace Design.Configs
         public sfloat ForwardDashDistance;
         public sfloat BackDashDistance;
         public int NumAirDashes;
+        public sfloat ForwardAirDashDistance;
+        public sfloat BackAirDashDistance;
         public EnumArray<CharacterState, HitboxData> Hitboxes;
 
         public FrameData GetFrameData(CharacterState anim, int tick)

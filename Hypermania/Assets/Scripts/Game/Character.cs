@@ -29,6 +29,8 @@ namespace Game
         BlockStand = 22,
         BlockCrouch = 23,
         Running = 24,
+        ForwardAirDash = 25,
+        BackAirDash = 26,
     }
 
     [Serializable]

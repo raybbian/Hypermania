@@ -28,6 +28,7 @@ namespace Game.Sim
         public InputHistory InputH;
         public int Lives;
         public sfloat Burst;
+        public int AirDashCount;
 
         public CharacterState State { get; private set; }
         public Frame StateStart { get; private set; }
@@ -84,6 +85,7 @@ namespace Game.Sim
                 FacingDir = facingDirection,
                 Lives = lives,
                 Burst = 0,
+                AirDashCount = 0,
             };
             return state;
         }
@@ -100,6 +102,7 @@ namespace Game.Sim
             InputH.Clear(); // Clear, don't want to read input from a previous round.
             // TODO: character dependent?
             Burst = 0;
+            AirDashCount = 0;
             Health = config.Health;
             FacingDir = facingDirection;
         }
@@ -202,10 +205,45 @@ namespace Game.Sim
                     }
                 }
             }
+            else if (Location(config) == FighterLocation.Airborne)
+            {
+                if (
+                    InputH.IsHeld(ForwardInput)
+                    && InputH.PressedAndReleasedRecently(ForwardInput, 12, 1)
+                    && AirDashCount < characterConfig.NumAirDashes
+                )
+                {
+                    AirDashCount += 1;
+                    State = CharacterState.ForwardAirDash;
+                    StateEnd = frame + config.ForwardAirDashTicks;
+                    StateStart = frame;
+                    Velocity.x +=
+                        ForwardVector.x * (characterConfig.ForwardAirDashDistance / config.ForwardAirDashTicks);
+                    return;
+                }
+
+                if (
+                    InputH.IsHeld(BackwardInput)
+                    && InputH.PressedAndReleasedRecently(BackwardInput, 12, 1)
+                    && AirDashCount < characterConfig.NumAirDashes
+                )
+                {
+                    AirDashCount += 1;
+                    State = CharacterState.BackAirDash;
+                    StateEnd = frame + config.BackAirDashTicks;
+                    StateStart = frame;
+                    Velocity.x += BackwardVector.x * (characterConfig.BackAirDashDistance / config.BackAirDashTicks);
+                    return;
+                }
+            }
         }
 
         public void ApplyActiveState(Frame frame, CharacterConfig characterConfig, GlobalConfig config)
         {
+            if (Location(config) == FighterLocation.Grounded)
+            {
+                AirDashCount = 0;
+            }
             if (State == CharacterState.Hit)
             {
                 if (InputH.IsHeld(InputFlags.Burst))
