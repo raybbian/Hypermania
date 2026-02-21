@@ -1,3 +1,6 @@
+using System.Security.Cryptography;
+using UnityEngine;
+
 namespace Game.Runners
 {
     public class ManualRunner : SingleplayerRunner
@@ -8,7 +11,10 @@ namespace Game.Runners
             {
                 return;
             }
-            GameLoop();
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                GameLoop();
+            }
         }
     }
 }
