@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Design;
 using Game;
 using UnityEngine;
 using Utils;
@@ -9,10 +10,6 @@ using Utils;
 [RequireComponent(typeof(AudioSource))]
 public class Conductor : MonoBehaviour
 {
-    [Header("Input song (must be fully accessible for GetData)")]
-    [SerializeField]
-    private AudioClip _songClip;
-
     private AudioSource _output;
 
     private float[] _pcm;
@@ -41,24 +38,25 @@ public class Conductor : MonoBehaviour
         }
     }
 
-    public void Init()
+    public void Init(AudioConfig audioConfig)
     {
         _notified = false;
         _audioStartedFlag = 0;
+        AudioClip songClip = audioConfig.AudioClip;
 
-        if (_songClip == null)
+        if (songClip == null)
             throw new InvalidOperationException("songClip not assigned.");
 
         _output = GetComponent<AudioSource>();
         if (_output == null)
             throw new InvalidOperationException("output AudioSource missing.");
 
-        _channels = _songClip.channels;
-        _sampleRate = _songClip.frequency;
-        _totalSamples = _songClip.samples;
+        _channels = songClip.channels;
+        _sampleRate = songClip.frequency;
+        _totalSamples = songClip.samples;
 
         _pcm = new float[_totalSamples * _channels];
-        if (!_songClip.GetData(_pcm, 0))
+        if (!songClip.GetData(_pcm, 0))
             throw new InvalidOperationException(
                 "GetData failed. Set song clip Load Type to Decompress On Load (or ensure it's loadable)."
             );

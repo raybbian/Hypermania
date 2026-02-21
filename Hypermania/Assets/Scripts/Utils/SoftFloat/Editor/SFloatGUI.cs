@@ -49,14 +49,14 @@ namespace Utils.SoftFloat
         public static sfloat ReadSfloat(SerializedProperty sfloatProp)
         {
             var raw = sfloatProp.FindPropertyRelative("rawValue");
-            uint r = unchecked((uint)raw.intValue);
+            uint r = raw.uintValue;
             return sfloat.FromRaw(r);
         }
 
         public static void WriteSfloat(SerializedProperty sfloatProp, sfloat value)
         {
             var raw = sfloatProp.FindPropertyRelative("rawValue");
-            raw.intValue = unchecked((int)value.RawValue);
+            raw.uintValue = value.RawValue;
         }
 
         public static SVector2 ReadSVector2(SerializedProperty sv2Prop)

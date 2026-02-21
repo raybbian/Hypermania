@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: GlobalConfig
   m_EditorClassIdentifier: 
   Gravity:
-    rawValue: 3248488448
+    rawValue: 3251109888
   GroundY:
     rawValue: 0
   WallsX:
     rawValue: 1094713344
   ClankTicks: 30
+  RoundTimeTicks: 10800
+  AudioConfig: {fileID: 11400000, guid: 390bdf2077e7858679ef87c91e25471c, type: 2}
   _configs:
     values:
     - {fileID: 11400000, guid: 1e6472018f0802edf8647882acc6eb72, type: 2}

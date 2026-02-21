@@ -74,7 +74,6 @@ namespace Game.Runners
             }
 
             _session.AddLocalInput(new PlayerHandle(0), _inputBuffer.Poll());
-
             _session.AddLocalInput(new PlayerHandle(1), GameInput.None);
 
             List<RollbackRequest<GameState, GameInput>> requests = _session.AdvanceFrame();

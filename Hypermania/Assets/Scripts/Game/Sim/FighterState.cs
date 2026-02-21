@@ -330,39 +330,20 @@ namespace Game.Sim
             }
         }
 
-        public void ApplyHit(Frame frame, BoxProps props, CharacterConfig config)
+        public HitOutcome ApplyHit(Frame frame, BoxProps props, CharacterConfig config)
         {
             if (ImmunityEnd > frame)
             {
-                return;
+                return new HitOutcome { Kind = HitKind.None };
             }
 
-            bool holdingBack;
-            if (FacingDir == FighterFacing.Left)
-            {
-                holdingBack = InputH.IsHeld(InputFlags.Right);
-            }
-            else
-            {
-                holdingBack = InputH.IsHeld(InputFlags.Left);
-            }
+            bool holdingBack =
+                FacingDir == FighterFacing.Left ? InputH.IsHeld(InputFlags.Right) : InputH.IsHeld(InputFlags.Left);
             bool holdingDown = InputH.IsHeld(InputFlags.Down);
 
             bool standBlock = props.AttackKind != AttackKind.Low;
             bool crouchBlock = props.AttackKind != AttackKind.Overhead;
-
-            bool blockSuccess = false;
-            if (holdingBack)
-            {
-                if (holdingDown && crouchBlock)
-                {
-                    blockSuccess = true;
-                }
-                else if (!holdingDown && standBlock)
-                {
-                    blockSuccess = true;
-                }
-            }
+            bool blockSuccess = holdingBack && ((holdingDown && crouchBlock) || (!holdingDown && standBlock));
 
             if (blockSuccess)
             {
@@ -371,7 +352,8 @@ namespace Game.Sim
                 StateStart = frame;
                 StateEnd = frame + props.BlockstunTicks + 1;
                 ImmunityEnd = frame + 7;
-                return;
+                // TODO: check if other move is special, if so apply chip
+                return new HitOutcome { Kind = HitKind.Blocked };
             }
 
             State = CharacterState.Hit;
@@ -390,6 +372,7 @@ namespace Game.Sim
             Velocity = props.Knockback;
 
             ComboedCount++;
+            return new HitOutcome { Kind = HitKind.Hit, Props = props };
         }
 
         public void ApplyClank(Frame frame, GlobalConfig config)

@@ -18,9 +18,9 @@ MonoBehaviour:
   CharacterHeight:
     rawValue: 1071225242
   Speed:
-    rawValue: 1084227584
+    rawValue: 1075838976
   JumpVelocity:
-    rawValue: 1090519040
+    rawValue: 1088421888
   Health:
     rawValue: 1120403456
   BurstMax:
@@ -40,6 +40,8 @@ MonoBehaviour:
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 11400000, guid: 0d95c1ae31236b6b8a26cd6e3243d85c, type: 2}
+    - {fileID: 0}
+    - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}

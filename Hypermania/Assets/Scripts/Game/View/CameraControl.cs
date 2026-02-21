@@ -1,45 +1,46 @@
 using System;
 using System.Collections.Generic;
 using Design;
+using Game.View.Events;
 using UnityEngine;
+using Utils;
 
 namespace Game.View
 {
+    /// <summary>
+    /// Should be placed on a parent of the Camera
+    /// </summary>
+    [RequireComponent(typeof(CameraShakeManager))]
     public class CameraControl : MonoBehaviour
     {
-        private Camera Camera;
+        [Serializable]
+        public struct Params
+        {
+            public float CameraSpeed;
+            public float MaxZoom;
+            public float MinZoom;
+            public GlobalConfig Config;
+
+            // Additional area outside the arena bounds that the camera is allowed to see
+            public float Margin;
+
+            // Additional area around the interest points that the camera must see
+            public float Padding;
+            public Camera Camera;
+        }
 
         [SerializeField]
-        private float CameraSpeed = 10;
-
-        [SerializeField]
-        private float MaxZoom = 2.5f;
-
-        [SerializeField]
-        private float MinZoom = 1.5f;
-
-        [SerializeField]
-        private GlobalConfig Config;
-
-        // Additional area outside the arena bounds that the camera is allowed to see
-        [SerializeField]
-        private float Margin;
-
-        // Additional area around the interest points that the camera must see
-        [SerializeField]
-        private float Padding;
-
+        private Params _params;
         private List<Vector2> _interestPoints;
 
         void Start()
         {
-            Camera = GetComponent<Camera>();
             _interestPoints = new List<Vector2>();
         }
 
         public void OnValidate()
         {
-            if (Config == null)
+            if (_params.Config == null)
             {
                 throw new InvalidOperationException(
                     "Must set the config field on CameraControl because it reference the arena bounds"
@@ -66,30 +67,29 @@ namespace Game.View
                 min = Vector2.Min(min, point);
                 max = Vector2.Max(max, point);
             }
-            Vector2 padding = new Vector2(Padding, Padding);
+            Vector2 padding = new Vector2(_params.Padding, _params.Padding);
             min -= padding;
             max += padding;
 
             float width = max.x - min.x;
-            float wZoom = Mathf.Clamp(width / 2 / Camera.aspect, MinZoom, MaxZoom);
+            float wZoom = Mathf.Clamp(width / 2 / _params.Camera.aspect, _params.MinZoom, _params.MaxZoom);
 
             float dt = Time.deltaTime;
-            float k = CameraSpeed;
+            float k = _params.CameraSpeed;
             float a = 1f - Mathf.Exp(-k * dt);
-            Camera.orthographicSize = Mathf.Lerp(Camera.orthographicSize, wZoom, a);
+            _params.Camera.orthographicSize = Mathf.Lerp(_params.Camera.orthographicSize, wZoom, a);
 
             // adjust position with respect to zoom
 
             Vector3 p = transform.position;
-            min.y = max.y - 2 * Camera.orthographicSize;
+            min.y = max.y - 2 * _params.Camera.orthographicSize;
             Vector2 pos2 = Vector2.Lerp(new Vector2(p.x, p.y), (min + max) / 2, a);
+            float halfHeight = _params.Camera.orthographicSize;
+            float halfWidth = _params.Camera.orthographicSize * _params.Camera.aspect;
 
-            float halfHeight = Camera.orthographicSize;
-            float halfWidth = Camera.orthographicSize * Camera.aspect;
-
-            float minX = (float)-Config.WallsX + halfWidth - Margin;
-            float maxX = (float)Config.WallsX - halfWidth + Margin;
-            float minY = (float)Config.GroundY + halfHeight - Margin;
+            float minX = (float)-_params.Config.WallsX + halfWidth - _params.Margin;
+            float maxX = (float)_params.Config.WallsX - halfWidth + _params.Margin;
+            float minY = (float)_params.Config.GroundY + halfHeight - _params.Margin;
             float maxY = float.PositiveInfinity;
 
             // Clamping Camera View

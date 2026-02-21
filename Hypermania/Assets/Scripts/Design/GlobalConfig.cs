@@ -16,6 +16,11 @@ namespace Design
         public int RoundTimeTicks = 10800;
 
         [SerializeField]
+        private AudioConfig AudioConfig;
+
+        public AudioConfig Audio => AudioConfig;
+
+        [SerializeField]
         private EnumArray<Character, CharacterConfig> _configs;
 
         public CharacterConfig CharacterConfig(Character character)
