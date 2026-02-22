@@ -56,6 +56,9 @@ namespace Game.View.Overlay
         [SerializeField]
         private float _compress = 0.6f; // 0..1, higher = more compression
 
+        [SerializeField] 
+        private float lerpSpeed = 25f; // heatlh bar update smoothness, higher = faster
+
         private float _floor = 0.00001f;
         private float _peak = 0.00002f;
         private float _smoothed;
@@ -77,7 +80,7 @@ namespace Game.View.Overlay
 
         public void SetHealth(float health)
         {
-            _slider.value = health;
+            _slider.value = Mathf.Lerp(_slider.value, health, Time.deltaTime * lerpSpeed);
         }
 
         void Update()
