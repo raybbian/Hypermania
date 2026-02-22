@@ -119,6 +119,58 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &98098121
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 98098122}
+  - component: {fileID: 98098123}
+  m_Layer: 5
+  m_Name: VictoryMarksR
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &98098122
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 98098121}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 128986391}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 153, y: 331}
+  m_SizeDelta: {x: 300, y: 59.15}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &98098123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 98098121}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e33cc5974281f4e498bdade636ba1695, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assets:
+  - {fileID: 6100096907578842827, guid: e19fe9aa96ce2934791ecb486458203d, type: 3}
+  - {fileID: 6100096907578842827, guid: ec28cfd36b48aa74b98909e7ae02c125, type: 3}
+  - {fileID: 6100096907578842827, guid: c4b5abc9f753d6c419c4f3442e14e1ee, type: 3}
 --- !u!1 &102352429
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,6 +288,8 @@ RectTransform:
   - {fileID: 345038341}
   - {fileID: 994059580}
   - {fileID: 1060235727}
+  - {fileID: 440660915}
+  - {fileID: 98098122}
   m_Father: {fileID: 562816628700700722}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -384,7 +438,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4403075858722472300, guid: b3893dbf31233fa9084fcce0e7185d4d, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -240
+      value: -300
       objectReference: {fileID: 0}
     - target: {fileID: 4403075858722472300, guid: b3893dbf31233fa9084fcce0e7185d4d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -589,6 +643,67 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8ac0a9f740acf696945bc8d5bfb08da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &440660914
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 440660915}
+  - component: {fileID: 440660917}
+  - component: {fileID: 440660916}
+  m_Layer: 5
+  m_Name: VictoryMarksL
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &440660915
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440660914}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 128986391}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -158, y: 331}
+  m_SizeDelta: {x: 300, y: 59.15}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &440660916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440660914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e33cc5974281f4e498bdade636ba1695, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assets:
+  - {fileID: 6100096907578842827, guid: e19fe9aa96ce2934791ecb486458203d, type: 3}
+  - {fileID: 6100096907578842827, guid: ec28cfd36b48aa74b98909e7ae02c125, type: 3}
+  - {fileID: 6100096907578842827, guid: c4b5abc9f753d6c419c4f3442e14e1ee, type: 3}
+--- !u!222 &440660917
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440660914}
+  m_CullTransparentMesh: 1
 --- !u!1 &512469698
 GameObject:
   m_ObjectHideFlags: 0
@@ -903,6 +1018,10 @@ PrefabInstance:
     - target: {fileID: 2120388325386011813, guid: eeccba413df6b419591053b3c19f3a34, type: 3}
       propertyPath: m_Name
       value: ComboViewL
+      objectReference: {fileID: 0}
+    - target: {fileID: 2120388325386011813, guid: eeccba413df6b419591053b3c19f3a34, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6730312290750221592, guid: eeccba413df6b419591053b3c19f3a34, type: 3}
       propertyPath: m_Pivot.x
@@ -1582,10 +1701,12 @@ MonoBehaviour:
     HealthBarView: {fileID: 3996422961981561593}
     ManiaView: {fileID: 345038342}
     ComboCountView: {fileID: 2098230095}
+    VictoryMarkView: {fileID: 440660916}
   - BurstBarView: {fileID: 2703891575314601365}
     HealthBarView: {fileID: 2703891575314601364}
     ManiaView: {fileID: 994059581}
     ComboCountView: {fileID: 2106073376}
+    VictoryMarkView: {fileID: 98098123}
   _params:
     FighterIndicatorManager: {fileID: 102352433}
     CameraControl: {fileID: 102352431}
@@ -2244,6 +2365,10 @@ PrefabInstance:
     - target: {fileID: 4056135076737991059, guid: 21febfc11dc4f39459ea82755895ba72, type: 3}
       propertyPath: m_Name
       value: RoundCountdown
+      objectReference: {fileID: 0}
+    - target: {fileID: 4056135076737991059, guid: 21febfc11dc4f39459ea82755895ba72, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

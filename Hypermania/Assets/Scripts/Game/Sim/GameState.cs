@@ -1,11 +1,13 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Design.Animation;
 using Design.Configs;
 using MemoryPack;
 using Netcode.Rollback;
+using UnityEngine;
 using Utils;
 using Utils.SoftFloat;
 
@@ -182,6 +184,17 @@ namespace Game.Sim
                         return;
                     }
 
+                    // Decide what victory indicator to give.
+                    if (Fighters[1 - i].Health == characters[i].Health)
+                    {
+                        Fighters[1 - i].Victories[Fighters[1 - i].amountVictories] = 2;
+                    }
+                    else
+                    {
+                        Fighters[1 - i].Victories[Fighters[1 - i].amountVictories] = 1;
+                    }
+
+                    Fighters[1 - i].amountVictories++;
                     GameMode = GameMode.RoundEnd;
                     // Ensure that if the player died to a mania attack it ends immediately
                     for (int j = 0; j < Manias.Length; j++)

@@ -27,6 +27,7 @@ namespace Game.View
             public HealthBarView HealthBarView;
             public ManiaView ManiaView;
             public ComboCountView ComboCountView;
+            public VictoryMarkView VictoryMarkView;
         }
 
         [Serializable]
@@ -112,6 +113,7 @@ namespace Game.View
             {
                 _playerParams[i].HealthBarView.SetHealth((int)state.Fighters[i].Health);
                 _playerParams[i].BurstBarView.SetBurst((int)state.Fighters[i].Burst);
+                _playerParams[i].VictoryMarkView.SetVictories(state.Fighters[i].Victories, (i == 0 ? -1 : 1));
             }
 
             _params.CameraControl.UpdateCamera(interestPoints, _zoom);
