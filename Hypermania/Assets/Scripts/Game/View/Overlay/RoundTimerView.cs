@@ -1,3 +1,5 @@
+using Design.Configs;
+using Game.Sim;
 using TMPro;
 using UnityEngine;
 using Utils;
@@ -15,9 +17,16 @@ namespace Game.View.Overlay
             _roundTimer = GetComponent<TextMeshProUGUI>();
         }
 
-        public void DisplayRoundTimer(Frame currentFrame, Frame roundEnd)
+        public void DisplayRoundTimer(Frame currentFrame, Frame roundEnd, GameMode gameMode, GlobalConfig config)
         {
-            time = (roundEnd.No - currentFrame.No) / 60;
+            if (gameMode == GameMode.Countdown)
+            {
+                time = config.RoundTimeTicks / 60;
+            }
+            else
+            {
+                time = (roundEnd.No - currentFrame.No) / 60;
+            }
             gameObject.SetActive(time >= 0);
             _roundTimer.text = time.ToString();
         }

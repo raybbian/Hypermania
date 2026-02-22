@@ -40,6 +40,7 @@ namespace Game.View
             public SfxManager SfxManager;
             public VfxManager VfxManager;
             public FrameDataOverlay FrameDataOverlay;
+            public RoundCountdownView RoundCountdownView;
         }
 
         public FighterView[] Fighters => _fighters;
@@ -122,7 +123,8 @@ namespace Game.View
                 _playerParams[i].ComboCountView.SetComboCount(combo);
             }
             _params.InfoOverlayView.Render(overlayDetails);
-            _params.RoundTimerView.DisplayRoundTimer(state.Frame, state.RoundEnd);
+            _params.RoundCountdownView.DisplayRoundCD(state.Frame, state.RoundStart, config);
+            _params.RoundTimerView.DisplayRoundTimer(state.Frame, state.RoundEnd, state.GameMode, config);
 
             if (_rollbackStart != Frame.NullFrame)
             {

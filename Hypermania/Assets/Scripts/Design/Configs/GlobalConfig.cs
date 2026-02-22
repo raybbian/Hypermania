@@ -29,6 +29,7 @@ namespace Design.Configs
         public int BackAirDashTicks = 15;
         public sfloat RunningSpeedMultiplier = 2;
         public int RoundTimeTicks = 10800;
+        public int RoundCountdownTicks = 180;
 
         [SerializeField]
         private InputConfig _inputConfig;
