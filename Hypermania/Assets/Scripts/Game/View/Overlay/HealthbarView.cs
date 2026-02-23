@@ -145,7 +145,8 @@ namespace Game.View.Overlay
                 _healthShadowSlider.value = Mathf.MoveTowards(
                     _healthShadowSlider.value,
                     _shadowTargetHealth,
-                    lerpSpeed * Time.deltaTime);
+                    lerpSpeed * Time.deltaTime
+                );
                 // smooth decrease when losing hp
             }
             else
