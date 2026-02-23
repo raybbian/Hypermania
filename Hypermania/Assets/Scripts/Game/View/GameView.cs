@@ -44,6 +44,8 @@ namespace Game.View
 
         public FighterView[] Fighters => _fighters;
         private FighterView[] _fighters;
+        private int[] _prevComboCounts;
+        private float[] _prevHealth;
 
         [SerializeField]
         private float _zoom = 1.6f;
@@ -71,6 +73,8 @@ namespace Game.View
                 );
             }
             _fighters = new FighterView[characters.Length];
+            _prevComboCounts = new int[characters.Length];
+            _prevHealth = new float[characters.Length];
 
             _characters = characters;
             for (int i = 0; i < characters.Length; i++)
@@ -119,7 +123,18 @@ namespace Game.View
             for (int i = 0; i < _characters.Length; i++)
             {
                 int combo = state.Fighters[i ^ 1].ComboedCount;
+                if (_prevComboCounts[i] > 0 && combo == 0) // if combo ends
+                {
+                    _playerParams[i ^ 1].HealthBarView.SetShadowHealth((int)state.Fighters[i ^ 1].Health);
+                }
+                if (combo > _prevComboCounts[i] && _playerParams[i ^ 1].HealthBarView.IsDraining()) // character hit while shadow bar is draining
+                {
+                    _playerParams[i ^ 1].HealthBarView.SnapShadowHealth();
+                    _playerParams[i ^ 1].HealthBarView.SetShadowHealth(_prevHealth[i ^ 1]);
+                }
+                _prevHealth[i ^ 1] = (float)state.Fighters[i ^ 1].Health;
                 _playerParams[i].ComboCountView.SetComboCount(combo);
+                _prevComboCounts[i] = combo;
             }
             _params.InfoOverlayView.Render(overlayDetails);
             _params.RoundTimerView.DisplayRoundTimer(state.Frame, state.RoundEnd);
@@ -191,6 +206,8 @@ namespace Game.View
             }
             _fighters = null;
             _characters = null;
+            _prevComboCounts = null;
+            _prevHealth = null;
         }
     }
 }

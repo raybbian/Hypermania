@@ -1947,6 +1947,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6297387434524917342, guid: b05e2d1e1cd7f8154b89157e168d00eb, type: 3}
+      propertyPath: lerpSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827902151193863170, guid: b05e2d1e1cd7f8154b89157e168d00eb, type: 3}
+      propertyPath: lerpSpeed
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 6827902151193863170, guid: b05e2d1e1cd7f8154b89157e168d00eb, type: 3}
       propertyPath: _audioSource
       value: 
@@ -2012,6 +2020,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1330759815}
     m_Modifications:
+    - target: {fileID: 5084496446945749104, guid: 24c5c7e6f99de2a93b83f322f76450b6, type: 3}
+      propertyPath: lerpSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5704520043538903596, guid: 24c5c7e6f99de2a93b83f322f76450b6, type: 3}
+      propertyPath: lerpSpeed
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 5704520043538903596, guid: 24c5c7e6f99de2a93b83f322f76450b6, type: 3}
       propertyPath: _audioSource
       value: 

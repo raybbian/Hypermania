@@ -9,7 +9,7 @@ namespace Game.View.Overlay
         private Slider _slider;
 
         [SerializeField] 
-        private float lerpSpeed = 30f; // burst bar update smoothness, higher = faster
+        private float lerpSpeed = 70f; // burst bar update smoothness, higher = faster
 
         public void SetMaxBurst(float burst) 
         {

@@ -10,7 +10,10 @@ namespace Game.View.Overlay
         private GameObject _disk;
 
         [SerializeField]
-        private Slider _slider;
+        private Slider _healthSlider;
+
+        [SerializeField]
+        private Slider _healthShadowSlider;
 
         [Header("Spin")]
         [SerializeField]
@@ -57,13 +60,14 @@ namespace Game.View.Overlay
         private float _compress = 0.6f; // 0..1, higher = more compression
 
         [SerializeField] 
-        private float lerpSpeed = 25f; // heatlh bar update smoothness, higher = faster
+        private float lerpSpeed = 30f; // heatlh bar shadow update smoothness, higher = faster
 
         private float _floor = 0.00001f;
         private float _peak = 0.00002f;
         private float _smoothed;
         private float[] _spectrum;
         private Vector3 _diskBaseScale;
+        private float _shadowTargetHealth;
 
         void Awake()
         {
@@ -74,13 +78,36 @@ namespace Game.View.Overlay
 
         public void SetMaxHealth(float health)
         {
-            _slider.maxValue = health;
-            _slider.value = health;
+            _healthSlider.maxValue = health;
+            _healthSlider.value = health;
+            SetMaxShadowHealth(health);
         }
 
         public void SetHealth(float health)
         {
-            _slider.value = Mathf.Lerp(_slider.value, health, Time.deltaTime * lerpSpeed);
+            _healthSlider.value = health;
+        }
+
+        public void SetShadowHealth(float health)
+        {
+            _shadowTargetHealth = health;
+        }
+
+        public void SetMaxShadowHealth(float health)
+        {
+            _healthShadowSlider.maxValue = health;
+            _healthShadowSlider.value = health;
+            _shadowTargetHealth = health;
+        }
+
+        public bool IsDraining()
+        {
+            return _healthShadowSlider.value > _shadowTargetHealth;
+        }
+
+        public void SnapShadowHealth()
+        {
+            _healthShadowSlider.value = _shadowTargetHealth;
         }
 
         void Update()
@@ -112,6 +139,17 @@ namespace Game.View.Overlay
 
             float s = _scaleBase + _smoothed * _scaleRange;
             _disk.transform.localScale = _diskBaseScale * s;
+
+            if (_healthShadowSlider.value > _shadowTargetHealth)
+            {
+                _healthShadowSlider.value = Mathf.MoveTowards(_healthShadowSlider.value, _shadowTargetHealth, lerpSpeed * Time.deltaTime);
+                // smooth decrease when losing hp
+            }
+            else
+            {
+                _healthShadowSlider.value = _shadowTargetHealth; // snap instantly when health resets
+                // had to put it here because it doesn't snap via setMaxShadowHealth? It tries to MoveTowards instead
+            }
         }
 
         private static float ComputeBandEnergy(float[] spectrum, float lowHz, float highHz, int sampleRate)
