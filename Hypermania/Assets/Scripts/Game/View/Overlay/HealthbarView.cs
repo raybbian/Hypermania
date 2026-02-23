@@ -59,7 +59,7 @@ namespace Game.View.Overlay
         [SerializeField]
         private float _compress = 0.6f; // 0..1, higher = more compression
 
-        [SerializeField] 
+        [SerializeField]
         private float lerpSpeed = 30f; // heatlh bar shadow update smoothness, higher = faster
 
         private float _floor = 0.00001f;
