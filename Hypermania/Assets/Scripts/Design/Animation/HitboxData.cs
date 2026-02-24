@@ -72,9 +72,19 @@ namespace Design.Animation
     }
 
     [Serializable]
+    public enum TickPhase
+    {
+        Startup,
+        Active,
+        Recovery,
+    }
+
+    [Serializable]
     public class FrameData
     {
         public List<BoxData> Boxes = new List<BoxData>();
+
+        public TickPhase Phase = TickPhase.Startup; //Default phase should be startup
     }
 
     [CreateAssetMenu(menuName = "Hypermania/Character Animation Hitbox Data")]

@@ -163,14 +163,29 @@ namespace Game.Sim
                 }
             }
         }
-
+        //helper to check if current state is an attack
+        private bool IsAttackState( {
+            return State == CharacterState.LightAttack
+                || State == CharacterState.MediumAttack
+                || State == CharacterState.SuperAttack
+                || State == CharacterState.SpecialAttack
+                || State == CharacterState.LightAerial
+                || State == CharacterState.MediumAerial
+                || State == CharacterState.SuperAerial
+                || State == CharacterState.SpecialAerial;
+        })
         public void ApplyActiveState(Frame frame, CharacterConfig characterConfig, GlobalConfig config)
         {
-            if (State != CharacterState.Idle && State != CharacterState.Walk && State != CharacterState.Jump)
+            // if (State != CharacterState.Idle && State != CharacterState.Walk && State != CharacterState.Jump)
+            // {
+            //     return;
+            // }
+            // Path 1: New Attack from idle, walk, jump
+            bool isActionable = State == CharacterState.Idle || State == CharacterState.Walk || State == CharacterState.Jump;
+
+            if (isActionable)
             {
-                return;
-            }
-            if (InputH.PressedRecently(InputFlags.LightAttack, 8))
+                if (InputH.PressedRecently(InputFlags.LightAttack, 8))
             {
                 switch (Location(config))
                 {
@@ -205,7 +220,81 @@ namespace Game.Sim
                         break;
                 }
             }
-        }
+            }
+        
+        // Path 2 : Beat cancel thru recovery
+
+        bool isInAttackState = IsAttackState();
+
+        if (isInAttackState)
+            {
+                bool lightPressThisFrame = InputH.PressedRecently(InputFlags.LightAttack, 1);
+                bool superPressThisFrame = InputH.PressedRecently(InputFlags.SuperAttack, 1);
+
+                if (lightPressThisFrame || superPressThisFrame)
+                {
+                    int currentTick = frame - StateStart;
+                    FrameData frameData = characterConfig.GetFrameData(State, currentTick);
+
+                    // Check to see if we are in recovery phase and on beat
+
+                    if (frameData != null && frameData.Phase == TickPhase.Recovery)
+                    {
+                        bool isOnBeat = config.AudioConfig.IsBeatWithinWindow(
+                            frame.Value,
+                            BeatSubdivision.QuarterNote,
+                            windowFrames: 3
+                        );
+
+                        if (isOnBeat)
+                        {
+                            if (lightPressThisFrame)
+                            {
+                                switch (Location(config))
+                                {
+                                    case FighterLocation.Grounded:
+                                        {
+                                            Velocity = SVector2.zero;
+                                            State = CharacterState.LightAttack;
+                                            StateStart = frame;
+                                            StateEnd = StateStart + characterConfig.GetHitboxData(State).TotalTicks;
+                                        }
+                                        break;
+                                    case FighterLocation.Airborne:
+                                        {
+                                            State = CharacterState.LightAerial;
+                                            StateStart = frame;
+                                            StateEnd = StateStart + characterConfig.GetHitboxData(State).TotalTicks;
+                                        }
+                                        break;
+                                }
+                            }
+
+                            else if (superPressThisFrame)
+                            {
+                                switch (Location(config))
+                                {
+                                    case FighterLocation.Grounded:
+                                        {
+                                            Velocity = SVector2.zero;
+                                            State = CharacterState.SuperAttack;
+                                            StateStart = frame;
+                                            StateEnd = StateStart + characterConfig.GetHitboxData(State).TotalTicks;
+                                        }
+                                        break;
+                                    case FighterLocation.Airborne:
+                                        {
+                                            State = CharacterState.SuperAerial;
+                                            StateStart = frame;
+                                            StateEnd = StateStart + characterConfig.GetHitboxData(State).TotalTicks;
+                                            break;
+                                }
+                            }
+                        }
+                    }
+            }
+    
+       
 
         public void UpdatePosition(GlobalConfig config)
         {
