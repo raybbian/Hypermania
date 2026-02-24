@@ -138,6 +138,16 @@ namespace Game.Sim
             return FighterLocation.Grounded;
         }
 
+        public void SetState(CharacterState nextState, Frame start, Frame end)
+        {
+            if (State != nextState)
+            {
+                State = nextState;
+                StateStart = start;
+                StateEnd = end;
+            }
+        }
+
         public void FaceTowards(SVector2 location)
         {
             // can only switch locations if in idle/walking
@@ -165,19 +175,7 @@ namespace Game.Sim
                 {
                     Velocity.x = 0;
                 }
-                State = CharacterState.Idle;
-                StateStart = frame;
-                StateEnd = Frame.Infinity;
-            }
-        }
-
-        public void SetState(CharacterState nextState, Frame start, Frame end)
-        {
-            if (State != nextState)
-            {
-                State = nextState;
-                StateStart = start;
-                StateEnd = end;
+                SetState(CharacterState.Idle, frame, Frame.Infinity);
             }
         }
 
@@ -385,9 +383,7 @@ namespace Game.Sim
             }
             else if (InputH.IsHeld(ForwardInput) && dashCancelEligible && State == CharacterState.ForwardDash)
             {
-                State = CharacterState.Running;
-                StateStart = frame;
-                StateEnd = Frame.Infinity;
+                SetState(CharacterState.Running, frame, Frame.Infinity);
             }
         }
 
@@ -437,9 +433,7 @@ namespace Game.Sim
             // TODO: apply some landing lag here
             if (Location(config) == FighterLocation.Grounded)
             {
-                State = CharacterState.Idle;
-                StateStart = frame;
-                StateEnd = Frame.Infinity;
+                SetState(CharacterState.Idle, frame, Frame.Infinity);
             }
         }
 
@@ -486,19 +480,21 @@ namespace Game.Sim
             if (blockSuccess)
             {
                 // True: Crouch blocking, False: Stand blocking
-                State = holdingDown ? CharacterState.BlockCrouch : CharacterState.BlockStand;
-                StateStart = frame;
-                StateEnd = frame + props.BlockstunTicks + 1;
+                SetState(
+                    holdingDown ? CharacterState.BlockCrouch : CharacterState.BlockStand,
+                    frame,
+                    frame + props.BlockstunTicks + 1
+                );
+
                 ImmunityEnd = frame + 7;
                 // TODO: check if other move is special, if so apply chip
                 return new HitOutcome { Kind = HitKind.Blocked };
             }
 
-            State = CharacterState.Hit;
-            StateStart = frame;
             // Apply Hit/collision stuff is done after the player is actionable, so if the player needs to be
             // inactionable for "one more frame"
-            StateEnd = frame + props.HitstunTicks + 1;
+            SetState(CharacterState.Hit, frame, frame + props.HitstunTicks + 1);
+
             // TODO: fixme, just to prevent multi hit
             ImmunityEnd = frame + 7;
             // TODO: if high enough, go knockdown
@@ -515,11 +511,10 @@ namespace Game.Sim
 
         public void ApplyClank(Frame frame, GlobalConfig config)
         {
-            State = CharacterState.Hit;
-            StateStart = frame;
             // Apply Hit/collision stuff is done after the player is actionable, so if the player needs to be
             // inactionable for "one more frame"
-            StateEnd = frame + config.ClankTicks + 1;
+            SetState(CharacterState.Hit, frame, frame + config.ClankTicks + 1);
+
             Velocity = SVector2.zero;
         }
     }
