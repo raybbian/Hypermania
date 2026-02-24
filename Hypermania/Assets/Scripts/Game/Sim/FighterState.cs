@@ -151,7 +151,7 @@ namespace Game.Sim
         public void FaceTowards(SVector2 location)
         {
             // can only switch locations if in idle/walking
-            if (State != CharacterState.Idle && State != CharacterState.ForwardWalk)
+            if (State != CharacterState.Idle && State != CharacterState.ForwardWalk && State != CharacterState.BackWalk)
             {
                 return;
             }
