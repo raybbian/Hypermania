@@ -27,26 +27,32 @@ namespace Game.Editors
             using (new EditorGUI.DisabledScope(!inPlayMode || isSinglePlayer))
             using (new EditorGUILayout.VerticalScope("box"))
             {
-                if (GUILayout.Button("Create Lobby"))
+                using (new EditorGUI.DisabledScope(gm.Started))
                 {
-                    gm.CreateLobby();
+                    if (GUILayout.Button("Create Lobby"))
+                    {
+                        gm.CreateLobby();
+                    }
+                    _roomId = (ulong)EditorGUILayout.LongField("Room Id", (long)_roomId);
+                    if (GUILayout.Button("Join Lobby"))
+                    {
+                        gm.JoinLobby(new CSteamID(_roomId));
+                    }
+                    if (GUILayout.Button("Leave Lobby"))
+                    {
+                        gm.LeaveLobby();
+                    }
+                    if (GUILayout.Button("Start Game"))
+                    {
+                        gm.StartGame();
+                    }
                 }
-                _roomId = (ulong)EditorGUILayout.LongField("Room Id", (long)_roomId);
-                if (GUILayout.Button("Join Lobby"))
+                using (new EditorGUI.DisabledScope(!gm.Started))
                 {
-                    gm.JoinLobby(new CSteamID(_roomId));
-                }
-                if (GUILayout.Button("Leave Lobby"))
-                {
-                    gm.LeaveLobby();
-                }
-                if (GUILayout.Button("Start Game"))
-                {
-                    gm.StartGame();
-                }
-                if (GUILayout.Button("Stop Game"))
-                {
-                    gm.StopGame();
+                    if (GUILayout.Button("Stop Game"))
+                    {
+                        gm.DeInit();
+                    }
                 }
             }
 
@@ -56,13 +62,19 @@ namespace Game.Editors
             using (new EditorGUI.DisabledScope(!inPlayMode || !isSinglePlayer))
             using (new EditorGUILayout.VerticalScope("box"))
             {
-                if (GUILayout.Button("Start Local Game"))
+                using (new EditorGUI.DisabledScope(gm.Started))
                 {
-                    gm.StartLocalGame();
+                    if (GUILayout.Button("Start Local Game"))
+                    {
+                        gm.StartLocalGame();
+                    }
                 }
-                if (GUILayout.Button("Stop Game"))
+                using (new EditorGUI.DisabledScope(!gm.Started))
                 {
-                    gm.StopGame();
+                    if (GUILayout.Button("Stop Game"))
+                    {
+                        gm.DeInit();
+                    }
                 }
             }
         }

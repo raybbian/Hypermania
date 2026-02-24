@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using Design;
+using Game.Sim;
+using Game.View.Fighters;
 using UnityEngine;
 
 namespace Game.View
@@ -9,38 +10,38 @@ namespace Game.View
         [SerializeField]
         private GameObject TrackerPrefab;
 
-        private Dictionary<int, FighterView> NotVisibleFighters = new Dictionary<int, FighterView>();
+        private Dictionary<int, Vector2> NotVisibleFighters = new Dictionary<int, Vector2>();
 
         private Dictionary<int, GameObject> Trackers = new Dictionary<int, GameObject>();
 
         [SerializeField]
         private Camera Camera;
 
-        public void Track(FighterView[] _fighters)
+        public void Track(FighterState[] _fighters)
         {
             NotVisibleFighters.Clear();
 
-            Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera);
-            //Adding all nonvisible fighters as key value pairs, fighter number -> FighterView
-            //Key value pairs are for if in the future, you would want to add different trackers for each fighter
+            Vector2 camPos = Camera.transform.position;
+            Vector2 halfBounds = new Vector2(Camera.orthographicSize * Camera.aspect, Camera.orthographicSize);
+            Vector2 min = camPos - halfBounds;
+            Vector2 max = camPos + halfBounds;
+
             for (int i = 0; i < _fighters.Length; i++)
             {
-                //Detecting if visible or not
+                Vector2 p = (Vector2)_fighters[i].Position;
 
-                bool v = GeometryUtility.TestPlanesAABB(
-                    planes,
-                    _fighters[i].gameObject.GetComponent<Renderer>().bounds
-                );
-                if (!v)
+                bool outside = p.x < min.x || p.x > max.x || p.y < min.y || p.y > max.y;
+
+                if (outside)
                 {
-                    NotVisibleFighters.Add(i, _fighters[i]);
+                    NotVisibleFighters.Add(i, p);
                 }
             }
 
             //Creating/updating trackers for nonvisible fighters
-            foreach (KeyValuePair<int, FighterView> f in NotVisibleFighters)
+            foreach (KeyValuePair<int, Vector2> f in NotVisibleFighters)
             {
-                Vector3 fighterPos = f.Value.transform.position;
+                Vector3 fighterPos = f.Value;
 
                 // Convert to viewport coordinates
                 Vector3 vp = Camera.WorldToViewportPoint(fighterPos);

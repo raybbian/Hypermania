@@ -27,7 +27,9 @@ namespace Game
             if (Keyboard.current.kKey.isPressed)
                 input |= InputFlags.MediumAttack;
             if (Keyboard.current.lKey.isPressed)
-                input |= InputFlags.SuperAttack;
+                input |= InputFlags.HeavyAttack;
+            if (Keyboard.current.oKey.isPressed)
+                input |= InputFlags.Burst;
 
             // Mania Keys
             if (Keyboard.current.aKey.isPressed)
@@ -44,11 +46,14 @@ namespace Game
                 input |= InputFlags.Mania6;
         }
 
-        public GameInput Consume()
+        public void Clear()
         {
-            GameInput res = new GameInput(input);
             input = InputFlags.None;
-            return res;
+        }
+
+        public GameInput Poll()
+        {
+            return new GameInput(input);
         }
     }
 }

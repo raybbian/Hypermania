@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using MemoryPack;
 
 namespace Game.Sim
@@ -27,6 +26,13 @@ namespace Game.Sim
         public InputHistory()
         {
             _buffer = new GameInput[64];
+            _next = 0;
+            _count = 0;
+        }
+
+        public void Clear()
+        {
+            Array.Clear(_buffer, 0, _buffer.Length);
             _next = 0;
             _count = 0;
         }
@@ -60,7 +66,8 @@ namespace Game.Sim
         public bool PressedRecently(InputFlags flag, int withinFrames, int beforeFrames = 0)
         {
             return HasInputSeqeunce(
-                stackalloc InputHistoryEntry[] {
+                stackalloc InputHistoryEntry[]
+                {
                     new InputHistoryEntry { Pressed = false, Input = flag },
                     new InputHistoryEntry { Pressed = true, Input = flag },
                 },
@@ -72,7 +79,8 @@ namespace Game.Sim
         public bool PressedAndReleasedRecently(InputFlags flag, int withinFrames, int beforeFrames = 0)
         {
             return HasInputSeqeunce(
-                stackalloc InputHistoryEntry[] {
+                stackalloc InputHistoryEntry[]
+                {
                     new InputHistoryEntry { Pressed = false, Input = flag },
                     new InputHistoryEntry { Pressed = true, Input = flag },
                     new InputHistoryEntry { Pressed = false, Input = flag },
@@ -102,7 +110,8 @@ namespace Game.Sim
         public bool ReleasedRecently(InputFlags flag, int withinFrames, int beforeFrames = 0)
         {
             return HasInputSeqeunce(
-                stackalloc InputHistoryEntry[] {
+                stackalloc InputHistoryEntry[]
+                {
                     new InputHistoryEntry { Pressed = true, Input = flag },
                     new InputHistoryEntry { Pressed = false, Input = flag },
                 },

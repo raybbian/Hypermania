@@ -15,16 +15,14 @@ namespace Design.Animation
     [Serializable]
     public struct BoxProps : IEquatable<BoxProps>
     {
+        // NOTE: ensure that any new fields added above are added to the equals and hashcode implementation!!!
         public HitboxKind Kind;
-
         public int Damage;
         public int HitstunTicks;
         public int BlockstunTicks;
         public bool StartsRhythmCombo;
         public SVector2 Knockback;
 
-        // NOTE: ensure that any new fields added above are added to the equals implementation: otherwise they will not
-        // be editable in the move builder
         public bool Equals(BoxProps other) =>
             Kind == other.Kind
             && HitstunTicks == other.HitstunTicks
@@ -35,7 +33,8 @@ namespace Design.Animation
 
         public override bool Equals(object obj) => obj is BoxProps other && Equals(other);
 
-        public override int GetHashCode() => HashCode.Combine(Kind, HitstunTicks);
+        public override int GetHashCode() =>
+            HashCode.Combine(Kind, HitstunTicks, Damage, BlockstunTicks, StartsRhythmCombo, Knockback);
 
         public static bool operator ==(BoxProps a, BoxProps b) => a.Equals(b);
 
@@ -85,9 +84,38 @@ namespace Design.Animation
         public List<BoxData> Boxes = new List<BoxData>();
 
         public TickPhase Phase = TickPhase.Startup; //Default phase should be startup
+        public FrameData Clone()
+        {
+            var copy = new FrameData();
+
+            if (Boxes != null)
+                copy.Boxes = new List<BoxData>(Boxes);
+            else
+                copy.Boxes = new List<BoxData>();
+
+            return copy;
+        }
+
+        public void CopyFrom(FrameData other)
+        {
+            Boxes.Clear();
+            if (other?.Boxes != null)
+                Boxes.AddRange(other.Boxes);
+        }
+
+        public override int GetHashCode()
+        {
+            var hc = new HashCode();
+            hc.Add(Boxes != null ? Boxes.Count : 0);
+            for (int j = 0; j < Boxes.Count; j++)
+            {
+                hc.Add(Boxes[j]);
+            }
+            return hc.ToHashCode();
+        }
     }
 
-    [CreateAssetMenu(menuName = "Hypermania/Character Animation Hitbox Data")]
+    [CreateAssetMenu(menuName = "Hypermania/Move Data")]
     [Serializable]
     public class HitboxData : ScriptableObject
     {
@@ -114,6 +142,24 @@ namespace Design.Animation
                 return null;
             }
             return Frames[tick];
+        }
+
+        public override int GetHashCode()
+        {
+            var hc = new HashCode();
+
+            hc.Add(Clip ? Clip.GetInstanceID() : 0);
+            hc.Add(Frames != null ? Frames.Count : 0);
+
+            if (Frames != null)
+            {
+                for (int i = 0; i < Frames.Count; i++)
+                {
+                    hc.Add(Frames[i]);
+                }
+            }
+
+            return hc.ToHashCode();
         }
     }
 }

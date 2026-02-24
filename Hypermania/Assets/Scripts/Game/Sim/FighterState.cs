@@ -29,6 +29,8 @@ namespace Game.Sim
         public sfloat Health;
         public int ComboedCount;
         public InputHistory InputH;
+        public int Lives;
+        public sfloat Burst;
 
         public CharacterState State { get; private set; }
         public Frame StateStart { get; private set; }
@@ -50,21 +52,46 @@ namespace Game.Sim
             || State == CharacterState.SuperAerial
             || State == CharacterState.SpecialAerial;
 
-        public static FighterState Create(SVector2 position, FighterFacing facingDirection, CharacterConfig config)
+        public static FighterState Create(
+            SVector2 position,
+            FighterFacing facingDirection,
+            CharacterConfig config,
+            int lives
+        )
         {
-            FighterState state = new FighterState();
-            state.Position = position;
-            state.Velocity = SVector2.zero;
-            state.State = CharacterState.Idle;
-            state.StateStart = Frame.FirstFrame;
-            state.StateEnd = Frame.Infinity;
-            state.ImmunityEnd = Frame.FirstFrame;
-            state.ComboedCount = 0;
-            state.InputH = new InputHistory();
-            // TODO: character dependent?
-            state.Health = config.Health;
-            state.FacingDir = facingDirection;
+            FighterState state = new FighterState
+            {
+                Position = position,
+                Velocity = SVector2.zero,
+                State = CharacterState.Idle,
+                StateStart = Frame.FirstFrame,
+                StateEnd = Frame.Infinity,
+                ImmunityEnd = Frame.FirstFrame,
+                ComboedCount = 0,
+                InputH = new InputHistory(),
+                // TODO: character dependent?
+                Health = config.Health,
+                FacingDir = facingDirection,
+                Lives = lives,
+                Burst = 0,
+            };
             return state;
+        }
+
+        public void RoundReset(SVector2 position, FighterFacing facingDirection, CharacterConfig config)
+        {
+            Position = position;
+            Velocity = SVector2.zero;
+            State = CharacterState.Idle;
+            StateStart = Frame.FirstFrame;
+            StateEnd = Frame.Infinity;
+            ImmunityEnd = Frame.FirstFrame;
+            ComboedCount = 0;
+            InputH.Clear(); // Clear, don't want to read input from a previous round.
+            // TODO: character dependent?
+            Burst = 0;
+            Health = config.Health;
+            FacingDir = facingDirection;
         }
 
         public void DoFrameStart()
@@ -183,7 +210,20 @@ namespace Game.Sim
             // Path 1: New Attack from idle, walk, jump
             bool isActionable = State == CharacterState.Idle || State == CharacterState.Walk || State == CharacterState.Jump;
 
-            if (isActionable)
+            if (State == CharacterState.Hit)
+            {
+                if (InputH.IsHeld(InputFlags.Burst))
+                {
+                    Burst = 0;
+                    State = CharacterState.Burst;
+                    StateStart = frame;
+                    StateEnd = StateStart + characterConfig.GetHitboxData(State).TotalTicks;
+                    // TODO: apply knockback to other player (this should be a hitbox on a burst animation with large kb)
+                }
+            }
+
+
+            if (State != CharacterState.Idle && State != CharacterState.Walk && State != CharacterState.Jump)
             {
                 if (InputH.PressedRecently(InputFlags.LightAttack, 8))
             {
@@ -206,7 +246,21 @@ namespace Game.Sim
                         break;
                 }
             }
-            else if (InputH.PressedRecently(InputFlags.SuperAttack, 8))
+            else if (InputH.PressedRecently(InputFlags.MediumAttack, 8))
+            {
+                switch (Location(config))
+                {
+                    case FighterLocation.Grounded:
+                        {
+                            Velocity = SVector2.zero;
+                            State = CharacterState.MediumAttack;
+                            StateStart = frame;
+                            StateEnd = StateStart + characterConfig.GetHitboxData(State).TotalTicks;
+                        }
+                        break;
+                }
+            }
+            else if (InputH.PressedRecently(InputFlags.HeavyAttack, 8))
             {
                 switch (Location(config))
                 {
@@ -367,7 +421,7 @@ namespace Game.Sim
             }
         }
 
-        public void ApplyHit(Frame frame, BoxProps props)
+        public void ApplyHit(Frame frame, BoxProps props, CharacterConfig config)
         {
             if (ImmunityEnd > frame)
             {
@@ -382,6 +436,9 @@ namespace Game.Sim
             ImmunityEnd = frame + 7;
             // TODO: if high enough, go knockdown
             Health -= props.Damage;
+
+            Burst += props.Damage;
+            Burst = Mathsf.Clamp(Burst, sfloat.Zero, config.BurstMax);
 
             Velocity = props.Knockback;
 

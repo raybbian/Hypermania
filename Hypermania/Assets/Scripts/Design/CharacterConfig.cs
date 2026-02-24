@@ -1,7 +1,6 @@
-using System;
 using Design.Animation;
 using Game;
-using Game.View;
+using Game.View.Fighters;
 using UnityEngine;
 using Utils.EnumArray;
 using Utils.SoftFloat;
@@ -14,9 +13,12 @@ namespace Design
         public Character Character;
         public FighterView Prefab;
         public AnimatorOverrideController AnimationController;
+        public sfloat CharacterHeight;
         public sfloat Speed;
         public sfloat JumpVelocity;
         public sfloat Health;
+        public sfloat BurstMax;
+        public int NumAirDashes;
         public EnumArray<CharacterState, HitboxData> Hitboxes;
 
         public FrameData GetFrameData(CharacterState anim, int tick)
@@ -35,6 +37,11 @@ namespace Design
 
         public HitboxData GetHitboxData(CharacterState anim)
         {
+            if (Hitboxes[anim] == null)
+            {
+                // if there is no hitbox data here, just do idle for testing
+                return Hitboxes[CharacterState.Idle];
+            }
             return Hitboxes[anim];
         }
     }

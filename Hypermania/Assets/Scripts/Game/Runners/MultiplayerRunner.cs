@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using Design;
 using Game.Sim;
+using Game.View;
 using Netcode.P2P;
 using Netcode.Rollback;
 using Netcode.Rollback.Sessions;
 using Steamworks;
 using UnityEngine;
+using Utils;
 
 namespace Game.Runners
 {
@@ -16,6 +18,7 @@ namespace Game.Runners
 
         private uint _waitRemaining;
         private PlayerHandle _myHandle;
+        private PlayerHandle _remoteHandle;
 
         public override void Init(
             List<(PlayerHandle playerHandle, PlayerKind playerKind, SteamNetworkingIdentity address)> players,
@@ -29,12 +32,17 @@ namespace Game.Runners
                 SteamNetworkingIdentity
             >()
                 .WithNumPlayers(players.Count)
-                .WithFps(64);
+                .WithFps(GameManager.TPS);
             foreach ((PlayerHandle playerHandle, PlayerKind playerKind, SteamNetworkingIdentity address) in players)
             {
                 if (playerKind == PlayerKind.Local)
                 {
                     _myHandle = playerHandle;
+                }
+                else if (playerKind == PlayerKind.Remote)
+                {
+                    // assume only two people for now
+                    _remoteHandle = playerHandle;
                 }
                 builder.AddPlayer(
                     new PlayerType<SteamNetworkingIdentity> { Kind = playerKind, Address = address },
@@ -44,9 +52,9 @@ namespace Game.Runners
             _session = builder.StartP2PSession<GameState>(client);
             _waitRemaining = 0;
 
-            if (_myHandle.Id == -1)
+            if (_myHandle.Id == -1 || _remoteHandle.Id == -1)
             {
-                throw new InvalidOperationException("No local players in multiplayer runner");
+                throw new InvalidOperationException("Players not found in multiplayer runner");
             }
         }
 
@@ -65,6 +73,7 @@ namespace Game.Runners
                 return;
             }
 
+            _inputBuffer.Clear();
             _inputBuffer.Saturate();
 
             _session.PollRemoteClients();
@@ -110,7 +119,7 @@ namespace Game.Runners
                 return;
             }
 
-            _session.AddLocalInput(_myHandle, _inputBuffer.Consume());
+            _session.AddLocalInput(_myHandle, _inputBuffer.Poll());
 
             List<RollbackRequest<GameState, GameInput>> requests = _session.AdvanceFrame();
             foreach (RollbackRequest<GameState, GameInput> request in requests)
@@ -124,14 +133,26 @@ namespace Game.Runners
                     case RollbackRequestKind.LoadGameStateReq:
                         var loadReq = request.GetLoadGameStateReq();
                         loadReq.Cell.Load(out _curState);
+                        _view.RollbackRender(_curState);
                         break;
                     case RollbackRequestKind.AdvanceFrameReq:
                         _curState.Advance(request.GetAdvanceFrameRequest().Inputs, _characters, _config);
+                        _view.RollbackRender(_curState);
                         break;
                 }
             }
 
-            _view.Render(_curState, _config);
+            if (_session.ConfirmedState().FightersDead())
+            {
+                DeInit();
+                return;
+            }
+            InfoOverlayDetails details = new InfoOverlayDetails
+            {
+                HasPing = true,
+                Ping = _session.NetworkStats(_remoteHandle).Ping,
+            };
+            _view.Render(_curState, _config, details);
         }
     }
 }

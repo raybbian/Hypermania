@@ -124,4 +124,28 @@ namespace Game.Sim
             _boxInds.Clear();
         }
     }
+
+    /// <summary>
+    /// Data structure to avoid many reallocs in game state simulation (are cleared every frame)
+    /// </summary>
+    public class PhysicsContext<TData>
+    {
+        public Physics<TData> Physics;
+        public List<Physics<TData>.Collision> Collisions;
+        public Dictionary<(int, int), Physics<TData>.Collision> HurtHitCollisions;
+
+        public PhysicsContext(int maxColliders)
+        {
+            Physics = new Physics<TData>(maxColliders);
+            Collisions = new List<Physics<TData>.Collision>(maxColliders);
+            HurtHitCollisions = new Dictionary<(int, int), Physics<TData>.Collision>(maxColliders);
+        }
+
+        public void Clear()
+        {
+            Physics.Clear();
+            Collisions.Clear();
+            HurtHitCollisions.Clear();
+        }
+    }
 }

@@ -37,6 +37,7 @@ namespace Utils.SoftFloat
             EditorGUIUtility.singleLineHeight;
     }
 
+    [CustomPropertyDrawer(typeof(SVector3))]
     public sealed class SVector3Drawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

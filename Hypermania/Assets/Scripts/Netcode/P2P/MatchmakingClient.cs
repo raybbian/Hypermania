@@ -87,7 +87,6 @@ namespace Netcode.P2P
 
             Debug.Log($"[Matchmaking] StartGame(): lobby={_currentLobby.m_SteamID}");
 
-            PublishPlayersToLobby();
             SendLobbyStartMessage();
 
             Debug.Log("[Matchmaking] Host sent START message.");
@@ -106,7 +105,6 @@ namespace Netcode.P2P
         private Callback<GameLobbyJoinRequested_t> _joinRequestedCb;
         private CallResult<LobbyCreated_t> _lobbyCreatedCallResult;
         private Callback<LobbyDataUpdate_t> _lobbyDataUpdateCb;
-        private bool _waitingForPlayers;
 
         private TaskCompletionSource<CSteamID> _lobbyCreatedTcs;
         private TaskCompletionSource<bool> _lobbyEnterTcs;
@@ -182,7 +180,7 @@ namespace Netcode.P2P
 
             CSteamID user;
             EChatEntryType type;
-            byte[] buffer = new byte[256];
+            byte[] buffer = new byte[1024];
 
             int len = SteamMatchmaking.GetLobbyChatEntry(
                 new CSteamID(data.m_ulSteamIDLobby),
@@ -199,21 +197,15 @@ namespace Netcode.P2P
             string text = System.Text.Encoding.UTF8.GetString(buffer, 0, len).TrimEnd('\0');
             Debug.Log($"[Matchmaking] OnLobbyChatMessage: from={user.m_SteamID}, type={type}, text='{text}'");
 
-            if (text == START_MSG)
+            var players = new List<CSteamID>();
+            bool startPresent = TryParseStartMessage(text, players);
+
+            if (startPresent)
             {
                 CSteamID host = SteamMatchmaking.GetLobbyOwner(_currentLobby);
                 Debug.Log($"[Matchmaking] Received START. host={host.m_SteamID}, me={SteamUser.GetSteamID()}");
 
-                SteamMatchmaking.RequestLobbyData(_currentLobby);
-                var players = GetPlayersFromLobbyData();
-                if (players == null)
-                {
-                    _waitingForPlayers = true;
-                }
-                else
-                {
-                    OnStartWithPlayers?.Invoke(players);
-                }
+                OnStartWithPlayers?.Invoke(players);
             }
         }
 
@@ -227,32 +219,11 @@ namespace Netcode.P2P
         {
             if (!_currentLobby.IsValid() || data.m_ulSteamIDLobby != _currentLobby.m_SteamID)
                 return;
-
-            if (_waitingForPlayers)
-            {
-                _waitingForPlayers = false;
-                var handles = GetPlayersFromLobbyData();
-                OnStartWithPlayers?.Invoke(handles);
-            }
         }
 
         private void SendLobbyStartMessage()
         {
-            Debug.Log($"[Matchmaking] Sending START lobby chat message. lobby={_currentLobby.m_SteamID}");
-            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(START_MSG);
-            SteamMatchmaking.SendLobbyChatMsg(_currentLobby, bytes, bytes.Length);
-        }
-
-        private void PublishPlayersToLobby()
-        {
-            if (!_currentLobby.IsValid())
-                return;
-
-            if (SteamUser.GetSteamID() != SteamMatchmaking.GetLobbyOwner(_currentLobby))
-            {
-                throw new InvalidOperationException("Cannot publish handles to lobby as non host");
-            }
-
+            // from PublishPlayersToLobby. getting lobby members and sorting
             int count = SteamMatchmaking.GetNumLobbyMembers(_currentLobby);
             if (count <= 0)
                 return;
@@ -266,55 +237,48 @@ namespace Netcode.P2P
             }
             players.Sort((a, b) => a.m_SteamID.CompareTo(b.m_SteamID));
 
-            SteamMatchmaking.SetLobbyData(_currentLobby, HANDLE_CNT, $"{players.Count}");
-            for (int i = 0; i < players.Count; i++)
-            {
-                SteamMatchmaking.SetLobbyData(_currentLobby, $"{HANDLE_NUM}_{i}", $"{players[i].m_SteamID}");
-            }
-            Debug.Log($"[Matchmaking] Published handles to lobby data");
+            string builtStartMsg = START_MSG + "|" + string.Join("|", players);
+
+            Debug.Log(
+                $"[Matchmaking] Sending START lobby chat message. lobby={_currentLobby.m_SteamID}, message={builtStartMsg}"
+            );
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(builtStartMsg);
+            SteamMatchmaking.SendLobbyChatMsg(_currentLobby, bytes, bytes.Length);
         }
 
-        private List<CSteamID> GetPlayersFromLobbyData()
+        private bool TryParseStartMessage(string text, List<CSteamID> players)
         {
-            if (!_currentLobby.IsValid())
-                throw new InvalidOperationException("Lobby is not valid.");
-
-            string handleCntStr = SteamMatchmaking.GetLobbyData(_currentLobby, HANDLE_CNT);
-            if (string.IsNullOrEmpty(handleCntStr))
+            // Parses a given string and outputs to a list of CSteamIDs if the message begins with __START.
+            // The boolean returned reflects whether the message began with __START or not.
+            string[] playerIDStrings = text.Split("|");
+            if (playerIDStrings[0] == START_MSG)
             {
-                Debug.Log("[Matchmaking] No handles lobby data present.");
-                return null;
+                for (int i = 1; i < playerIDStrings.Length; i++)
+                {
+                    try
+                    {
+                        players.Add(new CSteamID(ulong.Parse(playerIDStrings[i])));
+                    }
+                    catch (FormatException)
+                    {
+                        Debug.Log("SteamID " + playerIDStrings[i] + " could not be parsed as a ulong");
+                    }
+                    catch (OverflowException)
+                    {
+                        Debug.Log("SteamID " + playerIDStrings[i] + " was out of range for ulong");
+                    }
+                    catch (ArgumentException)
+                    {
+                        Debug.Log("SteamID " + playerIDStrings[i] + " could not be parsed as a ulong");
+                    }
+                }
+                return true;
             }
-            if (!int.TryParse(handleCntStr, out int handleCnt) || handleCnt <= 0)
+            else
             {
-                throw new InvalidOperationException($"Invalid handle count '{handleCntStr}'.");
+                Debug.Log("Start message did not begin with __START.");
+                return false;
             }
-
-            var result = new List<CSteamID>(handleCnt);
-            for (int i = 0; i < handleCnt; i++)
-            {
-                string key = $"{HANDLE_NUM}_{i}";
-                string steamIdStr = SteamMatchmaking.GetLobbyData(_currentLobby, key);
-
-                if (string.IsNullOrEmpty(steamIdStr))
-                {
-                    throw new InvalidOperationException($"Missing lobby data key '{key}'.");
-                }
-
-                if (!ulong.TryParse(steamIdStr, out ulong steamIdU64))
-                {
-                    throw new InvalidOperationException($"Invalid SteamID value '{steamIdStr}' for '{key}'.");
-                }
-
-                var steamId = new CSteamID(steamIdU64);
-                if (!steamId.IsValid())
-                {
-                    throw new InvalidOperationException($"SteamID '{steamIdU64}' is not valid.");
-                }
-
-                result.Add(steamId);
-            }
-            return result;
         }
     }
 }

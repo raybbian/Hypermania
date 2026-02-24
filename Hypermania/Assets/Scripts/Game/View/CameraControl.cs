@@ -13,15 +13,28 @@ namespace Game.View
         private float CameraSpeed = 10;
 
         [SerializeField]
+        private float MaxZoom = 2.5f;
+
+        [SerializeField]
+        private float MinZoom = 1.5f;
+
+        [SerializeField]
         private GlobalConfig Config;
 
         // Additional area outside the arena bounds that the camera is allowed to see
         [SerializeField]
         private float Margin;
 
+        // Additional area around the interest points that the camera must see
+        [SerializeField]
+        private float Padding;
+
+        private List<Vector2> _interestPoints;
+
         void Start()
         {
             Camera = GetComponent<Camera>();
+            _interestPoints = new List<Vector2>();
         }
 
         public void OnValidate()
@@ -34,28 +47,43 @@ namespace Game.View
             }
         }
 
-        public void UpdateCamera(List<Vector2> interestPoints, float zoom, float time)
+        public void UpdateCamera(List<Vector2> interestPoints, float zoom)
         {
-            Vector2 center = CalculateCenter(interestPoints);
-            //Interpolation to center
-            Vector2 pos = Vector2.Lerp(transform.position, center, CameraSpeed * time);
-            transform.position = new Vector3(pos.x, pos.y, transform.position.z);
-            //Interpolation to zoom
-            Camera.orthographicSize = Mathf.Lerp(Camera.orthographicSize, zoom, CameraSpeed * time);
+            _interestPoints = interestPoints;
         }
 
-        // Recalculates the center of interestPoints
-        Vector2 CalculateCenter(List<Vector2> interestPoints)
+        public void Update()
         {
-            if (interestPoints.Count == 0)
-                return Vector2.zero;
+            if (_interestPoints == null || _interestPoints.Count == 0)
+            {
+                return;
+            }
 
-            Vector2 NewCenter = Vector2.zero;
-            foreach (Vector2 point in interestPoints)
-                NewCenter += point;
+            Vector2 min = Vector2.positiveInfinity;
+            Vector2 max = Vector2.negativeInfinity;
+            foreach (Vector2 point in _interestPoints)
+            {
+                min = Vector2.Min(min, point);
+                max = Vector2.Max(max, point);
+            }
+            Vector2 padding = new Vector2(Padding, Padding);
+            min -= padding;
+            max += padding;
 
-            NewCenter /= interestPoints.Count;
-            // Calculating visual area given aspect and zoom
+            float width = max.x - min.x;
+            float wZoom = Mathf.Clamp(width / 2 / Camera.aspect, MinZoom, MaxZoom);
+
+            float dt = Time.deltaTime;
+            float k = CameraSpeed;
+            float a = 1f - Mathf.Exp(-k * dt);
+            Camera.orthographicSize = Mathf.Lerp(Camera.orthographicSize, wZoom, a);
+
+            // adjust position with respect to zoom
+
+            Vector3 p = transform.position;
+            min.y = max.y - 2 * Camera.orthographicSize;
+            Vector2 pos2 = Vector2.Lerp(new Vector2(p.x, p.y), (min + max) / 2, a);
+
             float halfHeight = Camera.orthographicSize;
             float halfWidth = Camera.orthographicSize * Camera.aspect;
 
@@ -70,10 +98,9 @@ namespace Game.View
                 throw new InvalidOperationException("bounds too small");
             }
 
-            NewCenter.x = Mathf.Clamp(NewCenter.x, minX, maxX);
-            NewCenter.y = Mathf.Clamp(NewCenter.y, minY, maxY);
-
-            return new Vector2(NewCenter.x, NewCenter.y);
+            pos2.x = Mathf.Clamp(pos2.x, minX, maxX);
+            pos2.y = Mathf.Clamp(pos2.y, minY, maxY);
+            transform.position = new Vector3(pos2.x, pos2.y, p.z);
         }
     }
 }
