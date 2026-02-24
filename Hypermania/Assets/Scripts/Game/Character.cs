@@ -31,6 +31,7 @@ namespace Game
         Running = 24,
         ForwardAirDash = 25,
         BackAirDash = 26,
+        Crouch = 27,
     }
 
     [Serializable]

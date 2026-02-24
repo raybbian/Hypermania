@@ -16,6 +16,7 @@ namespace Game.Sim
     {
         Grounded,
         Airborne,
+        Crouched,
     }
 
     [MemoryPackable]
@@ -45,6 +46,7 @@ namespace Game.Sim
 
         public BoxProps HitProps { get; private set; }
         public SVector2 HitLocation { get; private set; }
+        public bool CrouchFlag { get; private set; }
 
         public bool IsAerial =>
             State == CharacterState.LightAerial
@@ -62,7 +64,8 @@ namespace Game.Sim
             State == CharacterState.Idle
             || State == CharacterState.Walk
             || State == CharacterState.Jump
-            || State == CharacterState.Running;
+            || State == CharacterState.Running
+            || State == CharacterState.Crouch;
 
         public SVector2 ForwardVector => FacingDir == FighterFacing.Left ? SVector2.left : SVector2.right;
         public SVector2 BackwardVector => FacingDir == FighterFacing.Left ? SVector2.right : SVector2.left;
@@ -92,6 +95,7 @@ namespace Game.Sim
                 Lives = lives,
                 Burst = 0,
                 AirDashCount = 0,
+                CrouchFlag = false,
             };
             return state;
         }
@@ -109,6 +113,7 @@ namespace Game.Sim
             // TODO: character dependent?
             Burst = 0;
             AirDashCount = 0;
+            CrouchFlag = false;
             Health = config.Health;
             FacingDir = facingDirection;
         }
@@ -132,6 +137,10 @@ namespace Game.Sim
             if (Position.y > config.GroundY)
             {
                 return FighterLocation.Airborne;
+            }
+            if (CrouchFlag)
+            {
+                return FighterLocation.Crouched;
             }
             return FighterLocation.Grounded;
         }
@@ -175,12 +184,42 @@ namespace Game.Sim
             {
                 return;
             }
+
             if (Location(config) == FighterLocation.Grounded)
             {
                 Velocity.x = 0;
 
+                CrouchFlag = InputH.IsHeld(InputFlags.Down);
+
+                bool willJump = InputH.IsHeld(InputFlags.Up);
+                bool moveEligible = !InputH.IsHeld(InputFlags.Down);
+                bool dashEligible = moveEligible && !willJump;
+
+                if (moveEligible && InputH.IsHeld(ForwardInput))
+                {
+                    Velocity.x += ForwardVector.x * characterConfig.ForwardSpeed * config.RunningSpeedMultiplier;
+                }
+                if (moveEligible && InputH.IsHeld(BackwardInput))
+                {
+                    Velocity.x += BackwardVector.x * characterConfig.BackSpeed;
+                }
+
+                if (moveEligible && InputH.IsHeld(InputFlags.Up))
+                {
+                    if (InputH.PressedRecently(InputFlags.Down, config.Input.SuperJumpWindow))
+                    {
+                        Velocity.y = (sfloat)1.25 * characterConfig.JumpVelocity;
+                    }
+                    else
+                    {
+                        Velocity.y = characterConfig.JumpVelocity;
+                    }
+                    return;
+                }
+
                 if (
-                    InputH.IsHeld(ForwardInput)
+                    dashEligible
+                    && InputH.IsHeld(ForwardInput)
                     && InputH.PressedAndReleasedRecently(ForwardInput, config.Input.DashWindow, 1)
                 )
                 {
@@ -192,7 +231,8 @@ namespace Game.Sim
                 }
 
                 if (
-                    InputH.IsHeld(BackwardInput)
+                    dashEligible
+                    && InputH.IsHeld(BackwardInput)
                     && InputH.PressedAndReleasedRecently(BackwardInput, config.Input.DashWindow, 1)
                 )
                 {
@@ -202,33 +242,12 @@ namespace Game.Sim
                     Velocity.x = BackwardVector.x * characterConfig.BackDashDistance / config.BackDashTicks;
                     return;
                 }
+            }
+            else if (Location(config) == FighterLocation.Crouched)
+            {
+                Velocity.x = 0;
 
-                // prevent jump from taking run multiplier
-                sfloat runMult =
-                    State == CharacterState.Running && !InputH.IsHeld(InputFlags.Up)
-                        ? config.RunningSpeedMultiplier
-                        : sfloat.One;
-
-                if (InputH.IsHeld(ForwardInput))
-                {
-                    Velocity.x += ForwardVector.x * characterConfig.ForwardSpeed * runMult;
-                }
-                if (InputH.IsHeld(BackwardInput))
-                {
-                    Velocity.x += BackwardVector.x * characterConfig.BackSpeed;
-                }
-
-                if (InputH.IsHeld(InputFlags.Up))
-                {
-                    if (InputH.PressedRecently(InputFlags.Down, config.Input.SuperJumpWindow))
-                    {
-                        Velocity.y = (sfloat)1.25 * characterConfig.JumpVelocity;
-                    }
-                    else
-                    {
-                        Velocity.y = characterConfig.JumpVelocity;
-                    }
-                }
+                CrouchFlag = InputH.IsHeld(InputFlags.Down);
             }
             else if (Location(config) == FighterLocation.Airborne)
             {
@@ -479,17 +498,15 @@ namespace Game.Sim
 
         public void ApplyMovementState(Frame frame, GlobalConfig config)
         {
-            if (
-                (State == CharacterState.Idle || State == CharacterState.Walk || State == CharacterState.Running)
-                && Location(config) == FighterLocation.Airborne
-            )
+            if (State != CharacterState.Jump && Actionable && Location(config) == FighterLocation.Airborne)
             {
                 State = CharacterState.Jump;
                 StateStart = frame;
                 StateEnd = Frame.Infinity;
             }
             else if (
-                (State == CharacterState.Idle || State == CharacterState.Jump)
+                State != CharacterState.Walk
+                && Actionable
                 && Velocity.magnitude > (sfloat)0.01f
                 && Location(config) == FighterLocation.Grounded
             )
@@ -499,12 +516,24 @@ namespace Game.Sim
                 StateEnd = Frame.Infinity;
             }
             else if (
-                (State == CharacterState.Walk || State == CharacterState.Jump || State == CharacterState.Running)
-                && Velocity.magnitude < (sfloat)0.01f
+                State != CharacterState.Idle
+                && Actionable
+                && Velocity.magnitude <= (sfloat)0.01f
                 && Location(config) == FighterLocation.Grounded
             )
             {
                 State = CharacterState.Idle;
+                StateStart = frame;
+                StateEnd = Frame.Infinity;
+            }
+            else if (
+                State != CharacterState.Crouch
+                && Actionable
+                && Velocity.magnitude <= (sfloat)0.01f
+                && Location(config) == FighterLocation.Crouched
+            )
+            {
+                State = CharacterState.Crouch;
                 StateStart = frame;
                 StateEnd = Frame.Infinity;
             }

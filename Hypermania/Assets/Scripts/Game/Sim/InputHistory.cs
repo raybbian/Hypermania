@@ -57,6 +57,27 @@ namespace Game.Sim
             return _buffer[idx];
         }
 
+        private static (InputFlags d, InputFlags o)[] _dirPairs =
+        {
+            (InputFlags.Up, InputFlags.Down),
+            (InputFlags.Down, InputFlags.Up),
+            (InputFlags.Left, InputFlags.Right),
+            (InputFlags.Right, InputFlags.Left),
+        };
+
+        public InputFlags GetDirectionalInput()
+        {
+            InputFlags dir = InputFlags.None;
+            foreach ((InputFlags a, InputFlags b) in _dirPairs)
+            {
+                if (GetInput(0).HasInput(a) && !GetInput(0).HasInput(b))
+                {
+                    dir |= a;
+                }
+            }
+            return dir;
+        }
+
         public bool IsHeld(InputFlags flag)
         {
             return GetInput(0).HasInput(flag);
