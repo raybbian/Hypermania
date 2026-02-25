@@ -27,6 +27,7 @@ namespace Game.View
             public HealthBarView HealthBarView;
             public ManiaView ManiaView;
             public ComboCountView ComboCountView;
+            public VictoryMarkView VictoryMarkView;
         }
 
         [Serializable]
@@ -40,6 +41,7 @@ namespace Game.View
             public SfxManager SfxManager;
             public VfxManager VfxManager;
             public FrameDataOverlay FrameDataOverlay;
+            public RoundCountdownView RoundCountdownView;
         }
 
         public FighterView[] Fighters => _fighters;
@@ -111,6 +113,7 @@ namespace Game.View
             {
                 _playerParams[i].HealthBarView.SetHealth((int)state.Fighters[i].Health);
                 _playerParams[i].BurstBarView.SetBurst((int)state.Fighters[i].Burst);
+                _playerParams[i].VictoryMarkView.SetVictories(state.Fighters[i].Victories, (i == 0 ? -1 : 1));
             }
 
             _params.CameraControl.UpdateCamera(interestPoints, _zoom);
@@ -122,7 +125,8 @@ namespace Game.View
                 _playerParams[i].ComboCountView.SetComboCount(combo);
             }
             _params.InfoOverlayView.Render(overlayDetails);
-            _params.RoundTimerView.DisplayRoundTimer(state.Frame, state.RoundEnd);
+            _params.RoundCountdownView.DisplayRoundCD(state.Frame, state.RoundStart, config);
+            _params.RoundTimerView.DisplayRoundTimer(state.Frame, state.RoundEnd, state.GameMode, config);
 
             if (_rollbackStart != Frame.NullFrame)
             {

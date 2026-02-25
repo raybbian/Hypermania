@@ -1,5 +1,6 @@
 using Design.Animation;
 using Design.Configs;
+using Game.View.Overlay;
 using MemoryPack;
 using Utils;
 using Utils.SoftFloat;
@@ -29,6 +30,8 @@ namespace Game.Sim
         public int Lives;
         public sfloat Burst;
         public int AirDashCount;
+        public VictoryKind[] Victories;
+        public int amountVictories;
 
         public CharacterState State { get; private set; }
         public Frame StateStart { get; private set; }
@@ -94,6 +97,8 @@ namespace Game.Sim
                 Lives = lives,
                 Burst = 0,
                 AirDashCount = 0,
+                Victories = new VictoryKind[lives],
+                amountVictories = 0,
             };
             return state;
         }

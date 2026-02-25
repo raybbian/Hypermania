@@ -1,11 +1,14 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Design.Animation;
 using Design.Configs;
+using Game.View.Overlay;
 using MemoryPack;
 using Netcode.Rollback;
+using UnityEngine;
 using Utils;
 using Utils.SoftFloat;
 
@@ -15,7 +18,8 @@ namespace Game.Sim
     {
         Fighting,
         Mania,
-        Starting,
+        RoundEnd, // Used to be roundStart, indicates the end of a round
+        Countdown, // Countdown to round.
     }
 
     [MemoryPackable]
@@ -40,6 +44,7 @@ namespace Game.Sim
         public const int MAX_COLLIDERS = 100;
 
         public Frame Frame;
+        public Frame RoundStart; // Added to indicate when a round starts.
         public Frame RoundEnd;
         public FighterState[] Fighters;
         public ManiaState[] Manias;
@@ -56,13 +61,14 @@ namespace Game.Sim
         {
             GameState state = new GameState();
             state.Frame = Frame.FirstFrame;
+            state.RoundStart = Frame.FirstFrame;
             state.RoundEnd = new Frame(config.RoundTimeTicks);
             state.Fighters = new FighterState[characters.Length];
             state.Manias = new ManiaState[characters.Length];
-            state.GameMode = GameMode.Fighting;
+            state.GameMode = GameMode.Countdown;
             for (int i = 0; i < characters.Length; i++)
             {
-                sfloat xPos = i - ((sfloat)characters.Length - 1) / 2;
+                sfloat xPos = (i - ((sfloat)characters.Length - 1) / 2) * 4;
                 FighterFacing facing = xPos > 0 ? FighterFacing.Left : FighterFacing.Right;
                 state.Fighters[i] = FighterState.Create(new SVector2(xPos, sfloat.Zero), facing, characters[i], 3);
                 state.Manias[i] = ManiaState.Create(
@@ -90,7 +96,7 @@ namespace Game.Sim
             Frame += 1;
 
             // Reset positions and state for a new round.
-            if (GameMode == GameMode.Starting)
+            if (GameMode == GameMode.RoundEnd)
             {
                 for (int i = 0; i < Fighters.Length; i++)
                 {
@@ -99,8 +105,17 @@ namespace Game.Sim
                     FighterFacing facing = xPos > 0 ? FighterFacing.Left : FighterFacing.Right;
                     Fighters[i].RoundReset(new SVector2(xPos, sfloat.Zero), facing, characters[i]);
                 }
-                GameMode = GameMode.Fighting;
-                RoundEnd = Frame + config.RoundTimeTicks;
+                RoundStart = Frame;
+                GameMode = GameMode.Countdown;
+            }
+
+            if (GameMode == GameMode.Countdown)
+            {
+                if (Frame - RoundStart > config.RoundCountdownTicks) // Added an attribute to config for countdown.
+                {
+                    GameMode = GameMode.Fighting;
+                    RoundEnd = Frame + config.RoundTimeTicks;
+                }
             }
 
             // Push the current input into the input history, to read for buffering.
@@ -170,7 +185,18 @@ namespace Game.Sim
                         return;
                     }
 
-                    GameMode = GameMode.Starting;
+                    // Decide what victory indicator to give.
+                    if (Fighters[1 - i].Health == characters[i].Health)
+                    {
+                        Fighters[1 - i].Victories[Fighters[1 - i].amountVictories] = VictoryKind.Perfect;
+                    }
+                    else
+                    {
+                        Fighters[1 - i].Victories[Fighters[1 - i].amountVictories] = VictoryKind.Normal;
+                    }
+
+                    Fighters[1 - i].amountVictories++;
+                    GameMode = GameMode.RoundEnd;
                     // Ensure that if the player died to a mania attack it ends immediately
                     for (int j = 0; j < Manias.Length; j++)
                     {
