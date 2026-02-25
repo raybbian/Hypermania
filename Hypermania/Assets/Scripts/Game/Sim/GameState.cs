@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using Design.Animation;
 using Design.Configs;
+using Game.View.Overlay;
 using MemoryPack;
 using Netcode.Rollback;
 using UnityEngine;
@@ -187,11 +188,11 @@ namespace Game.Sim
                     // Decide what victory indicator to give.
                     if (Fighters[1 - i].Health == characters[i].Health)
                     {
-                        Fighters[1 - i].Victories[Fighters[1 - i].amountVictories] = 2;
+                        Fighters[1 - i].Victories[Fighters[1 - i].amountVictories] = VictoryKind.Perfect;
                     }
                     else
                     {
-                        Fighters[1 - i].Victories[Fighters[1 - i].amountVictories] = 1;
+                        Fighters[1 - i].Victories[Fighters[1 - i].amountVictories] = VictoryKind.Normal;
                     }
 
                     Fighters[1 - i].amountVictories++;

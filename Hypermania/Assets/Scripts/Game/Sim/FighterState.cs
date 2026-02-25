@@ -1,5 +1,6 @@
 using Design.Animation;
 using Design.Configs;
+using Game.View.Overlay;
 using MemoryPack;
 using Utils;
 using Utils.SoftFloat;
@@ -29,7 +30,7 @@ namespace Game.Sim
         public int Lives;
         public sfloat Burst;
         public int AirDashCount;
-        public byte[] Victories; // null = not yet won, 1 = normal win, 2 = perfect.
+        public VictoryKind[] Victories;
         public int amountVictories;
 
         public CharacterState State { get; private set; }
@@ -96,7 +97,7 @@ namespace Game.Sim
                 Lives = lives,
                 Burst = 0,
                 AirDashCount = 0,
-                Victories = new byte[lives],
+                Victories = new VictoryKind[lives],
                 amountVictories = 0,
             };
             return state;
