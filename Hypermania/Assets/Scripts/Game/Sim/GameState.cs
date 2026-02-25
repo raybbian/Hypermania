@@ -75,12 +75,39 @@ namespace Game.Sim
                     new ManiaConfig
                     {
                         NumKeys = 4,
-                        HitHalfRange = 8,
-                        MissHalfRange = 6,
+                        HitHalfRange = config.Input.BeatCancelWindow,
+                        MissHalfRange = config.Input.BeatCancelWindow + 3,
                     }
                 );
             }
             return state;
+        }
+
+        private void DoRoundEnd(CharacterConfig[] characters, Span<GameInput> outInputs)
+        {
+            for (int i = 0; i < Fighters.Length; i++)
+            {
+                Fighters[i].Health = characters[i].Health;
+                sfloat xPos = (i - ((sfloat)characters.Length - 1) / 2) * 4;
+                FighterFacing facing = xPos > 0 ? FighterFacing.Left : FighterFacing.Right;
+                Fighters[i].RoundReset(new SVector2(xPos, sfloat.Zero), facing, characters[i]);
+                outInputs[i] = GameInput.None;
+            }
+            RoundStart = Frame;
+            GameMode = GameMode.Countdown;
+        }
+
+        private void DoCountdown(GlobalConfig config, Span<GameInput> outInputs)
+        {
+            if (Frame - RoundStart >= config.RoundCountdownTicks) // Added an attribute to config for countdown.
+            {
+                GameMode = GameMode.Fighting;
+                RoundEnd = Frame + config.RoundTimeTicks;
+            }
+            for (int i = 0; i < Fighters.Length; i++)
+            {
+                outInputs[i] = GameInput.None;
+            }
         }
 
         public void Advance(
@@ -95,40 +122,31 @@ namespace Game.Sim
             }
             Frame += 1;
 
-            // Reset positions and state for a new round.
+            Span<GameInput> remapInputs = stackalloc GameInput[Fighters.Length];
             if (GameMode == GameMode.RoundEnd)
+            {
+                DoRoundEnd(characters, remapInputs);
+            }
+            else if (GameMode == GameMode.Countdown)
+            {
+                DoCountdown(config, remapInputs);
+            }
+            else if (GameMode == GameMode.Mania)
+            {
+                DoManiaStep(inputs, remapInputs);
+            }
+            else if (GameMode == GameMode.Fighting)
             {
                 for (int i = 0; i < Fighters.Length; i++)
                 {
-                    Fighters[i].Health = characters[i].Health;
-                    sfloat xPos = (i - ((sfloat)characters.Length - 1) / 2) * 4;
-                    FighterFacing facing = xPos > 0 ? FighterFacing.Left : FighterFacing.Right;
-                    Fighters[i].RoundReset(new SVector2(xPos, sfloat.Zero), facing, characters[i]);
-                }
-                RoundStart = Frame;
-                GameMode = GameMode.Countdown;
-            }
-
-            if (GameMode == GameMode.Countdown)
-            {
-                if (Frame - RoundStart > config.RoundCountdownTicks) // Added an attribute to config for countdown.
-                {
-                    GameMode = GameMode.Fighting;
-                    RoundEnd = Frame + config.RoundTimeTicks;
+                    remapInputs[i] = inputs[i].input;
                 }
             }
 
             // Push the current input into the input history, to read for buffering.
             for (int i = 0; i < Fighters.Length; i++)
             {
-                if (GameMode == GameMode.Fighting)
-                {
-                    Fighters[i].InputH.PushInput(inputs[i].input);
-                }
-                else
-                {
-                    Fighters[i].InputH.PushInput(GameInput.None);
-                }
+                Fighters[i].InputH.PushInput(remapInputs[i]);
             }
 
             for (int i = 0; i < Fighters.Length; i++)
@@ -152,11 +170,6 @@ namespace Game.Sim
             for (int i = 0; i < Fighters.Length; i++)
             {
                 Fighters[i].ApplyActiveState(Frame, characters[i], config);
-            }
-
-            if (GameMode == GameMode.Mania)
-            {
-                DoManiaStep(inputs);
             }
 
             DoCollisionStep(characters, config);
@@ -236,13 +249,12 @@ namespace Game.Sim
             return false;
         }
 
-        private void DoManiaStep((GameInput input, InputStatus status)[] inputs)
+        private void DoManiaStep((GameInput input, InputStatus status)[] inputs, Span<GameInput> outInputs)
         {
             for (int i = 0; i < Manias.Length; i++)
             {
                 List<ManiaEvent> maniaEvents = new List<ManiaEvent>();
                 Manias[i].Tick(Frame, inputs[i].input, maniaEvents);
-                // TODO: make note hits do something to the character here
 
                 foreach (ManiaEvent ev in maniaEvents)
                 {
@@ -250,6 +262,9 @@ namespace Game.Sim
                     {
                         case ManiaEventKind.End:
                             GameMode = GameMode.Fighting;
+                            break;
+                        case ManiaEventKind.Hit:
+                            outInputs[i].Flags |= ev.Note.HitInput;
                             break;
                     }
                 }
@@ -338,8 +353,17 @@ namespace Game.Sim
 
                         for (int i = 0; i < 16; i++)
                         {
-                            Manias[owners.Item1].QueueNote(i % 4, new ManiaNote { Length = 0, Tick = nextBeat });
-                            nextBeat = config.Audio.NextBeat(nextBeat + 1, AudioConfig.BeatSubdivision.EighthNote);
+                            Manias[owners.Item1]
+                                .QueueNote(
+                                    i % 4,
+                                    new ManiaNote
+                                    {
+                                        Length = 0,
+                                        Tick = nextBeat,
+                                        HitInput = InputFlags.MediumAttack,
+                                    }
+                                );
+                            nextBeat = config.Audio.NextBeat(nextBeat + 1, AudioConfig.BeatSubdivision.QuarterNote);
                         }
                         Manias[owners.Item1].Enable(nextBeat);
                         GameMode = GameMode.Mania;

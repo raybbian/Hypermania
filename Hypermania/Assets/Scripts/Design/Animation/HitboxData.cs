@@ -94,7 +94,7 @@ namespace Design.Animation
     public class FrameData
     {
         public List<BoxData> Boxes = new List<BoxData>();
-        public FrameType FrameType;
+        public FrameType FrameType = FrameType.Neutral;
 
         public FrameData Clone()
         {
@@ -152,10 +152,7 @@ namespace Design.Animation
 
         public FrameData GetFrame(int tick)
         {
-            if (tick < 0 || tick >= TotalTicks)
-            {
-                return null;
-            }
+            tick = Mathf.Clamp(tick, 0, TotalTicks - 1);
             return Frames[tick];
         }
 

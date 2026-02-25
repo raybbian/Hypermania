@@ -11,6 +11,7 @@ namespace Game.Sim
         public int Id;
         public Frame Tick;
         public int Length;
+        public InputFlags HitInput;
     }
 
     // Each channel for ManiaView (up, down, left, right)

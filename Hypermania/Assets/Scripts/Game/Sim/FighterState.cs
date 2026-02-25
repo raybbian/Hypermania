@@ -2,8 +2,10 @@ using Design.Animation;
 using Design.Configs;
 using Game.View.Overlay;
 using MemoryPack;
+using UnityEngine;
 using Utils;
 using Utils.SoftFloat;
+using static Design.Configs.AudioConfig;
 
 namespace Game.Sim
 {
@@ -143,9 +145,9 @@ namespace Game.Sim
             return FighterLocation.Grounded;
         }
 
-        public void SetState(CharacterState nextState, Frame start, Frame end)
+        public void SetState(CharacterState nextState, Frame start, Frame end, bool forceChange = false)
         {
-            if (State != nextState)
+            if (State != nextState || forceChange)
             {
                 State = nextState;
                 StateStart = start;
@@ -320,13 +322,27 @@ namespace Game.Sim
                 }
             }
 
+            FrameData frameData = characterConfig.GetFrameData(State, frame - StateStart);
+            bool isOnBeat = config.Audio.BeatWithinWindow(
+                frame,
+                BeatSubdivision.QuarterNote,
+                windowFrames: config.Input.BeatCancelWindow
+            );
+            bool beatCancelEligible = frameData.FrameType == FrameType.Recovery && isOnBeat;
+
             bool dashCancelEligible =
                 ((frame + config.ForwardDashCancelAfterTicks >= StateEnd) && State == CharacterState.ForwardDash)
                 || ((frame + config.BackDashCancelAfterTicks >= StateEnd) && State == CharacterState.BackDash);
 
-            if (!Actionable && !dashCancelEligible)
+            if (!Actionable && !dashCancelEligible && !beatCancelEligible)
             {
                 return;
+            }
+
+            Frame startFrame = frame;
+            if (!Actionable && beatCancelEligible)
+            {
+                startFrame = config.Audio.ClosestBeat(frame, BeatSubdivision.QuarterNote);
             }
 
             if (InputH.PressedRecently(InputFlags.LightAttack, config.Input.InputBufferWindow))
@@ -338,8 +354,9 @@ namespace Game.Sim
                             Velocity = SVector2.zero;
                             SetState(
                                 CharacterState.LightAttack,
-                                frame,
-                                frame + characterConfig.GetHitboxData(CharacterState.LightAttack).TotalTicks
+                                startFrame,
+                                startFrame + characterConfig.GetHitboxData(CharacterState.LightAttack).TotalTicks,
+                                true
                             );
                         }
                         break;
@@ -347,8 +364,9 @@ namespace Game.Sim
                         {
                             SetState(
                                 CharacterState.LightAerial,
-                                frame,
-                                frame + characterConfig.GetHitboxData(CharacterState.LightAerial).TotalTicks
+                                startFrame,
+                                startFrame + characterConfig.GetHitboxData(CharacterState.LightAerial).TotalTicks,
+                                true
                             );
                         }
                         break;
@@ -363,8 +381,9 @@ namespace Game.Sim
                             Velocity = SVector2.zero;
                             SetState(
                                 CharacterState.MediumAttack,
-                                frame,
-                                frame + characterConfig.GetHitboxData(CharacterState.MediumAttack).TotalTicks
+                                startFrame,
+                                startFrame + characterConfig.GetHitboxData(CharacterState.MediumAttack).TotalTicks,
+                                true
                             );
                         }
                         break;
@@ -379,14 +398,20 @@ namespace Game.Sim
                             Velocity = SVector2.zero;
                             SetState(
                                 CharacterState.SuperAttack,
-                                frame,
-                                frame + characterConfig.GetHitboxData(CharacterState.SuperAttack).TotalTicks
+                                startFrame,
+                                startFrame + characterConfig.GetHitboxData(CharacterState.SuperAttack).TotalTicks,
+                                true
                             );
                         }
                         break;
                 }
             }
-            else if (InputH.IsHeld(ForwardInput) && dashCancelEligible && State == CharacterState.ForwardDash)
+            else if (
+                dashCancelEligible
+                && InputH.IsHeld(ForwardInput)
+                && dashCancelEligible
+                && State == CharacterState.ForwardDash
+            )
             {
                 SetState(CharacterState.Running, frame, Frame.Infinity);
             }

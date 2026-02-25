@@ -12,6 +12,7 @@ namespace Design.Configs
         public int DashWindow;
         public int SuperJumpWindow;
         public int InputBufferWindow;
+        public int BeatCancelWindow;
     }
 
     [CreateAssetMenu(menuName = "Hypermania/Global Config")]
