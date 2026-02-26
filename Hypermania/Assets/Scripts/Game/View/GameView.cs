@@ -42,6 +42,7 @@ namespace Game.View
             public VfxManager VfxManager;
             public FrameDataOverlay FrameDataOverlay;
             public RoundCountdownView RoundCountdownView;
+            public HypeBarView HypeBarView;
         }
 
         public FighterView[] Fighters => _fighters;
@@ -136,6 +137,7 @@ namespace Game.View
                 _rollbackStart = Frame.NullFrame;
             }
             _params.FrameDataOverlay.AddFrameData(state, _characters, config.Audio);
+            _params.HypeBarView.SetHype(state.HypeMeter);
         }
 
         public void RollbackRender(in GameState state)
