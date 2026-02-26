@@ -14,5 +14,6 @@ namespace Game.Sim
     {
         public HitKind Kind;
         public BoxProps Props;
+        public int HitstopFrames;
     }
 }

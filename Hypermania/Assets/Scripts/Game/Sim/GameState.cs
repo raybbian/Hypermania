@@ -44,6 +44,7 @@ namespace Game.Sim
         public FighterState[] Fighters;
         public ManiaState[] Manias;
         public GameMode GameMode;
+        public int HitstopFramesRemaining;
 
         /// <summary>
         /// Use this static builder instead of the constructor for creating new GameStates. This is because MemoryPack,
@@ -60,6 +61,7 @@ namespace Game.Sim
             state.Fighters = new FighterState[characters.Length];
             state.Manias = new ManiaState[characters.Length];
             state.GameMode = GameMode.Fighting;
+            state.HitstopFramesRemaining = 0;
             for (int i = 0; i < characters.Length; i++)
             {
                 sfloat xPos = i - ((sfloat)characters.Length - 1) / 2;
@@ -86,6 +88,22 @@ namespace Game.Sim
             if (inputs.Length != characters.Length || characters.Length != Fighters.Length)
             {
                 throw new InvalidOperationException("invalid inputs and characters to advance game state with");
+            }
+            if (HitstopFramesRemaining != 0)
+            {
+                    for (int i = 0; i < Fighters.Length; i++)
+                {
+                    if (GameMode == GameMode.Fighting)
+                    {
+                        Fighters[i].InputH.PushInput(inputs[i].input);
+                    }
+                    else
+                    {
+                        Fighters[i].InputH.PushInput(GameInput.None);
+                    }
+                }
+                HitstopFramesRemaining--;
+                return;
             }
             Frame += 1;
 
@@ -303,6 +321,10 @@ namespace Game.Sim
                 {
                     //owners[0] hits owners[1]
                     HitOutcome outcome = HandleCollision(collision, config, characters);
+                    if (outcome.Kind == HitKind.Hit || outcome.Kind == HitKind.Blocked) // hitstop for blocks?
+                    {
+                        HitstopFramesRemaining = outcome.HitstopFrames;
+                    }
                     var attackerBox = collision.BoxA.Owner == owners.Item1 ? collision.BoxA : collision.BoxB;
                     //to start a rhythm combo, we must sure that the move was not traded
                     if (

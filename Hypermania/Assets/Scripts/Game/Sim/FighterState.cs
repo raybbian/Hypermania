@@ -1,3 +1,4 @@
+using System.Collections;
 using Design.Animation;
 using Design.Configs;
 using MemoryPack;
@@ -115,10 +116,10 @@ namespace Game.Sim
 
         public void DoFrameStart(GlobalConfig config)
         {
-            //if (Actionable)
-            //{
-            //    ComboedCount = 0;
-            //}
+            if (Actionable)
+            {
+                ComboedCount = 0;
+            }
             HitLocation = SVector2.zero;
             HitProps = new BoxProps();
             if (Location(config) == FighterLocation.Grounded)
@@ -445,7 +446,7 @@ namespace Game.Sim
                 StateEnd = frame + props.BlockstunTicks + 1;
                 ImmunityEnd = frame + 7;
                 // TODO: check if other move is special, if so apply chip
-                return new HitOutcome { Kind = HitKind.Blocked };
+                return new HitOutcome { Kind = HitKind.Blocked, HitstopFrames = 6 };
             }
 
             State = CharacterState.Hit;
@@ -464,7 +465,18 @@ namespace Game.Sim
             Velocity = props.Knockback;
 
             ComboedCount++;
-            return new HitOutcome { Kind = HitKind.Hit, Props = props };
+            
+            switch (props.AttackKind)
+            {
+                case AttackKind.Low:
+                    return new HitOutcome { Kind = HitKind.Hit, Props = props, HitstopFrames = 6 };
+                case AttackKind.Medium:
+                    return new HitOutcome { Kind = HitKind.Hit, Props = props, HitstopFrames = 8 };
+                case AttackKind.Overhead:
+                    return new HitOutcome { Kind = HitKind.Hit, Props = props, HitstopFrames = 10 };
+                default :
+                    return new HitOutcome { Kind = HitKind.Hit, Props = props };
+            }
         }
 
         public void ApplyClank(Frame frame, GlobalConfig config)
