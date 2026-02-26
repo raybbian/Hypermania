@@ -68,6 +68,8 @@ namespace Game.View.Overlay
         private float[] _spectrum;
         private Vector3 _diskBaseScale;
         private float _shadowTargetHealth;
+        private int _prevComboCount;
+        private float _prevHealth;
 
         void Awake()
         {
@@ -88,11 +90,6 @@ namespace Game.View.Overlay
             _healthSlider.value = health;
         }
 
-        public void SetShadowHealth(float health)
-        {
-            _shadowTargetHealth = health;
-        }
-
         public void SetMaxShadowHealth(float health)
         {
             _healthShadowSlider.maxValue = health;
@@ -100,14 +97,19 @@ namespace Game.View.Overlay
             _shadowTargetHealth = health;
         }
 
-        public bool IsDraining()
+        public void SetCombo(int combo, int health)
         {
-            return _healthShadowSlider.value > _shadowTargetHealth;
-        }
-
-        public void SnapShadowHealth()
-        {
-            _healthShadowSlider.value = _shadowTargetHealth;
+            if (_prevComboCount > 0 && combo == 0) // if combo ends
+            {
+                _shadowTargetHealth = health;
+            }
+            if (combo > _prevComboCount && _healthShadowSlider.value > _shadowTargetHealth) // character hit while shadow bar is draining
+            {
+                _healthShadowSlider.value = _shadowTargetHealth;
+                _shadowTargetHealth = _prevHealth;
+            }
+            _prevHealth = health;
+            _prevComboCount = combo;
         }
 
         void Update()

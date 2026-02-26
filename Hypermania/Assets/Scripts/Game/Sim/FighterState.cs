@@ -115,10 +115,10 @@ namespace Game.Sim
 
         public void DoFrameStart(GlobalConfig config)
         {
-            if (Actionable)
-            {
-                ComboedCount = 0;
-            }
+            //if (Actionable)
+            //{
+            //    ComboedCount = 0;
+            //}
             HitLocation = SVector2.zero;
             HitProps = new BoxProps();
             if (Location(config) == FighterLocation.Grounded)
