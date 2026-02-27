@@ -1,3 +1,4 @@
+using System.Collections;
 using Design.Animation;
 using Design.Configs;
 using Game.View.Overlay;
@@ -306,7 +307,7 @@ namespace Game.Sim
             }
         }
 
-        public void ApplyActiveState(Frame frame, CharacterConfig characterConfig, GlobalConfig config)
+        public void ApplyActiveState(Frame frame, Frame realFrame, CharacterConfig characterConfig, GlobalConfig config)
         {
             if (State == CharacterState.Hit)
             {
@@ -324,7 +325,7 @@ namespace Game.Sim
 
             FrameData frameData = characterConfig.GetFrameData(State, frame - StateStart);
             bool isOnBeat = config.Audio.BeatWithinWindow(
-                frame,
+                realFrame,
                 BeatSubdivision.QuarterNote,
                 windowFrames: config.Input.BeatCancelWindow
             );
@@ -342,7 +343,8 @@ namespace Game.Sim
             Frame startFrame = frame;
             if (!Actionable && beatCancelEligible)
             {
-                startFrame = config.Audio.ClosestBeat(frame, BeatSubdivision.QuarterNote);
+                int frameDiff = config.Audio.ClosestBeat(frame, BeatSubdivision.QuarterNote) - realFrame;
+                startFrame += frameDiff;
             }
 
             if (InputH.PressedRecently(InputFlags.LightAttack, config.Input.InputBufferWindow))
