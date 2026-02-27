@@ -163,6 +163,8 @@ namespace Design.Animation
 
         public FrameData GetFrame(int tick)
         {
+            if (Frames == null || Frames.Count == 0)
+                return null;
             tick = Mathf.Clamp(tick, 0, TotalTicks - 1);
             return Frames[tick];
         }
