@@ -989,7 +989,7 @@ SpriteRenderer:
   m_SortingLayerID: -1444139175
   m_SortingLayer: -2
   m_SortingOrder: 35
-  m_Sprite: {fileID: 4484856245817790684, guid: 14222601f6de24887b62d652b9754d37, type: 3}
+  m_Sprite: {fileID: 3630524337317286325, guid: 14222601f6de24887b62d652b9754d37, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2769,7 +2769,7 @@ SpriteRenderer:
   m_SortingLayerID: -1444139175
   m_SortingLayer: -2
   m_SortingOrder: 8
-  m_Sprite: {fileID: -1152731787922967705, guid: 14222601f6de24887b62d652b9754d37, type: 3}
+  m_Sprite: {fileID: 3201017651555180104, guid: 14222601f6de24887b62d652b9754d37, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -3628,7 +3628,7 @@ SpriteRenderer:
   m_SortingLayerID: -1444139175
   m_SortingLayer: -2
   m_SortingOrder: 19
-  m_Sprite: {fileID: 9002981598624474483, guid: 14222601f6de24887b62d652b9754d37, type: 3}
+  m_Sprite: {fileID: -8871295176491831246, guid: 14222601f6de24887b62d652b9754d37, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -3902,7 +3902,7 @@ SpriteRenderer:
   m_SortingLayerID: -1444139175
   m_SortingLayer: -2
   m_SortingOrder: 9
-  m_Sprite: {fileID: -3173419459271100997, guid: 14222601f6de24887b62d652b9754d37, type: 3}
+  m_Sprite: {fileID: 496760487275173898, guid: 14222601f6de24887b62d652b9754d37, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -4267,7 +4267,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7465665398735221178}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.011854398, w: 0.9999297}
+  m_LocalRotation: {x: -0, y: -0, z: -0.011854633, w: 0.9999297}
   m_LocalPosition: {x: 0.4317595, y: -0.000006353614, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4743,7 +4743,7 @@ SpriteRenderer:
   m_SortingLayerID: -1444139175
   m_SortingLayer: -2
   m_SortingOrder: 28
-  m_Sprite: {fileID: 1626734877231556628, guid: 14222601f6de24887b62d652b9754d37, type: 3}
+  m_Sprite: {fileID: -4309669537955753529, guid: 14222601f6de24887b62d652b9754d37, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -4769,6 +4769,7 @@ MonoBehaviour:
   m_RootBone: {fileID: 4217807302454724545}
   m_BoneTransforms:
   - {fileID: 4229723411060116953}
+  - {fileID: 3239751068026203513}
   m_Bounds:
     m_Center: {x: 27.171576, y: 23.638657, z: 0}
     m_Extent: {x: 1.224741, y: 0.9969797, z: 0}
@@ -6731,7 +6732,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -6524092281346244289, guid: 14222601f6de24887b62d652b9754d37, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.0000014798931
+      value: -0.0000012454374
       objectReference: {fileID: 0}
     - target: {fileID: -5519831956026390999, guid: 14222601f6de24887b62d652b9754d37, type: 3}
       propertyPath: m_IsActive

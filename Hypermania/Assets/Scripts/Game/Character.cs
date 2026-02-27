@@ -8,6 +8,7 @@ namespace Game
         ForwardWalk = 1,
         BackWalk = 28,
         Jump = 2,
+        PreJump = 29,
         Idle = 3,
         Knockdown = 4,
         LightAttack = 5,

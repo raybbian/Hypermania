@@ -40,7 +40,7 @@ MonoBehaviour:
     values:
     - {fileID: 11400000, guid: b3afc991f416967e5b3e636cd58f772a, type: 2}
     - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 11400000, guid: 77993e6206ae5d42280c665e746df5b1, type: 2}
     - {fileID: 11400000, guid: 6935d7dcf4841d9cf948ff0efee3d2cb, type: 2}
     - {fileID: 0}
     - {fileID: 11400000, guid: 0fdef0c6d04a9f2f594bed51a1cbfde4, type: 2}
@@ -50,6 +50,8 @@ MonoBehaviour:
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 11400000, guid: 0d95c1ae31236b6b8a26cd6e3243d85c, type: 2}
+    - {fileID: 0}
+    - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}

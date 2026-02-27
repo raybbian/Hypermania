@@ -514,8 +514,13 @@ MonoBehaviour:
       m_Sprite: {fileID: -7335706615576534919, guid: 14222601f6de24887b62d652b9754d37, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -7335706615576534919, guid: 14222601f6de24887b62d652b9754d37, type: 3}
+    - m_Name: torso_lean_down
+      m_Hash: 963526702
+      m_Sprite: {fileID: -7691308212568808085, guid: 14222601f6de24887b62d652b9754d37, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -7691308212568808085, guid: 14222601f6de24887b62d652b9754d37, type: 3}
     m_FromMain: 0
-    m_EntryOverrideCount: 5
+    m_EntryOverrideCount: 6
   - m_Name: L_leg
     m_Hash: 48104700
     m_CategoryList: []
@@ -692,5 +697,5 @@ MonoBehaviour:
     m_FromMain: 0
     m_EntryOverrideCount: 1
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 639058543218888152
+  m_ModificationHash: 639077450910047128
   m_Version: 1
