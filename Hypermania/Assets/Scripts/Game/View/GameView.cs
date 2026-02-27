@@ -43,6 +43,7 @@ namespace Game.View
             public VfxManager VfxManager;
             public FrameDataOverlay FrameDataOverlay;
             public RoundCountdownView RoundCountdownView;
+            public HypeBarView HypeBarView;
         }
 
         public FighterView[] Fighters => _fighters;
@@ -87,6 +88,7 @@ namespace Game.View
                 _playerParams[i].HealthBarView.SetMaxHealth((float)characters[i].Health);
                 _playerParams[i].BurstBarView.SetMaxBurst((float)characters[i].BurstMax);
             }
+            _params.HypeBarView.SetMaxHype((float)config.MaxHype);
             _conductor.Init(config.Audio);
             _rollbackStart = Frame.NullFrame;
         }
@@ -137,6 +139,7 @@ namespace Game.View
                 _params.VfxManager.InvalidateAndConsume(_rollbackStart, state.SimFrame);
                 _rollbackStart = Frame.NullFrame;
             }
+            _params.HypeBarView.SetHype((float)state.HypeMeter);
             _params.FrameDataOverlay.AddFrameData(state, config, _characters, config.Audio);
         }
 
