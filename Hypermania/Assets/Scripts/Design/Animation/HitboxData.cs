@@ -29,6 +29,7 @@ namespace Design.Animation
         public int Damage;
         public int HitstunTicks;
         public int BlockstunTicks;
+        public int HitstopTicks;
         public bool StartsRhythmCombo;
         public SVector2 Knockback;
 
@@ -39,12 +40,22 @@ namespace Design.Animation
             && Damage == other.Damage
             && BlockstunTicks == other.BlockstunTicks
             && Knockback == other.Knockback
-            && StartsRhythmCombo == other.StartsRhythmCombo;
+            && StartsRhythmCombo == other.StartsRhythmCombo
+            && HitstopTicks == other.HitstopTicks;
 
         public override bool Equals(object obj) => obj is BoxProps other && Equals(other);
 
         public override int GetHashCode() =>
-            HashCode.Combine(Kind, AttackKind, HitstunTicks, Damage, BlockstunTicks, StartsRhythmCombo, Knockback);
+            HashCode.Combine(
+                Kind,
+                AttackKind,
+                HitstunTicks,
+                Damage,
+                BlockstunTicks,
+                StartsRhythmCombo,
+                Knockback,
+                HitstopTicks
+            );
 
         public static bool operator ==(BoxProps a, BoxProps b) => a.Equals(b);
 

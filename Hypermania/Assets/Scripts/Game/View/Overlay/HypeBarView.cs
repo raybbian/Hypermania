@@ -7,16 +7,15 @@ namespace Game.View.Overlay
     {
         [SerializeField]
         private Slider _slider;
-        public float maxValue;
 
         public void SetMaxHype(float hype)
         {
-            _slider.maxValue = hype;
+            _slider.maxValue = 2 * hype;
         }
 
         public void SetHype(float hype)
         {
-            float normalizedHype = (hype + maxValue) / (2 * maxValue);
+            float normalizedHype = hype + _slider.maxValue / 2;
             _slider.value = normalizedHype;
         }
     }

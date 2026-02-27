@@ -32,6 +32,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -57,6 +58,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -82,6 +84,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -107,6 +110,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -132,6 +136,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -155,6 +160,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -178,6 +184,7 @@ MonoBehaviour:
         Damage: 5
         HitstunTicks: 12
         BlockstunTicks: 0
+        HitstopTicks: 7
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -203,6 +210,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -226,6 +234,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -249,6 +258,7 @@ MonoBehaviour:
         Damage: 5
         HitstunTicks: 12
         BlockstunTicks: 0
+        HitstopTicks: 7
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -274,6 +284,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -297,6 +308,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -320,6 +332,7 @@ MonoBehaviour:
         Damage: 5
         HitstunTicks: 12
         BlockstunTicks: 0
+        HitstopTicks: 7
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -345,6 +358,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -368,6 +382,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -391,6 +406,7 @@ MonoBehaviour:
         Damage: 5
         HitstunTicks: 12
         BlockstunTicks: 0
+        HitstopTicks: 7
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -416,6 +432,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -439,6 +456,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -462,6 +480,7 @@ MonoBehaviour:
         Damage: 5
         HitstunTicks: 12
         BlockstunTicks: 0
+        HitstopTicks: 7
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -487,6 +506,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -512,6 +532,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -537,6 +558,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -562,6 +584,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -587,6 +610,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
@@ -612,6 +636,7 @@ MonoBehaviour:
         Damage: 0
         HitstunTicks: 0
         BlockstunTicks: 0
+        HitstopTicks: 0
         StartsRhythmCombo: 0
         Knockback:
           x:
