@@ -1,6 +1,7 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using Design.Animation;
@@ -49,6 +50,7 @@ namespace Game.Sim
         public Frame RoundEnd;
         public FighterState[] Fighters;
         public ManiaState[] Manias;
+        public sfloat HypeMeter;
         public GameMode GameMode;
         public int HitstopFramesRemaining;
 
@@ -70,6 +72,7 @@ namespace Game.Sim
                 Fighters = new FighterState[characters.Length],
                 Manias = new ManiaState[characters.Length],
                 HitstopFramesRemaining = 0,
+                HypeMeter = (sfloat)0f,
                 GameMode = GameMode.Countdown,
             };
             for (int i = 0; i < characters.Length; i++)
@@ -99,6 +102,7 @@ namespace Game.Sim
                 Fighters[i].RoundReset(new SVector2(xPos, sfloat.Zero), facing, characters[i]);
                 outInputs[i] = GameInput.None;
             }
+            HypeMeter = (sfloat)0.0f;
             RoundStart = SimFrame;
             GameMode = GameMode.Countdown;
         }
@@ -148,6 +152,7 @@ namespace Game.Sim
                     remapInputs[i] = inputs[i].input;
                 }
             }
+
             // Push the current input into the input history, to read for buffering.
             for (int i = 0; i < Fighters.Length; i++)
             {
@@ -235,6 +240,15 @@ namespace Game.Sim
             for (int i = 0; i < Fighters.Length; i++)
             {
                 Fighters[i].UpdatePosition(config);
+            }
+
+            // Update hype if they are holding forward
+            for (int i = 0; i < Fighters.Length; i++)
+            {
+                if (Fighters[i].InputH.IsHeld(Fighters[i].ForwardInput))
+                {
+                    UpdateHype(config, i, config.HypeMovementFactor);
+                }
             }
 
             // If the fighter is now on the ground, apply aerial cancels
@@ -355,6 +369,13 @@ namespace Game.Sim
                     HitstopFramesRemaining = Mathsf.Max(outcome.Props.HitstopTicks, HitstopFramesRemaining);
 
                     var attackerBox = collision.BoxA.Owner == owners.Item1 ? collision.BoxA : collision.BoxB;
+
+                    if (outcome.Kind == HitKind.Hit)
+                    {
+                        sfloat damage = outcome.Props.Damage;
+                        UpdateHype(config, attackerBox.Owner, damage);
+                    }
+
                     //to start a rhythm combo, we must sure that the move was not traded
                     if (
                         attackerBox.Data.StartsRhythmCombo
@@ -397,6 +418,19 @@ namespace Game.Sim
 
             // Clear the physics context for the next frame, which will then re-add boxes and solve for collisions again
             PhysicsCtx.Clear();
+        }
+
+        private void UpdateHype(GlobalConfig config, int handle, sfloat damage)
+        {
+            if (handle == 0)
+            {
+                HypeMeter += damage;
+            }
+            else
+            {
+                HypeMeter -= damage;
+            }
+            HypeMeter = Mathsf.Clamp(HypeMeter, -config.MaxHype, config.MaxHype);
         }
 
         private HitOutcome HandleCollision(

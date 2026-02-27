@@ -32,6 +32,8 @@ namespace Design.Configs
         public sfloat SuperJumpMultiplier = (sfloat)1.25f;
         public int RoundTimeTicks = 10800;
         public int RoundCountdownTicks = 180;
+        public sfloat MaxHype = 100;
+        public sfloat HypeMovementFactor = (sfloat)0.3f;
 
         [SerializeField]
         private InputConfig _inputConfig;
