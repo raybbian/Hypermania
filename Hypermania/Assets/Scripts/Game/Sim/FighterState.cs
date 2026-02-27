@@ -52,6 +52,8 @@ namespace Game.Sim
         public BoxProps HitProps { get; private set; }
         public SVector2 HitLocation { get; private set; }
 
+        public SVector2 StoredJumpVelocity;
+
         public bool IsAerial =>
             State == CharacterState.LightAerial
             || State == CharacterState.MediumAerial
@@ -64,11 +66,12 @@ namespace Game.Sim
             || State == CharacterState.ForwardDash
             || State == CharacterState.BackDash;
 
-        public bool Actionable =>
+        public bool Actionable => State == CharacterState.Jump || GroundedActionable;
+
+        public bool GroundedActionable =>
             State == CharacterState.Idle
             || State == CharacterState.ForwardWalk
             || State == CharacterState.BackWalk
-            || State == CharacterState.Jump
             || State == CharacterState.Running
             || State == CharacterState.Crouch;
 
@@ -158,7 +161,6 @@ namespace Game.Sim
 
         public void FaceTowards(SVector2 location)
         {
-            // can only switch locations if in idle/walking
             if (State != CharacterState.Idle && State != CharacterState.ForwardWalk && State != CharacterState.BackWalk)
             {
                 return;
@@ -183,6 +185,13 @@ namespace Game.Sim
                 {
                     Velocity.x = 0;
                 }
+                else if (State == CharacterState.PreJump)
+                {
+                    Velocity = StoredJumpVelocity;
+                    StoredJumpVelocity = SVector2.zero;
+                    SetState(CharacterState.Jump, frame, Frame.Infinity);
+                    return;
+                }
                 SetState(CharacterState.Idle, frame, Frame.Infinity);
             }
         }
@@ -195,32 +204,36 @@ namespace Game.Sim
             }
             sfloat runMult = State == CharacterState.Running ? config.RunningSpeedMultiplier : (sfloat)1f;
 
-            if (Location(config) == FighterLocation.Grounded)
+            if (GroundedActionable)
             {
                 if (InputH.IsHeld(InputFlags.Up))
                 {
                     // Jump
                     if (InputH.PressedAndReleasedRecently(InputFlags.Down, config.Input.SuperJumpWindow))
                     {
-                        Velocity.y = characterConfig.JumpVelocity * config.SuperJumpMultiplier;
+                        StoredJumpVelocity.y = characterConfig.JumpVelocity * config.SuperJumpMultiplier;
                     }
                     else
                     {
-                        Velocity.y = characterConfig.JumpVelocity;
+                        StoredJumpVelocity.y = characterConfig.JumpVelocity;
                     }
                     if (InputH.IsHeld(ForwardInput))
                     {
-                        Velocity.x = ForwardVector.x * characterConfig.ForwardSpeed * runMult;
+                        StoredJumpVelocity.x = ForwardVector.x * characterConfig.ForwardSpeed * runMult;
                     }
                     else if (InputH.IsHeld(BackwardInput))
                     {
-                        Velocity.x = BackwardVector.x * characterConfig.BackSpeed;
+                        StoredJumpVelocity.x = BackwardVector.x * characterConfig.BackSpeed;
                     }
                     else
                     {
-                        Velocity.x = 0;
+                        StoredJumpVelocity.x = 0;
                     }
-                    SetState(CharacterState.Jump, frame, Frame.Infinity);
+                    SetState(
+                        CharacterState.PreJump,
+                        frame,
+                        frame + characterConfig.GetHitboxData(CharacterState.PreJump).TotalTicks
+                    );
                     return;
                 }
 
@@ -274,7 +287,7 @@ namespace Game.Sim
                     return;
                 }
             }
-            else if (Location(config) == FighterLocation.Airborne)
+            else if (State == CharacterState.Jump)
             {
                 if (
                     InputH.IsHeld(ForwardInput)
@@ -458,14 +471,20 @@ namespace Game.Sim
 
         public void ApplyAerialCancel(Frame frame, GlobalConfig config)
         {
-            if (!IsAerial)
+            if (Location(config) != FighterLocation.Grounded)
             {
                 return;
             }
-            // TODO: apply some landing lag here
-            if (Location(config) == FighterLocation.Grounded)
+            if (IsAerial)
+            {
+                // TODO: apply some landing lag here
+                SetState(CharacterState.Idle, frame, Frame.Infinity);
+                return;
+            }
+            if (State == CharacterState.Jump)
             {
                 SetState(CharacterState.Idle, frame, Frame.Infinity);
+                return;
             }
         }
 
