@@ -12,6 +12,7 @@ namespace Design.Configs
         public int DashWindow;
         public int SuperJumpWindow;
         public int InputBufferWindow;
+        public int BeatCancelWindow;
     }
 
     [CreateAssetMenu(menuName = "Hypermania/Global Config")]
@@ -28,7 +29,9 @@ namespace Design.Configs
         public int BackDashTicks = 15;
         public int BackAirDashTicks = 15;
         public sfloat RunningSpeedMultiplier = 2;
+        public sfloat SuperJumpMultiplier = (sfloat)1.25f;
         public int RoundTimeTicks = 10800;
+        public int RoundCountdownTicks = 180;
 
         [SerializeField]
         private InputConfig _inputConfig;

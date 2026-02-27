@@ -94,14 +94,14 @@ namespace Game.View.Overlay
 
         public void AddFrameData(in GameState state, CharacterConfig[] characterConfigs, AudioConfig audioConfig)
         {
-            if (state.Frame == Frame.NullFrame)
+            if (state.SimFrame == Frame.NullFrame)
             {
                 return;
             }
-            int baseIdx = state.Frame.No % _numColumns;
+            int baseIdx = state.SimFrame.No % _numColumns;
             for (int i = 0; i < 2; i++)
             {
-                _cells[i, baseIdx].SetType(state.Frame, state.Fighters[i], characterConfigs[i]);
+                _cells[i, baseIdx].SetType(state.SimFrame, state.Fighters[i], characterConfigs[i]);
                 _consecText[i, baseIdx].gameObject.SetActive(false);
                 int prevIdx = (baseIdx + _numColumns - 1) % _numColumns;
 
@@ -120,7 +120,7 @@ namespace Game.View.Overlay
 
             _curFrameBar.GetComponent<RectTransform>().anchoredPosition = new Vector2((baseIdx + 1) * _cellWidth, 0f);
 
-            if (audioConfig.BeatWithinWindow(state.Frame, AudioConfig.BeatSubdivision.QuarterNote, 0))
+            if (audioConfig.BeatWithinWindow(state.SimFrame, AudioConfig.BeatSubdivision.QuarterNote, 0))
             {
                 _cells[2, baseIdx].SetType(FrameType.Active);
             }

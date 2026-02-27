@@ -1,9 +1,12 @@
 using System.Collections;
 using Design.Animation;
 using Design.Configs;
+using Game.View.Overlay;
 using MemoryPack;
+using UnityEngine;
 using Utils;
 using Utils.SoftFloat;
+using static Design.Configs.AudioConfig;
 
 namespace Game.Sim
 {
@@ -30,6 +33,8 @@ namespace Game.Sim
         public int Lives;
         public sfloat Burst;
         public int AirDashCount;
+        public VictoryKind[] Victories;
+        public int amountVictories;
 
         public CharacterState State { get; private set; }
         public Frame StateStart { get; private set; }
@@ -61,9 +66,11 @@ namespace Game.Sim
 
         public bool Actionable =>
             State == CharacterState.Idle
-            || State == CharacterState.Walk
+            || State == CharacterState.ForwardWalk
+            || State == CharacterState.BackWalk
             || State == CharacterState.Jump
-            || State == CharacterState.Running;
+            || State == CharacterState.Running
+            || State == CharacterState.Crouch;
 
         public SVector2 ForwardVector => FacingDir == FighterFacing.Left ? SVector2.left : SVector2.right;
         public SVector2 BackwardVector => FacingDir == FighterFacing.Left ? SVector2.right : SVector2.left;
@@ -93,6 +100,8 @@ namespace Game.Sim
                 Lives = lives,
                 Burst = 0,
                 AirDashCount = 0,
+                Victories = new VictoryKind[lives],
+                amountVictories = 0,
             };
             return state;
         }
@@ -137,10 +146,20 @@ namespace Game.Sim
             return FighterLocation.Grounded;
         }
 
+        public void SetState(CharacterState nextState, Frame start, Frame end, bool forceChange = false)
+        {
+            if (State != nextState || forceChange)
+            {
+                State = nextState;
+                StateStart = start;
+                StateEnd = end;
+            }
+        }
+
         public void FaceTowards(SVector2 location)
         {
             // can only switch locations if in idle/walking
-            if (State != CharacterState.Idle && State != CharacterState.Walk)
+            if (State != CharacterState.Idle && State != CharacterState.ForwardWalk && State != CharacterState.BackWalk)
             {
                 return;
             }
@@ -164,71 +183,95 @@ namespace Game.Sim
                 {
                     Velocity.x = 0;
                 }
-                State = CharacterState.Idle;
-                StateStart = frame;
-                StateEnd = Frame.Infinity;
+                SetState(CharacterState.Idle, frame, Frame.Infinity);
             }
         }
 
-        public void ApplyMovementIntent(Frame frame, CharacterConfig characterConfig, GlobalConfig config)
+        public void ApplyMovementState(Frame frame, CharacterConfig characterConfig, GlobalConfig config)
         {
             if (!Actionable)
             {
                 return;
             }
+            sfloat runMult = State == CharacterState.Running ? config.RunningSpeedMultiplier : (sfloat)1f;
+
             if (Location(config) == FighterLocation.Grounded)
             {
-                Velocity.x = 0;
+                if (InputH.IsHeld(InputFlags.Up))
+                {
+                    // Jump
+                    if (InputH.PressedAndReleasedRecently(InputFlags.Down, config.Input.SuperJumpWindow))
+                    {
+                        Velocity.y = characterConfig.JumpVelocity * config.SuperJumpMultiplier;
+                    }
+                    else
+                    {
+                        Velocity.y = characterConfig.JumpVelocity;
+                    }
+                    if (InputH.IsHeld(ForwardInput))
+                    {
+                        Velocity.x = ForwardVector.x * characterConfig.ForwardSpeed * runMult;
+                    }
+                    else if (InputH.IsHeld(BackwardInput))
+                    {
+                        Velocity.x = BackwardVector.x * characterConfig.BackSpeed;
+                    }
+                    else
+                    {
+                        Velocity.x = 0;
+                    }
+                    SetState(CharacterState.Jump, frame, Frame.Infinity);
+                    return;
+                }
+
+                if (InputH.IsHeld(InputFlags.Down))
+                {
+                    // Crouch
+                    Velocity.x = 0;
+                    SetState(CharacterState.Crouch, frame, Frame.Infinity);
+                    return;
+                }
+
+                if (InputH.IsHeld(ForwardInput))
+                {
+                    Velocity.x = ForwardVector.x * characterConfig.ForwardSpeed * runMult;
+
+                    CharacterState nxtState =
+                        State == CharacterState.Running ? CharacterState.Running : CharacterState.ForwardWalk;
+                    SetState(nxtState, frame, Frame.Infinity);
+                }
+                else if (InputH.IsHeld(BackwardInput))
+                {
+                    Velocity.x = BackwardVector.x * characterConfig.BackSpeed;
+
+                    SetState(CharacterState.BackWalk, frame, Frame.Infinity);
+                }
+                else
+                {
+                    Velocity.x = 0;
+
+                    SetState(CharacterState.Idle, frame, Frame.Infinity);
+                }
 
                 if (
                     InputH.IsHeld(ForwardInput)
                     && InputH.PressedAndReleasedRecently(ForwardInput, config.Input.DashWindow, 1)
                 )
                 {
-                    State = CharacterState.ForwardDash;
-                    StateEnd = frame + config.ForwardDashTicks;
-                    StateStart = frame;
                     Velocity.x = ForwardVector.x * (characterConfig.ForwardDashDistance / config.ForwardDashTicks);
+
+                    SetState(CharacterState.ForwardDash, frame, frame + config.ForwardDashTicks);
                     return;
                 }
-
                 if (
                     InputH.IsHeld(BackwardInput)
                     && InputH.PressedAndReleasedRecently(BackwardInput, config.Input.DashWindow, 1)
                 )
                 {
-                    State = CharacterState.BackDash;
-                    StateEnd = frame + config.BackDashTicks;
-                    StateStart = frame;
                     Velocity.x = BackwardVector.x * characterConfig.BackDashDistance / config.BackDashTicks;
+
+                    SetState(CharacterState.BackDash, frame, frame + config.BackDashTicks);
                     return;
-                }
-
-                // prevent jump from taking run multiplier
-                sfloat runMult =
-                    State == CharacterState.Running && !InputH.IsHeld(InputFlags.Up)
-                        ? config.RunningSpeedMultiplier
-                        : sfloat.One;
-
-                if (InputH.IsHeld(ForwardInput))
-                {
-                    Velocity.x += ForwardVector.x * characterConfig.ForwardSpeed * runMult;
-                }
-                if (InputH.IsHeld(BackwardInput))
-                {
-                    Velocity.x += BackwardVector.x * characterConfig.BackSpeed;
-                }
-
-                if (InputH.IsHeld(InputFlags.Up))
-                {
-                    if (InputH.PressedRecently(InputFlags.Down, config.Input.SuperJumpWindow))
-                    {
-                        Velocity.y = (sfloat)1.25 * characterConfig.JumpVelocity;
-                    }
-                    else
-                    {
-                        Velocity.y = characterConfig.JumpVelocity;
-                    }
                 }
             }
             else if (Location(config) == FighterLocation.Airborne)
@@ -240,12 +283,11 @@ namespace Game.Sim
                 )
                 {
                     AirDashCount += 1;
-                    State = CharacterState.ForwardAirDash;
-                    StateEnd = frame + config.ForwardAirDashTicks;
-                    StateStart = frame;
                     Velocity.x =
                         ForwardVector.x * (characterConfig.ForwardAirDashDistance / config.ForwardAirDashTicks);
                     Velocity.y = 0;
+
+                    SetState(CharacterState.ForwardAirDash, frame, frame + config.ForwardAirDashTicks);
                     return;
                 }
 
@@ -256,37 +298,53 @@ namespace Game.Sim
                 )
                 {
                     AirDashCount += 1;
-                    State = CharacterState.BackAirDash;
-                    StateEnd = frame + config.BackAirDashTicks;
-                    StateStart = frame;
                     Velocity.x = BackwardVector.x * (characterConfig.BackAirDashDistance / config.BackAirDashTicks);
                     Velocity.y = 0;
+
+                    SetState(CharacterState.BackAirDash, frame, frame + config.BackAirDashTicks);
                     return;
                 }
             }
         }
 
-        public void ApplyActiveState(Frame frame, CharacterConfig characterConfig, GlobalConfig config)
+        public void ApplyActiveState(Frame frame, Frame realFrame, CharacterConfig characterConfig, GlobalConfig config)
         {
             if (State == CharacterState.Hit)
             {
                 if (InputH.IsHeld(InputFlags.Burst))
                 {
                     Burst = 0;
-                    State = CharacterState.Burst;
-                    StateStart = frame;
-                    StateEnd = StateStart + characterConfig.GetHitboxData(State).TotalTicks;
+                    SetState(
+                        CharacterState.Burst,
+                        frame,
+                        frame + characterConfig.GetHitboxData(CharacterState.Burst).TotalTicks
+                    );
                     // TODO: apply knockback to other player (this should be a hitbox on a burst animation with large kb)
                 }
             }
+
+            FrameData frameData = characterConfig.GetFrameData(State, frame - StateStart);
+            bool isOnBeat = config.Audio.BeatWithinWindow(
+                realFrame,
+                BeatSubdivision.QuarterNote,
+                windowFrames: config.Input.BeatCancelWindow
+            );
+            bool beatCancelEligible = frameData.FrameType == FrameType.Recovery && isOnBeat;
 
             bool dashCancelEligible =
                 ((frame + config.ForwardDashCancelAfterTicks >= StateEnd) && State == CharacterState.ForwardDash)
                 || ((frame + config.BackDashCancelAfterTicks >= StateEnd) && State == CharacterState.BackDash);
 
-            if (!Actionable && !dashCancelEligible)
+            if (!Actionable && !dashCancelEligible && !beatCancelEligible)
             {
                 return;
+            }
+
+            Frame startFrame = frame;
+            if (!Actionable && beatCancelEligible)
+            {
+                int frameDiff = config.Audio.ClosestBeat(frame, BeatSubdivision.QuarterNote) - realFrame;
+                startFrame += frameDiff;
             }
 
             if (InputH.PressedRecently(InputFlags.LightAttack, config.Input.InputBufferWindow))
@@ -296,16 +354,22 @@ namespace Game.Sim
                     case FighterLocation.Grounded:
                         {
                             Velocity = SVector2.zero;
-                            State = CharacterState.LightAttack;
-                            StateStart = frame;
-                            StateEnd = StateStart + characterConfig.GetHitboxData(State).TotalTicks;
+                            SetState(
+                                CharacterState.LightAttack,
+                                startFrame,
+                                startFrame + characterConfig.GetHitboxData(CharacterState.LightAttack).TotalTicks,
+                                true
+                            );
                         }
                         break;
                     case FighterLocation.Airborne:
                         {
-                            State = CharacterState.LightAerial;
-                            StateStart = frame;
-                            StateEnd = StateStart + characterConfig.GetHitboxData(State).TotalTicks;
+                            SetState(
+                                CharacterState.LightAerial,
+                                startFrame,
+                                startFrame + characterConfig.GetHitboxData(CharacterState.LightAerial).TotalTicks,
+                                true
+                            );
                         }
                         break;
                 }
@@ -317,9 +381,12 @@ namespace Game.Sim
                     case FighterLocation.Grounded:
                         {
                             Velocity = SVector2.zero;
-                            State = CharacterState.MediumAttack;
-                            StateStart = frame;
-                            StateEnd = StateStart + characterConfig.GetHitboxData(State).TotalTicks;
+                            SetState(
+                                CharacterState.MediumAttack,
+                                startFrame,
+                                startFrame + characterConfig.GetHitboxData(CharacterState.MediumAttack).TotalTicks,
+                                true
+                            );
                         }
                         break;
                 }
@@ -331,18 +398,24 @@ namespace Game.Sim
                     case FighterLocation.Grounded:
                         {
                             Velocity = SVector2.zero;
-                            State = CharacterState.SuperAttack;
-                            StateStart = frame;
-                            StateEnd = StateStart + characterConfig.GetHitboxData(State).TotalTicks;
+                            SetState(
+                                CharacterState.SuperAttack,
+                                startFrame,
+                                startFrame + characterConfig.GetHitboxData(CharacterState.SuperAttack).TotalTicks,
+                                true
+                            );
                         }
                         break;
                 }
             }
-            else if (InputH.IsHeld(ForwardInput) && dashCancelEligible && State == CharacterState.ForwardDash)
+            else if (
+                dashCancelEligible
+                && InputH.IsHeld(ForwardInput)
+                && dashCancelEligible
+                && State == CharacterState.ForwardDash
+            )
             {
-                State = CharacterState.Running;
-                StateStart = frame;
-                StateEnd = Frame.Infinity;
+                SetState(CharacterState.Running, frame, Frame.Infinity);
             }
         }
 
@@ -392,9 +465,7 @@ namespace Game.Sim
             // TODO: apply some landing lag here
             if (Location(config) == FighterLocation.Grounded)
             {
-                State = CharacterState.Idle;
-                StateStart = frame;
-                StateEnd = Frame.Infinity;
+                SetState(CharacterState.Idle, frame, Frame.Infinity);
             }
         }
 
@@ -441,19 +512,21 @@ namespace Game.Sim
             if (blockSuccess)
             {
                 // True: Crouch blocking, False: Stand blocking
-                State = holdingDown ? CharacterState.BlockCrouch : CharacterState.BlockStand;
-                StateStart = frame;
-                StateEnd = frame + props.BlockstunTicks + 1;
+                SetState(
+                    holdingDown ? CharacterState.BlockCrouch : CharacterState.BlockStand,
+                    frame,
+                    frame + props.BlockstunTicks + 1
+                );
+
                 ImmunityEnd = frame + 7;
                 // TODO: check if other move is special, if so apply chip
-                return new HitOutcome { Kind = HitKind.Blocked, HitstopFrames = 6 };
+                return new HitOutcome { Kind = HitKind.Blocked };
             }
 
-            State = CharacterState.Hit;
-            StateStart = frame;
             // Apply Hit/collision stuff is done after the player is actionable, so if the player needs to be
             // inactionable for "one more frame"
-            StateEnd = frame + props.HitstunTicks + 1;
+            SetState(CharacterState.Hit, frame, frame + props.HitstunTicks + 1);
+
             // TODO: fixme, just to prevent multi hit
             ImmunityEnd = frame + 7;
             // TODO: if high enough, go knockdown
@@ -465,61 +538,16 @@ namespace Game.Sim
             Velocity = props.Knockback;
 
             ComboedCount++;
-            
-            switch (props.AttackKind)
-            {
-                case AttackKind.Low:
-                    return new HitOutcome { Kind = HitKind.Hit, Props = props, HitstopFrames = 6 };
-                case AttackKind.Medium:
-                    return new HitOutcome { Kind = HitKind.Hit, Props = props, HitstopFrames = 8 };
-                case AttackKind.Overhead:
-                    return new HitOutcome { Kind = HitKind.Hit, Props = props, HitstopFrames = 10 };
-                default :
-                    return new HitOutcome { Kind = HitKind.Hit, Props = props };
-            }
+            return new HitOutcome { Kind = HitKind.Hit, Props = props };
         }
 
         public void ApplyClank(Frame frame, GlobalConfig config)
         {
-            State = CharacterState.Hit;
-            StateStart = frame;
             // Apply Hit/collision stuff is done after the player is actionable, so if the player needs to be
             // inactionable for "one more frame"
-            StateEnd = frame + config.ClankTicks + 1;
-            Velocity = SVector2.zero;
-        }
+            SetState(CharacterState.Hit, frame, frame + config.ClankTicks + 1);
 
-        public void ApplyMovementState(Frame frame, GlobalConfig config)
-        {
-            if (
-                (State == CharacterState.Idle || State == CharacterState.Walk || State == CharacterState.Running)
-                && Location(config) == FighterLocation.Airborne
-            )
-            {
-                State = CharacterState.Jump;
-                StateStart = frame;
-                StateEnd = Frame.Infinity;
-            }
-            else if (
-                (State == CharacterState.Idle || State == CharacterState.Jump)
-                && Velocity.magnitude > (sfloat)0.01f
-                && Location(config) == FighterLocation.Grounded
-            )
-            {
-                State = CharacterState.Walk;
-                StateStart = frame;
-                StateEnd = Frame.Infinity;
-            }
-            else if (
-                (State == CharacterState.Walk || State == CharacterState.Jump || State == CharacterState.Running)
-                && Velocity.magnitude < (sfloat)0.01f
-                && Location(config) == FighterLocation.Grounded
-            )
-            {
-                State = CharacterState.Idle;
-                StateStart = frame;
-                StateEnd = Frame.Infinity;
-            }
+            Velocity = SVector2.zero;
         }
     }
 }

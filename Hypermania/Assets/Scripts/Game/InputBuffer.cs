@@ -25,7 +25,12 @@ namespace Game
             _controlScheme = _controlsConfig.GetControlScheme();
         }
 
-        InputFlags input = InputFlags.None;
+        private InputFlags _input = InputFlags.None;
+        private static (InputFlags dir, InputFlags opp)[] _dirPairs =
+        {
+            (InputFlags.Left, InputFlags.Right),
+            (InputFlags.Up, InputFlags.Down),
+        };
 
         public void Saturate()
         {
@@ -49,19 +54,29 @@ namespace Game
                     )
                 )
                 {
-                    input |= flag;
+                    _input |= flag;
+                }
+            }
+
+            // clean inputs: cancel directionals
+            foreach ((InputFlags dir, InputFlags opp) in _dirPairs)
+            {
+                if ((_input & dir) != 0 && (_input & opp) != 0)
+                {
+                    _input &= ~dir;
+                    _input &= ~opp;
                 }
             }
         }
 
         public void Clear()
         {
-            input = InputFlags.None;
+            _input = InputFlags.None;
         }
 
         public GameInput Poll()
         {
-            return new GameInput(input);
+            return new GameInput(_input);
         }
     }
 }

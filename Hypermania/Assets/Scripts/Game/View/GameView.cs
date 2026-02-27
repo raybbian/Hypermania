@@ -28,6 +28,7 @@ namespace Game.View
             public HealthBarView HealthBarView;
             public ManiaView ManiaView;
             public ComboCountView ComboCountView;
+            public VictoryMarkView VictoryMarkView;
         }
 
         [Serializable]
@@ -41,6 +42,7 @@ namespace Game.View
             public SfxManager SfxManager;
             public VfxManager VfxManager;
             public FrameDataOverlay FrameDataOverlay;
+            public RoundCountdownView RoundCountdownView;
         }
 
         public FighterView[] Fighters => _fighters;
@@ -93,10 +95,10 @@ namespace Game.View
         {
             for (int i = 0; i < _characters.Length; i++)
             {
-                _fighters[i].Render(state.Frame, state.Fighters[i]);
-                _playerParams[i].ManiaView.Render(state.Frame, state.Manias[i]);
+                _fighters[i].Render(state.SimFrame, state.Fighters[i]);
+                _playerParams[i].ManiaView.Render(state.RealFrame, state.Manias[i]);
             }
-            _conductor.RequestSlice(state.Frame);
+            _conductor.RequestSlice(state.RealFrame);
 
             List<Vector2> interestPoints = new List<Vector2>();
             for (int i = 0; i < _characters.Length; i++)
@@ -112,6 +114,7 @@ namespace Game.View
             {
                 _playerParams[i].HealthBarView.SetHealth((int)state.Fighters[i].Health);
                 _playerParams[i].BurstBarView.SetBurst((int)state.Fighters[i].Burst);
+                _playerParams[i].VictoryMarkView.SetVictories(state.Fighters[i].Victories, (i == 0 ? -1 : 1));
             }
 
             _params.CameraControl.UpdateCamera(interestPoints, _zoom);
@@ -124,13 +127,14 @@ namespace Game.View
                 _playerParams[i ^ 1].HealthBarView.SetCombo(combo, (int)state.Fighters[i ^ 1].Health);
             }
             _params.InfoOverlayView.Render(overlayDetails);
-            _params.RoundTimerView.DisplayRoundTimer(state.Frame, state.RoundEnd);
+            _params.RoundCountdownView.DisplayRoundCD(state.SimFrame, state.RoundStart, config);
+            _params.RoundTimerView.DisplayRoundTimer(state.SimFrame, state.RoundEnd, state.GameMode, config);
 
             if (_rollbackStart != Frame.NullFrame)
             {
-                _params.SfxManager.InvalidateAndConsume(_rollbackStart, state.Frame);
-                _params.CameraShakeManager.InvalidateAndConsume(_rollbackStart, state.Frame);
-                _params.VfxManager.InvalidateAndConsume(_rollbackStart, state.Frame);
+                _params.SfxManager.InvalidateAndConsume(_rollbackStart, state.SimFrame);
+                _params.CameraShakeManager.InvalidateAndConsume(_rollbackStart, state.SimFrame);
+                _params.VfxManager.InvalidateAndConsume(_rollbackStart, state.SimFrame);
                 _rollbackStart = Frame.NullFrame;
             }
             _params.FrameDataOverlay.AddFrameData(state, _characters, config.Audio);
@@ -141,7 +145,7 @@ namespace Game.View
             // gather all sfx from states in the current rollback process
             if (_rollbackStart == Frame.NullFrame)
             {
-                _rollbackStart = state.Frame;
+                _rollbackStart = state.SimFrame;
             }
             DoViewEvents(state);
         }
@@ -151,14 +155,14 @@ namespace Game.View
             // TODO: refactor me, im thinking some listener pattern
             for (int i = 0; i < _characters.Length; i++)
             {
-                _fighters[i].RollbackRender(state.Frame, state.Fighters[i], _params.VfxManager, _params.SfxManager);
-                if (state.Fighters[i].State == CharacterState.Hit && state.Frame == state.Fighters[i].StateStart)
+                _fighters[i].RollbackRender(state.SimFrame, state.Fighters[i], _params.VfxManager, _params.SfxManager);
+                if (state.Fighters[i].State == CharacterState.Hit && state.SimFrame == state.Fighters[i].StateStart)
                 {
                     _params.SfxManager.AddDesired(
                         new ViewEvent<SfxEvent>
                         {
                             Event = new SfxEvent { Kind = SfxKind.MediumPunch },
-                            StartFrame = state.Frame,
+                            StartFrame = state.SimFrame,
                             Hash = i,
                         }
                     );
@@ -174,7 +178,7 @@ namespace Game.View
                                     NumBounces = 10,
                                     KnockbackVector = (Vector2)state.Fighters[i].Velocity,
                                 },
-                                StartFrame = state.Frame,
+                                StartFrame = state.SimFrame,
                                 Hash = i,
                             }
                         );

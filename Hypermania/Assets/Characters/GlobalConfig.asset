@@ -27,11 +27,15 @@ MonoBehaviour:
   BackAirDashTicks: 15
   RunningSpeedMultiplier:
     rawValue: 1073741824
+  SuperJumpMultiplier:
+    rawValue: 1067450368
   RoundTimeTicks: 10800
+  RoundCountdownTicks: 180
   _inputConfig:
     DashWindow: 12
     SuperJumpWindow: 8
     InputBufferWindow: 8
+    BeatCancelWindow: 3
   _audioConfig: {fileID: 11400000, guid: 390bdf2077e7858679ef87c91e25471c, type: 2}
   _configs:
     values:

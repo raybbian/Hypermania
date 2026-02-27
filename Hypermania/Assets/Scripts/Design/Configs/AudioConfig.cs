@@ -39,23 +39,20 @@ namespace Design.Configs
             );
         }
 
-        public bool BeatWithinWindow(Frame frame, BeatSubdivision subdivision, int windowFrames)
+        public Frame ClosestBeat(Frame frame, BeatSubdivision subdivision)
         {
+            int framesSinceFirstBeat = frame - FirstMusicalBeat;
             sfloat framesPerSubdivision =
                 FramesPerBeat * ((sfloat)(int)BeatSubdivision.QuarterNote / (sfloat)(int)subdivision);
-            int framesSinceFirstBeat = frame - FirstMusicalBeat;
-            // if we havent gotten to first beat yet, then no alignment so far
-            if (framesSinceFirstBeat < 0)
-            {
-                return false;
-            }
-
-            int nearestBeatOffset = Mathsf.RoundToInt(
-                Mathsf.RoundToInt(framesSinceFirstBeat / framesPerSubdivision) * framesPerSubdivision
+            return new Frame(
+                Mathsf.RoundToInt(Mathsf.RoundToInt(framesSinceFirstBeat / framesPerSubdivision) * framesPerSubdivision)
             );
+        }
 
-            int distanceToNearestBeat = Mathsf.Abs(framesSinceFirstBeat - nearestBeatOffset);
-
+        public bool BeatWithinWindow(Frame frame, BeatSubdivision subdivision, int windowFrames)
+        {
+            Frame beatFrame = ClosestBeat(frame, subdivision);
+            int distanceToNearestBeat = Mathsf.Abs(frame - beatFrame);
             bool isInWindow = distanceToNearestBeat <= windowFrames;
             return isInWindow;
         }
