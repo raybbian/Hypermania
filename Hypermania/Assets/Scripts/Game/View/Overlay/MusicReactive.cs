@@ -6,9 +6,6 @@ namespace Game.View.Overlay
     public class MusicReactive : MonoBehaviour
     {
         [SerializeField]
-        private Transform _object;
-
-        [SerializeField]
         private AudioSource _audioSource;
 
         // FFT
@@ -24,13 +21,6 @@ namespace Game.View.Overlay
 
         [SerializeField]
         private float _bassHighHz = 180f;
-
-        // Scaling
-        [SerializeField]
-        private float _scaleBase = 1.0f;
-
-        [SerializeField]
-        private float _scaleRange = 0.35f;
 
         [SerializeField]
         private float _floorFollow = 0.5f; // slower = more stable baseline
@@ -51,16 +41,14 @@ namespace Game.View.Overlay
         private float _peak = 0.00002f;
         private float _smoothed;
         private float[] _spectrum;
-        private Vector3 _baseScale;
 
         void Awake()
         {
-            _baseScale = _object.localScale;
             _fftSize = Mathf.ClosestPowerOfTwo(Mathf.Clamp(_fftSize, 64, 8192));
             _spectrum = new float[_fftSize];
         }
 
-        void Update()
+        public float GetMusicValue()
         {
             _audioSource.GetSpectrumData(_spectrum, 0, _fftWindow);
 
@@ -84,9 +72,7 @@ namespace Game.View.Overlay
             // Smooth output (attack/release)
             float rate = (norm > _smoothed) ? _attack : _release;
             _smoothed = Mathf.Lerp(_smoothed, norm, 1f - Mathf.Exp(-rate * Time.deltaTime));
-
-            float s = _scaleBase + _smoothed * _scaleRange;
-            _object.transform.localScale = _baseScale * s;
+            return _smoothed;
         }
 
         private static float ComputeBandEnergy(float[] spectrum, float lowHz, float highHz, int sampleRate)

@@ -2242,18 +2242,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6297387434524917342, guid: b05e2d1e1cd7f8154b89157e168d00eb, type: 3}
-      propertyPath: lerpSpeed
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 6827902151193863170, guid: b05e2d1e1cd7f8154b89157e168d00eb, type: 3}
-      propertyPath: lerpSpeed
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 6827902151193863170, guid: b05e2d1e1cd7f8154b89157e168d00eb, type: 3}
-      propertyPath: _audioSource
-      value: 
-      objectReference: {fileID: 2114326936}
     - target: {fileID: 7433304162675645364, guid: b05e2d1e1cd7f8154b89157e168d00eb, type: 3}
       propertyPath: _audioSource
       value: 

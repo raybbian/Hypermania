@@ -7,7 +7,7 @@ namespace Game.View.Overlay
     {
         [Header("UI")]
         [SerializeField]
-        private GameObject _disk;
+        private Transform _disk;
 
         [SerializeField]
         private Slider _healthSlider;
@@ -15,9 +15,11 @@ namespace Game.View.Overlay
         [SerializeField]
         private Slider _healthShadowSlider;
 
-        [Header("Spin")]
         [SerializeField]
         private float _diskSpinSpeed = 90f;
+
+        [SerializeField]
+        private float _diskScaleRange = 0.35f;
 
         [SerializeField]
         private float lerpSpeed = 30f; // heatlh bar shadow update smoothness, higher = faster
@@ -25,6 +27,12 @@ namespace Game.View.Overlay
         private float _shadowTargetHealth;
         private int _prevComboCount;
         private float _prevHealth;
+        private Vector3 _baseScale;
+
+        public void Awake()
+        {
+            _baseScale = _disk.localScale;
+        }
 
         public void SetMaxHealth(float health)
         {
@@ -62,7 +70,9 @@ namespace Game.View.Overlay
 
         void Update()
         {
-            _disk.transform.Rotate(0f, 0f, _diskSpinSpeed * Time.deltaTime);
+            _disk.Rotate(0f, 0f, _diskSpinSpeed * Time.deltaTime);
+            _disk.localScale =
+                _baseScale + Vector3.one * GetComponent<MusicReactive>().GetMusicValue() * _diskScaleRange;
 
             _healthShadowSlider.value = Mathf.MoveTowards(
                 _healthShadowSlider.value,
