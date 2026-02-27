@@ -137,7 +137,7 @@ namespace Game.View
                 _params.VfxManager.InvalidateAndConsume(_rollbackStart, state.SimFrame);
                 _rollbackStart = Frame.NullFrame;
             }
-            _params.FrameDataOverlay.AddFrameData(state, _characters, config.Audio);
+            _params.FrameDataOverlay.AddFrameData(state, config, _characters, config.Audio);
         }
 
         public void RollbackRender(in GameState state)

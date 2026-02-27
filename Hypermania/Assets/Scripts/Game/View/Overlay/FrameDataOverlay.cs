@@ -92,7 +92,12 @@ namespace Game.View.Overlay
             }
         }
 
-        public void AddFrameData(in GameState state, CharacterConfig[] characterConfigs, AudioConfig audioConfig)
+        public void AddFrameData(
+            in GameState state,
+            GlobalConfig config,
+            CharacterConfig[] characterConfigs,
+            AudioConfig audioConfig
+        )
         {
             if (state.SimFrame == Frame.NullFrame)
             {
@@ -120,7 +125,13 @@ namespace Game.View.Overlay
 
             _curFrameBar.GetComponent<RectTransform>().anchoredPosition = new Vector2((baseIdx + 1) * _cellWidth, 0f);
 
-            if (audioConfig.BeatWithinWindow(state.SimFrame, AudioConfig.BeatSubdivision.QuarterNote, 0))
+            if (
+                audioConfig.BeatWithinWindow(
+                    state.RealFrame,
+                    AudioConfig.BeatSubdivision.QuarterNote,
+                    config.Input.BeatCancelWindow
+                )
+            )
             {
                 _cells[2, baseIdx].SetType(FrameType.Active);
             }
