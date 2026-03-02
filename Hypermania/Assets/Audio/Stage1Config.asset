@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de3229c5d597546899a91cad77c46b83, type: 3}
   m_Name: Stage1Config
   m_EditorClassIdentifier: 
-  BPM: 158
+  BPM:
+    rawValue: 1126039552
   AudioClip: {fileID: 8300000, guid: 7eaa589c8e014834e9cff995a2d85c77, type: 3}

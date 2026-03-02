@@ -15,8 +15,8 @@ public sealed class NoFloatDoubleInGameSimAnalyzer : DiagnosticAnalyzer
 
     private static readonly DiagnosticDescriptor Rule = new(
         id: DiagnosticId,
-        title: "Disallow float/double in Game.Sim",
-        messageFormat: "Type '{0}' is not allowed in namespace Game.Sim",
+        title: "Disallow float/double in Game.Sim or Design.Configs",
+        messageFormat: "Type '{0}' is not allowed in namespace Game.Sim or Design.Configs",
         category: "Determinism",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -25,7 +25,7 @@ public sealed class NoFloatDoubleInGameSimAnalyzer : DiagnosticAnalyzer
     private static readonly DiagnosticDescriptor MathfRule = new(
         id: MathfDiagnosticId,
         title: "Disallow Mathf in Game.Sim",
-        messageFormat: "Use of '{0}' is not allowed in namespace Game.Sim",
+        messageFormat: "Use of '{0}' is not allowed in namespace Game.Sim or Design.Configs",
         category: "Determinism",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true
@@ -65,7 +65,10 @@ public sealed class NoFloatDoubleInGameSimAnalyzer : DiagnosticAnalyzer
     private static bool IsInTargetNamespace(ISymbol symbol)
     {
         var ns = symbol.ContainingNamespace?.ToDisplayString() ?? "";
-        return ns == "Game.Sim" || ns.StartsWith("Game.Sim.");
+        return ns == "Game.Sim"
+            || ns.StartsWith("Game.Sim.")
+            || ns == "Design.Configs"
+            || ns.StartsWith("Design.Configs.");
     }
 
     private static bool IsInTargetNamespace(OperationAnalysisContext context, SyntaxNode node)

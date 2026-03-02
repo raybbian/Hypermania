@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Design;
+using Design.Configs;
 using Game.View.Events;
 using UnityEngine;
-using Utils;
 
 namespace Game.View
 {

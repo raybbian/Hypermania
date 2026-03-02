@@ -143,7 +143,7 @@ namespace Game.Runners
                 }
             }
 
-            if (_session.ConfirmedState().FightersDead())
+            if (_session.ConfirmedFrame() != Frame.NullFrame && _session.ConfirmedState().FightersDead())
             {
                 DeInit();
                 return;

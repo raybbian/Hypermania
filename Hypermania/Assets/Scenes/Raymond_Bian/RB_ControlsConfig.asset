@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25c40c74260407c44937a7a045857c43, type: 3}
+  m_Name: RB_ControlsConfig
+  m_EditorClassIdentifier: 
+  _controlScheme:
+    values:
+    - _primaryKey: 0
+      _altKey: 0
+    - _primaryKey: 37
+      _altKey: 0
+    - _primaryKey: 33
+      _altKey: 0
+    - _primaryKey: 15
+      _altKey: 0
+    - _primaryKey: 18
+      _altKey: 0
+    - _primaryKey: 24
+      _altKey: 0
+    - _primaryKey: 25
+      _altKey: 0
+    - _primaryKey: 26
+      _altKey: 0
+    - _primaryKey: 23
+      _altKey: 0
+    - _primaryKey: 29
+      _altKey: 0
+    - _primaryKey: 15
+      _altKey: 0
+    - _primaryKey: 33
+      _altKey: 0
+    - _primaryKey: 18
+      _altKey: 0
+    - _primaryKey: 24
+      _altKey: 0
+    - _primaryKey: 25
+      _altKey: 0
+    - _primaryKey: 26
+      _altKey: 0

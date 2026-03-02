@@ -8,6 +8,7 @@ namespace Game.View.Events.Vfx
     public enum VfxKind
     {
         Block,
+        DashDust,
     }
 
     [Serializable]

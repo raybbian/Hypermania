@@ -159,6 +159,9 @@ namespace Design.Animation.MoveBuilder.Editors
                 if (GUILayout.Button("Paste Frame (Ctrl Shift V)"))
                     m.PasteFrameDataToCurrentFrame();
             }
+
+            EditorGUILayout.Space(6);
+            frame.FrameType = (FrameType)EditorGUILayout.EnumPopup("Frame Type", frame.FrameType);
         }
 
         private void DrawBoxList(MoveBuilderModel m)
@@ -209,6 +212,7 @@ namespace Design.Animation.MoveBuilder.Editors
                 p.Damage = EditorGUILayout.IntField("Damage", p.Damage);
                 p.HitstunTicks = EditorGUILayout.IntField("Hitstun (ticks)", p.HitstunTicks);
                 p.BlockstunTicks = EditorGUILayout.IntField("Blockstun (ticks)", p.BlockstunTicks);
+                p.HitstopTicks = EditorGUILayout.IntField("Hitstop Ticks", p.HitstopTicks);
                 p.Knockback = SFloatGUI.Field("Knockback", p.Knockback);
                 p.StartsRhythmCombo = EditorGUILayout.Toggle("Starts rhythm combo", p.StartsRhythmCombo);
             }

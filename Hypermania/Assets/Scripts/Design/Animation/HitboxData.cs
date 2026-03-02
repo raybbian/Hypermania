@@ -29,6 +29,7 @@ namespace Design.Animation
         public int Damage;
         public int HitstunTicks;
         public int BlockstunTicks;
+        public int HitstopTicks;
         public bool StartsRhythmCombo;
         public SVector2 Knockback;
 
@@ -39,12 +40,22 @@ namespace Design.Animation
             && Damage == other.Damage
             && BlockstunTicks == other.BlockstunTicks
             && Knockback == other.Knockback
-            && StartsRhythmCombo == other.StartsRhythmCombo;
+            && StartsRhythmCombo == other.StartsRhythmCombo
+            && HitstopTicks == other.HitstopTicks;
 
         public override bool Equals(object obj) => obj is BoxProps other && Equals(other);
 
         public override int GetHashCode() =>
-            HashCode.Combine(Kind, AttackKind, HitstunTicks, Damage, BlockstunTicks, StartsRhythmCombo, Knockback);
+            HashCode.Combine(
+                Kind,
+                AttackKind,
+                HitstunTicks,
+                Damage,
+                BlockstunTicks,
+                StartsRhythmCombo,
+                Knockback,
+                HitstopTicks
+            );
 
         public static bool operator ==(BoxProps a, BoxProps b) => a.Equals(b);
 
@@ -80,10 +91,21 @@ namespace Design.Animation
         public static bool operator !=(BoxData left, BoxData right) => !left.Equals(right);
     }
 
+    public enum FrameType
+    {
+        Neutral,
+        Startup,
+        Active,
+        Recovery,
+        Hitstun,
+        Blockstun,
+    }
+
     [Serializable]
     public class FrameData
     {
         public List<BoxData> Boxes = new List<BoxData>();
+        public FrameType FrameType = FrameType.Neutral;
 
         public FrameData Clone()
         {
@@ -94,6 +116,7 @@ namespace Design.Animation
             else
                 copy.Boxes = new List<BoxData>();
 
+            copy.FrameType = FrameType;
             return copy;
         }
 
@@ -102,6 +125,7 @@ namespace Design.Animation
             Boxes.Clear();
             if (other?.Boxes != null)
                 Boxes.AddRange(other.Boxes);
+            FrameType = other.FrameType;
         }
 
         public override int GetHashCode()
@@ -112,6 +136,7 @@ namespace Design.Animation
             {
                 hc.Add(Boxes[j]);
             }
+            hc.Add(FrameType);
             return hc.ToHashCode();
         }
     }
@@ -138,10 +163,9 @@ namespace Design.Animation
 
         public FrameData GetFrame(int tick)
         {
-            if (tick < 0 || tick >= TotalTicks)
-            {
+            if (Frames == null || Frames.Count == 0)
                 return null;
-            }
+            tick = Mathf.Clamp(tick, 0, TotalTicks - 1);
             return Frames[tick];
         }
 

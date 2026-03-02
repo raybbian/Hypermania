@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Design;
+using Design.Configs;
 using Game;
 using UnityEngine;
 using Utils;

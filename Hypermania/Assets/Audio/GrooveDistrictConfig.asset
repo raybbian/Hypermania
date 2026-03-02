@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de3229c5d597546899a91cad77c46b83, type: 3}
   m_Name: GrooveDistrictConfig
   m_EditorClassIdentifier: 
-  BPM: 125
+  BPM:
+    rawValue: 1123680256
   AudioClip: {fileID: 8300000, guid: e64b37391f68957318008ef403992a38, type: 3}

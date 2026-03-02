@@ -10,7 +10,7 @@ namespace Game.View.Events.Vfx
         public override void StartEffect(ViewEvent<VfxEvent> ev)
         {
             transform.position = new Vector3(ev.Event.Position.x, ev.Event.Position.y, transform.position.z);
-            transform.rotation = Quaternion.FromToRotation(Vector3.right, -ev.Event.KnockbackVector);
+            transform.rotation = Quaternion.FromToRotation(Vector3.right, -ev.Event.Direction);
             Animator animator = GetComponent<Animator>();
             animator.Play(_startStateName);
         }

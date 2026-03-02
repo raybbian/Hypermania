@@ -8,7 +8,7 @@ namespace Game.View.Events.Vfx
     {
         public VfxKind Kind;
         public Vector2 Position;
-        public Vector2 KnockbackVector;
+        public Vector2 Direction;
 
         public bool Equals(VfxEvent other)
         {

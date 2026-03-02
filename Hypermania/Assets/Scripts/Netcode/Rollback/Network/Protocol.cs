@@ -244,12 +244,12 @@ namespace Netcode.Rollback.Network
             {
                 throw new InvalidOperationException("not synchronized");
             }
-            ulong now = Helpers.MillisSinceEpoch();
-            ulong secs = (now - _statsStartTime) / 1000;
-            if (secs == 0)
-            {
-                throw new InvalidOperationException("not synchronized");
-            }
+            // ulong now = Helpers.MillisSinceEpoch();
+            // ulong secs = (now - _statsStartTime) / 1000;
+            // if (secs == 0)
+            // {
+            //     throw new InvalidOperationException("not synchronized");
+            // }
 
             return new NetworkStats
             {

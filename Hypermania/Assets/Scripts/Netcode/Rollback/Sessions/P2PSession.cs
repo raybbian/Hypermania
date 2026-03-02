@@ -398,7 +398,12 @@ namespace Netcode.Rollback.Sessions
 
         public TState ConfirmedState()
         {
-            _syncLayer.SavedStateByFrame(ConfirmedFrame()).Load(out var data);
+            Frame confirmed = ConfirmedFrame();
+            if (confirmed == Frame.NullFrame)
+            {
+                throw new InvalidOperationException("No confirmed frame yet");
+            }
+            _syncLayer.SavedStateByFrame(confirmed).Load(out var data);
             return data;
         }
 
