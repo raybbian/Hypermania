@@ -16,21 +16,17 @@ namespace Design.Animation.Keyframing
 
             using (new EditorGUI.DisabledScope(t.Clip == null))
             {
-                if (GUILayout.Button("1) Add time 0 keys [MAKE SURE TO CHANGE TARGET ANIM]"))
+                if (GUILayout.Button("1) Add time 0 keys"))
                 {
                     t.AddTimeZeroKeys();
                 }
 
-                if (GUILayout.Button("2) Copy time 0 keys to clip end [MAKE SURE TO CHANGE TARGET ANIM]"))
+                if (GUILayout.Button("2) Copy time 0 keys to clip end"))
                 {
                     t.CopyTimeZeroKeysToClipEnd();
                 }
 
-                if (
-                    GUILayout.Button(
-                        "3) Set SpriteRenderer Order-in-Layer tangents to Constant [MAKE SURE TO CHANGE TARGET ANIM]"
-                    )
-                )
+                if (GUILayout.Button("3) Set SpriteRenderer Order-in-Layer tangents to Constant"))
                 {
                     t.SetSortingOrderTangentsConstant();
                 }

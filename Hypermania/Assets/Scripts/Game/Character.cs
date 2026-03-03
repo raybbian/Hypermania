@@ -39,7 +39,7 @@ namespace Game
     [Serializable]
     public enum Character
     {
-        // SampleFighter = 0,
+        SampleFighter = 0,
         Nythea = 1,
     }
 }

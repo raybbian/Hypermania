@@ -22,13 +22,6 @@ namespace Game.Sim
         Airborne,
     }
 
-    public enum FighterAttackLocation
-    {
-        Standing,
-        Aerial,
-        Crouching,
-    }
-
     [MemoryPackable]
     public partial struct FighterState
     {
@@ -61,7 +54,7 @@ namespace Game.Sim
 
         public SVector2 StoredJumpVelocity;
 
-        public bool IsAerialAttack =>
+        public bool IsAerial =>
             State == CharacterState.LightAerial
             || State == CharacterState.MediumAerial
             || State == CharacterState.SuperAerial
@@ -156,16 +149,6 @@ namespace Game.Sim
             return FighterLocation.Grounded;
         }
 
-        public FighterAttackLocation AttackLocation(GlobalConfig config)
-        {
-            FighterLocation loc = Location(config);
-            if (loc == FighterLocation.Airborne)
-            {
-                return FighterAttackLocation.Aerial;
-            }
-            return InputH.IsHeld(InputFlags.Down) ? FighterAttackLocation.Crouching : FighterAttackLocation.Standing;
-        }
-
         public void SetState(CharacterState nextState, Frame start, Frame end, bool forceChange = false)
         {
             if (State != nextState || forceChange)
@@ -202,7 +185,7 @@ namespace Game.Sim
                 {
                     Velocity.x = 0;
                 }
-                if (State == CharacterState.PreJump)
+                else if (State == CharacterState.PreJump)
                 {
                     Velocity = StoredJumpVelocity;
                     StoredJumpVelocity = SVector2.zero;
@@ -351,7 +334,6 @@ namespace Game.Sim
                     );
                     // TODO: apply knockback to other player (this should be a hitbox on a burst animation with large kb)
                 }
-                return;
             }
 
             FrameData frameData = characterConfig.GetFrameData(State, frame - StateStart);
@@ -380,9 +362,9 @@ namespace Game.Sim
 
             if (InputH.PressedRecently(InputFlags.LightAttack, config.Input.InputBufferWindow))
             {
-                switch (AttackLocation(config))
+                switch (Location(config))
                 {
-                    case FighterAttackLocation.Standing:
+                    case FighterLocation.Grounded:
                         {
                             Velocity = SVector2.zero;
                             SetState(
@@ -393,17 +375,7 @@ namespace Game.Sim
                             );
                         }
                         break;
-                    case FighterAttackLocation.Crouching:
-                        {
-                            SetState(
-                                CharacterState.LightCrouching,
-                                startFrame,
-                                startFrame + characterConfig.GetHitboxData(CharacterState.LightCrouching).TotalTicks,
-                                true
-                            );
-                        }
-                        break;
-                    case FighterAttackLocation.Aerial:
+                    case FighterLocation.Airborne:
                         {
                             SetState(
                                 CharacterState.LightAerial,
@@ -417,9 +389,9 @@ namespace Game.Sim
             }
             else if (InputH.PressedRecently(InputFlags.MediumAttack, config.Input.InputBufferWindow))
             {
-                switch (AttackLocation(config))
+                switch (Location(config))
                 {
-                    case FighterAttackLocation.Standing:
+                    case FighterLocation.Grounded:
                         {
                             Velocity = SVector2.zero;
                             SetState(
@@ -434,9 +406,9 @@ namespace Game.Sim
             }
             else if (InputH.PressedRecently(InputFlags.HeavyAttack, config.Input.InputBufferWindow))
             {
-                switch (AttackLocation(config))
+                switch (Location(config))
                 {
-                    case FighterAttackLocation.Standing:
+                    case FighterLocation.Grounded:
                         {
                             Velocity = SVector2.zero;
                             SetState(
@@ -503,7 +475,7 @@ namespace Game.Sim
             {
                 return;
             }
-            if (IsAerialAttack)
+            if (IsAerial)
             {
                 // TODO: apply some landing lag here
                 SetState(CharacterState.Idle, frame, Frame.Infinity);

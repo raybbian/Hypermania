@@ -11,22 +11,19 @@ namespace Design.Animation.Keyframing
 {
     public sealed class AnimationTools : MonoBehaviour
     {
-        [Header("Target Clip [MAKE SURE YOU CHANGE THIS!]")]
+        [Header("Target Clip")]
         [SerializeField]
         private AnimationClip _clip;
 
         [Header("Named Children (searched under this GameObject)")]
         [SerializeField]
-        private GameObject[] _rigChildren;
+        private string[] _rigChildNames = { "Root", "ScytheHandle1" };
 
         [SerializeField]
-        private GameObject[] _spriteChildren;
+        private string _spriteChildName = "Sprites";
 
         [SerializeField]
-        private GameObject[] _oneOffChildren;
-
-        [SerializeField]
-        private GameObject[] _ikChildren;
+        private string _ikChildName = "IK";
 
         public AnimationClip Clip => _clip;
 
@@ -42,55 +39,31 @@ namespace Design.Animation.Keyframing
             _clip.EnsureQuaternionContinuity();
 
             Transform animRoot = transform;
-            foreach (var rigChild in _rigChildren)
-            {
-                foreach (Transform t in rigChild.GetComponentsInChildren<Transform>(true))
-                {
-                    AddTransformKeysAtTime(
-                        _clip,
-                        animRoot,
-                        t,
-                        0f,
-                        includePosition: true,
-                        includeScale: true,
-                        includeEuler: true
-                    );
-                }
-            }
 
-            foreach (var oneOffChild in _oneOffChildren)
+            foreach (var rigChildName in _rigChildNames)
             {
-                foreach (Transform t in oneOffChild.GetComponentsInChildren<Transform>(true))
+                Transform rootNode = FindChildByName(animRoot, rigChildName);
+                if (rootNode != null)
                 {
-                    AddTransformKeysAtTime(
-                        _clip,
-                        animRoot,
-                        t,
-                        0f,
-                        includePosition: true,
-                        includeScale: true,
-                        includeEuler: true
-                    );
-
-                    var sr = t.GetComponent<SpriteRenderer>();
-                    if (sr != null)
+                    foreach (Transform t in EnumerateHierarchy(rootNode))
                     {
-                        AddFloatKeyAtTime(
-                            clip: _clip,
-                            animRoot: animRoot,
-                            componentType: typeof(SpriteRenderer),
-                            targetTransform: t,
-                            propertyName: "m_SortingOrder",
-                            time: 0f,
-                            value: sr.sortingOrder
+                        AddTransformKeysAtTime(
+                            _clip,
+                            animRoot,
+                            t,
+                            0f,
+                            includePosition: true,
+                            includeScale: true,
+                            includeEuler: true
                         );
                     }
                 }
             }
 
-            foreach (var spriteChild in _spriteChildren)
+            Transform spriteNode = FindChildByName(animRoot, _spriteChildName);
+            if (spriteNode != null)
             {
-                foreach (Transform t in spriteChild.GetComponentsInChildren<Transform>(true))
+                foreach (Transform t in EnumerateHierarchy(spriteNode))
                 {
                     var sr = t.GetComponent<SpriteRenderer>();
                     if (sr != null)
@@ -123,7 +96,7 @@ namespace Design.Animation.Keyframing
                 }
             }
 
-            foreach (var marker in GetComponentsInChildren<IKTargetMarker>(true))
+            foreach (var marker in GetComponentsInChildren<IKTargetMarker>(includeInactive: true))
             {
                 Transform t = marker.transform;
                 AddTransformKeysAtTime(
@@ -137,9 +110,10 @@ namespace Design.Animation.Keyframing
                 );
             }
 
-            foreach (var ikChild in _ikChildren)
+            Transform ikNode = FindChildByName(animRoot, _ikChildName);
+            if (ikNode != null)
             {
-                foreach (Transform t in ikChild.GetComponentsInChildren<Transform>(true))
+                foreach (Transform t in EnumerateHierarchy(ikNode))
                 {
                     var solver = t.GetComponent<LimbSolver2D>();
                     if (solver != null)
@@ -285,6 +259,23 @@ namespace Design.Animation.Keyframing
                     q.Enqueue(t.GetChild(i));
             }
             return null;
+        }
+
+        private static IEnumerable<Transform> EnumerateHierarchy(Transform root)
+        {
+            if (root == null)
+                yield break;
+
+            var stack = new Stack<Transform>();
+            stack.Push(root);
+            while (stack.Count > 0)
+            {
+                var t = stack.Pop();
+                yield return t;
+
+                for (int i = t.childCount - 1; i >= 0; i--)
+                    stack.Push(t.GetChild(i));
+            }
         }
 
         private static void AddTransformKeysAtTime(
