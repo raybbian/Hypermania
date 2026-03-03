@@ -13,6 +13,7 @@ public class ParallaxManager : MonoBehaviour
 
     [SerializeField]
     private ParallaxLayer[] layers;
+
     [SerializeField]
     private Camera _camera;
     private float[] offsetX;
@@ -47,7 +48,10 @@ public class ParallaxManager : MonoBehaviour
         for (int i = 0; i < layers.Length; i++)
         {
             offsetX[i] -= layers[i].speedX * cameraXMovement;
-            layers[i].rawImage.rectTransform.anchoredPosition = new Vector2(offsetX[i], layers[i].rawImage.rectTransform.anchoredPosition.y);
+            layers[i].rawImage.rectTransform.anchoredPosition = new Vector2(
+                offsetX[i],
+                layers[i].rawImage.rectTransform.anchoredPosition.y
+            );
             float layerZoom = Mathf.Lerp(1f, zoomRatio, layers[i].zoomSpeed);
             layers[i].rawImage.rectTransform.localScale = new Vector3(layerZoom, layerZoom, 1);
         }
