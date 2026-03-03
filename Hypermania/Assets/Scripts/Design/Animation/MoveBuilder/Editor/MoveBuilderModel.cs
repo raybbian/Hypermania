@@ -66,6 +66,16 @@ namespace Design.Animation.MoveBuilder.Editors
 
         #region Modifications
 
+        public void BindDataToClip(MoveBuilderAnimationState state)
+        {
+            RecordUndo(state, "Bind Data to Clip");
+
+            if (state.Data.BindToClip(state.Clip))
+            {
+                MarkDirty(state);
+            }
+        }
+
         public FrameData GetCurrentFrame(MoveBuilderAnimationState state)
         {
             if (!state.Data)

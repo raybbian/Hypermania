@@ -43,6 +43,9 @@ namespace Design.Animation.MoveBuilder.Editors
             }
 
             EditorGUILayout.Space(8);
+            if (GUILayout.Button("Bind Data to Clip"))
+                m.BindDataToClip(state);
+            EditorGUILayout.Space(8);
             DrawControls(m, state);
             EditorGUILayout.Space(8);
             DrawBoxList(m, state);
@@ -55,13 +58,7 @@ namespace Design.Animation.MoveBuilder.Editors
 
             using (new EditorGUI.DisabledScope(m == null || !m.HasUnsavedChanges(state)))
             {
-                if (
-                    GUILayout.Button(
-                        m.HasUnsavedChanges(state) ? "Apply*" : "Apply",
-                        EditorStyles.toolbarButton,
-                        GUILayout.Width(60)
-                    )
-                )
+                if (GUILayout.Button(m.HasUnsavedChanges(state) ? "Apply*" : "Apply"))
                 {
                     m.SaveAsset(state);
                     GUI.FocusControl(null);
@@ -75,7 +72,10 @@ namespace Design.Animation.MoveBuilder.Editors
             if (frame == null)
                 return;
 
-            EditorGUILayout.LabelField("Controls", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(
+                "Controls (For Keybinds, the MoveBuilderPreview tool must be active)",
+                EditorStyles.boldLabel
+            );
 
             if (GUILayout.Button("Add Hurtbox (Shift A)"))
                 m.AddBox(state, HitboxKind.Hurtbox);

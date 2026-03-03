@@ -254,7 +254,7 @@ namespace Game.Sim
             // If the fighter is now on the ground, apply aerial cancels
             for (int i = 0; i < Fighters.Length; i++)
             {
-                Fighters[i].ApplyAerialCancel(SimFrame, config);
+                Fighters[i].ApplyAerialCancel(SimFrame, config, characters[i]);
             }
 
             for (int i = 0; i < Fighters.Length; i++)

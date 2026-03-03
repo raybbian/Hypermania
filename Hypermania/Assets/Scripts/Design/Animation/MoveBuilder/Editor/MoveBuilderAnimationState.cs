@@ -65,11 +65,6 @@ namespace Design.Animation.MoveBuilder.Editors
                 direct = ScriptableObject.CreateInstance<HitboxData>();
                 AssetDatabase.CreateAsset(direct, expected);
             }
-            if (direct.BindToClip(clip))
-            {
-                EditorUtility.SetDirty(direct);
-                AssetDatabase.SaveAssetIfDirty(direct);
-            }
             return direct;
         }
     }

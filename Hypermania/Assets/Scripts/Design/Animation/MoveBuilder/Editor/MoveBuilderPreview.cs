@@ -26,9 +26,14 @@ namespace Design.Animation.MoveBuilder.Editors
             }
             var state = animState.Value;
 
+            HandleKeybinds(fighter, m, state);
+
             FrameData curFrame = m.GetCurrentFrame(state);
             if (curFrame == null)
+            {
+                ConsumeScenePicking();
                 return;
+            }
 
             for (int i = 0; i < curFrame.Boxes.Count; i++)
             {
@@ -36,6 +41,104 @@ namespace Design.Animation.MoveBuilder.Editors
             }
             HandleBoxSelectionClick(fighter, m, curFrame);
             ConsumeScenePicking();
+        }
+
+        private static void HandleKeybinds(FighterView fighter, MoveBuilderModel m, MoveBuilderAnimationState state)
+        {
+            var e = Event.current;
+            if (e == null || e.type != EventType.KeyDown)
+                return;
+
+            // Don’t steal typing if Unity has a text field focused (rare in SceneView, but safe)
+            if (EditorGUIUtility.editingTextField)
+                return;
+
+            bool actionKey = EditorGUI.actionKey; // Ctrl on Win/Linux, Cmd on macOS
+            bool shift = e.shift;
+
+            bool HasSelection()
+            {
+                var frame = m.GetCurrentFrame(state);
+                return frame != null && m.SelectedBoxIndex >= 0 && m.SelectedBoxIndex < frame.Boxes.Count;
+            }
+
+            // Add Hitbox (A), Add Hurtbox (Shift+A)
+            if (e.keyCode == KeyCode.A && !actionKey)
+            {
+                m.AddBox(state, shift ? HitboxKind.Hurtbox : HitboxKind.Hitbox);
+                GUI.changed = true;
+                e.Use();
+                return;
+            }
+
+            // Duplicate Selected (Ctrl/Cmd + D)
+            if (e.keyCode == KeyCode.D && actionKey)
+            {
+                if (HasSelection())
+                {
+                    m.DuplicateSelected(state);
+                    GUI.changed = true;
+                }
+                e.Use();
+                return;
+            }
+
+            // Delete Selected (Backspace/Delete)
+            if (e.keyCode == KeyCode.Backspace || e.keyCode == KeyCode.Delete)
+            {
+                if (HasSelection())
+                {
+                    m.DeleteSelected(state);
+                    GUI.changed = true;
+                }
+                e.Use();
+                return;
+            }
+
+            // Copy Box Props (Ctrl/Cmd + C)
+            if (e.keyCode == KeyCode.C && actionKey && !shift)
+            {
+                if (HasSelection())
+                {
+                    m.CopySelectedBoxProps(state);
+                    GUI.changed = true;
+                }
+                e.Use();
+                return;
+            }
+
+            // Paste Box Props (Ctrl/Cmd + V)
+            if (e.keyCode == KeyCode.V && actionKey && !shift)
+            {
+                if (HasSelection() && m.HasCopiedBoxProps)
+                {
+                    m.PasteBoxPropsToSelected(state);
+                    GUI.changed = true;
+                }
+                e.Use();
+                return;
+            }
+
+            // Copy Frame (Ctrl/Cmd + Shift + C)
+            if (e.keyCode == KeyCode.C && actionKey && shift)
+            {
+                m.CopyCurrentFrameData(state);
+                GUI.changed = true;
+                e.Use();
+                return;
+            }
+
+            // Paste Frame (Ctrl/Cmd + Shift + V)
+            if (e.keyCode == KeyCode.V && actionKey && shift)
+            {
+                if (m.HasCopiedFrame)
+                {
+                    m.PasteFrameDataToCurrentFrame(state);
+                    GUI.changed = true;
+                }
+                e.Use();
+                return;
+            }
         }
 
         private static void ConsumeScenePicking()

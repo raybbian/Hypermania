@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Design.Animation;
 using Design.Configs;
 using Game.View.Overlay;
@@ -73,7 +74,7 @@ namespace Game.Sim
             || State == CharacterState.ForwardDash
             || State == CharacterState.BackDash;
 
-        public bool Actionable => State == CharacterState.Jump || GroundedActionable;
+        public bool Actionable => State == CharacterState.Jump || State == CharacterState.Falling || GroundedActionable;
 
         public bool GroundedActionable =>
             State == CharacterState.Idle
@@ -246,6 +247,7 @@ namespace Game.Sim
                     {
                         StoredJumpVelocity.x = 0;
                     }
+                    Velocity.x = 0;
                     SetState(
                         CharacterState.PreJump,
                         frame,
@@ -304,8 +306,12 @@ namespace Game.Sim
                     return;
                 }
             }
-            else if (State == CharacterState.Jump)
+            else if (State == CharacterState.Jump || State == CharacterState.Falling)
             {
+                if (Velocity.y < 0)
+                {
+                    SetState(CharacterState.Falling, frame, Frame.Infinity);
+                }
                 if (
                     InputH.IsHeld(ForwardInput)
                     && InputH.PressedAndReleasedRecently(ForwardInput, config.Input.DashWindow, 1)
@@ -336,6 +342,20 @@ namespace Game.Sim
                 }
             }
         }
+
+        private static Dictionary<(FighterAttackLocation, InputFlags), CharacterState> _attackDictionary =
+            new Dictionary<(FighterAttackLocation, InputFlags), CharacterState>
+            {
+                { (FighterAttackLocation.Standing, InputFlags.LightAttack), CharacterState.LightAttack },
+                { (FighterAttackLocation.Standing, InputFlags.MediumAttack), CharacterState.MediumAttack },
+                { (FighterAttackLocation.Standing, InputFlags.HeavyAttack), CharacterState.SuperAttack },
+                { (FighterAttackLocation.Crouching, InputFlags.LightAttack), CharacterState.LightCrouching },
+                { (FighterAttackLocation.Crouching, InputFlags.MediumAttack), CharacterState.MediumCrouching },
+                { (FighterAttackLocation.Crouching, InputFlags.HeavyAttack), CharacterState.SuperCrouching },
+                { (FighterAttackLocation.Aerial, InputFlags.LightAttack), CharacterState.LightAerial },
+                { (FighterAttackLocation.Aerial, InputFlags.MediumAttack), CharacterState.MediumAerial },
+                { (FighterAttackLocation.Aerial, InputFlags.HeavyAttack), CharacterState.SuperAerial },
+            };
 
         public void ApplyActiveState(Frame frame, Frame realFrame, CharacterConfig characterConfig, GlobalConfig config)
         {
@@ -378,78 +398,24 @@ namespace Game.Sim
                 startFrame += frameDiff;
             }
 
-            if (InputH.PressedRecently(InputFlags.LightAttack, config.Input.InputBufferWindow))
+            var attackLocation = AttackLocation(config);
+            foreach (((var loc, var input), var state) in _attackDictionary)
             {
-                switch (AttackLocation(config))
+                if (InputH.PressedRecently(input, config.Input.InputBufferWindow) && attackLocation == loc)
                 {
-                    case FighterAttackLocation.Standing:
-                        {
-                            Velocity = SVector2.zero;
-                            SetState(
-                                CharacterState.LightAttack,
-                                startFrame,
-                                startFrame + characterConfig.GetHitboxData(CharacterState.LightAttack).TotalTicks,
-                                true
-                            );
-                        }
-                        break;
-                    case FighterAttackLocation.Crouching:
-                        {
-                            SetState(
-                                CharacterState.LightCrouching,
-                                startFrame,
-                                startFrame + characterConfig.GetHitboxData(CharacterState.LightCrouching).TotalTicks,
-                                true
-                            );
-                        }
-                        break;
-                    case FighterAttackLocation.Aerial:
-                        {
-                            SetState(
-                                CharacterState.LightAerial,
-                                startFrame,
-                                startFrame + characterConfig.GetHitboxData(CharacterState.LightAerial).TotalTicks,
-                                true
-                            );
-                        }
-                        break;
+                    if (
+                        attackLocation == FighterAttackLocation.Standing
+                        || attackLocation == FighterAttackLocation.Crouching
+                    )
+                    {
+                        Velocity = SVector2.zero;
+                    }
+                    SetState(state, startFrame, startFrame + characterConfig.GetHitboxData(state).TotalTicks, true);
+                    return;
                 }
             }
-            else if (InputH.PressedRecently(InputFlags.MediumAttack, config.Input.InputBufferWindow))
-            {
-                switch (AttackLocation(config))
-                {
-                    case FighterAttackLocation.Standing:
-                        {
-                            Velocity = SVector2.zero;
-                            SetState(
-                                CharacterState.MediumAttack,
-                                startFrame,
-                                startFrame + characterConfig.GetHitboxData(CharacterState.MediumAttack).TotalTicks,
-                                true
-                            );
-                        }
-                        break;
-                }
-            }
-            else if (InputH.PressedRecently(InputFlags.HeavyAttack, config.Input.InputBufferWindow))
-            {
-                switch (AttackLocation(config))
-                {
-                    case FighterAttackLocation.Standing:
-                        {
-                            Velocity = SVector2.zero;
-                            SetState(
-                                CharacterState.SuperAttack,
-                                startFrame,
-                                startFrame + characterConfig.GetHitboxData(CharacterState.SuperAttack).TotalTicks,
-                                true
-                            );
-                        }
-                        break;
-                }
-            }
-            else if (
+
+            if (
                 dashCancelEligible
                 && InputH.IsHeld(ForwardInput)
                 && dashCancelEligible
@@ -497,7 +463,7 @@ namespace Game.Sim
             }
         }
 
-        public void ApplyAerialCancel(Frame frame, GlobalConfig config)
+        public void ApplyAerialCancel(Frame frame, GlobalConfig config, CharacterConfig characterConfig)
         {
             if (Location(config) != FighterLocation.Grounded)
             {
@@ -506,12 +472,20 @@ namespace Game.Sim
             if (IsAerialAttack)
             {
                 // TODO: apply some landing lag here
-                SetState(CharacterState.Idle, frame, Frame.Infinity);
+                SetState(
+                    CharacterState.Landing,
+                    frame,
+                    frame + characterConfig.GetHitboxData(CharacterState.Landing).TotalTicks
+                );
                 return;
             }
-            if (State == CharacterState.Jump)
+            if (State == CharacterState.Falling)
             {
-                SetState(CharacterState.Idle, frame, Frame.Infinity);
+                SetState(
+                    CharacterState.Landing,
+                    frame,
+                    frame + characterConfig.GetHitboxData(CharacterState.Landing).TotalTicks
+                );
                 return;
             }
         }
