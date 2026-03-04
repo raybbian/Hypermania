@@ -14,7 +14,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Clip: {fileID: 7400000, guid: 67400385c5b75e464810d1935ce76f18, type: 2}
   Frames:
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3164643360
+        y:
+          rawValue: 1063009054
+      SizeLocal:
+        x:
+          rawValue: 1059760754
+        y:
+          rawValue: 1071151026
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
     FrameType: 0
   - Boxes: []
     FrameType: 0

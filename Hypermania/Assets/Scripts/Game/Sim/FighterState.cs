@@ -487,6 +487,12 @@ namespace Game.Sim
                 );
                 return;
             }
+            else if (State == CharacterState.Knockdown)
+            {
+                // TODO: getup options
+                SetState(CharacterState.Idle, frame, Frame.Infinity);
+                return;
+            }
             if (State == CharacterState.Falling)
             {
                 SetState(
@@ -554,7 +560,15 @@ namespace Game.Sim
 
             // Apply Hit/collision stuff is done after the player is actionable, so if the player needs to be
             // inactionable for "one more frame"
-            SetState(CharacterState.Hit, frame, frame + props.HitstunTicks + 1);
+            switch (props.KnockdownKind)
+            {
+                case KnockdownKind.None:
+                    SetState(CharacterState.Hit, frame, frame + props.HitstunTicks + 1);
+                    break;
+                case KnockdownKind.Light:
+                    SetState(CharacterState.Knockdown, frame, Frame.Infinity);
+                    break;
+            }
 
             // TODO: fixme, just to prevent multi hit
             ImmunityEnd = frame + 7;

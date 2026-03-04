@@ -162,7 +162,13 @@ namespace Game.View
             for (int i = 0; i < _options.Players.Length; i++)
             {
                 _fighters[i].RollbackRender(state.SimFrame, state.Fighters[i], _params.VfxManager, _params.SfxManager);
-                if (state.Fighters[i].State == CharacterState.Hit && state.SimFrame == state.Fighters[i].StateStart)
+                if (
+                    (
+                        state.Fighters[i].State == CharacterState.Hit
+                        || state.Fighters[i].State == CharacterState.Knockdown
+                    )
+                    && state.SimFrame == state.Fighters[i].StateStart
+                )
                 {
                     _params.SfxManager.AddDesired(
                         new ViewEvent<SfxEvent>
