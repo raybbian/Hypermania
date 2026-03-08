@@ -6,7 +6,7 @@ public class ParallaxController : MonoBehaviour
     public class ParallaxLayer
     {
         public SpriteRenderer image;
-        public float speedX; // 0 = moves with camera (no parallax), 1 = stays fixed in world space
+        public float speedX; // 0 = no movement, 1 = moves with camera
     }
 
     public Camera _camera;
