@@ -6,11 +6,10 @@ public class ParallaxController : MonoBehaviour
     public class ParallaxLayer
     {
         public SpriteRenderer image;
+        public float speedX; // 0 = moves with camera (no parallax), 1 = stays fixed in world space
     }
 
     public Camera _camera;
-    public SpriteRenderer _foreground;
-    public SpriteRenderer _background;
     public ParallaxLayer[] layers;
 
     private float cameraPrevXValue;
@@ -26,13 +25,8 @@ public class ParallaxController : MonoBehaviour
 
         for (int i = 0; i < layers.Length; i++)
         {
-            float speed = Mathf.InverseLerp(
-                _foreground.bounds.size.x,
-                _background.bounds.size.x,
-                layers[i].image.bounds.size.x
-            );
             layers[i].image.transform.position = new Vector2(
-                layers[i].image.transform.position.x + speed * cameraXMovement,
+                layers[i].image.transform.position.x + layers[i].speedX * cameraXMovement,
                 layers[i].image.transform.position.y
             );
         }
