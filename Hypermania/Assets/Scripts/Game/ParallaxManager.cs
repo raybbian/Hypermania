@@ -39,5 +39,4 @@ public class ParallaxController : MonoBehaviour
 
         cameraPrevXValue = _camera.transform.position.x;
     }
-
 }
