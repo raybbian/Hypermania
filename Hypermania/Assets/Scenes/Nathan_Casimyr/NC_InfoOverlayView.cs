@@ -9,10 +9,14 @@ public class NC_InfoOverlayView : MonoBehaviour
 {
     public void Render(NC_InfoOverlayDetails details)
     {
-        string detailsString = "FPS: " + details.FPS;
+        string detailsString = "FPS: " + details.FPS + ", Ping ";
         if (details.HasPing)
         {
-            detailsString += details.PingMs + "ms";
+            detailsString += details.PingMs + " ms";
+        }
+        else
+        {
+            detailsString += "N/A";
         }
         GetComponent<TMP_Text>().SetText(detailsString);
     }

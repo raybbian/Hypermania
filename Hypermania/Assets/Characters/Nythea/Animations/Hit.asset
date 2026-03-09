@@ -14,123 +14,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Clip: {fileID: 7400000, guid: 12a32605129da940f991671180269cfa, type: 2}
   Frames:
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
-    FrameType: 4
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3173533200
+        y:
+          rawValue: 1060449881
+      SizeLocal:
+        x:
+          rawValue: 1059846922
+        y:
+          rawValue: 1068646663
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        StartsRhythmCombo: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
     FrameType: 4

@@ -15,8 +15,7 @@ MonoBehaviour:
   Clip: {fileID: 7400000, guid: 9856e8797989a4fbf8359d8f13c83937, type: 2}
   Frames:
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1015724255
         y:
@@ -41,8 +40,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 1
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1015724255
         y:
@@ -67,8 +65,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 1
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1015724255
         y:
@@ -93,8 +90,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 1
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1025628076
         y:
@@ -119,8 +115,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 1
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1025628076
         y:
@@ -145,8 +140,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 1
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1025628076
         y:
@@ -171,8 +165,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 1
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1025628076
         y:
@@ -197,8 +190,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 1
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1042279020
         y:
@@ -221,8 +213,7 @@ MonoBehaviour:
             rawValue: 1065353216
           y:
             rawValue: 0
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1059488779
         y:
@@ -247,8 +238,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 2
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1042279020
         y:
@@ -271,8 +261,7 @@ MonoBehaviour:
             rawValue: 1065353216
           y:
             rawValue: 0
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1059488779
         y:
@@ -297,8 +286,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 2
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1042279020
         y:
@@ -321,8 +309,7 @@ MonoBehaviour:
             rawValue: 1065353216
           y:
             rawValue: 0
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1059488779
         y:
@@ -347,8 +334,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 2
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1042279020
         y:
@@ -371,8 +357,7 @@ MonoBehaviour:
             rawValue: 1065353216
           y:
             rawValue: 0
-    - Name: Hit
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1063716201
         y:
@@ -395,8 +380,7 @@ MonoBehaviour:
             rawValue: 1066252842
           y:
             rawValue: 1048768442
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1057771372
         y:
@@ -421,8 +405,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1042279020
         y:
@@ -445,8 +428,7 @@ MonoBehaviour:
             rawValue: 1065353216
           y:
             rawValue: 0
-    - Name: Hit
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1063716201
         y:
@@ -469,8 +451,7 @@ MonoBehaviour:
             rawValue: 1066252842
           y:
             rawValue: 1048768442
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1057771372
         y:
@@ -495,8 +476,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1042279020
         y:
@@ -519,8 +499,7 @@ MonoBehaviour:
             rawValue: 1065353216
           y:
             rawValue: 0
-    - Name: Hit
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1063716201
         y:
@@ -543,8 +522,7 @@ MonoBehaviour:
             rawValue: 1066252842
           y:
             rawValue: 1048768442
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1057771372
         y:
@@ -569,8 +547,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1042279020
         y:
@@ -593,8 +570,7 @@ MonoBehaviour:
             rawValue: 1065353216
           y:
             rawValue: 0
-    - Name: Hit
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1063716201
         y:
@@ -617,8 +593,7 @@ MonoBehaviour:
             rawValue: 1066252842
           y:
             rawValue: 1048768442
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1057771372
         y:
@@ -643,8 +618,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:
@@ -669,8 +643,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:
@@ -695,8 +668,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:
@@ -721,8 +693,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:
@@ -747,8 +718,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:
@@ -773,8 +743,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:
@@ -799,8 +768,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:
@@ -825,8 +793,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:
@@ -851,8 +818,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:
@@ -877,8 +843,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:
@@ -903,8 +868,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:
@@ -929,8 +893,7 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:
@@ -955,8 +918,32 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
   - Boxes:
-    - Name: Hurt
-      CenterLocal:
+    - CenterLocal:
+        x:
+          rawValue: 1037725985
+        y:
+          rawValue: 1060981821
+      SizeLocal:
+        x:
+          rawValue: 1060815780
+        y:
+          rawValue: 1069461025
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        StartsRhythmCombo: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 3
+  - Boxes:
+    - CenterLocal:
         x:
           rawValue: 1037725985
         y:

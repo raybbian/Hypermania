@@ -1,0 +1,162 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
+  m_Name: Knockdown
+  m_EditorClassIdentifier: 
+  Clip: {fileID: 7400000, guid: 67400385c5b75e464810d1935ce76f18, type: 2}
+  Frames:
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3164643360
+        y:
+          rawValue: 1063009054
+      SizeLocal:
+        x:
+          rawValue: 1059760754
+        y:
+          rawValue: 1071151026
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0
+  - Boxes: []
+    FrameType: 0

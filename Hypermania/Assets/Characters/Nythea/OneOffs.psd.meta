@@ -108,8 +108,8 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 2651
-      y: 1224
+      x: 4
+      y: 3370
       width: 1433
       height: 669
     spriteID: 9069e2b2c339e9143987cab7dc4c5ff8
@@ -120,7 +120,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 2651, y: 1224}
+    uvTransform: {x: 4, y: 3370}
     spritePosition: {x: 2449, y: 1699}
   - name: 5M smear3
     originalName: 
@@ -130,7 +130,7 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 4
+      x: 1756
       y: 2270
       width: 1458
       height: 1259
@@ -142,7 +142,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 4, y: 2270}
+    uvTransform: {x: 1756, y: 2270}
     spritePosition: {x: 2449, y: 1109}
   - name: 5M smear2
     originalName: 
@@ -166,6 +166,28 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 4, y: 4}
     spritePosition: {x: 974, y: 947}
+  - name: 5M smear1.5
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 2270
+      width: 1744
+      height: 1092
+    spriteID: 891563d1af640dc40851eb753187b847
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 2270}
+    spritePosition: {x: 2121, y: 980}
   - name: 5M smear1
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -257,7 +279,7 @@ ScriptedImporter:
     parentIndex: -1
     spriteID: 9069e2b2c339e9143987cab7dc4c5ff8
     layerID: 8
-    mosaicPosition: {x: 2651, y: 1224}
+    mosaicPosition: {x: 4, y: 3370}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -267,7 +289,7 @@ ScriptedImporter:
     parentIndex: -1
     spriteID: 05990b247f053824fa794bfef8bae292
     layerID: 7
-    mosaicPosition: {x: 4, y: 2270}
+    mosaicPosition: {x: 1756, y: 2270}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -278,6 +300,16 @@ ScriptedImporter:
     spriteID: 61b9a4e1ea4377a4d84594104aceb82d
     layerID: 4
     mosaicPosition: {x: 4, y: 4}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: 5M smear1.5
+    spriteName: 5M smear1.5
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 891563d1af640dc40851eb753187b847
+    layerID: 9
+    mosaicPosition: {x: 4, y: 2270}
     flatten: 0
     isImported: 1
     isVisible: 1

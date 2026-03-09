@@ -29,6 +29,10 @@ namespace Design.Configs
         public FrameData GetFrameData(CharacterState anim, int tick)
         {
             HitboxData data = GetHitboxData(anim);
+            if (data.TotalTicks == 0)
+            {
+                return new FrameData();
+            }
             // By default loop the animation, but this should never happen because we would have switched to a different
             // state in the fighter state for ones that should not loop
             tick = ((tick % data.TotalTicks) + data.TotalTicks) % data.TotalTicks;

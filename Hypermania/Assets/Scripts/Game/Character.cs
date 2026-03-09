@@ -8,6 +8,7 @@ namespace Game
         ForwardWalk = 1,
         BackWalk = 28,
         Jump = 2,
+        PreJump = 29,
         Idle = 3,
         Knockdown = 4,
         LightAttack = 5,
@@ -33,12 +34,14 @@ namespace Game
         ForwardAirDash = 25,
         BackAirDash = 26,
         Crouch = 27,
+        Falling = 30,
+        Landing = 31,
     }
 
     [Serializable]
     public enum Character
     {
-        SampleFighter = 0,
+        // SampleFighter = 0,
         Nythea = 1,
     }
 }

@@ -17,11 +17,11 @@ namespace Game.View.Overlay
             _roundTimer = GetComponent<TextMeshProUGUI>();
         }
 
-        public void DisplayRoundTimer(Frame currentFrame, Frame roundEnd, GameMode gameMode, GlobalConfig config)
+        public void DisplayRoundTimer(Frame currentFrame, Frame roundEnd, GameMode gameMode, GameOptions options)
         {
             if (gameMode == GameMode.Countdown)
             {
-                time = config.RoundTimeTicks / 60;
+                time = options.Global.RoundTimeTicks / 60;
             }
             else
             {

@@ -7,112 +7,105 @@ using Utils.SoftFloat;
 
 namespace Design.Animation.MoveBuilder.Editors
 {
+    public static class MoveBuilderModelStore
+    {
+        private static readonly Dictionary<string, MoveBuilderModel> _states = new();
+
+        public static string KeyFor(UnityEngine.Object o)
+        {
+            if (!o)
+                return "null";
+            // GlobalObjectId is stable for assets and scene objects.
+            var gid = GlobalObjectId.GetGlobalObjectIdSlow(o);
+            return gid.ToString();
+        }
+
+        public static MoveBuilderModel Get(UnityEngine.Object owner)
+        {
+            string key = KeyFor(owner);
+            if (!_states.TryGetValue(key, out var s))
+            {
+                s = new MoveBuilderModel();
+                _states[key] = s;
+            }
+            return s;
+        }
+
+        public static void Remove(UnityEngine.Object owner)
+        {
+            _states.Remove(KeyFor(owner));
+        }
+    }
+
     [Serializable]
     public sealed class MoveBuilderModel
     {
-        public GameObject CharacterPrefab;
-        public AnimationClip Clip;
-        public HitboxData Data;
-        public MoveBuilderVisibilityModel VisibilityModel;
-
-        public int CurrentTick = 0;
         public int SelectedBoxIndex = -1;
         private HitboxData _lastData;
         private int _savedValueHash;
 
-        public bool HasUnsavedChanges
+        public bool HasUnsavedChanges(MoveBuilderAnimationState state)
         {
-            get
+            if (!state.Data)
+                return false;
+
+            if (!ReferenceEquals(state.Data, _lastData))
             {
-                if (!Data)
-                    return false;
-
-                // When the user selects a different asset, treat the newly selected asset as "saved" initially.
-                if (!ReferenceEquals(Data, _lastData))
-                {
-                    _lastData = Data;
-                    _savedValueHash = Data.GetHashCode();
-                    return false;
-                }
-
-                return Data.GetHashCode() != _savedValueHash;
+                _lastData = state.Data;
+                _savedValueHash = state.Data.GetHashCode();
+                return false;
             }
-        }
 
-        public bool HasAllInputs => CharacterPrefab && Clip && Data;
-        public int TotalTicks => Data ? Mathf.Max(1, Data.TotalTicks) : 1;
+            return state.Data.GetHashCode() != _savedValueHash;
+        }
 
         public MoveBuilderModel()
         {
-            VisibilityModel = new MoveBuilderVisibilityModel(this);
-            CurrentTick = 0;
             SelectedBoxIndex = -1;
         }
 
-        public float CurrentTimeSeconds(int tps) => CurrentTick / (float)Mathf.Max(1, tps);
-
-        #region Data Binding
-        public void BindDataToClipLength(MoveBuilderModel model, int tps)
-        {
-            if (!Data || !Clip)
-                return;
-
-            Data.Clip = Clip;
-
-            float length = Mathf.Max(0.0001f, Clip.length);
-            int totalTicks = Mathf.Max(1, Mathf.CeilToInt(length * Mathf.Max(1, tps)));
-            Data.EnsureSize(totalTicks);
-
-            CurrentTick = Mathf.Clamp(CurrentTick, 0, totalTicks - 1);
-            SelectedBoxIndex = Mathf.Clamp(SelectedBoxIndex, -1, GetCurrentFrame()?.Boxes.Count - 1 ?? -1);
-
-            MarkDirty();
-            model.SaveAsset();
-        }
-        #endregion
-
         #region Modifications
-        public void SetTick(int tick)
-        {
-            if (!Data)
-                return;
 
-            CurrentTick = Mathf.Clamp(tick, 0, TotalTicks - 1);
-            SelectBox(SelectedBoxIndex);
+        public void BindDataToClip(MoveBuilderAnimationState state)
+        {
+            RecordUndo(state, "Bind Data to Clip");
+
+            if (state.Data.BindToClip(state.Clip))
+            {
+                MarkDirty(state);
+            }
         }
 
-        public FrameData GetCurrentFrame()
+        public FrameData GetCurrentFrame(MoveBuilderAnimationState state)
         {
-            if (!Data)
+            if (!state.Data)
                 return null;
-            return Data.GetFrame(CurrentTick);
+            return state.Data.GetFrame(state.Tick);
         }
 
-        public void SelectBox(int index)
+        public void SelectBox(MoveBuilderAnimationState state, int index)
         {
-            var frame = GetCurrentFrame();
-            int max = frame != null ? frame.Boxes.Count - 1 : -1;
-            if (index > max)
-            {
-                SelectedBoxIndex = -1;
-            }
-            else
-            {
-                SelectedBoxIndex = index;
-            }
-        }
-
-        public void AddBox(HitboxKind kind)
-        {
-            var frame = GetCurrentFrame();
+            var frame = GetCurrentFrame(state);
             if (frame == null)
                 return;
 
-            RecordUndo("Add Box");
+            int max = frame.Boxes == null ? frame.Boxes.Count - 1 : -1;
+            if (index > max || index < -1)
+                SelectedBoxIndex = -1;
+            else
+                SelectedBoxIndex = index;
+        }
+
+        public void AddBox(MoveBuilderAnimationState state, HitboxKind kind)
+        {
+            var frame = GetCurrentFrame(state);
+            if (frame == null)
+                return;
+
+            RecordUndo(state, "Add Box");
 
             var b = new BoxData
             {
-                Name = kind == HitboxKind.Hitbox ? "Hit" : "Hurt",
                 CenterLocal = SVector2.zero,
                 SizeLocal = new SVector2((sfloat)0.5f, (sfloat)0.5f),
                 Props = new BoxProps
@@ -127,87 +120,45 @@ namespace Design.Animation.MoveBuilder.Editors
             frame.Boxes.Add(b);
             SelectedBoxIndex = frame.Boxes.Count - 1;
 
-            MarkDirty();
+            MarkDirty(state);
         }
 
-        public void DuplicateSelected()
+        public void DuplicateSelected(MoveBuilderAnimationState state)
         {
-            var frame = GetCurrentFrame();
+            var frame = GetCurrentFrame(state);
             if (frame == null)
                 return;
             if (SelectedBoxIndex < 0 || SelectedBoxIndex >= frame.Boxes.Count)
                 return;
 
-            RecordUndo("Duplicate Box");
+            RecordUndo(state, "Duplicate Box");
 
             var copy = frame.Boxes[SelectedBoxIndex];
-            copy.Name += "_Copy";
             frame.Boxes.Add(copy);
-
             SelectedBoxIndex = frame.Boxes.Count - 1;
 
-            MarkDirty();
+            MarkDirty(state);
         }
 
-        public void DeleteSelected()
+        public void DeleteSelected(MoveBuilderAnimationState state)
         {
-            var frame = GetCurrentFrame();
+            var frame = GetCurrentFrame(state);
             if (frame == null)
                 return;
             if (SelectedBoxIndex < 0 || SelectedBoxIndex >= frame.Boxes.Count)
                 return;
 
-            RecordUndo("Delete Box");
+            RecordUndo(state, "Delete Box");
 
             frame.Boxes.RemoveAt(SelectedBoxIndex);
             SelectedBoxIndex = -1;
 
-            MarkDirty();
+            MarkDirty(state);
         }
 
-        public void EditBoxKnockback(int index, Vector2 knockback)
+        public void SetBox(MoveBuilderAnimationState state, int index, BoxData updated)
         {
-            var frame = GetCurrentFrame();
-            if (frame == null)
-                return;
-            if (index < 0 || index >= frame.Boxes.Count)
-                return;
-
-            var b = frame.Boxes[index];
-            if (b.Props.Knockback == (SVector2)knockback)
-                return;
-
-            RecordUndo("Edit Box Knockback");
-
-            b.Props.Knockback = (SVector2)knockback;
-            frame.Boxes[index] = b;
-
-            MarkDirty();
-        }
-
-        public void MoveBoxCenter(int index, Vector2 newCenterLocal)
-        {
-            var frame = GetCurrentFrame();
-            if (frame == null)
-                return;
-            if (index < 0 || index >= frame.Boxes.Count)
-                return;
-
-            var b = frame.Boxes[index];
-            if (b.CenterLocal == (SVector2)newCenterLocal)
-                return;
-
-            RecordUndo("Move Box");
-
-            b.CenterLocal = (SVector2)newCenterLocal;
-            frame.Boxes[index] = b;
-
-            MarkDirty();
-        }
-
-        public void SetBox(int index, BoxData updated)
-        {
-            var frame = GetCurrentFrame();
+            var frame = GetCurrentFrame(state);
             if (frame == null)
                 return;
             if (index < 0 || index >= frame.Boxes.Count)
@@ -217,59 +168,20 @@ namespace Design.Animation.MoveBuilder.Editors
             if (cur == updated)
                 return;
 
-            RecordUndo("Edit Box");
+            RecordUndo(state, "Edit Box");
 
             frame.Boxes[index] = updated;
 
-            MarkDirty();
-        }
-
-        public void SetBoxesFromPreviousFrame()
-        {
-            if (!Data)
-                return;
-            if (CurrentTick <= 0)
-                return;
-
-            var prev = Data.GetFrame(CurrentTick - 1);
-            var cur = Data.GetFrame(CurrentTick);
-            if (prev == null || cur == null)
-                return;
-
-            RecordUndo("Copy Boxes From Previous Frame");
-
-            cur.Boxes.Clear();
-
-            for (int i = 0; i < prev.Boxes.Count; i++)
-            {
-                var src = prev.Boxes[i];
-
-                var dst = new BoxData
-                {
-                    Name = src.Name,
-                    CenterLocal = src.CenterLocal,
-                    SizeLocal = src.SizeLocal,
-                    Props = src.Props,
-                };
-
-                cur.Boxes.Add(dst);
-            }
-
-            if (SelectedBoxIndex >= cur.Boxes.Count)
-                SelectedBoxIndex = cur.Boxes.Count - 1;
-            if (cur.Boxes.Count == 0)
-                SelectedBoxIndex = -1;
-
-            MarkDirty();
+            MarkDirty(state);
         }
 
         private bool _hasCopiedBoxProps;
         private BoxProps _copiedBoxProps;
         public bool HasCopiedBoxProps => _hasCopiedBoxProps;
 
-        public void CopySelectedBoxProps()
+        public void CopySelectedBoxProps(MoveBuilderAnimationState state)
         {
-            var frame = GetCurrentFrame();
+            var frame = GetCurrentFrame(state);
             if (frame == null)
                 return;
             if (SelectedBoxIndex < 0 || SelectedBoxIndex >= frame.Boxes.Count)
@@ -279,12 +191,12 @@ namespace Design.Animation.MoveBuilder.Editors
             _hasCopiedBoxProps = true;
         }
 
-        public void PasteBoxPropsToSelected()
+        public void PasteBoxPropsToSelected(MoveBuilderAnimationState state)
         {
             if (!_hasCopiedBoxProps)
                 return;
 
-            var frame = GetCurrentFrame();
+            var frame = GetCurrentFrame(state);
             if (frame == null)
                 return;
             if (SelectedBoxIndex < 0 || SelectedBoxIndex >= frame.Boxes.Count)
@@ -294,12 +206,12 @@ namespace Design.Animation.MoveBuilder.Editors
             if (cur.Props == _copiedBoxProps)
                 return;
 
-            RecordUndo("Paste Box Props");
+            RecordUndo(state, "Paste Box Props");
 
             cur.Props = _copiedBoxProps;
             frame.Boxes[SelectedBoxIndex] = cur;
 
-            MarkDirty();
+            MarkDirty(state);
         }
 
         private bool _hasCopiedFrame;
@@ -307,9 +219,9 @@ namespace Design.Animation.MoveBuilder.Editors
 
         public bool HasCopiedFrame => _hasCopiedFrame;
 
-        public void CopyCurrentFrameData()
+        public void CopyCurrentFrameData(MoveBuilderAnimationState state)
         {
-            var frame = GetCurrentFrame();
+            var frame = GetCurrentFrame(state);
             if (frame == null)
                 return;
 
@@ -317,16 +229,16 @@ namespace Design.Animation.MoveBuilder.Editors
             _hasCopiedFrame = true;
         }
 
-        public void PasteFrameDataToCurrentFrame()
+        public void PasteFrameDataToCurrentFrame(MoveBuilderAnimationState state)
         {
             if (!_hasCopiedFrame)
                 return;
 
-            var frame = GetCurrentFrame();
+            var frame = GetCurrentFrame(state);
             if (frame == null)
                 return;
 
-            RecordUndo("Paste Frame Data");
+            RecordUndo(state, "Paste Frame Data");
 
             frame.CopyFrom(_copiedFrame);
 
@@ -335,44 +247,36 @@ namespace Design.Animation.MoveBuilder.Editors
             if (frame.Boxes.Count == 0)
                 SelectedBoxIndex = -1;
 
-            MarkDirty();
+            MarkDirty(state);
         }
-
-        public void ResetTimelineSelection()
-        {
-            CurrentTick = 0;
-            SelectedBoxIndex = -1;
-        }
-
         #endregion
 
 
         #region Helpers
-        public void SaveAsset()
+        public void SaveAsset(MoveBuilderAnimationState state)
         {
-            if (!Data)
+            if (!state.Data)
                 return;
 
-            EditorUtility.SetDirty(Data);
+            EditorUtility.SetDirty(state.Data);
             AssetDatabase.SaveAssets();
 
-            _lastData = Data;
-            _savedValueHash = Data.GetHashCode();
+            _lastData = state.Data;
+            _savedValueHash = state.Data.GetHashCode();
         }
 
-        private void MarkDirty()
+        private void MarkDirty(MoveBuilderAnimationState state)
         {
-            if (Data)
+            if (state.Data)
             {
-                EditorUtility.SetDirty(Data);
+                EditorUtility.SetDirty(state.Data);
             }
         }
 
-        private void RecordUndo(string label)
+        private void RecordUndo(MoveBuilderAnimationState state, string label)
         {
-            // Important: Undo needs to record the ScriptableObject (Data), not the frame/box contents.
-            if (Data)
-                Undo.RecordObject(Data, label);
+            if (state.Data)
+                Undo.RecordObject(state.Data, label);
         }
         #endregion
     }

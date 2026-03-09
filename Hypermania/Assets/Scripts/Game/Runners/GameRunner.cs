@@ -17,7 +17,7 @@ namespace Game.Runners
         protected GameView _view;
 
         [SerializeField]
-        protected GlobalConfig _config;
+        protected GameOptions _options;
 
         [SerializeField]
         protected bool _drawHitboxes;
@@ -34,7 +34,6 @@ namespace Game.Runners
         /// The characters of each player. _characters[i] should represent the chararcter being played by handle i. If
         /// you derive from this class, it must be initialized on Init();
         /// </summary>
-        protected CharacterConfig[] _characters;
         protected InputBuffer _inputBuffer;
         protected bool _initialized;
         protected float _time;
@@ -48,15 +47,8 @@ namespace Game.Runners
             {
                 throw new InvalidOperationException("must get 2 players");
             }
-            // TODO: character select pass in chars here
-            // CharacterConfig sampleConfig = _config.CharacterConfig(Character.SampleFighter);
-            CharacterConfig nytheaConfig = _config.CharacterConfig(Character.Nythea);
-
-            _characters = new CharacterConfig[players.Count];
-            _characters[0] = nytheaConfig;
-            _characters[1] = nytheaConfig;
-            _curState = GameState.Create(_config, _characters);
-            _view.Init(_config, _characters);
+            _curState = GameState.Create(_options);
+            _view.Init(_options);
             if (_controlsConfig == null)
                 _controlsConfig = ScriptableObject.CreateInstance<ControlsConfig>();
             _inputBuffer = new InputBuffer(_controlsConfig);
@@ -73,20 +65,13 @@ namespace Game.Runners
             _inputBuffer = null;
             _view.DeInit();
             _curState = null;
-            _characters = null;
         }
 
         public void OnDrawGizmos()
         {
             if (!_drawHitboxes)
                 return;
-            if (
-                _curState == null
-                || _characters == null
-                || _view == null
-                || _view.Fighters == null
-                || _curState.Fighters == null
-            )
+            if (_curState == null || _view == null || _view.Fighters == null || _curState.Fighters == null)
                 return;
 
             for (int i = 0; i < _curState.Fighters.Length; i++)
@@ -94,7 +79,7 @@ namespace Game.Runners
                 var fighterView = _view.Fighters[i];
                 CharacterState anim = _curState.Fighters[i].State;
                 int tick = _curState.SimFrame - _curState.Fighters[i].StateStart;
-                FrameData frame = _characters[i].GetFrameData(anim, tick);
+                FrameData frame = _options.Players[i].Character.GetFrameData(anim, tick);
 
                 Transform t = fighterView.transform;
 

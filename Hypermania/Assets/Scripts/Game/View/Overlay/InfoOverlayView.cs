@@ -42,10 +42,14 @@ namespace Game.View.Overlay
         public void Render(InfoOverlayDetails details)
         {
             _tps.Call();
-            string detailsString = "FPS: " + _fps.Tps + "  TPS: " + _tps.Tps;
+            string detailsString = "FPS: " + _fps.Tps + "  TPS: " + _tps.Tps + " Ping: ";
             if (details.HasPing)
             {
-                detailsString += "  Ping: " + details.Ping + "ms";
+                detailsString += details.Ping + "ms";
+            }
+            else
+            {
+                detailsString += "N/A";
             }
             _detailText.SetText(detailsString);
         }

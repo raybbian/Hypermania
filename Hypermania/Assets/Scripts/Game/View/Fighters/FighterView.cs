@@ -52,7 +52,7 @@ namespace Game.View.Fighters
                 ticks = Mathf.Min(ticks, totalTicks - 1);
             }
 
-            _animator.Play(animation.ToString(), 0, (float)ticks / totalTicks);
+            _animator.Play(animation.ToString(), 0, (float)ticks / (totalTicks - 1));
             _animator.Update(0f); // force pose evaluation this frame while paused
         }
 

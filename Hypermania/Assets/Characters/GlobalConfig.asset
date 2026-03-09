@@ -31,6 +31,10 @@ MonoBehaviour:
     rawValue: 1067450368
   RoundTimeTicks: 10800
   RoundCountdownTicks: 180
+  MaxHype:
+    rawValue: 1120403456
+  HypeMovementFactor:
+    rawValue: 1050253722
   _inputConfig:
     DashWindow: 12
     SuperJumpWindow: 8
@@ -39,5 +43,4 @@ MonoBehaviour:
   _audioConfig: {fileID: 11400000, guid: 390bdf2077e7858679ef87c91e25471c, type: 2}
   _configs:
     values:
-    - {fileID: 11400000, guid: 1e6472018f0802edf8647882acc6eb72, type: 2}
     - {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}
