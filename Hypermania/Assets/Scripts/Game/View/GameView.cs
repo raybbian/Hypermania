@@ -84,7 +84,7 @@ namespace Game.View
                 _fighters[i] = Instantiate(config.Prefab);
                 _fighters[i].name = "Fighter View";
                 _fighters[i].transform.SetParent(transform, true);
-                _fighters[i].Init(config);
+                _fighters[i].Init(config, options.Players[i].SkinIndex);
 
                 _playerParams[i].ManiaView.Init();
                 _playerParams[i].HealthBarView.SetMaxHealth((float)config.Health);

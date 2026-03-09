@@ -170,7 +170,6 @@ MonoBehaviour:
     CameraSpeed: 10
     Config: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
     Margin: 0.3
-    Padding: 0.3
     Camera: {fileID: 562816628700700724}
 --- !u!114 &102352432
 MonoBehaviour:
@@ -354,8 +353,10 @@ MonoBehaviour:
     Players:
     - HealOnActionable: 1
       Character: {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}
+      SkinIndex: 0
     - HealOnActionable: 1
       Character: {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}
+      SkinIndex: 1
   _drawHitboxes: 1
   _controlsConfig: {fileID: 0}
   _advanceKey: 62
@@ -517,8 +518,10 @@ MonoBehaviour:
     Players:
     - HealOnActionable: 1
       Character: {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}
+      SkinIndex: 0
     - HealOnActionable: 1
       Character: {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}
+      SkinIndex: 1
   _drawHitboxes: 1
   _controlsConfig: {fileID: 0}
 --- !u!4 &286925406
@@ -842,8 +845,10 @@ MonoBehaviour:
     Players:
     - HealOnActionable: 0
       Character: {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}
+      SkinIndex: 0
     - HealOnActionable: 0
       Character: {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}
+      SkinIndex: 1
   _drawHitboxes: 1
   _controlsConfig: {fileID: 0}
 --- !u!1 &841370078

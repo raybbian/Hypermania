@@ -1,16 +1,20 @@
+using System;
 using Design.Configs;
 using Game.Sim;
 using Game.View.Events;
 using Game.View.Events.Vfx;
 using UnityEngine;
+using UnityEngine.U2D.Animation;
 using Utils;
 
 namespace Game.View.Fighters
 {
     [RequireComponent(typeof(Animator))]
+    [RequireComponent(typeof(SpriteLibrary))]
     public class FighterView : MonoBehaviour
     {
         private Animator _animator;
+        private SpriteLibrary _spriteLibrary;
         private CharacterConfig _characterConfig;
         private RuntimeAnimatorController _oldController;
 
@@ -20,14 +24,20 @@ namespace Game.View.Fighters
         public virtual void Awake()
         {
             _animator = GetComponent<Animator>();
+            _spriteLibrary = GetComponent<SpriteLibrary>();
             _animator.speed = 0f;
         }
 
-        public virtual void Init(CharacterConfig characterConfig)
+        public virtual void Init(CharacterConfig characterConfig, int skinIndex)
         {
+            if (skinIndex < 0 || skinIndex >= characterConfig.Skins.Length)
+            {
+                throw new InvalidOperationException("Skin index out of range");
+            }
             _characterConfig = characterConfig;
             _oldController = _animator.runtimeAnimatorController;
             _animator.runtimeAnimatorController = characterConfig.AnimationController;
+            _spriteLibrary.spriteLibraryAsset = characterConfig.Skins[skinIndex];
         }
 
         public virtual void Render(Frame frame, in FighterState state)

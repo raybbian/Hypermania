@@ -28,6 +28,7 @@ namespace Game.Sim
     {
         public bool HealOnActionable;
         public CharacterConfig Character;
+        public int SkinIndex;
     }
 
     [Serializable]

@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Character: 1
   Prefab: {fileID: 5766376669795590084, guid: 692614c6f0138c5709de58dbca0159e4, type: 3}
+  Skins:
+  - {fileID: 7108339969198208228, guid: 7bce4506c706589b0ba441fd802927e8, type: 3}
+  - {fileID: 7108339969198208228, guid: f6fdaaf67e68349c7961174219f92281, type: 3}
   AnimationController: {fileID: 22100000, guid: b2247d1bd644d04a3a78e3aa68904cb8, type: 2}
   CharacterHeight:
     rawValue: 1071225242
