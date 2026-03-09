@@ -20,9 +20,6 @@ namespace Game.View
 
             // Additional area outside the arena bounds that the camera is allowed to see
             public float Margin;
-
-            // Additional area around the interest points that the camera must see
-            public float Padding;
             public Camera Camera;
         }
 
@@ -33,6 +30,7 @@ namespace Game.View
         void Start()
         {
             _interestPoints = new List<Vector2>();
+            _params.Camera.orthographicSize = (float)_params.Config.CameraHalfHeight;
         }
 
         public void OnValidate()
@@ -64,7 +62,7 @@ namespace Game.View
                 min = Vector2.Min(min, point);
                 max = Vector2.Max(max, point);
             }
-            Vector2 padding = new Vector2(_params.Padding, _params.Padding);
+            Vector2 padding = new Vector2((float)_params.Config.CameraPadding, (float)_params.Config.CameraPadding);
             min -= padding;
             max += padding;
 

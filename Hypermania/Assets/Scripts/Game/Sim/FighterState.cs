@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Design.Animation;
 using Design.Configs;
@@ -434,7 +435,7 @@ namespace Game.Sim
             }
         }
 
-        public void UpdatePosition(GameOptions options)
+        public void UpdatePosition(GameOptions options, SVector2 otherFighterPos)
         {
             // Apply gravity if not grounded and not in airdash
             if (
@@ -457,15 +458,22 @@ namespace Game.Sim
                 if (Velocity.y < 0)
                     Velocity.y = 0;
             }
-            if (Position.x >= options.Global.WallsX)
+
+            sfloat cameraMaxBounds =
+                otherFighterPos.x + 2 * (options.Global.CameraHalfWidth - options.Global.CameraPadding);
+            sfloat cameraMinBounds =
+                otherFighterPos.x - 2 * (options.Global.CameraHalfWidth - options.Global.CameraPadding);
+            sfloat maxBounds = Mathsf.Min(options.Global.WallsX, cameraMaxBounds);
+            sfloat minBounds = Mathsf.Max(-options.Global.WallsX, cameraMinBounds);
+            if (Position.x >= maxBounds)
             {
-                Position.x = options.Global.WallsX;
+                Position.x = maxBounds;
                 if (Velocity.x > 0)
                     Velocity.x = 0;
             }
-            if (Position.x <= -options.Global.WallsX)
+            if (Position.x <= minBounds)
             {
-                Position.x = -options.Global.WallsX;
+                Position.x = minBounds;
                 if (Velocity.x < 0)
                     Velocity.x = 0;
             }

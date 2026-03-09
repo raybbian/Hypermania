@@ -34,6 +34,9 @@ namespace Design.Configs
         public int RoundCountdownTicks = 180;
         public sfloat MaxHype = 100;
         public sfloat HypeMovementFactor = (sfloat)0.3f;
+        public sfloat CameraHalfHeight = (sfloat)1.5f;
+        public sfloat CameraPadding = (sfloat)0.3f;
+        public sfloat CameraHalfWidth => CameraHalfHeight * (sfloat)1.7777777f;
 
         [SerializeField]
         private InputConfig _inputConfig;
