@@ -170,7 +170,7 @@ namespace Game.Sim
                 Fighters[i].InputH.PushInput(remapInputs[i]);
             }
             // if hitstop, only grab inputs and return
-            if (HitstopFramesRemaining >= 0)
+            if (HitstopFramesRemaining > 0)
             {
                 HitstopFramesRemaining--;
                 return;

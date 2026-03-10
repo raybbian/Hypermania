@@ -25,6 +25,9 @@ namespace Game.View.Overlay
         private GameObject _fontPrefab;
 
         [SerializeField]
+        private bool _displayHitstopFrames = true;
+
+        [SerializeField]
         private int _numColumns;
 
         private float _cellWidth;
@@ -98,10 +101,19 @@ namespace Game.View.Overlay
             {
                 return;
             }
-            int baseIdx = state.SimFrame.No % _numColumns;
+
+            Frame frame = _displayHitstopFrames ? state.RealFrame : state.SimFrame;
+            int baseIdx = frame.No % _numColumns;
             for (int i = 0; i < 2; i++)
             {
-                _cells[i, baseIdx].SetType(state.SimFrame, state.Fighters[i], options.Players[i].Character);
+                if (_displayHitstopFrames && state.HitstopFramesRemaining > 0)
+                {
+                    _cells[i, baseIdx].SetType(FrameType.Hitstop);
+                }
+                else
+                {
+                    _cells[i, baseIdx].SetType(state.SimFrame, state.Fighters[i], options.Players[i].Character);
+                }
                 _consecText[i, baseIdx].gameObject.SetActive(false);
                 int prevIdx = (baseIdx + _numColumns - 1) % _numColumns;
 

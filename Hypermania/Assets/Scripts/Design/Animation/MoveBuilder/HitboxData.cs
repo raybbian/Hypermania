@@ -110,6 +110,7 @@ namespace Design.Animation
         Recovery,
         Hitstun,
         Blockstun,
+        Hitstop,
     }
 
     [Serializable]
