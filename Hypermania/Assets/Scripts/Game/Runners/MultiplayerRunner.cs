@@ -137,7 +137,7 @@ namespace Game.Runners
                         _view.RollbackRender(_curState);
                         break;
                     case RollbackRequestKind.AdvanceFrameReq:
-                        _curState.Advance(request.GetAdvanceFrameRequest().Inputs, _characters, _config);
+                        _curState.Advance(_options, request.GetAdvanceFrameRequest().Inputs);
                         _view.RollbackRender(_curState);
                         break;
                 }
@@ -153,7 +153,7 @@ namespace Game.Runners
                 HasPing = true,
                 Ping = _session.NetworkStats(_remoteHandle).Ping,
             };
-            _view.Render(_curState, _config, details);
+            _view.Render(_curState, _options, details);
         }
     }
 }

@@ -23,6 +23,14 @@ namespace Design.Animation
     }
 
     [Serializable]
+    public enum KnockdownKind
+    {
+        None,
+        Light,
+        Heavy,
+    }
+
+    [Serializable]
     [MemoryPackable]
     public partial struct BoxProps : IEquatable<BoxProps>
     {
@@ -34,6 +42,7 @@ namespace Design.Animation
         public int BlockstunTicks;
         public int HitstopTicks;
         public bool StartsRhythmCombo;
+        public KnockdownKind KnockdownKind;
         public SVector2 Knockback;
 
         public bool Equals(BoxProps other) =>
@@ -43,6 +52,7 @@ namespace Design.Animation
             && Damage == other.Damage
             && BlockstunTicks == other.BlockstunTicks
             && Knockback == other.Knockback
+            && KnockdownKind == other.KnockdownKind
             && StartsRhythmCombo == other.StartsRhythmCombo
             && HitstopTicks == other.HitstopTicks;
 
@@ -50,13 +60,16 @@ namespace Design.Animation
 
         public override int GetHashCode() =>
             HashCode.Combine(
-                Kind,
-                AttackKind,
-                HitstunTicks,
-                Damage,
-                BlockstunTicks,
-                StartsRhythmCombo,
-                Knockback,
+                HashCode.Combine(
+                    Kind,
+                    AttackKind,
+                    HitstunTicks,
+                    Damage,
+                    BlockstunTicks,
+                    StartsRhythmCombo,
+                    KnockdownKind,
+                    Knockback
+                ),
                 HitstopTicks
             );
 

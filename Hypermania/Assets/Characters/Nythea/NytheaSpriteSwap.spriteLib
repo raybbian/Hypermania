@@ -696,6 +696,28 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: 4136965847296015695, guid: 14222601f6de24887b62d652b9754d37, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 1
+  - m_Name: scythe_top
+    m_Hash: 933312809
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: scythe_top
+      m_Hash: 933312809
+      m_Sprite: {fileID: 7631342423142823879, guid: 14222601f6de24887b62d652b9754d37, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 7631342423142823879, guid: 14222601f6de24887b62d652b9754d37, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
+  - m_Name: scythe_bottom
+    m_Hash: 1073440414
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: scythe_bottom
+      m_Hash: 1073440414
+      m_Sprite: {fileID: -3655786474013948043, guid: 14222601f6de24887b62d652b9754d37, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -3655786474013948043, guid: 14222601f6de24887b62d652b9754d37, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 1
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 639077450910047128
+  m_ModificationHash: 639086754086398520
   m_Version: 1

@@ -16,15 +16,10 @@ namespace Game.View
         public struct Params
         {
             public float CameraSpeed;
-            public float MaxZoom;
-            public float MinZoom;
             public GlobalConfig Config;
 
             // Additional area outside the arena bounds that the camera is allowed to see
             public float Margin;
-
-            // Additional area around the interest points that the camera must see
-            public float Padding;
             public Camera Camera;
         }
 
@@ -35,6 +30,7 @@ namespace Game.View
         void Start()
         {
             _interestPoints = new List<Vector2>();
+            _params.Camera.orthographicSize = (float)_params.Config.CameraHalfHeight;
         }
 
         public void OnValidate()
@@ -66,20 +62,15 @@ namespace Game.View
                 min = Vector2.Min(min, point);
                 max = Vector2.Max(max, point);
             }
-            Vector2 padding = new Vector2(_params.Padding, _params.Padding);
+            Vector2 padding = new Vector2((float)_params.Config.CameraPadding, (float)_params.Config.CameraPadding);
             min -= padding;
             max += padding;
-
-            float width = max.x - min.x;
-            float wZoom = Mathf.Clamp(width / 2 / _params.Camera.aspect, _params.MinZoom, _params.MaxZoom);
 
             float dt = Time.deltaTime;
             float k = _params.CameraSpeed;
             float a = 1f - Mathf.Exp(-k * dt);
-            _params.Camera.orthographicSize = Mathf.Lerp(_params.Camera.orthographicSize, wZoom, a);
 
             // adjust position with respect to zoom
-
             Vector3 p = transform.position;
             min.y = max.y - 2 * _params.Camera.orthographicSize;
             Vector2 pos2 = Vector2.Lerp(new Vector2(p.x, p.y), (min + max) / 2, a);

@@ -166,6 +166,7 @@ namespace Design.Animation.MoveBuilder.Editors
                 p.BlockstunTicks = EditorGUILayout.IntField("Blockstun (ticks)", p.BlockstunTicks);
                 p.HitstopTicks = EditorGUILayout.IntField("Hitstop Ticks", p.HitstopTicks);
                 p.Knockback = SFloatGUI.Field("Knockback", p.Knockback);
+                p.KnockdownKind = (KnockdownKind)EditorGUILayout.EnumPopup("Knockdown Kind", p.KnockdownKind);
                 p.StartsRhythmCombo = EditorGUILayout.Toggle("Starts rhythm combo", p.StartsRhythmCombo);
             }
             box.Props = p;

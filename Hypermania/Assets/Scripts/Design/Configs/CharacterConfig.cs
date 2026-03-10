@@ -2,6 +2,7 @@ using Design.Animation;
 using Game;
 using Game.View.Fighters;
 using UnityEngine;
+using UnityEngine.U2D.Animation;
 using Utils.EnumArray;
 using Utils.SoftFloat;
 
@@ -12,6 +13,7 @@ namespace Design.Configs
     {
         public Character Character;
         public FighterView Prefab;
+        public SpriteLibraryAsset[] Skins;
         public AnimatorOverrideController AnimationController;
         public sfloat CharacterHeight;
         public sfloat ForwardSpeed;

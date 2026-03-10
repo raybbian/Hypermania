@@ -1,4 +1,5 @@
 using Design.Configs;
+using Game.Sim;
 using TMPro;
 using UnityEngine;
 using Utils;
@@ -17,11 +18,11 @@ namespace Game.View.Overlay
             _roundCD = GetComponent<TextMeshProUGUI>();
         }
 
-        public void DisplayRoundCD(Frame currentFrame, Frame roundStart, GlobalConfig config)
+        public void DisplayRoundCD(Frame currentFrame, Frame roundStart, GameOptions options)
         {
             time = (currentFrame.No - roundStart.No) / 60;
-            gameObject.SetActive(time <= config.RoundCountdownTicks / 60 + 0.5);
-            if (time < config.RoundCountdownTicks / 60)
+            gameObject.SetActive(time <= options.Global.RoundCountdownTicks / 60 + 0.5);
+            if (time < options.Global.RoundCountdownTicks / 60)
             {
                 _roundCD.SetText((3 - Mathf.FloorToInt(time)).ToString());
             }
