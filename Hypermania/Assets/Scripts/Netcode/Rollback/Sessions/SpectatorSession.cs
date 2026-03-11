@@ -40,7 +40,7 @@ namespace Netcode.Rollback.Sessions
             _hostConnectStatus = new ConnectionStatus[numPlayers];
             for (int i = 0; i < numPlayers; i++)
             {
-                _hostConnectStatus[i] = ConnectionStatus.Default;
+                _hostConnectStatus[i] = ConnectionStatus.DEFAULT;
             }
 
             _state = SessionState.Synchronizing;

@@ -143,7 +143,7 @@ namespace Game.View.Mania
                 Config
                     .Anchors[i]
                     .gameObject.GetComponent<ManiaSpriteSwitcher>()
-                    .ChangeSprite(state.Channels[i].pressed);
+                    .ChangeSprite(state.Channels[i].Pressed);
             }
 
             for (int i = 0; i < state.Config.NumKeys; i++)
@@ -182,9 +182,7 @@ namespace Game.View.Mania
 
             if (!_activeNotes.ContainsKey(note.Id))
             {
-                noteView = Instantiate(Config.Notes[channel]);
-                //ensure that scale is 1
-                noteView.transform.SetParent(transform, false);
+                noteView = Instantiate(Config.Notes[channel], transform, false);
             }
             else
             {

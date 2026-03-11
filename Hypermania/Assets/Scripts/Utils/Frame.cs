@@ -54,13 +54,13 @@ namespace Utils
             return sizeof(int);
         }
 
-        public int Serialize(Span<byte> outBytes)
+        public readonly int Serialize(Span<byte> outBytes)
         {
             BinaryPrimitives.WriteInt32LittleEndian(outBytes, No);
             return sizeof(int);
         }
 
-        public int SerdeSize()
+        public readonly int SerdeSize()
         {
             return sizeof(int);
         }

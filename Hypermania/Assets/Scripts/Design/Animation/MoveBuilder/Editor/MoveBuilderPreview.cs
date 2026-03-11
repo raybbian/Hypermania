@@ -1,13 +1,12 @@
-using System.Collections.Generic;
 using Game.View.Fighters;
 using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEngine;
 using Utils.SoftFloat;
 
-namespace Design.Animation.MoveBuilder.Editors
+namespace Design.Animation.MoveBuilder.Editor
 {
-    [EditorTool("MoveBuilder Previow", typeof(FighterView))]
+    [EditorTool("MoveBuilder Preview", typeof(FighterView))]
     public sealed class MoveBuilderPreview : EditorTool
     {
         public override void OnToolGUI(EditorWindow window)
@@ -26,7 +25,7 @@ namespace Design.Animation.MoveBuilder.Editors
             }
             var state = animState.Value;
 
-            HandleKeybinds(fighter, m, state);
+            HandleKeybinds(m, state);
 
             FrameData curFrame = m.GetCurrentFrame(state);
             if (curFrame == null)
@@ -43,7 +42,7 @@ namespace Design.Animation.MoveBuilder.Editors
             ConsumeScenePicking();
         }
 
-        private static void HandleKeybinds(FighterView fighter, MoveBuilderModel m, MoveBuilderAnimationState state)
+        private static void HandleKeybinds(MoveBuilderModel m, MoveBuilderAnimationState state)
         {
             var e = Event.current;
             if (e == null || e.type != EventType.KeyDown)
@@ -71,8 +70,8 @@ namespace Design.Animation.MoveBuilder.Editors
                 return;
             }
 
-            // Duplicate Selected (Ctrl/Cmd + D)
-            if (e.keyCode == KeyCode.D && actionKey)
+            // Duplicate Selected (D)
+            if (e.keyCode == KeyCode.D && !actionKey)
             {
                 if (HasSelection())
                 {
@@ -84,7 +83,7 @@ namespace Design.Animation.MoveBuilder.Editors
             }
 
             // Delete Selected (Backspace/Delete)
-            if (e.keyCode == KeyCode.Backspace || e.keyCode == KeyCode.Delete)
+            if ((e.keyCode == KeyCode.Backspace || e.keyCode == KeyCode.Delete) && !actionKey)
             {
                 if (HasSelection())
                 {
@@ -95,8 +94,8 @@ namespace Design.Animation.MoveBuilder.Editors
                 return;
             }
 
-            // Copy Box Props (Ctrl/Cmd + C)
-            if (e.keyCode == KeyCode.C && actionKey && !shift)
+            // Copy Box Props (C)
+            if (e.keyCode == KeyCode.C && !actionKey && !shift)
             {
                 if (HasSelection())
                 {
@@ -107,8 +106,8 @@ namespace Design.Animation.MoveBuilder.Editors
                 return;
             }
 
-            // Paste Box Props (Ctrl/Cmd + V)
-            if (e.keyCode == KeyCode.V && actionKey && !shift)
+            // Paste Box Props (V)
+            if (e.keyCode == KeyCode.V && !actionKey && !shift)
             {
                 if (HasSelection() && m.HasCopiedBoxProps)
                 {
@@ -119,8 +118,8 @@ namespace Design.Animation.MoveBuilder.Editors
                 return;
             }
 
-            // Copy Frame (Ctrl/Cmd + Shift + C)
-            if (e.keyCode == KeyCode.C && actionKey && shift)
+            // Copy Frame (Shift + C)
+            if (e.keyCode == KeyCode.C && !actionKey && shift)
             {
                 m.CopyCurrentFrameData(state);
                 GUI.changed = true;
@@ -128,8 +127,8 @@ namespace Design.Animation.MoveBuilder.Editors
                 return;
             }
 
-            // Paste Frame (Ctrl/Cmd + Shift + V)
-            if (e.keyCode == KeyCode.V && actionKey && shift)
+            // Paste Frame (Shift + V)
+            if (e.keyCode == KeyCode.V && !actionKey && shift)
             {
                 if (m.HasCopiedFrame)
                 {

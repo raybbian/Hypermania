@@ -5,7 +5,7 @@ using Utils;
 
 namespace Netcode.Rollback
 {
-    public readonly struct PlayerHandle : IFormattable
+    public readonly struct PlayerHandle : IFormattable, IEquatable<PlayerHandle>
     {
         public readonly int Id;
 
@@ -15,6 +15,21 @@ namespace Netcode.Rollback
         }
 
         public override string ToString() => Id.ToString();
+
+        public bool Equals(PlayerHandle other)
+        {
+            return Id == other.Id;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PlayerHandle other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id);
+        }
 
         public string ToString(string format, IFormatProvider formatProvider) => Id.ToString(format, formatProvider);
     }
@@ -32,10 +47,26 @@ namespace Netcode.Rollback
         Spectator,
     }
 
-    public struct PlayerType<TAddress>
+    public struct PlayerType<TAddress> : IEquatable<PlayerType<TAddress>>
+        where TAddress : IEquatable<TAddress>
     {
         public PlayerKind Kind;
         public TAddress Address;
+
+        public bool Equals(PlayerType<TAddress> other)
+        {
+            return other.Kind == Kind && other.Address.Equals(Address);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is PlayerType<TAddress> other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Kind, Address);
+        }
     }
 
     public enum SessionState
@@ -137,37 +168,37 @@ namespace Netcode.Rollback
         public static RollbackEvent<TInput, TAddress> From(in DesyncDetected e) =>
             new() { Kind = RollbackEventKind.DesyncDetected, _desyncDetected = e };
 
-        public Synchronizing GetSynchronizing() =>
+        public readonly Synchronizing GetSynchronizing() =>
             Kind == RollbackEventKind.Synchronizing
                 ? _synchronizing
                 : throw new System.InvalidOperationException("event type mismatch");
 
-        public Synchronized GetSynchronized() =>
+        public readonly Synchronized GetSynchronized() =>
             Kind == RollbackEventKind.Synchronized
                 ? _synchronized
                 : throw new System.InvalidOperationException("event type mismatch");
 
-        public Disconnected GetDisconnected() =>
+        public readonly Disconnected GetDisconnected() =>
             Kind == RollbackEventKind.Disconnected
                 ? _disconnected
                 : throw new System.InvalidOperationException("event type mismatch");
 
-        public NetworkInterrupted GetNetworkInterrupted() =>
+        public readonly NetworkInterrupted GetNetworkInterrupted() =>
             Kind == RollbackEventKind.NetworkInterrupted
                 ? _networkInterrupted
                 : throw new System.InvalidOperationException("event type mismatch");
 
-        public NetworkResumed GetNetworkResumed() =>
+        public readonly NetworkResumed GetNetworkResumed() =>
             Kind == RollbackEventKind.NetworkResumed
                 ? _networkResumed
                 : throw new System.InvalidOperationException("event type mismatch");
 
-        public WaitRecommendation GetWaitRecommendation() =>
+        public readonly WaitRecommendation GetWaitRecommendation() =>
             Kind == RollbackEventKind.WaitRecommendation
                 ? _waitRecommendation
                 : throw new System.InvalidOperationException("event type mismatch");
 
-        public DesyncDetected GetDesyncDetected() =>
+        public readonly DesyncDetected GetDesyncDetected() =>
             Kind == RollbackEventKind.DesyncDetected
                 ? _desyncDetected
                 : throw new System.InvalidOperationException("event type mismatch");
@@ -234,8 +265,6 @@ namespace Netcode.Rollback
     public interface IInput<TSelf> : IEquatable<TSelf>, ISerializable { }
 
     public interface IState<TSelf> { }
-
-    public interface IAddress<TSelf> : IEquatable<TSelf> { }
 
     public interface INonBlockingSocket<TAddress>
     {

@@ -160,6 +160,28 @@ namespace Netcode.P2P
             }
         }
 
+        public void DisconnectAllPeers(string reason = "disconnect_all")
+        {
+            if (!_initialized || _connections == null)
+                return;
+
+            foreach (var kv in _connections)
+            {
+                var c = kv.Value;
+
+                if (c.Incoming != HSteamNetConnection.Invalid)
+                {
+                    SteamNetworkingSockets.CloseConnection(c.Incoming, 0, reason, false);
+                    c.Incoming = HSteamNetConnection.Invalid;
+                }
+                if (c.Outgoing != HSteamNetConnection.Invalid)
+                {
+                    SteamNetworkingSockets.CloseConnection(c.Outgoing, 0, reason, false);
+                    c.Outgoing = HSteamNetConnection.Invalid;
+                }
+            }
+        }
+
         private void OnNetConnectionStatusChanged(SteamNetConnectionStatusChangedCallback_t data)
         {
             Debug.Log(
@@ -268,8 +290,8 @@ namespace Netcode.P2P
 
         public List<(SteamNetworkingIdentity addr, Message message)> ReceiveAllMessages()
         {
-            const int BATCH = 32;
-            IntPtr[] ptrs = new IntPtr[BATCH];
+            const int batch = 32;
+            IntPtr[] ptrs = new IntPtr[batch];
 
             var received = new List<(SteamNetworkingIdentity addr, Message message)>();
 
@@ -283,7 +305,7 @@ namespace Netcode.P2P
 
                 while (true)
                 {
-                    int n = SteamNetworkingSockets.ReceiveMessagesOnConnection(conn, ptrs, BATCH);
+                    int n = SteamNetworkingSockets.ReceiveMessagesOnConnection(conn, ptrs, batch);
                     if (n <= 0)
                         break;
                     for (int i = 0; i < n; i++)

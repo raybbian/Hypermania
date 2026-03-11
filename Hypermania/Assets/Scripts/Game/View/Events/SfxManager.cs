@@ -23,7 +23,6 @@ namespace Game.View.Events
         private float _fadeOutDuration;
 
         // randomly choose between variants for sfx, not critical to state/gameplay
-        [SerializeField]
         private System.Random _random;
 
         public void Awake()

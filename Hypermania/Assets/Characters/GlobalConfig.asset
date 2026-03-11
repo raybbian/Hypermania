@@ -17,7 +17,7 @@ MonoBehaviour:
   GroundY:
     rawValue: 0
   WallsX:
-    rawValue: 1090519040
+    rawValue: 1088421888
   ClankTicks: 30
   ForwardDashCancelAfterTicks: 2
   ForwardDashTicks: 5
@@ -34,6 +34,10 @@ MonoBehaviour:
   MaxHype:
     rawValue: 1120403456
   HypeMovementFactor:
+    rawValue: 1050253722
+  CameraHalfHeight:
+    rawValue: 1069547520
+  CameraPadding:
     rawValue: 1050253722
   _inputConfig:
     DashWindow: 12

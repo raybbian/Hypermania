@@ -1,17 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using UnityEditor;
-using UnityEngine;
 using Utils.SoftFloat;
 
-namespace Design.Animation.MoveBuilder.Editors
+namespace Design.Animation.MoveBuilder.Editor
 {
     public static class MoveBuilderModelStore
     {
-        private static readonly Dictionary<string, MoveBuilderModel> _states = new();
+        private static readonly Dictionary<string, MoveBuilderModel> States = new();
 
-        public static string KeyFor(UnityEngine.Object o)
+        private static string KeyFor(UnityEngine.Object o)
         {
             if (!o)
                 return "null";
@@ -23,24 +21,24 @@ namespace Design.Animation.MoveBuilder.Editors
         public static MoveBuilderModel Get(UnityEngine.Object owner)
         {
             string key = KeyFor(owner);
-            if (!_states.TryGetValue(key, out var s))
+            if (!States.TryGetValue(key, out var s))
             {
                 s = new MoveBuilderModel();
-                _states[key] = s;
+                States[key] = s;
             }
             return s;
         }
 
         public static void Remove(UnityEngine.Object owner)
         {
-            _states.Remove(KeyFor(owner));
+            States.Remove(KeyFor(owner));
         }
     }
 
     [Serializable]
     public sealed class MoveBuilderModel
     {
-        public int SelectedBoxIndex = -1;
+        public int SelectedBoxIndex;
         private HitboxData _lastData;
         private int _savedValueHash;
 
@@ -52,11 +50,11 @@ namespace Design.Animation.MoveBuilder.Editors
             if (!ReferenceEquals(state.Data, _lastData))
             {
                 _lastData = state.Data;
-                _savedValueHash = state.Data.GetHashCode();
+                _savedValueHash = state.Data.GetValueHash();
                 return false;
             }
 
-            return state.Data.GetHashCode() != _savedValueHash;
+            return state.Data.GetValueHash() != _savedValueHash;
         }
 
         public MoveBuilderModel()
@@ -86,10 +84,10 @@ namespace Design.Animation.MoveBuilder.Editors
         public void SelectBox(MoveBuilderAnimationState state, int index)
         {
             var frame = GetCurrentFrame(state);
-            if (frame == null)
+            if (frame == null || frame.Boxes == null)
                 return;
 
-            int max = frame.Boxes == null ? frame.Boxes.Count - 1 : -1;
+            int max = frame.Boxes != null ? frame.Boxes.Count - 1 : -1;
             if (index > max || index < -1)
                 SelectedBoxIndex = -1;
             else
@@ -262,7 +260,7 @@ namespace Design.Animation.MoveBuilder.Editors
             AssetDatabase.SaveAssets();
 
             _lastData = state.Data;
-            _savedValueHash = state.Data.GetHashCode();
+            _savedValueHash = state.Data.GetValueHash();
         }
 
         private void MarkDirty(MoveBuilderAnimationState state)

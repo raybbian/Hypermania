@@ -8,7 +8,6 @@ namespace Game
 {
     public class InputBuffer
     {
-        private ControlsConfig _controlsConfig;
         private EnumArray<InputFlags, Binding> _controlScheme;
 
         /**
@@ -21,8 +20,7 @@ namespace Game
          */
         public InputBuffer(ControlsConfig config)
         {
-            _controlsConfig = config;
-            _controlScheme = _controlsConfig.GetControlScheme();
+            _controlScheme = config.GetControlScheme();
         }
 
         private InputFlags _input = InputFlags.None;

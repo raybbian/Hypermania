@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Design.Animation.MoveBuilder.Editors
+namespace Design.Animation.MoveBuilder.Editor
 {
     public struct MoveBuilderAnimationState
     {

@@ -13,6 +13,7 @@ namespace Netcode.Rollback.Sessions
 
     public class SessionBuilder<TInput, TAddress>
         where TInput : struct, IInput<TInput>
+        where TAddress : IEquatable<TAddress>
     {
         const int DEFAULT_PLAYERS = 2;
         const bool DEFAULT_SAVE_MODE = false;
@@ -276,7 +277,7 @@ namespace Netcode.Rollback.Sessions
             );
         }
 
-        public SyncTestSession<TState, TInput, TAddress> StartSynctestSession<TState>()
+        public SyncTestSession<TState, TInput> StartSynctestSession<TState>()
             where TState : IState<TState>
         {
             if (_checkDist >= _maxPrediction)
@@ -285,7 +286,7 @@ namespace Netcode.Rollback.Sessions
             }
 
             MarkStarted();
-            return new SyncTestSession<TState, TInput, TAddress>(_numPlayers, _maxPrediction, _checkDist, _inputDelay);
+            return new SyncTestSession<TState, TInput>(_numPlayers, _maxPrediction, _checkDist, _inputDelay);
         }
 
         private UdpProtocol<TInput, TAddress> CreateEndpoint(

@@ -3,10 +3,10 @@ using Steamworks;
 using UnityEditor;
 using UnityEngine;
 
-namespace Game.Editors
+namespace Game.Editor
 {
     [CustomEditor(typeof(GameManager))]
-    public sealed class GameManagerEditor : Editor
+    public sealed class GameManagerEditor : UnityEditor.Editor
     {
         private ulong _roomId;
 

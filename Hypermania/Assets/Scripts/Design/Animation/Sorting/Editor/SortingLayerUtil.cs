@@ -4,12 +4,10 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace Design.Animation.Sorting.Editors
+namespace Design.Animation.Sorting.Editor
 {
     internal static class SortingLayerUtil
     {
-        // Unity does not expose an official "get all sorting layers" API in runtime.
-        // In editor, reflection is the common approach.
         private static readonly Type InternalEditorUtilityType = Type.GetType(
             "UnityEditorInternal.InternalEditorUtility, UnityEditor"
         );

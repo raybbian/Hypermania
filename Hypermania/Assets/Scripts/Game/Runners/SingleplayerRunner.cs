@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Design;
 using Game.Sim;
-using Game.View;
 using Game.View.Overlay;
 using Netcode.P2P;
 using Netcode.Rollback;
@@ -13,7 +11,7 @@ namespace Game.Runners
 {
     public class SingleplayerRunner : GameRunner
     {
-        protected SyncTestSession<GameState, GameInput, SteamNetworkingIdentity> _session;
+        protected SyncTestSession<GameState, GameInput> _session;
 
         public override void Init(
             List<(PlayerHandle playerHandle, PlayerKind playerKind, SteamNetworkingIdentity address)> players,

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -11,35 +10,32 @@ namespace Design.Animation.Keyframing
 {
     public sealed class AnimationTools : MonoBehaviour
     {
-        [Header("Target Clip [MAKE SURE YOU CHANGE THIS!]")]
-        [SerializeField]
-        private AnimationClip _clip;
-
-        [Header("Named Children (searched under this GameObject)")]
+        [Header("Rig Children: Keyframe Transform")]
         [SerializeField]
         private GameObject[] _rigChildren;
 
+        [Header("Sprite Children: Keyframe Sorting Order, Sprite Hash")]
         [SerializeField]
         private GameObject[] _spriteChildren;
 
+        [Header("OneOff Children: Keyframe Transform, Sorting Order")]
         [SerializeField]
         private GameObject[] _oneOffChildren;
 
+        [Header("Ik Children: Keyframe LimbSolver Flip")]
         [SerializeField]
         private GameObject[] _ikChildren;
-
-        public AnimationClip Clip => _clip;
 
 #if UNITY_EDITOR
         private const float Epsilon = 1e-6f;
 
-        public void AddTimeZeroKeys()
+        public void AddTimeZeroKeys(AnimationClip clip)
         {
-            if (_clip == null)
+            if (clip == null)
                 return;
 
-            Undo.RegisterCompleteObjectUndo(_clip, "Add time 0 keys");
-            _clip.EnsureQuaternionContinuity();
+            Undo.RegisterCompleteObjectUndo(clip, "Add time 0 keys");
+            clip.EnsureQuaternionContinuity();
 
             Transform animRoot = transform;
             foreach (var rigChild in _rigChildren)
@@ -47,7 +43,7 @@ namespace Design.Animation.Keyframing
                 foreach (Transform t in rigChild.GetComponentsInChildren<Transform>(true))
                 {
                     AddTransformKeysAtTime(
-                        _clip,
+                        clip,
                         animRoot,
                         t,
                         0f,
@@ -63,7 +59,7 @@ namespace Design.Animation.Keyframing
                 foreach (Transform t in oneOffChild.GetComponentsInChildren<Transform>(true))
                 {
                     AddTransformKeysAtTime(
-                        _clip,
+                        clip,
                         animRoot,
                         t,
                         0f,
@@ -76,7 +72,7 @@ namespace Design.Animation.Keyframing
                     if (sr != null)
                     {
                         AddFloatKeyAtTime(
-                            clip: _clip,
+                            clip: clip,
                             animRoot: animRoot,
                             componentType: typeof(SpriteRenderer),
                             targetTransform: t,
@@ -96,7 +92,7 @@ namespace Design.Animation.Keyframing
                     if (sr != null)
                     {
                         AddFloatKeyAtTime(
-                            clip: _clip,
+                            clip: clip,
                             animRoot: animRoot,
                             componentType: typeof(SpriteRenderer),
                             targetTransform: t,
@@ -111,7 +107,7 @@ namespace Design.Animation.Keyframing
                     {
                         float hash = ReadSpriteResolverSpriteHash(resolver);
                         AddDiscreteIntKeyAtTime(
-                            clip: _clip,
+                            clip: clip,
                             animRoot: animRoot,
                             targetTransform: t,
                             componentType: typeof(SpriteResolver),
@@ -127,7 +123,7 @@ namespace Design.Animation.Keyframing
             {
                 Transform t = marker.transform;
                 AddTransformKeysAtTime(
-                    _clip,
+                    clip,
                     animRoot,
                     t,
                     0f,
@@ -145,7 +141,7 @@ namespace Design.Animation.Keyframing
                     if (solver != null)
                     {
                         AddFloatKeyAtTime(
-                            clip: _clip,
+                            clip: clip,
                             animRoot: animRoot,
                             componentType: typeof(LimbSolver2D),
                             targetTransform: t,
@@ -157,26 +153,26 @@ namespace Design.Animation.Keyframing
                 }
             }
 
-            EditorUtility.SetDirty(_clip);
+            EditorUtility.SetDirty(clip);
             AssetDatabase.SaveAssets();
         }
 
-        public void CopyTimeZeroKeysToClipEnd()
+        public void CopyTimeZeroKeysToClipEnd(AnimationClip clip)
         {
-            if (_clip == null)
+            if (clip == null)
                 return;
 
-            Undo.RegisterCompleteObjectUndo(_clip, "Copy time 0 keys to end");
+            Undo.RegisterCompleteObjectUndo(clip, "Copy time 0 keys to end");
 
-            float endTime = GetClipEndTime(_clip);
+            float endTime = GetClipEndTime(clip);
             if (endTime <= 0f)
                 return;
 
             // Copy all float curve bindings: if a curve has a key at time 0, clone it to endTime.
-            var bindings = AnimationUtility.GetCurveBindings(_clip);
+            var bindings = AnimationUtility.GetCurveBindings(clip);
             foreach (var binding in bindings)
             {
-                var curve = AnimationUtility.GetEditorCurve(_clip, binding);
+                var curve = AnimationUtility.GetEditorCurve(clip, binding);
                 if (curve == null || curve.keys == null || curve.keys.Length == 0)
                     continue;
 
@@ -206,21 +202,21 @@ namespace Design.Animation.Keyframing
                     curve.AddKey(dst);
                 }
 
-                AnimationUtility.SetEditorCurve(_clip, binding, curve);
+                AnimationUtility.SetEditorCurve(clip, binding, curve);
             }
 
-            EditorUtility.SetDirty(_clip);
+            EditorUtility.SetDirty(clip);
             AssetDatabase.SaveAssets();
         }
 
-        public void SetSortingOrderTangentsConstant()
+        public void SetSortingOrderTangentsConstant(AnimationClip clip)
         {
-            if (_clip == null)
+            if (clip == null)
                 return;
 
-            Undo.RegisterCompleteObjectUndo(_clip, "Set sorting order tangents constant");
+            Undo.RegisterCompleteObjectUndo(clip, "Set sorting order tangents constant");
 
-            var bindings = AnimationUtility.GetCurveBindings(_clip);
+            var bindings = AnimationUtility.GetCurveBindings(clip);
             foreach (var binding in bindings)
             {
                 if (binding.type != typeof(SpriteRenderer))
@@ -228,7 +224,7 @@ namespace Design.Animation.Keyframing
                 if (binding.propertyName != "m_SortingOrder")
                     continue;
 
-                var curve = AnimationUtility.GetEditorCurve(_clip, binding);
+                var curve = AnimationUtility.GetEditorCurve(clip, binding);
                 if (curve == null || curve.length == 0)
                     continue;
 
@@ -237,10 +233,10 @@ namespace Design.Animation.Keyframing
                     SetConstantTangents(curve, i);
                 }
 
-                AnimationUtility.SetEditorCurve(_clip, binding, curve);
+                AnimationUtility.SetEditorCurve(clip, binding, curve);
             }
 
-            EditorUtility.SetDirty(_clip);
+            EditorUtility.SetDirty(clip);
             AssetDatabase.SaveAssets();
         }
 
@@ -256,8 +252,8 @@ namespace Design.Animation.Keyframing
                 float* ptr2 = (float*)ptr;
                 return *ptr2;
             }
-            int hash = Bit30Hash_GetStringHash(resolver.GetCategory() + "_" + resolver.GetLabel());
-            int Bit30Hash_GetStringHash(string value)
+            int hash = Bit30HashGetStringHash(resolver.GetCategory() + "_" + resolver.GetLabel());
+            int Bit30HashGetStringHash(string value)
             {
                 return PreserveFirst30Bits(Animator.StringToHash(value));
             }
@@ -266,25 +262,6 @@ namespace Design.Animation.Keyframing
                 return input & 0x3FFFFFFF;
             }
             return ConvertDiscreteIntToFloat(hash);
-        }
-
-        private static Transform FindChildByName(Transform root, string name)
-        {
-            if (root == null || string.IsNullOrEmpty(name))
-                return null;
-
-            var q = new Queue<Transform>();
-            q.Enqueue(root);
-            while (q.Count > 0)
-            {
-                var t = q.Dequeue();
-                if (t != root && t.name == name)
-                    return t;
-
-                for (int i = 0; i < t.childCount; i++)
-                    q.Enqueue(t.GetChild(i));
-            }
-            return null;
         }
 
         private static void AddTransformKeysAtTime(

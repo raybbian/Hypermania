@@ -11,6 +11,7 @@ namespace Game.View.Events.Vfx
         DashDust,
         NoteHit, 
         NoteMiss
+        SmallHit,
     }
 
     [Serializable]

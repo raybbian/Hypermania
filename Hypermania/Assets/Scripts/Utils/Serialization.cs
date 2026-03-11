@@ -4,19 +4,19 @@ namespace Utils
 {
     public interface ISerializable
     {
-        public abstract int SerdeSize();
-        public abstract int Serialize(Span<byte> outBytes);
-        public abstract int Deserialize(ReadOnlySpan<byte> inBytes);
+        public int SerdeSize();
+        public int Serialize(Span<byte> outBytes);
+        public int Deserialize(ReadOnlySpan<byte> inBytes);
     }
 
     public static class Serializer<T>
         where T : ISerializable
     {
-        private static readonly T _sample = default;
+        private static readonly T SAMPLE = default;
 
         public static int DefaultSize()
         {
-            return _sample.SerdeSize();
+            return SAMPLE.SerdeSize();
         }
     }
 }

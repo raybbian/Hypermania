@@ -94,8 +94,6 @@ namespace Netcode.P2P
         }
 
         private const string START_MSG = "__START";
-        private const string HANDLE_CNT = "__HANDLE_CNT";
-        private const string HANDLE_NUM = "__HANDLE_NUM";
 
         private CSteamID _currentLobby;
 

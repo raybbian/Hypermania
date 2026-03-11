@@ -1,21 +1,25 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Game.View.Mania
 {
     public class ManiaSpriteSwitcher : MonoBehaviour
     {
-        public Sprite spriteDefault;
-        public Sprite spritePressed;
+        [FormerlySerializedAs("spriteDefault")]
+        public Sprite SpriteDefault;
 
-        private Image imageComp;
+        [FormerlySerializedAs("spritePressed")]
+        public Sprite SpritePressed;
+
+        private Image _imageComponent;
 
         void Start()
         {
-            imageComp = GetComponent<Image>();
-            if (imageComp != null)
+            _imageComponent = GetComponent<Image>();
+            if (_imageComponent != null)
             {
-                imageComp.sprite = spriteDefault;
+                _imageComponent.sprite = SpriteDefault;
             }
         }
 
@@ -23,11 +27,11 @@ namespace Game.View.Mania
         {
             if (pressed)
             {
-                imageComp.sprite = spritePressed;
+                _imageComponent.sprite = SpritePressed;
             }
             else
             {
-                imageComp.sprite = spriteDefault;
+                _imageComponent.sprite = SpriteDefault;
             }
         }
     }

@@ -1,15 +1,12 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using Design.Animation;
 using Design.Configs;
 using Game.View.Overlay;
 using MemoryPack;
 using Netcode.Rollback;
-using UnityEngine;
 using Utils;
 using Utils.SoftFloat;
 
@@ -176,7 +173,7 @@ namespace Game.Sim
                 Fighters[i].InputH.PushInput(remapInputs[i]);
             }
             // if hitstop, only grab inputs and return
-            if (HitstopFramesRemaining >= 0)
+            if (HitstopFramesRemaining > 0)
             {
                 HitstopFramesRemaining--;
                 return;

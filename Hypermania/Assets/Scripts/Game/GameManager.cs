@@ -19,13 +19,15 @@ namespace Game
         private List<(PlayerHandle handle, PlayerKind playerKind, SteamNetworkingIdentity netId)> _players;
 
         public const int TPS = 60;
-        public bool Started;
+
+        private bool _started;
+        public bool Started => _started;
 
         void OnEnable()
         {
             _matchmakingClient = new SteamMatchmakingClient();
             _matchmakingClient.OnStartWithPlayers += OnStartWithPlayers;
-            Started = false;
+            _started = false;
 
             _p2pClient = null;
             _players = new List<(PlayerHandle handle, PlayerKind playerKind, SteamNetworkingIdentity netId)>();
@@ -41,7 +43,7 @@ namespace Game
 
         void OnDisable()
         {
-            Started = false;
+            _started = false;
             _matchmakingClient = null;
             _p2pClient = null;
             _players = null;
@@ -53,7 +55,7 @@ namespace Game
 
         IEnumerator CreateLobbyRoutine()
         {
-            if (Started)
+            if (_started)
                 yield break;
             var task = _matchmakingClient.Create();
             while (!task.IsCompleted)
@@ -69,7 +71,7 @@ namespace Game
 
         IEnumerator JoinLobbyRoutine(CSteamID lobbyId)
         {
-            if (Started)
+            if (_started)
                 yield break;
             var task = _matchmakingClient.Join(lobbyId);
             while (!task.IsCompleted)
@@ -85,7 +87,7 @@ namespace Game
 
         IEnumerator LeaveLobbyRoutine()
         {
-            if (Started)
+            if (_started)
                 yield break;
             var task = _matchmakingClient.Leave();
             while (!task.IsCompleted)
@@ -101,7 +103,7 @@ namespace Game
 
         IEnumerator StartGameRoutine()
         {
-            if (Started)
+            if (_started)
                 yield break;
             var task = _matchmakingClient.StartGame();
             while (!task.IsCompleted)
@@ -115,7 +117,7 @@ namespace Game
 
         public void StartLocalGame()
         {
-            if (Started || _matchmakingClient.CurrentLobby.IsValid())
+            if (_started || _matchmakingClient.CurrentLobby.IsValid())
                 return;
             _players.Clear();
             _players.Add((new PlayerHandle(0), PlayerKind.Local, default));
@@ -125,9 +127,9 @@ namespace Game
 
         public void DeInit()
         {
-            if (!Started)
+            if (!_started)
                 return;
-            Started = false;
+            _started = false;
             Runner.DeInit();
         }
 
@@ -172,11 +174,12 @@ namespace Game
                 throw new InvalidOperationException("players should be initialized if peers are connected");
             }
             Runner.Init(_players, _p2pClient);
-            Started = true;
+            _started = true;
         }
 
         void OnPeerDisconnected(SteamNetworkingIdentity id)
         {
+            _p2pClient.DisconnectAllPeers();
             DeInit();
         }
 

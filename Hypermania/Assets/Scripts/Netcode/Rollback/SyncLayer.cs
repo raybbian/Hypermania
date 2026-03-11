@@ -197,7 +197,7 @@ namespace Netcode.Rollback
             return inputs;
         }
 
-        public void SetLastConfirmedFrame(Frame frame, bool SparseSaving)
+        public void SetLastConfirmedFrame(Frame frame, bool sparseSaving)
         {
             Frame firstIncorrect = Frame.NullFrame;
             for (int i = 0; i < _numPlayers; i++)
@@ -205,7 +205,7 @@ namespace Netcode.Rollback
                 firstIncorrect = Frame.Max(firstIncorrect, _inputQueues[i].FirstIncorrectFrame);
             }
 
-            if (SparseSaving)
+            if (sparseSaving)
             {
                 frame = Frame.Min(frame, _lastSavedFrame);
             }

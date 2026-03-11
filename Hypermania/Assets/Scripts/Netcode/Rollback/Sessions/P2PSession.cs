@@ -10,6 +10,7 @@ namespace Netcode.Rollback.Sessions
 {
     public class PlayerRegisty<TInput, TAddress>
         where TInput : IInput<TInput>
+        where TAddress : IEquatable<TAddress>
     {
         public Dictionary<PlayerHandle, PlayerType<TAddress>> Handles;
         public Dictionary<TAddress, UdpProtocol<TInput, TAddress>> Remotes;
@@ -88,6 +89,7 @@ namespace Netcode.Rollback.Sessions
     public class P2PSession<TState, TInput, TAddress>
         where TState : IState<TState>
         where TInput : struct, IInput<TInput>
+        where TAddress : IEquatable<TAddress>
     {
         const uint MIN_RECOMMENDATION = 3;
         const int RECOMMENDATION_INTERVAL = 60;
@@ -123,7 +125,7 @@ namespace Netcode.Rollback.Sessions
             _localConnectStatus = new ConnectionStatus[numPlayers];
             for (int i = 0; i < numPlayers; i++)
             {
-                _localConnectStatus[i] = ConnectionStatus.Default;
+                _localConnectStatus[i] = ConnectionStatus.DEFAULT;
             }
             _syncLayer = new SyncLayer<TState, TInput>(numPlayers, maxPrediction);
             foreach ((PlayerHandle handle, PlayerType<TAddress> type) in players.Handles)
@@ -785,16 +787,13 @@ namespace Netcode.Rollback.Sessions
             if (frameToSend <= _syncLayer.LastConfirmedFrame && frameToSend <= _syncLayer.LastSavedFrame)
             {
                 GameStateCell<TState> cell = _syncLayer.SavedStateByFrame(frameToSend);
-                ulong? checkSum = cell.State.Checksum;
-                if (checkSum != null)
+                ulong checkSum = cell.State.Checksum;
+                foreach (UdpProtocol<TInput, TAddress> remote in _playerRegistry.Remotes.Values)
                 {
-                    foreach (UdpProtocol<TInput, TAddress> remote in _playerRegistry.Remotes.Values)
-                    {
-                        remote.SendChecksumReport(frameToSend, (ulong)checkSum);
-                    }
-                    _lastSentChecksumFrame = frameToSend;
-                    _localChecksumHistory.Add(frameToSend, (ulong)checkSum);
+                    remote.SendChecksumReport(frameToSend, checkSum);
                 }
+                _lastSentChecksumFrame = frameToSend;
+                _localChecksumHistory.Add(frameToSend, checkSum);
 
                 if (_localChecksumHistory.Count > ProtocolConstants.MAX_CHECKSUM_HISTORY_SIZE)
                 {

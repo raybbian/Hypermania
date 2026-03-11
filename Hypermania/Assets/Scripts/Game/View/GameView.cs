@@ -7,7 +7,6 @@ using Game.View.Events.Vfx;
 using Game.View.Fighters;
 using Game.View.Mania;
 using Game.View.Overlay;
-using Unity.VisualScripting;
 using UnityEngine;
 using Utils;
 

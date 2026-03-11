@@ -1,10 +1,11 @@
+using Design.Animation.MoveBuilder.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace Design.Animation.Keyframing
+namespace Design.Animation.Keyframing.Editor
 {
     [CustomEditor(typeof(AnimationTools))]
-    public sealed class AnimationKeyframeToolsEditor : Editor
+    public sealed class AnimationKeyframeToolsEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
@@ -12,33 +13,45 @@ namespace Design.Animation.Keyframing
 
             var t = (AnimationTools)target;
 
-            EditorGUILayout.Space(8);
-
-            using (new EditorGUI.DisabledScope(t.Clip == null))
+            var animState = MoveBuilderAnimationState.GetAnimState();
+            if (!animState.HasValue)
             {
-                if (GUILayout.Button("1) Add time 0 keys [MAKE SURE TO CHANGE TARGET ANIM]"))
-                {
-                    t.AddTimeZeroKeys();
-                }
-
-                if (GUILayout.Button("2) Copy time 0 keys to clip end [MAKE SURE TO CHANGE TARGET ANIM]"))
-                {
-                    t.CopyTimeZeroKeysToClipEnd();
-                }
-
-                if (
-                    GUILayout.Button(
-                        "3) Set SpriteRenderer Order-in-Layer tangents to Constant [MAKE SURE TO CHANGE TARGET ANIM]"
-                    )
-                )
-                {
-                    t.SetSortingOrderTangentsConstant();
-                }
+                EditorGUILayout.HelpBox(
+                    "Open the Animation window and select an object/clip there to drive the Animation Tools.",
+                    MessageType.Info
+                );
+                return;
+            }
+            var state = animState.Value;
+            using (new EditorGUI.DisabledScope(true))
+            {
+                EditorGUILayout.ObjectField(
+                    "Animation Clip (Animation Window)",
+                    state.Clip,
+                    typeof(AnimationClip),
+                    false
+                );
+                EditorGUILayout.IntField("Anim Frame (Animation Window)", state.Tick);
             }
 
-            if (t.Clip == null)
+            EditorGUILayout.Space(8);
+
+            using (new EditorGUI.DisabledScope(state.Clip == null))
             {
-                EditorGUILayout.HelpBox("Assign an AnimationClip to enable the buttons.", MessageType.Info);
+                if (GUILayout.Button("Add keyframes (for current pose) for all animatable values at time 0"))
+                {
+                    t.AddTimeZeroKeys(state.Clip);
+                }
+
+                if (GUILayout.Button("Copy all time 0 keys to clip end"))
+                {
+                    t.CopyTimeZeroKeysToClipEnd(state.Clip);
+                }
+
+                if (GUILayout.Button("Set SpriteRenderer Order-in-Layer tangents to Constant"))
+                {
+                    t.SetSortingOrderTangentsConstant(state.Clip);
+                }
             }
         }
     }

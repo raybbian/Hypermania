@@ -1,7 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using Design.Animation;
-using UnityEngine;
 using Utils.SoftFloat;
 
 namespace Game.Sim

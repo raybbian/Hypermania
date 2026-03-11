@@ -4,10 +4,10 @@ using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
 
-namespace Design.Animation.Sorting.Editors
+namespace Design.Animation.Sorting.Editor
 {
     [CustomEditor(typeof(SpriteSortGroup))]
-    public sealed class SpriteSortGroupEditor : Editor
+    public sealed class SpriteSortGroupEditor : UnityEditor.Editor
     {
         private SerializedProperty _sortingLayerIdProp;
         private SerializedProperty _baseOrderProp;

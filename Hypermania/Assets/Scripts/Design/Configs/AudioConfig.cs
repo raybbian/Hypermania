@@ -1,5 +1,6 @@
 using Game;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Utils;
 using Utils.SoftFloat;
 
@@ -9,11 +10,13 @@ namespace Design.Configs
     public class AudioConfig : ScriptableObject
     {
         public Frame FirstMusicalBeat = Frame.FirstFrame;
-        public sfloat BPM = 60;
+
+        [FormerlySerializedAs("BPM")]
+        public sfloat Bpm = 60;
         public AudioClip AudioClip;
 
         //Convert BPM to seconds per frame, then seconds to frames
-        public int FramesPerBeat => Mathsf.RoundToInt((sfloat)60f / BPM * GameManager.TPS);
+        public int FramesPerBeat => Mathsf.RoundToInt((sfloat)60f / Bpm * GameManager.TPS);
 
         public enum BeatSubdivision
         {
@@ -30,8 +33,7 @@ namespace Design.Configs
 
         public Frame NextBeat(Frame frame, BeatSubdivision subdivision)
         {
-            sfloat framesPerSubdivision =
-                FramesPerBeat * ((sfloat)(int)BeatSubdivision.QuarterNote / (sfloat)(int)subdivision);
+            sfloat framesPerSubdivision = FramesPerBeat * ((sfloat)(int)BeatSubdivision.QuarterNote / (int)subdivision);
             int framesSinceFirstBeat = frame - FirstMusicalBeat;
 
             return new Frame(
@@ -42,8 +44,7 @@ namespace Design.Configs
         public Frame ClosestBeat(Frame frame, BeatSubdivision subdivision)
         {
             int framesSinceFirstBeat = frame - FirstMusicalBeat;
-            sfloat framesPerSubdivision =
-                FramesPerBeat * ((sfloat)(int)BeatSubdivision.QuarterNote / (sfloat)(int)subdivision);
+            sfloat framesPerSubdivision = FramesPerBeat * ((sfloat)(int)BeatSubdivision.QuarterNote / (int)subdivision);
             return new Frame(
                 Mathsf.RoundToInt(Mathsf.RoundToInt(framesSinceFirstBeat / framesPerSubdivision) * framesPerSubdivision)
             );

@@ -11,7 +11,7 @@ namespace Design.Animation.Sorting
         public int SortingLayerId => _sortingLayerId;
 
         [SerializeField]
-        private int _baseOrder = 0;
+        private int _baseOrder;
         public int BaseOrder => _baseOrder;
 
         public void ApplyToRenderers()

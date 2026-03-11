@@ -49,11 +49,11 @@ namespace Game.View.Fighters
             transform.position = pos;
             transform.localScale = new Vector3(state.FacingDir == FighterFacing.Left ? -1 : 1, 1f, 1f);
 
-            CharacterState animation = state.State;
-            int totalTicks = _characterConfig.GetHitboxData(animation).TotalTicks;
+            CharacterState animState = state.State;
+            int totalTicks = _characterConfig.GetHitboxData(animState).TotalTicks;
 
             int ticks = frame - state.StateStart;
-            if (_characterConfig.AnimLoops(animation))
+            if (_characterConfig.AnimLoops(animState))
             {
                 ticks %= totalTicks;
             }
@@ -62,7 +62,7 @@ namespace Game.View.Fighters
                 ticks = Mathf.Min(ticks, totalTicks - 1);
             }
 
-            _animator.Play(animation.ToString(), 0, (float)ticks / (totalTicks - 1));
+            _animator.Play(animState.ToString(), 0, (float)ticks / (totalTicks - 1));
             _animator.Update(0f); // force pose evaluation this frame while paused
         }
 
@@ -89,6 +89,20 @@ namespace Game.View.Fighters
                         },
                         StartFrame = frame,
                         Hash = 0, // can't be more than one block per character on a frame?
+                    }
+                );
+            }
+            if (
+                (state.State == CharacterState.Hit || state.State == CharacterState.Knockdown)
+                && frame == state.StateStart
+            )
+            {
+                vfxManager.AddDesired(
+                    new ViewEvent<VfxEvent>()
+                    {
+                        Event = new VfxEvent { Kind = VfxKind.SmallHit, Position = (Vector2)state.HitLocation },
+                        StartFrame = frame,
+                        Hash = 0,
                     }
                 );
             }

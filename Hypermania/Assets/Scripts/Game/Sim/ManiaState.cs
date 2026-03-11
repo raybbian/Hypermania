@@ -19,7 +19,7 @@ namespace Game.Sim
     public partial struct ManiaNoteChannel
     {
         public Deque<ManiaNote> Notes;
-        public bool pressed;
+        public bool Pressed;
     }
 
     public enum ManiaEventKind
@@ -103,7 +103,7 @@ namespace Game.Sim
         public ManiaConfig Config;
         public ManiaNoteChannel[] Channels;
         public Frame EndFrame;
-        private static readonly InputFlags[] _channelInput =
+        private static readonly InputFlags[] CHANNEL_INPUT =
         {
             InputFlags.Mania1,
             InputFlags.Mania2,
@@ -121,7 +121,7 @@ namespace Game.Sim
             sim.Channels = new ManiaNoteChannel[config.NumKeys];
             for (int i = 0; i < config.NumKeys; i++)
             {
-                sim.Channels[i] = new ManiaNoteChannel { Notes = new Deque<ManiaNote>(MAX_NOTES), pressed = false };
+                sim.Channels[i] = new ManiaNoteChannel { Notes = new Deque<ManiaNote>(MAX_NOTES), Pressed = false };
             }
             sim.EndFrame = Frame.NullFrame;
             return sim;
@@ -154,8 +154,8 @@ namespace Game.Sim
                 return;
             for (int i = 0; i < Channels.Length; i++)
             {
-                bool hasInput = input.HasInput(_channelInput[i]);
-                Channels[i].pressed = hasInput;
+                bool hasInput = input.HasInput(CHANNEL_INPUT[i]);
+                Channels[i].Pressed = hasInput;
                 if (Channels[i].Notes.Count == 0)
                 {
                     continue;

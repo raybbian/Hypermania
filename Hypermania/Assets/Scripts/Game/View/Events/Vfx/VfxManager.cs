@@ -25,8 +25,7 @@ namespace Game.View.Events.Vfx
 
         public override VfxEffect OnStartEffect(ViewEvent<VfxEvent> ev)
         {
-            GameObject vfx = Instantiate(_vfxLibrary.Library[ev.Event.Kind].Effect);
-            vfx.transform.SetParent(transform);
+            GameObject vfx = Instantiate(_vfxLibrary.Library[ev.Event.Kind].Effect, transform, true);
             VfxEffect effect = vfx.GetComponent<VfxEffect>();
             if (effect == null)
             {

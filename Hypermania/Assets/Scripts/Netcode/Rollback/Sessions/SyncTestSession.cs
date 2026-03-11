@@ -6,7 +6,7 @@ using Utils;
 
 namespace Netcode.Rollback.Sessions
 {
-    public class SyncTestSession<TState, TInput, TAddress>
+    public class SyncTestSession<TState, TInput>
         where TInput : struct, IInput<TInput>
         where TState : IState<TState>
     {
@@ -23,7 +23,7 @@ namespace Netcode.Rollback.Sessions
             _dummyConnectStatus = new ConnectionStatus[numPlayers];
             for (int i = 0; i < numPlayers; i++)
             {
-                _dummyConnectStatus[i] = ConnectionStatus.Default;
+                _dummyConnectStatus[i] = ConnectionStatus.DEFAULT;
             }
 
             _syncLayer = new SyncLayer<TState, TInput>(numPlayers, maxPrediction);

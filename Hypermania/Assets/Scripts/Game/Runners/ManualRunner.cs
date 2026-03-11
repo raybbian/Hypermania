@@ -11,7 +11,7 @@ namespace Game.Runners
         [SerializeField]
         private float _holdS;
 
-        private float _curHoldS = 0;
+        private float _curHoldS;
 
         public override void Poll(float deltaTime)
         {

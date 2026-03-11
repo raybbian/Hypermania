@@ -47,7 +47,7 @@ namespace Game.View.Events
                 _direction = -_direction + _params.Randomness * rnd.normalized;
                 _direction = _direction.normalized;
                 float decayValue = 1 - (float)_bounceIndex / _params.NumBounces;
-                _currentWaypoint = decayValue * decayValue * _direction * _params.PositionStrength;
+                _currentWaypoint = _params.PositionStrength * decayValue * decayValue * _direction;
             }
         }
 

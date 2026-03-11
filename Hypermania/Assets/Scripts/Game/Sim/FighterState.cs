@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Design.Animation;
 using Design.Configs;
@@ -436,12 +435,7 @@ namespace Game.Sim
                 }
             }
 
-            if (
-                dashCancelEligible
-                && InputH.IsHeld(ForwardInput)
-                && dashCancelEligible
-                && State == CharacterState.ForwardDash
-            )
+            if (dashCancelEligible && InputH.IsHeld(ForwardInput) && State == CharacterState.ForwardDash)
             {
                 SetState(CharacterState.Running, frame, Frame.Infinity);
             }
@@ -570,7 +564,7 @@ namespace Game.Sim
                 SetState(
                     holdingDown ? CharacterState.BlockCrouch : CharacterState.BlockStand,
                     frame,
-                    frame + props.BlockstunTicks + 1
+                    frame + props.BlockstunTicks
                 );
 
                 ImmunityEnd = frame + 7;
@@ -578,12 +572,10 @@ namespace Game.Sim
                 return new HitOutcome { Kind = HitKind.Blocked };
             }
 
-            // Apply Hit/collision stuff is done after the player is actionable, so if the player needs to be
-            // inactionable for "one more frame"
             switch (props.KnockdownKind)
             {
                 case KnockdownKind.None:
-                    SetState(CharacterState.Hit, frame, frame + props.HitstunTicks + 1);
+                    SetState(CharacterState.Hit, frame, frame + props.HitstunTicks);
                     break;
                 case KnockdownKind.Light:
                     SetState(CharacterState.Knockdown, frame, Frame.Infinity);
@@ -606,9 +598,7 @@ namespace Game.Sim
 
         public void ApplyClank(Frame frame, GameOptions options)
         {
-            // Apply Hit/collision stuff is done after the player is actionable, so if the player needs to be
-            // inactionable for "one more frame"
-            SetState(CharacterState.Hit, frame, frame + options.Global.ClankTicks + 1);
+            SetState(CharacterState.Hit, frame, frame + options.Global.ClankTicks);
 
             Velocity = SVector2.zero;
         }
