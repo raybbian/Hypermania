@@ -68,11 +68,11 @@ namespace Game.Runners
          */
         public InputDevice GetPlayerInputDevice(int index)
         {
-            if (index == 1)
+            if (index == 0)
             {
                 return P1_Input;
             }
-            if (index == 2)
+            if (index == 1)
             {
                 return P2_Input;
             }
