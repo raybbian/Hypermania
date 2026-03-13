@@ -479,10 +479,7 @@ namespace Game.Sim
                 Velocity = curData.ApplyVelocity;
                 Velocity.x *= FacingDir == FighterFacing.Left ? -1 : 1;
             }
-            if (
-                curData.GravityEnabled
-                && Position.y > options.Global.GroundY
-            )
+            if (curData.GravityEnabled && Position.y > options.Global.GroundY)
             {
                 Velocity.y += options.Global.Gravity * 1 / GameManager.TPS;
             }
