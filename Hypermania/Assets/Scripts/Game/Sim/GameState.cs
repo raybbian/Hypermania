@@ -349,7 +349,10 @@ namespace Game.Sim
                     UpdateHype(options, i, options.Global.HypeMovementFactor);
                 }
             }
-
+            for (int i = 0; i < Fighters.Length; i++)
+            {
+                UpdateSuper(characters, config, i, (sfloat)0.03f); //TODO: Determine update rate
+            }
             // If the fighter is now on the ground, apply aerial cancels
             for (int i = 0; i < Fighters.Length; i++)
             {
@@ -472,7 +475,12 @@ namespace Game.Sim
                     if (outcome.Kind == HitKind.Hit)
                     {
                         sfloat damage = outcome.Props.Damage;
+<<<<<<< HEAD
                         UpdateHype(options, attackerBox.Owner, damage);
+=======
+                        UpdateHype(config, attackerBox.Owner, damage);
+                        UpdateSuper(characters, config, attackerBox.Owner, damage);
+>>>>>>> 8aa2663 (Added super move code)
                     }
 
                     //to start a rhythm combo, we must sure that the move was not traded
@@ -546,7 +554,23 @@ namespace Game.Sim
             HypeMeter = Mathsf.Clamp(HypeMeter, -options.Global.MaxHype, options.Global.MaxHype);
         }
 
+<<<<<<< HEAD
         private HitOutcome HandleCollision(GameOptions options, Physics<BoxProps>.Collision c)
+=======
+        private void UpdateSuper(CharacterConfig[] characters, GlobalConfig config, int handle, sfloat damage)
+        {
+            if (handle == 0)
+            {
+                Fighters[handle].Super += damage; // Placeholder value
+                Fighters[handle].Super = Mathsf.Clamp(Fighters[handle].Super, 0, characters[handle].SuperMax);
+            }
+        }
+        private HitOutcome HandleCollision(
+            Physics<BoxProps>.Collision c,
+            GlobalConfig config,
+            CharacterConfig[] characters
+        )
+>>>>>>> 8aa2663 (Added super move code)
         {
             if (c.BoxA.Data.Kind == HitboxKind.Hitbox && c.BoxB.Data.Kind == HitboxKind.Hurtbox)
             {
