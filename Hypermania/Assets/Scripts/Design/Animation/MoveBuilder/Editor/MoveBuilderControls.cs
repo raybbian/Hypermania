@@ -136,6 +136,7 @@ namespace Design.Animation.MoveBuilder.Editor
             EditorGUILayout.Space(6);
             EditorGUILayout.LabelField("Frame Data", EditorStyles.boldLabel);
             frame.FrameType = (FrameType)EditorGUILayout.EnumPopup("Frame Type", frame.FrameType);
+            frame.Floating = EditorGUILayout.Toggle("Floating", frame.Floating);
         }
 
         private void DrawBoxList(MoveBuilderModel m, MoveBuilderAnimationState state)

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Game;
 using MemoryPack;
 using UnityEngine;
+using UnityEngine.Rendering;
+using Utils;
+using Utils.EnumArray;
 using Utils.SoftFloat;
 
 namespace Design.Animation
@@ -116,22 +119,24 @@ namespace Design.Animation
         Hitstop,
     }
 
+    public enum FrameAttribute
+    {
+        Floating,
+    }
+
     [Serializable]
     public class FrameData
     {
         public List<BoxData> Boxes = new List<BoxData>();
         public FrameType FrameType = FrameType.Neutral;
+        public bool Floating;
 
         public FrameData Clone()
         {
             var copy = new FrameData();
-
-            if (Boxes != null)
-                copy.Boxes = new List<BoxData>(Boxes);
-            else
-                copy.Boxes = new List<BoxData>();
-
+            copy.Boxes = new List<BoxData>(Boxes);
             copy.FrameType = FrameType;
+            copy.Floating = Floating;
             return copy;
         }
 
@@ -141,6 +146,7 @@ namespace Design.Animation
                 return;
             Boxes.Clear();
             Boxes.AddRange(other.Boxes);
+            Floating = other.Floating;
             FrameType = other.FrameType;
         }
 
@@ -156,6 +162,7 @@ namespace Design.Animation
                 }
             }
             hc.Add(FrameType);
+            hc.Add(Floating);
             return hc.ToHashCode();
         }
 

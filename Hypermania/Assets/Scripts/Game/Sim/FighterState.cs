@@ -444,10 +444,14 @@ namespace Game.Sim
             }
         }
 
-        public void UpdatePosition(GameOptions options, SVector2 otherFighterPos)
+        public void UpdatePosition(Frame frame, GameOptions options, SVector2 otherFighterPos)
         {
             // Apply gravity if not grounded and not in airdash
-            if (
+            if (options.Players[Index].Character.GetFrameData(State, frame - StateStart).Floating)
+            {
+                Velocity /= options.Global.FloatingFactor;
+            }
+            else if (
                 State != CharacterState.BackAirDash
                 && State != CharacterState.ForwardAirDash
                 && Position.y > options.Global.GroundY

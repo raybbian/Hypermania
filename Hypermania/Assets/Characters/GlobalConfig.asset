@@ -40,6 +40,8 @@ MonoBehaviour:
   CameraPadding:
     rawValue: 1050253722
   RoundEndTicks: 160
+  FloatingFactor:
+    rawValue: 1066192077
   _inputConfig:
     DashWindow: 12
     SuperJumpWindow: 8

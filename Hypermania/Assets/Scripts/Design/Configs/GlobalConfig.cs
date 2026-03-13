@@ -37,6 +37,7 @@ namespace Design.Configs
         public sfloat CameraHalfHeight = (sfloat)1.5f;
         public sfloat CameraPadding = (sfloat)0.3f;
         public int RoundEndTicks = 120;
+        public sfloat FloatingFactor = (sfloat)1.3f;
         public sfloat CameraHalfWidth => CameraHalfHeight * (sfloat)1.7777777f;
 
         [SerializeField]
