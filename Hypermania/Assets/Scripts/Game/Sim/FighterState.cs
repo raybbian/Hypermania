@@ -38,6 +38,7 @@ namespace Game.Sim
         public InputHistory InputH;
         public int Lives;
         public sfloat Burst;
+        public sfloat Super;
         public int AirDashCount;
         public VictoryKind[] Victories;
         public int NumVictories;
@@ -461,8 +462,51 @@ namespace Game.Sim
                     return;
                 }
             }
+<<<<<<< HEAD
 
             if (dashCancelEligible && InputH.IsHeld(ForwardInput) && State == CharacterState.ForwardDash)
+=======
+            else if (InputH.PressedRecently(InputFlags.MediumAttack, config.Input.InputBufferWindow))
+            {
+                switch (Location(config))
+                {
+                    case FighterLocation.Grounded:
+                        {
+                            Velocity = SVector2.zero;
+                            SetState(
+                                CharacterState.MediumAttack,
+                                startFrame,
+                                startFrame + characterConfig.GetHitboxData(CharacterState.MediumAttack).TotalTicks,
+                                true
+                            );
+                        }
+                        break;
+                }
+            }
+            else if (InputH.PressedRecently(InputFlags.HeavyAttack, config.Input.InputBufferWindow) && Super == characterConfig.SuperMax)
+            {
+                switch (Location(config))
+                {
+                    case FighterLocation.Grounded:
+                        {
+                            Velocity = SVector2.zero;
+                            SetState(
+                                CharacterState.SuperAttack,
+                                startFrame,
+                                startFrame + characterConfig.GetHitboxData(CharacterState.SuperAttack).TotalTicks,
+                                true
+                            );
+                        }
+                        break;
+                }
+            }
+            else if (
+                dashCancelEligible
+                && InputH.IsHeld(ForwardInput)
+                && dashCancelEligible
+                && State == CharacterState.ForwardDash
+            )
+>>>>>>> 8aa2663 (Added super move code)
             {
                 SetState(CharacterState.Running, frame, Frame.Infinity);
             }

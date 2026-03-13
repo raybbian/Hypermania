@@ -24,6 +24,7 @@ namespace Design.Configs
         public sfloat JumpVelocity;
         public sfloat Health;
         public sfloat BurstMax;
+        public sfloat SuperMax;
         public sfloat ForwardDashDistance;
         public sfloat BackDashDistance;
         public int NumAirDashes;
