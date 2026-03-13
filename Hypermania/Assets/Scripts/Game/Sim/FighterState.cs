@@ -394,6 +394,7 @@ namespace Game.Sim
                 { (FighterAttackLocation.Aerial, InputFlags.LightAttack), CharacterState.LightAerial },
                 { (FighterAttackLocation.Aerial, InputFlags.MediumAttack), CharacterState.MediumAerial },
                 { (FighterAttackLocation.Aerial, InputFlags.HeavyAttack), CharacterState.SuperAerial },
+                { (FighterAttackLocation.Aerial, InputFlags.SpecialAttack), CharacterState.SpecialAerial },
             };
 
         public void ApplyActiveState(Frame frame, Frame realFrame, GameOptions options, CharacterConfig config)
@@ -474,7 +475,7 @@ namespace Game.Sim
             {
                 Velocity /= options.Global.FloatingFactor;
             }
-            if (curData.ApplyVelocity != SVector2.zero)
+            if (curData.ShouldApplyVel)
             {
                 Velocity = curData.ApplyVelocity;
                 Velocity.x *= FacingDir == FighterFacing.Left ? -1 : 1;

@@ -14,125 +14,1718 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Clip: {fileID: 7400000, guid: e06139487fc3f44a991da5145f0aa9ff, type: 2}
   Frames:
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
-  - Boxes: []
-    FrameType: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1039144416
+        y:
+          rawValue: 1062687655
+      SizeLocal:
+        x:
+          rawValue: 1064831738
+        y:
+          rawValue: 1066223373
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1039144416
+        y:
+          rawValue: 1062687655
+      SizeLocal:
+        x:
+          rawValue: 1064831738
+        y:
+          rawValue: 1066223373
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019220320
+        y:
+          rawValue: 1061556757
+      SizeLocal:
+        x:
+          rawValue: 1061684888
+        y:
+          rawValue: 1067354271
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019220320
+        y:
+          rawValue: 1061556757
+      SizeLocal:
+        x:
+          rawValue: 1061684888
+        y:
+          rawValue: 1067354271
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3186628088
+        y:
+          rawValue: 1059639145
+      SizeLocal:
+        x:
+          rawValue: 1064635060
+        y:
+          rawValue: 1069271883
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3186628088
+        y:
+          rawValue: 1059639145
+      SizeLocal:
+        x:
+          rawValue: 1064635060
+        y:
+          rawValue: 1069271883
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3186628088
+        y:
+          rawValue: 1059639145
+      SizeLocal:
+        x:
+          rawValue: 1064635060
+        y:
+          rawValue: 1069271883
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3186628088
+        y:
+          rawValue: 1059639145
+      SizeLocal:
+        x:
+          rawValue: 1064635060
+        y:
+          rawValue: 1069271883
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3186628088
+        y:
+          rawValue: 1059639145
+      SizeLocal:
+        x:
+          rawValue: 1064635060
+        y:
+          rawValue: 1069271883
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3186628088
+        y:
+          rawValue: 1059639145
+      SizeLocal:
+        x:
+          rawValue: 1064635060
+        y:
+          rawValue: 1069271883
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3186628088
+        y:
+          rawValue: 1059639145
+      SizeLocal:
+        x:
+          rawValue: 1064635060
+        y:
+          rawValue: 1069271883
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3171945800
+        y:
+          rawValue: 1058950771
+      SizeLocal:
+        x:
+          rawValue: 1065584174
+        y:
+          rawValue: 1069960257
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3171945800
+        y:
+          rawValue: 1058950771
+      SizeLocal:
+        x:
+          rawValue: 1065584174
+        y:
+          rawValue: 1069960257
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3171945800
+        y:
+          rawValue: 1058950771
+      SizeLocal:
+        x:
+          rawValue: 1065584174
+        y:
+          rawValue: 1069960257
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041042648
+        y:
+          rawValue: 1060180009
+      SizeLocal:
+        x:
+          rawValue: 1064340048
+        y:
+          rawValue: 1068731019
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1042222718
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1064143367
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1042222718
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1064143367
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 1
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1044976214
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1065436666
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1066208481
+        y:
+          rawValue: 1054249880
+      SizeLocal:
+        x:
+          rawValue: 1061684880
+        y:
+          rawValue: 1062176576
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 2
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 4
+        BlockstopTicks: 2
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 1
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1044976214
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1065436666
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1066208481
+        y:
+          rawValue: 1054249880
+      SizeLocal:
+        x:
+          rawValue: 1061684880
+        y:
+          rawValue: 1062176576
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 2
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 4
+        BlockstopTicks: 2
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1066208481
+        y:
+          rawValue: 1054249880
+      SizeLocal:
+        x:
+          rawValue: 1061684880
+        y:
+          rawValue: 1062176576
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 2
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 4
+        BlockstopTicks: 2
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1066208481
+        y:
+          rawValue: 1054249880
+      SizeLocal:
+        x:
+          rawValue: 1061684880
+        y:
+          rawValue: 1062176576
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 2
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 4
+        BlockstopTicks: 2
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1069355331
+        y:
+          rawValue: 1054053202
+      SizeLocal:
+        x:
+          rawValue: 1061684880
+        y:
+          rawValue: 1062176576
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 4
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 4
+        BlockstopTicks: 2
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1069355331
+        y:
+          rawValue: 1054053202
+      SizeLocal:
+        x:
+          rawValue: 1061684880
+        y:
+          rawValue: 1062176576
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 4
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 4
+        BlockstopTicks: 2
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1069601178
+        y:
+          rawValue: 1048123072
+      SizeLocal:
+        x:
+          rawValue: 1061684880
+        y:
+          rawValue: 1062176576
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 4
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 4
+        BlockstopTicks: 2
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1069601178
+        y:
+          rawValue: 1048123072
+      SizeLocal:
+        x:
+          rawValue: 1061684880
+        y:
+          rawValue: 1062176576
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 4
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 4
+        BlockstopTicks: 2
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1070658322
+        y:
+          rawValue: 1034424156
+      SizeLocal:
+        x:
+          rawValue: 1065534999
+        y:
+          rawValue: 1065225087
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 4
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 4
+        BlockstopTicks: 2
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1070658322
+        y:
+          rawValue: 1034424156
+      SizeLocal:
+        x:
+          rawValue: 1065534999
+        y:
+          rawValue: 1065225087
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 4
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 4
+        BlockstopTicks: 2
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1074375825
+        y:
+          rawValue: 3190493082
+      SizeLocal:
+        x:
+          rawValue: 1065485832
+        y:
+          rawValue: 1062373255
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 6
+        HitstunTicks: 14
+        BlockstunTicks: 7
+        HitstopTicks: 9
+        BlockstopTicks: 7
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1074375825
+        y:
+          rawValue: 3190493082
+      SizeLocal:
+        x:
+          rawValue: 1065485832
+        y:
+          rawValue: 1062373255
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 6
+        HitstunTicks: 14
+        BlockstunTicks: 7
+        HitstopTicks: 9
+        BlockstopTicks: 7
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1074375825
+        y:
+          rawValue: 3190493082
+      SizeLocal:
+        x:
+          rawValue: 1065485832
+        y:
+          rawValue: 1062373255
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 6
+        HitstunTicks: 14
+        BlockstunTicks: 7
+        HitstopTicks: 9
+        BlockstopTicks: 7
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    - CenterLocal:
+        x:
+          rawValue: 1074375825
+        y:
+          rawValue: 3190493082
+      SizeLocal:
+        x:
+          rawValue: 1065485832
+        y:
+          rawValue: 1062373255
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 6
+        HitstunTicks: 14
+        BlockstunTicks: 7
+        HitstopTicks: 9
+        BlockstopTicks: 7
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 2
+    Floating: 1
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1034030792
+        y:
+          rawValue: 1060622534
+      SizeLocal:
+        x:
+          rawValue: 1061586554
+        y:
+          rawValue: 1068288494
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        StartsRhythmCombo: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0

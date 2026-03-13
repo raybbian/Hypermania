@@ -269,7 +269,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 0, y: 0, z: -12.666}
+        value: {x: 0, y: 0, z: -13.047}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -278,7 +278,7 @@ AnimationClip:
         outWeight: {x: 0, y: 0, z: 0}
       - serializedVersion: 3
         time: 0.083333336
-        value: {x: 0, y: 0, z: -12.666}
+        value: {x: 0, y: 0, z: -13.047}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -694,7 +694,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 0, y: 0, z: -3.6636047}
+        value: {x: 0, y: 0, z: 1.697}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -703,7 +703,7 @@ AnimationClip:
         outWeight: {x: 0, y: 0, z: 0}
       - serializedVersion: 3
         time: 0.083333336
-        value: {x: 0, y: 0, z: -3.6636047}
+        value: {x: 0, y: 0, z: 1.697}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -844,7 +844,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 0, y: 0, z: 148.94775}
+        value: {x: 0, y: 0, z: 148.095}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -853,7 +853,7 @@ AnimationClip:
         outWeight: {x: 0, y: 0, z: 0}
       - serializedVersion: 3
         time: 0.083333336
-        value: {x: 0, y: 0, z: 148.94775}
+        value: {x: 0, y: 0, z: 148.095}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -2220,7 +2220,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 0.22659975, y: 0.0005035872, z: 0}
+        value: {x: 0.2104343, y: 0.005962162, z: 0}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -2229,7 +2229,7 @@ AnimationClip:
         outWeight: {x: 0, y: 0, z: 0}
       - serializedVersion: 3
         time: 0.083333336
-        value: {x: 0.22659975, y: 0.0005035872, z: 0}
+        value: {x: 0.2104343, y: 0.005962162, z: 0}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -4878,7 +4878,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 4.4234972e-16
+        value: 7.693764e-18
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -4887,7 +4887,7 @@ AnimationClip:
         outWeight: 0
       - serializedVersion: 3
         time: 0.083333336
-        value: 4.4234972e-16
+        value: 7.693764e-18
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -4938,7 +4938,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1.117213e-30
+        value: 0.00000005394241
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -4947,7 +4947,7 @@ AnimationClip:
         outWeight: 0
       - serializedVersion: 3
         time: 0.083333336
-        value: 1.117213e-30
+        value: 0.00000005394241
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -5118,7 +5118,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.27148175
+        value: 8.233305e-24
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -5127,7 +5127,7 @@ AnimationClip:
         outWeight: 0
       - serializedVersion: 3
         time: 0.083333336
-        value: 0.27148175
+        value: 8.233305e-24
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -12816,7 +12816,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -12.666
+        value: -13.047
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -12825,7 +12825,7 @@ AnimationClip:
         outWeight: 0
       - serializedVersion: 3
         time: 0.083333336
-        value: -12.666
+        value: -13.047
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -17256,7 +17256,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.22659975
+        value: 0.2104343
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -17265,7 +17265,7 @@ AnimationClip:
         outWeight: 0
       - serializedVersion: 3
         time: 0.083333336
-        value: 0.22659975
+        value: 0.2104343
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -17286,7 +17286,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.0005035872
+        value: 0.005962162
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -17295,7 +17295,7 @@ AnimationClip:
         outWeight: 0
       - serializedVersion: 3
         time: 0.083333336
-        value: 0.0005035872
+        value: 0.005962162
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -17406,7 +17406,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: -3.6636047
+        value: 1.697
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -17415,7 +17415,7 @@ AnimationClip:
         outWeight: 0
       - serializedVersion: 3
         time: 0.083333336
-        value: -3.6636047
+        value: 1.697
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -19026,7 +19026,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 148.94775
+        value: 148.095
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -19035,7 +19035,7 @@ AnimationClip:
         outWeight: 0
       - serializedVersion: 3
         time: 0.083333336
-        value: 148.94775
+        value: 148.095
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -25566,7 +25566,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 4.4234972e-16
+        value: 7.693764e-18
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -25575,7 +25575,7 @@ AnimationClip:
         outWeight: 0
       - serializedVersion: 3
         time: 0.083333336
-        value: 4.4234972e-16
+        value: 7.693764e-18
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -25626,7 +25626,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1.117213e-30
+        value: 0.00000005394241
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -25635,7 +25635,7 @@ AnimationClip:
         outWeight: 0
       - serializedVersion: 3
         time: 0.083333336
-        value: 1.117213e-30
+        value: 0.00000005394241
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -25806,7 +25806,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.27148175
+        value: 8.233305e-24
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -25815,7 +25815,7 @@ AnimationClip:
         outWeight: 0
       - serializedVersion: 3
         time: 0.083333336
-        value: 0.27148175
+        value: 8.233305e-24
         inSlope: Infinity
         outSlope: Infinity
         tangentMode: 103
@@ -27699,7 +27699,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_L/UpperArm_L/LowerArm_L/Hand_Effector_L
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_L/UpperArm_L
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -27711,7 +27711,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_L/UpperArm_L/LowerArm_L/Hand_Effector_L
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_L/UpperArm_L
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -27723,7 +27723,79 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_L/UpperArm_L/LowerArm_L/Hand_Effector_L
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_L/UpperArm_L
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: ScytheHandle1/ScytheHandle2/ScytheHandle3
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: ScytheHandle1/ScytheHandle2/ScytheHandle3
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: ScytheHandle1/ScytheHandle2/ScytheHandle3
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: ScytheHandle1/ScytheHandle2/ScytheHandle3/ScytheHead1
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: ScytheHandle1/ScytheHandle2/ScytheHandle3/ScytheHead1
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: ScytheHandle1/ScytheHandle2/ScytheHandle3/ScytheHead1
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28167,7 +28239,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_L/UpperArm_L
+    path: Root/Hip/UpperLeg_R/LowerLeg_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28179,7 +28251,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_L/UpperArm_L
+    path: Root/Hip/UpperLeg_R/LowerLeg_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28191,7 +28263,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_L/UpperArm_L
+    path: Root/Hip/UpperLeg_R/LowerLeg_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28239,7 +28311,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Root/Hip/UpperLeg_R/LowerLeg_R/Foot_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_L/UpperArm_L/LowerArm_L/Hand_Effector_L
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28251,7 +28323,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Root/Hip/UpperLeg_R/LowerLeg_R/Foot_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_L/UpperArm_L/LowerArm_L/Hand_Effector_L
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28263,7 +28335,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Root/Hip/UpperLeg_R/LowerLeg_R/Foot_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_L/UpperArm_L/LowerArm_L/Hand_Effector_L
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28419,42 +28491,6 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
     path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R
     classID: 4
     script: {fileID: 0}
@@ -28491,7 +28527,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R/Wrist_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Pigtail_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28503,7 +28539,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R/Wrist_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Pigtail_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28515,7 +28551,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R/Wrist_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Pigtail_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28527,7 +28563,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Sidetail_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R/Hand_Effector_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28539,7 +28575,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Sidetail_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R/Hand_Effector_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28551,7 +28587,43 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Sidetail_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R/Hand_Effector_R
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R/Wrist_R
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R/Wrist_R
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R/Wrist_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28779,7 +28851,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Bang_C_0
+    path: ScytheHandle1/ScytheHandle2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28791,7 +28863,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Bang_C_0
+    path: ScytheHandle1/ScytheHandle2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28803,7 +28875,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Bang_C_0
+    path: ScytheHandle1/ScytheHandle2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28851,7 +28923,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: ScytheHandle1/ScytheHandle2/ScytheHandle3/ScytheHead1
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Horn_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28863,7 +28935,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: ScytheHandle1/ScytheHandle2/ScytheHandle3/ScytheHead1
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Horn_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28875,7 +28947,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: ScytheHandle1/ScytheHandle2/ScytheHandle3/ScytheHead1
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Horn_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28923,7 +28995,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Pigtail_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Bang_R_0
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28935,7 +29007,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Pigtail_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Bang_R_0
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -28947,7 +29019,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Pigtail_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Bang_R_0
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -29031,6 +29103,42 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Bang_C_0
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Bang_C_0
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Bang_C_0
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
     path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Eye_R
     classID: 4
     script: {fileID: 0}
@@ -29056,6 +29164,42 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Eye_R
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Pigtail_L
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Pigtail_L
+    classID: 4
+    script: {fileID: 0}
+    flags: 0
+  - serializedVersion: 2
+    curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Pigtail_L
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -29139,42 +29283,6 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Horn_R
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Horn_R
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Horn_R
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
     path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Sidetail_L
     classID: 4
     script: {fileID: 0}
@@ -29211,7 +29319,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Pigtail_L
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Sidetail_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -29223,7 +29331,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Pigtail_L
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Sidetail_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -29235,43 +29343,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Pigtail_L
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Bang_R_0
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Bang_R_0
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Bang_R_0
+    path: Root/Hip/LowSpine/Stomach/Chest/Neck/Head/Sidetail_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -29499,7 +29571,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Root/Hip/UpperLeg_R/LowerLeg_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -29511,7 +29583,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Root/Hip/UpperLeg_R/LowerLeg_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -29523,7 +29595,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Root/Hip/UpperLeg_R/LowerLeg_R
+    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -29571,7 +29643,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R/Hand_Effector_R
+    path: Root/Hip/UpperLeg_R/LowerLeg_R/Foot_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -29583,7 +29655,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R/Hand_Effector_R
+    path: Root/Hip/UpperLeg_R/LowerLeg_R/Foot_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -29595,7 +29667,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Root/Hip/LowSpine/Stomach/Chest/Clavicle_R/UpperArm_R/LowerArm_R/Hand_Effector_R
+    path: Root/Hip/UpperLeg_R/LowerLeg_R/Foot_R
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -29632,78 +29704,6 @@ AnimationClip:
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
     path: ScytheHandle1
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: ScytheHandle1/ScytheHandle2
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: ScytheHandle1/ScytheHandle2
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: ScytheHandle1/ScytheHandle2
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.z
-    path: ScytheHandle1/ScytheHandle2/ScytheHandle3
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.y
-    path: ScytheHandle1/ScytheHandle2/ScytheHandle3
-    classID: 4
-    script: {fileID: 0}
-    flags: 0
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_LocalEulerAngles.x
-    path: ScytheHandle1/ScytheHandle2/ScytheHandle3
     classID: 4
     script: {fileID: 0}
     flags: 0
