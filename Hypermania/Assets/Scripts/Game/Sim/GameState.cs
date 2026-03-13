@@ -554,6 +554,7 @@ namespace Game.Sim
                 return Fighters[c.BoxB.Owner]
                     .ApplyHit(
                         SimFrame,
+                        Fighters[c.BoxA.Owner].StateStart,
                         options.Players[c.BoxB.Owner].Character,
                         c.BoxA.Data,
                         c.BoxB.Box.ClosestPointToCenter(c.BoxA.Box),
@@ -566,6 +567,7 @@ namespace Game.Sim
                 return Fighters[c.BoxA.Owner]
                     .ApplyHit(
                         SimFrame,
+                        Fighters[c.BoxB.Owner].StateStart,
                         options.Players[c.BoxA.Owner].Character,
                         c.BoxB.Data,
                         c.BoxA.Box.ClosestPointToCenter(c.BoxB.Box),

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Design.Animation;
 using Design.Configs;
@@ -49,7 +50,7 @@ namespace Game.Sim
         /// Set to a value that marks the first frame in which the character should return to neutral.
         /// </summary>
         public Frame StateEnd { get; private set; }
-        public Frame ImmunityEnd { get; private set; }
+        public int ImmunityHash { get; private set; }
 
         public FighterFacing FacingDir;
 
@@ -122,7 +123,7 @@ namespace Game.Sim
                 State = CharacterState.Idle,
                 StateStart = Frame.FirstFrame,
                 StateEnd = Frame.Infinity,
-                ImmunityEnd = Frame.FirstFrame,
+                ImmunityHash = 0,
                 ComboedCount = 0,
                 InputH = new InputHistory(),
                 // TODO: character dependent?
@@ -144,7 +145,7 @@ namespace Game.Sim
             State = CharacterState.Idle;
             StateStart = Frame.FirstFrame;
             StateEnd = Frame.Infinity;
-            ImmunityEnd = Frame.FirstFrame;
+            ImmunityHash = 0;
             ComboedCount = 0;
             InputH.Clear(); // Clear, don't want to read input from a previous round.
             // TODO: character dependent?
@@ -468,15 +469,17 @@ namespace Game.Sim
         public void UpdatePosition(Frame frame, GameOptions options, SVector2 otherFighterPos)
         {
             // Apply gravity if not grounded and not in airdash
-            if (options.Players[Index].Character.GetFrameData(State, frame - StateStart).Floating)
+            FrameData curData = options.Players[Index].Character.GetFrameData(State, frame - StateStart);
+            if (curData.Floating)
             {
                 Velocity /= options.Global.FloatingFactor;
             }
-            else if (
-                State != CharacterState.BackAirDash
-                && State != CharacterState.ForwardAirDash
-                && Position.y > options.Global.GroundY
-            )
+            if (curData.ApplyVelocity != SVector2.zero)
+            {
+                Velocity = curData.ApplyVelocity;
+                Velocity.x *= FacingDir == FighterFacing.Left ? -1 : 1;
+            }
+            if (curData.GravityEnabled && Position.y > options.Global.GroundY)
             {
                 Velocity.y += options.Global.Gravity * 1 / GameManager.TPS;
             }
@@ -529,7 +532,7 @@ namespace Game.Sim
                 );
                 return;
             }
-            else if (State == CharacterState.Knockdown)
+            if (State == CharacterState.Knockdown)
             {
                 // TODO: getup options
                 SetState(CharacterState.Idle, frame, Frame.Infinity);
@@ -571,19 +574,22 @@ namespace Game.Sim
 
         public HitOutcome ApplyHit(
             Frame frame,
+            Frame attackSt,
             CharacterConfig characterConfig,
             BoxProps props,
             SVector2 location,
             sfloat damageMult
         )
         {
-            if (ImmunityEnd > frame)
+            int immunityVal = HashCode.Combine(props, attackSt);
+            if (ImmunityHash == immunityVal)
             {
                 return new HitOutcome { Kind = HitKind.None };
             }
 
             HitProps = props;
             HitLocation = location;
+            ImmunityHash = immunityVal;
 
             bool holdingBack = InputH.IsHeld(BackwardInput);
             bool holdingDown = InputH.IsHeld(InputFlags.Down);
@@ -592,7 +598,7 @@ namespace Game.Sim
             bool crouchBlock = props.AttackKind != AttackKind.Overhead;
             bool blockSuccess = holdingBack && ((holdingDown && crouchBlock) || (!holdingDown && standBlock));
 
-            if (blockSuccess)
+            if (blockSuccess && Actionable)
             {
                 // True: Crouch blocking, False: Stand blocking
                 SetState(
@@ -601,7 +607,6 @@ namespace Game.Sim
                     frame + props.BlockstunTicks
                 );
 
-                ImmunityEnd = frame + 7;
                 // TODO: check if other move is special, if so apply chip
                 return new HitOutcome { Kind = HitKind.Blocked };
             }
@@ -617,7 +622,6 @@ namespace Game.Sim
             }
 
             // TODO: fixme, just to prevent multi hit
-            ImmunityEnd = frame + 7;
             // TODO: if high enough, go knockdown
             Health -= props.Damage * damageMult;
 

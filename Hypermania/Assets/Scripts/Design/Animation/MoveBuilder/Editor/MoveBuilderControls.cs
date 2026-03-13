@@ -137,6 +137,12 @@ namespace Design.Animation.MoveBuilder.Editor
             EditorGUILayout.LabelField("Frame Data", EditorStyles.boldLabel);
             frame.FrameType = (FrameType)EditorGUILayout.EnumPopup("Frame Type", frame.FrameType);
             frame.Floating = EditorGUILayout.Toggle("Floating", frame.Floating);
+            frame.ShouldApplyVel = EditorGUILayout.Toggle("Should Apply Velocity", frame.ShouldApplyVel);
+            using (new EditorGUI.DisabledScope(!frame.ShouldApplyVel))
+            {
+                frame.ApplyVelocity = SFloatGUI.Field("Apply Velocity", frame.ApplyVelocity);
+            }
+            frame.GravityEnabled = EditorGUILayout.Toggle("Gravity Enabled", frame.GravityEnabled);
         }
 
         private void DrawBoxList(MoveBuilderModel m, MoveBuilderAnimationState state)

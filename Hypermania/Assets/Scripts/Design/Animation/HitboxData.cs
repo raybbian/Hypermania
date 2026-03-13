@@ -130,6 +130,9 @@ namespace Design.Animation
         public List<BoxData> Boxes = new List<BoxData>();
         public FrameType FrameType = FrameType.Neutral;
         public bool Floating;
+        public bool GravityEnabled = true;
+        public bool ShouldApplyVel;
+        public SVector2 ApplyVelocity;
 
         public FrameData Clone()
         {
@@ -137,6 +140,9 @@ namespace Design.Animation
             copy.Boxes = new List<BoxData>(Boxes);
             copy.FrameType = FrameType;
             copy.Floating = Floating;
+            copy.ShouldApplyVel = ShouldApplyVel;
+            copy.ApplyVelocity = ApplyVelocity;
+            copy.GravityEnabled = GravityEnabled;
             return copy;
         }
 
@@ -148,6 +154,9 @@ namespace Design.Animation
             Boxes.AddRange(other.Boxes);
             Floating = other.Floating;
             FrameType = other.FrameType;
+            ShouldApplyVel = other.ShouldApplyVel;
+            ApplyVelocity = other.ApplyVelocity;
+            GravityEnabled = other.GravityEnabled;
         }
 
         public int GetValueHash()
@@ -163,6 +172,9 @@ namespace Design.Animation
             }
             hc.Add(FrameType);
             hc.Add(Floating);
+            hc.Add(ShouldApplyVel);
+            hc.Add(ApplyVelocity);
+            hc.Add(GravityEnabled);
             return hc.ToHashCode();
         }
 
