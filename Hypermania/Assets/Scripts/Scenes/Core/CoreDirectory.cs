@@ -1,11 +1,17 @@
 using UnityEngine;
 
-namespace Scenes
+namespace Scenes.Core
 {
+    [DisallowMultipleComponent]
     public class CoreDirectory : MonoBehaviour
     {
+        [SerializeField]
+        public bool LoadScenesOnStart;
+
         public void Start()
         {
+            if (!LoadScenesOnStart)
+                return;
             SceneLoader
                 .Instance.LoadNewScene()
                 .Load(SceneID.Session, SceneDatabase.SESSION)

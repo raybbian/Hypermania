@@ -14,6 +14,10 @@ namespace Netcode.P2P
 
         public SteamMatchmakingClient()
         {
+            if (!SteamManager.Initialized)
+            {
+                throw new InvalidOperationException("Steam manager was not initialized");
+            }
             RegisterCallbacks();
 
             Debug.Log("[Matchmaking] SteamMatchmakingClient constructed.");
@@ -219,12 +223,13 @@ namespace Netcode.P2P
                 return;
         }
 
-        private void SendLobbyStartMessage()
+        public List<CSteamID> PlayersInLobby()
         {
-            // from PublishPlayersToLobby. getting lobby members and sorting
+            if (!InLobby)
+                return null;
             int count = SteamMatchmaking.GetNumLobbyMembers(_currentLobby);
             if (count <= 0)
-                return;
+                return null;
             var players = new List<CSteamID>(count);
             for (int i = 0; i < count; i++)
             {
@@ -234,6 +239,12 @@ namespace Netcode.P2P
                 players.Add(m);
             }
             players.Sort((a, b) => a.m_SteamID.CompareTo(b.m_SteamID));
+            return players;
+        }
+
+        private void SendLobbyStartMessage()
+        {
+            List<CSteamID> players = PlayersInLobby();
 
             string builtStartMsg = START_MSG + "|" + string.Join("|", players);
 

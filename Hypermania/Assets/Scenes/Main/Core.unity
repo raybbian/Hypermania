@@ -408,6 +408,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e855ea186d9482ab97c7be0d7f7ae03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LoadScenesOnStart: 1
 --- !u!4 &1332792558
 Transform:
   m_ObjectHideFlags: 0
@@ -657,5 +658,5 @@ SceneRoots:
   - {fileID: 1744216913}
   - {fileID: 512469699}
   - {fileID: 1701974734}
-  - {fileID: 1332792558}
   - {fileID: 981901266}
+  - {fileID: 1332792558}

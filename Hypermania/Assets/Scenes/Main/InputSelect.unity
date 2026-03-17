@@ -569,7 +569,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a12d88c42cc554945b3f81f43cad121c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _deviceManager: {fileID: 1996470249}
   _inputContainer: {fileID: 628039198}
   _spacing: {x: 400, y: 150}
   _controllerPrefab: {fileID: 1369553489080521514, guid: 4b40a7ed561b379f7a9d69b747fc8116, type: 3}
@@ -1361,6 +1360,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 848239703}
-  - {fileID: 1996470250}
   - {fileID: 921227634}
+  - {fileID: 1996470250}
   - {fileID: 284520220}

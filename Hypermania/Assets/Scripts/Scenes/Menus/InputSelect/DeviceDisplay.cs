@@ -1,14 +1,13 @@
 using System.Collections.Generic;
+using Scenes.Session;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DeviceType = UnityEngine.DeviceType;
 
 namespace Scenes.Menus.InputSelect
 {
     public class DeviceDisplay : MonoBehaviour
     {
-        [SerializeField]
-        private DeviceManager _deviceManager;
-
         [SerializeField]
         private RectTransform _inputContainer;
 
@@ -21,21 +20,44 @@ namespace Scenes.Menus.InputSelect
         [SerializeField]
         private GameObject _keyboardPrefab;
 
-        private Dictionary<InputDevice, (int pos, RectTransform icon)> _icons = new();
+        private Dictionary<InputDevice, (int pos, DeviceIcon icon)> _icons = new();
         private HashSet<int> _occuPos = new();
 
-        private void OnEnable()
+        public void Awake()
         {
-            _deviceManager.OnDevicePair += AddDevice;
-            _deviceManager.OnDeviceDisconnect += RemoveDevice;
-            _deviceManager.OnDeviceChangeAssignment += OnDeviceChange;
+            UpdateDisplay(false);
         }
 
-        private void OnDisable()
+        public void Update()
         {
-            _deviceManager.OnDevicePair -= AddDevice;
-            _deviceManager.OnDeviceDisconnect -= RemoveDevice;
-            _deviceManager.OnDeviceChangeAssignment -= OnDeviceChange;
+            UpdateDisplay();
+        }
+
+        public void UpdateDisplay(bool lerp = true)
+        {
+            foreach ((InputDevice dev, DeviceAssignment asg) in SessionDirectory.RegisteredDevices)
+            {
+                if (!_icons.ContainsKey(dev))
+                {
+                    AddDevice(dev, DeviceManager.GetDeviceType(dev), dev.name);
+                }
+
+                _icons[dev].icon.SetDeviceAssignment(asg, _spacing.x, lerp);
+            }
+
+            List<InputDevice> toRemove = new();
+            foreach (InputDevice dev in _icons.Keys)
+            {
+                if (!SessionDirectory.RegisteredDevices.ContainsKey(dev))
+                {
+                    toRemove.Add(dev);
+                }
+            }
+
+            foreach (InputDevice dev in toRemove)
+            {
+                RemoveDevice(dev);
+            }
         }
 
         private void AddDevice(InputDevice device, DeviceType type, string deviceName)
@@ -49,7 +71,7 @@ namespace Scenes.Menus.InputSelect
             RectTransform rect = icon.GetComponent<RectTransform>();
             DeviceIcon deviceIcon = icon.GetComponent<DeviceIcon>();
             deviceIcon.SetDeviceName(deviceName);
-            _icons.Add(device, (pos, rect));
+            _icons.Add(device, (pos, deviceIcon));
             _occuPos.Add(pos);
             rect.anchorMin = new Vector2(0.5f, 1);
             rect.anchorMax = new Vector2(0.5f, 1);
@@ -63,14 +85,6 @@ namespace Scenes.Menus.InputSelect
                 Destroy(data.icon);
                 _occuPos.Remove(data.pos);
             }
-        }
-
-        private void OnDeviceChange(InputDevice device, DeviceAssignment assignment)
-        {
-            _icons[device].icon.anchoredPosition = new Vector2(
-                ((int)assignment - 1) * _spacing.x,
-                _icons[device].icon.anchoredPosition.y
-            );
         }
 
         private GameObject GetInputIcon(DeviceType type)

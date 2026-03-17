@@ -1,6 +1,8 @@
 using Scenes;
-using Scenes.Menus.Session;
+using Scenes.Session;
+using Steamworks;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Scenes.Menus.MainMenu
 {
@@ -8,13 +10,27 @@ namespace Scenes.Menus.MainMenu
     {
         Local,
         Training,
+        Online,
     }
 
+    [DisallowMultipleComponent]
     public class MainMenuDirectory : MonoBehaviour
     {
+        [SerializeField] private Button _onlineButton;
         public void StartLocal()
         {
             SessionDirectory.Config = GameConfig.Local;
+            SceneLoader
+                .Instance.LoadNewScene()
+                .Load(SceneID.InputSelect, SceneDatabase.INPUT_SELECT)
+                .Unload(SceneID.MainMenu)
+                .WithOverlay()
+                .Execute();
+        }
+
+        public void StartOnline()
+        {
+            SessionDirectory.Config = GameConfig.Online;
             SceneLoader
                 .Instance.LoadNewScene()
                 .Load(SceneID.InputSelect, SceneDatabase.INPUT_SELECT)
@@ -32,6 +48,11 @@ namespace Scenes.Menus.MainMenu
                 .Unload(SceneID.MainMenu)
                 .WithOverlay()
                 .Execute();
+        }
+
+        public void Update()
+        {
+            _onlineButton.interactable = SteamManager.Initialized;
         }
 
         public void Quit() { }

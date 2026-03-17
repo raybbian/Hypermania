@@ -5,6 +5,8 @@ using Game.Runners;
 using Game.Sim;
 using Netcode.P2P;
 using Netcode.Rollback;
+using Scenes.Online;
+using Scenes.Session;
 using Steamworks;
 using UnityEngine;
 
@@ -15,7 +17,6 @@ namespace Game
     {
         [SerializeField]
         public GameRunner Runner;
-        private SteamMatchmakingClient _matchmakingClient;
         private P2PClient _p2pClient;
         private List<(PlayerHandle handle, PlayerKind playerKind, SteamNetworkingIdentity netId)> _players;
 
@@ -27,10 +28,7 @@ namespace Game
 
         void OnEnable()
         {
-            _matchmakingClient = new SteamMatchmakingClient();
-            _matchmakingClient.OnStartWithPlayers += OnStartWithPlayers;
             _started = false;
-
             _p2pClient = null;
             _players = new List<(PlayerHandle handle, PlayerKind playerKind, SteamNetworkingIdentity netId)>();
         }
@@ -46,85 +44,20 @@ namespace Game
         void OnDisable()
         {
             _started = false;
-            _matchmakingClient = null;
             _p2pClient = null;
             _players = null;
         }
 
         #region Controls
 
-        public void CreateLobby() => StartCoroutine(CreateLobbyRoutine());
-
-        IEnumerator CreateLobbyRoutine()
+        public void StartLocalGame()
         {
             if (_started)
-                yield break;
-            var task = _matchmakingClient.Create();
-            while (!task.IsCompleted)
-                yield return null;
-            if (task.IsFaulted)
-            {
-                Debug.LogException(task.Exception);
-                yield break;
-            }
-        }
-
-        public void JoinLobby(CSteamID lobbyId) => StartCoroutine(JoinLobbyRoutine(lobbyId));
-
-        IEnumerator JoinLobbyRoutine(CSteamID lobbyId)
-        {
-            if (_started)
-                yield break;
-            var task = _matchmakingClient.Join(lobbyId);
-            while (!task.IsCompleted)
-                yield return null;
-            if (task.IsFaulted)
-            {
-                Debug.LogException(task.Exception);
-                yield break;
-            }
-        }
-
-        public void LeaveLobby() => StartCoroutine(LeaveLobbyRoutine());
-
-        IEnumerator LeaveLobbyRoutine()
-        {
-            if (_started)
-                yield break;
-            var task = _matchmakingClient.Leave();
-            while (!task.IsCompleted)
-                yield return null;
-            if (task.IsFaulted)
-            {
-                Debug.LogException(task.Exception);
-                yield break;
-            }
-        }
-
-        public void StartGame() => StartCoroutine(StartGameRoutine());
-
-        IEnumerator StartGameRoutine()
-        {
-            if (_started)
-                yield break;
-            var task = _matchmakingClient.StartGame();
-            while (!task.IsCompleted)
-                yield return null;
-            if (task.IsFaulted)
-            {
-                Debug.LogException(task.Exception);
-                yield break;
-            }
-        }
-
-        public void StartLocalGame(GameOptions overrideOptions)
-        {
-            if (_started || _matchmakingClient.CurrentLobby.IsValid())
                 return;
             _players.Clear();
             _players.Add((new PlayerHandle(0), PlayerKind.Local, default));
             _players.Add((new PlayerHandle(1), PlayerKind.Local, default));
-            StartRunner(overrideOptions);
+            StartRunner(SessionDirectory.Options);
         }
 
         public void DeInit()
@@ -137,8 +70,14 @@ namespace Game
 
         #endregion
 
+        public void StartOnlineGame()
+        {
+            if (!OnlineDirectory.InLobby)
+                return;
+            StartWithPlayers(OnlineDirectory.Players);
+        }
 
-        void OnStartWithPlayers(List<CSteamID> players)
+        private void StartWithPlayers(IReadOnlyList<CSteamID> players)
         {
             // start connecting to all peers
             List<SteamNetworkingIdentity> peerAddr = new List<SteamNetworkingIdentity>();
@@ -171,7 +110,7 @@ namespace Game
 
         void OnAllPeersConnected()
         {
-            StartRunner(null);
+            StartRunner(SessionDirectory.Options);
         }
 
         void StartRunner(GameOptions overrideOptions)
@@ -180,6 +119,7 @@ namespace Game
             {
                 throw new InvalidOperationException("players should be initialized if peers are connected");
             }
+
             Runner.Init(_players, _p2pClient, overrideOptions);
             _started = true;
         }
@@ -187,6 +127,10 @@ namespace Game
         void OnPeerDisconnected(SteamNetworkingIdentity id)
         {
             _p2pClient.DisconnectAllPeers();
+            _p2pClient.OnAllPeersConnected -= OnAllPeersConnected;
+            _p2pClient.OnPeerDisconnected -= OnPeerDisconnected;
+            _p2pClient.Dispose();
+            _p2pClient = null;
             DeInit();
         }
 

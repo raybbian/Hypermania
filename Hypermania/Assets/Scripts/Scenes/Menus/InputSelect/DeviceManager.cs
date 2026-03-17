@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Scenes.Menus.MainMenu;
+using Scenes.Session;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.Users;
-using UnityEngine.InputSystem.Utilities;
-using UnityEngine.Rendering.VirtualTexturing;
 
 namespace Scenes.Menus.InputSelect
 {
@@ -43,24 +43,26 @@ namespace Scenes.Menus.InputSelect
         [SerializeField]
         private bool _debug = false;
 
-        public Dictionary<InputDevice, DeviceAssignment> RegisteredDevices { get; private set; } = new();
-
-        public delegate void DevicePair(InputDevice device, DeviceType deviceType, string displayName);
-        public event DevicePair OnDevicePair;
-
-        public delegate void DeviceDisconnect(InputDevice device);
-        public event DeviceDisconnect OnDeviceDisconnect;
-
-        public delegate void DeviceChangeAssignment(InputDevice device, DeviceAssignment assignment);
-        public event DeviceChangeAssignment OnDeviceChangeAssignment;
-
         public bool ValidAssignments(out InputDevice player1, out InputDevice player2)
         {
-            player1 = RegisteredDevices.FirstOrDefault((kvp) => kvp.Value == DeviceAssignment.Player1).Key;
-            player2 = RegisteredDevices.FirstOrDefault((kvp) => kvp.Value == DeviceAssignment.Player2).Key;
-            int oneCount = RegisteredDevices.Count((kvp) => kvp.Value == DeviceAssignment.Player1);
-            int twoCount = RegisteredDevices.Count((kvp) => kvp.Value == DeviceAssignment.Player2);
-            return oneCount <= 1 && twoCount <= 1 && oneCount + twoCount > 0;
+            player1 = SessionDirectory
+                .RegisteredDevices.FirstOrDefault((kvp) => kvp.Value == DeviceAssignment.Player1)
+                .Key;
+            player2 = SessionDirectory
+                .RegisteredDevices.FirstOrDefault((kvp) => kvp.Value == DeviceAssignment.Player2)
+                .Key;
+            int oneCount = SessionDirectory.RegisteredDevices.Count((kvp) => kvp.Value == DeviceAssignment.Player1);
+            int twoCount = SessionDirectory.RegisteredDevices.Count((kvp) => kvp.Value == DeviceAssignment.Player2);
+            switch (SessionDirectory.Config)
+            {
+                case GameConfig.Local:
+                case GameConfig.Training:
+                    return oneCount <= 1 && twoCount <= 1 && oneCount + twoCount > 0;
+                case GameConfig.Online:
+                    return oneCount == 1;
+            }
+
+            return false;
         }
 
         private void OnEnable()
@@ -85,11 +87,24 @@ namespace Scenes.Menus.InputSelect
         private void RegisterDevice(InputControl control, InputEventPtr ptr)
         {
             InputDevice device = control.device;
-            DeviceType deviceType = DeviceType.None;
 
-            if (RegisteredDevices.ContainsKey(device))
+            if (SessionDirectory.RegisteredDevices.ContainsKey(device))
                 return;
 
+            DeviceType deviceType = GetDeviceType(device);
+            if ((_legalDevices & deviceType) == 0)
+                return;
+
+            if (_debug)
+                Debug.Log($"Device {device.displayName} joined.");
+
+            SessionDirectory.RegisteredDevices.Add(device, DeviceAssignment.None);
+            InputUser.PerformPairingWithDevice(device);
+        }
+
+        public static DeviceType GetDeviceType(InputDevice device)
+        {
+            DeviceType deviceType = DeviceType.None;
             //Device validity check
             if (device is Keyboard)
                 deviceType = DeviceType.Keyboard;
@@ -99,28 +114,17 @@ namespace Scenes.Menus.InputSelect
                 deviceType = DeviceType.Gamepad;
             else if (device is Touchscreen)
                 deviceType = DeviceType.Touch;
-
-            if ((_legalDevices & deviceType) == 0)
-                return;
-
-            if (_debug)
-                Debug.Log($"Device {device.displayName} joined.");
-
-            RegisteredDevices.Add(device, DeviceAssignment.None);
-            InputUser.PerformPairingWithDevice(device);
-
-            OnDevicePair?.Invoke(device, deviceType, device.name);
+            return deviceType;
         }
 
         private void DeregisterDevice(InputDevice device, InputDeviceChange change)
         {
             if (change == InputDeviceChange.Disconnected || change == InputDeviceChange.Removed)
             {
-                if (RegisteredDevices.Remove(device))
+                if (SessionDirectory.RegisteredDevices.Remove(device))
                 {
                     if (_debug)
                         Debug.Log($"Device {device.name} has disconnected.");
-                    OnDeviceDisconnect?.Invoke(device);
                 }
             }
         }
@@ -128,7 +132,7 @@ namespace Scenes.Menus.InputSelect
         private void HandlePlayerInputSelect()
         {
             Dictionary<InputDevice, (bool left, bool right)> gatheredInputs = new();
-            foreach (InputDevice device in RegisteredDevices.Keys)
+            foreach (InputDevice device in SessionDirectory.RegisteredDevices.Keys)
             {
                 bool left = false;
                 bool right = false;
@@ -160,21 +164,15 @@ namespace Scenes.Menus.InputSelect
             {
                 if (left)
                 {
-                    DeviceAssignment n = (DeviceAssignment)Math.Clamp((int)RegisteredDevices[device] - 1, 0, 2);
-                    if (n != RegisteredDevices[device])
-                    {
-                        OnDeviceChangeAssignment?.Invoke(device, n);
-                    }
-                    RegisteredDevices[device] = n;
+                    DeviceAssignment n = (DeviceAssignment)
+                        Math.Clamp((int)SessionDirectory.RegisteredDevices[device] - 1, 0, 2);
+                    SessionDirectory.RegisteredDevices[device] = n;
                 }
                 if (right)
                 {
-                    DeviceAssignment n = (DeviceAssignment)Math.Clamp((int)RegisteredDevices[device] + 1, 0, 2);
-                    if (n != RegisteredDevices[device])
-                    {
-                        OnDeviceChangeAssignment?.Invoke(device, n);
-                    }
-                    RegisteredDevices[device] = n;
+                    DeviceAssignment n = (DeviceAssignment)
+                        Math.Clamp((int)SessionDirectory.RegisteredDevices[device] + 1, 0, 2);
+                    SessionDirectory.RegisteredDevices[device] = n;
                 }
             }
         }

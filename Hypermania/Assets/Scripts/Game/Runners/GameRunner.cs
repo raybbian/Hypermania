@@ -48,11 +48,12 @@ namespace Game.Runners
             {
                 _options = overrideOptions;
             }
+            
             _inputBuffers = new InputBuffer[_options.LocalPlayers.Length];
             for (int i = 0; i < _inputBuffers.Length; i++)
             {
                 _inputBuffers[i] = new InputBuffer(
-                    _options.LocalPlayers[i]?.InputDevice ?? Keyboard.current,
+                    _options.LocalPlayers[i]?.InputDevice,
                     _options.LocalPlayers[i]?.Controls?.ControlScheme ?? ControlsConfig.DefaultBindings
                 );
             }
