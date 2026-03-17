@@ -26,6 +26,7 @@ namespace Scenes.Online
 
         [SerializeField]
         private Button _leaveLobbyButton;
+
         [SerializeField]
         private Button _startGameButton;
 

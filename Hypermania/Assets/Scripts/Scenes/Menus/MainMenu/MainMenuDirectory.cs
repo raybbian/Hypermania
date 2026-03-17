@@ -16,7 +16,9 @@ namespace Scenes.Menus.MainMenu
     [DisallowMultipleComponent]
     public class MainMenuDirectory : MonoBehaviour
     {
-        [SerializeField] private Button _onlineButton;
+        [SerializeField]
+        private Button _onlineButton;
+
         public void StartLocal()
         {
             SessionDirectory.Config = GameConfig.Local;

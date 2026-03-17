@@ -600,7 +600,10 @@ namespace Game.Sim
             bool crouchBlock = props.AttackKind != AttackKind.Overhead;
             bool blockSuccess = holdingBack && ((holdingDown && crouchBlock) || (!holdingDown && standBlock));
 
-            if (blockSuccess && Actionable)
+            if (
+                blockSuccess
+                && (Actionable || State == CharacterState.BlockCrouch || State == CharacterState.BlockStand)
+            )
             {
                 // True: Crouch blocking, False: Stand blocking
                 SetState(

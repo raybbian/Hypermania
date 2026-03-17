@@ -48,7 +48,7 @@ namespace Game.Runners
             {
                 _options = overrideOptions;
             }
-            
+
             _inputBuffers = new InputBuffer[_options.LocalPlayers.Length];
             for (int i = 0; i < _inputBuffers.Length; i++)
             {
