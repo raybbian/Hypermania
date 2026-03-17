@@ -76,7 +76,6 @@ namespace Scenes
 
         public void Update()
         {
-            
             if (_isBusy || _queuedPlans.Count == 0)
                 return;
             _isBusy = true;

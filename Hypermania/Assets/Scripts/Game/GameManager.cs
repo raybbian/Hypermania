@@ -19,6 +19,7 @@ namespace Game
         public const int ROLLBACK_FRAMES = 8;
 
         public Action OnGameFinished;
+        public bool FirstFinish;
 
         void OnValidate()
         {
@@ -42,10 +43,12 @@ namespace Game
             if (Runner.Initialized)
                 return;
             Runner.Init(players, p2pClient, overrideOptions);
+            FirstFinish = true;
         }
 
         public void DeInit()
         {
+            FirstFinish = false;
             if (Runner.Initialized)
             {
                 Runner.DeInit();
@@ -55,9 +58,10 @@ namespace Game
         void Update()
         {
             bool finished = Runner.Poll(Time.deltaTime);
-            if (finished)
+            if (finished && FirstFinish)
             {
                 OnGameFinished?.Invoke();
+                FirstFinish = false;
             }
         }
     }
