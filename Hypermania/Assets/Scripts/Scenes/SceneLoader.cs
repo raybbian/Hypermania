@@ -36,9 +36,9 @@ namespace Scenes
                 return this;
             }
 
-            public Coroutine Execute()
+            public void Execute()
             {
-                return Instance.ExecutePlan(this);
+                Instance.ExecutePlan(this);
             }
         }
 
@@ -59,6 +59,7 @@ namespace Scenes
 
         private Dictionary<SceneID, string> _sceneIDMap = new();
         private bool _isBusy = false;
+        private Queue<SceneLoadPlan> _queuedPlans = new();
 
         public delegate void SceneLoad(SceneID loaded);
         public event SceneLoad OnSceneLoad;
@@ -68,12 +69,18 @@ namespace Scenes
             return new SceneLoadPlan();
         }
 
-        private Coroutine ExecutePlan(SceneLoadPlan plan)
+        private void ExecutePlan(SceneLoadPlan plan)
         {
-            if (_isBusy)
-                return null;
+            _queuedPlans.Enqueue(plan);
+        }
+
+        public void Update()
+        {
+            
+            if (_isBusy || _queuedPlans.Count == 0)
+                return;
             _isBusy = true;
-            return StartCoroutine(DoSceneTransition(plan));
+            StartCoroutine(DoSceneTransition(_queuedPlans.Dequeue()));
         }
 
         private IEnumerator DoSceneTransition(SceneLoadPlan plan)
