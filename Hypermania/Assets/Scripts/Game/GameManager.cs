@@ -79,7 +79,6 @@ namespace Game
 
         private void StartWithPlayers(IReadOnlyList<CSteamID> players)
         {
-            Debug.Log($"sesh players: {players}");
             // start connecting to all peers
             List<SteamNetworkingIdentity> peerAddr = new List<SteamNetworkingIdentity>();
             foreach (CSteamID id in players)
@@ -120,7 +119,6 @@ namespace Game
             {
                 throw new InvalidOperationException("players should be initialized if peers are connected");
             }
-            Debug.Log($"_players: {_players}");
             Runner.Init(_players, _p2pClient, overrideOptions);
             _started = true;
         }

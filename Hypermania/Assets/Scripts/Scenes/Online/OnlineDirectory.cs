@@ -49,13 +49,11 @@ namespace Scenes.Online
 
         public void OnEnable()
         {
-            _players.Clear();
             _matchmakingClient.OnStartWithPlayers += OnStartWithPlayers;
         }
 
         public void OnDisable()
         {
-            _players.Clear();
             _matchmakingClient.OnStartWithPlayers -= OnStartWithPlayers;
         }
 
@@ -169,7 +167,6 @@ namespace Scenes.Online
 
         void OnStartWithPlayers(List<CSteamID> players)
         {
-            Debug.Log($"onstartwithplayers players: {players}");
             _players = new List<CSteamID>(players);
             SceneLoader
                 .Instance.LoadNewScene()
