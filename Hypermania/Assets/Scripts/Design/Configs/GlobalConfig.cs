@@ -15,6 +15,12 @@ namespace Design.Configs
         public int BeatCancelWindow;
     }
 
+    [Serializable]
+    public struct InfoConfig
+    {
+        public bool ShowFrameMeter;
+    }
+
     [CreateAssetMenu(menuName = "Hypermania/Global Config")]
     public class GlobalConfig : ScriptableObject
     {

@@ -13,11 +13,11 @@ namespace Game.Runners
 
         private float _curHoldS;
 
-        public override void Poll(float deltaTime)
+        public override bool Poll(float deltaTime)
         {
             if (!_initialized)
             {
-                return;
+                return false;
             }
 
             for (int i = 0; i < _inputBuffers.Length; i++)
@@ -27,28 +27,36 @@ namespace Game.Runners
 
             if (Keyboard.current[Key.RightArrow].wasPressedThisFrame)
             {
-                GameLoop(deltaTime);
+                bool finished = GameLoop(deltaTime);
                 for (int i = 0; i < _inputBuffers.Length; i++)
                 {
                     _inputBuffers[i].Clear();
                 }
+
+                if (finished)
+                    return true;
             }
             if (Keyboard.current[Key.RightArrow].isPressed)
             {
                 _curHoldS += deltaTime;
                 if (_curHoldS >= _holdS)
                 {
-                    GameLoop(deltaTime);
+                    bool finished = GameLoop(deltaTime);
                     for (int i = 0; i < _inputBuffers.Length; i++)
                     {
                         _inputBuffers[i].Clear();
                     }
+
+                    if (finished)
+                        return true;
                 }
             }
             else
             {
                 _curHoldS = 0;
             }
+
+            return false;
         }
     }
 }

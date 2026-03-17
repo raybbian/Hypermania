@@ -12,7 +12,9 @@ namespace Scenes
         MainMenu,
         InputSelect,
         Battle,
+        BattleEnd,
         Online,
+        LiveConnection,
     }
 
     //Hard-typed bleh
@@ -24,5 +26,7 @@ namespace Scenes
         public const string INPUT_SELECT = "InputSelect";
         public const string BATTLE = "Hypermania";
         public const string ONLINE = "Online";
+        public const string LIVE_CONNECTION = "LiveConnection";
+        public const string BATTLE_END = "BattleEnd";
     }
 }

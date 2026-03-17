@@ -53,6 +53,7 @@ namespace Scenes.Menus.InputSelect
                 };
             }
             options.LocalPlayers[0] = new LocalPlayerOptions { InputDevice = p1 };
+            options.InfoOptions = new InfoOptions { ShowFrameData = false };
 
             SessionDirectory.Options = options;
             SceneLoader
@@ -83,6 +84,7 @@ namespace Scenes.Menus.InputSelect
                 };
                 options.LocalPlayers[i] = new LocalPlayerOptions { InputDevice = i == 0 ? p1 : p2 };
             }
+            options.InfoOptions = new InfoOptions { ShowFrameData = SessionDirectory.Config == GameConfig.Training };
 
             SessionDirectory.Options = options;
             SceneLoader

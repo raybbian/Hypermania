@@ -26,6 +26,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Main/Hypermania.unity
     guid: a6f631077c1dbcbd7adee3181116ffe1
+  - enabled: 1
+    path: Assets/Scenes/Main/LiveConnection.unity
+    guid: 4d336ca09490b4b049c62c2aa06fd672
+  - enabled: 1
+    path: Assets/Scenes/Main/BattleEnd.unity
+    guid: e5901e756fc40165f992ef2eb999a207
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 7571c303f6a62c63b9bdaef92dca34d9, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2391221d1a85aa801a76bfb1ec40e08e, type: 3}

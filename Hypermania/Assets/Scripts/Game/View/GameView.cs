@@ -171,7 +171,10 @@ namespace Game.View
                 );
             }
             _params.HypeBarView.SetHype((float)state.HypeMeter);
-            _params.FrameDataOverlay.AddFrameData(state, options);
+
+            _params.FrameDataOverlay.gameObject.SetActive(options.InfoOptions.ShowFrameData);
+            if (options.InfoOptions.ShowFrameData)
+                _params.FrameDataOverlay.AddFrameData(state, options);
         }
 
         public void RollbackRender(in GameState state)

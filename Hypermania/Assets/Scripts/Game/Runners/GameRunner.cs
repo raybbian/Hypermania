@@ -8,7 +8,6 @@ using Netcode.P2P;
 using Netcode.Rollback;
 using Steamworks;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Game.Runners
 {
@@ -17,38 +16,37 @@ namespace Game.Runners
         [SerializeField]
         protected GameView _view;
 
-        //TODO: ADDRESS ME (Set to public for device management)
-        [SerializeField]
-        public GameOptions _options;
-
-        [SerializeField]
-        protected bool _drawHitboxes;
-
         /// <summary>
         /// The current state of the runner. If you derive from this class, it must be initialized on Init();
         /// </summary>
         protected GameState _curState;
+        protected GameOptions _options;
 
         protected InputBuffer[] _inputBuffers;
         protected bool _initialized;
+        public bool Initialized => _initialized;
         protected float _time;
 
         public virtual void Init(
             List<(PlayerHandle playerHandle, PlayerKind playerKind, SteamNetworkingIdentity address)> players,
             P2PClient client,
-            GameOptions overrideOptions
+            GameOptions options
         )
         {
+            if (_initialized)
+            {
+                throw new InvalidOperationException("double initialization");
+            }
+
+            if (options == null)
+            {
+                throw new InvalidOperationException("No options");
+            }
             if (players.Count != 2)
             {
                 throw new InvalidOperationException("must get 2 players");
             }
-
-            if (overrideOptions != null)
-            {
-                _options = overrideOptions;
-            }
-
+            _options = options;
             _inputBuffers = new InputBuffer[_options.LocalPlayers.Length];
             for (int i = 0; i < _inputBuffers.Length; i++)
             {
@@ -63,7 +61,7 @@ namespace Game.Runners
             _initialized = true;
         }
 
-        public abstract void Poll(float deltaTime);
+        public abstract bool Poll(float deltaTime);
 
         public virtual void DeInit()
         {
@@ -76,8 +74,6 @@ namespace Game.Runners
 
         public void OnDrawGizmos()
         {
-            if (!_drawHitboxes)
-                return;
             if (_curState == null || _view == null || _view.Fighters == null || _curState.Fighters == null)
                 return;
 

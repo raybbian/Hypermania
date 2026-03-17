@@ -38,11 +38,18 @@ namespace Game.Sim
     }
 
     [Serializable]
+    public class InfoOptions
+    {
+        public bool ShowFrameData;
+    }
+
+    [Serializable]
     public class GameOptions
     {
         public GlobalConfig Global;
         public PlayerOptions[] Players;
         public LocalPlayerOptions[] LocalPlayers;
+        public InfoOptions InfoOptions;
     }
 
     [MemoryPackable]

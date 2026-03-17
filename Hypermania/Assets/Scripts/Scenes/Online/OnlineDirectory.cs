@@ -168,9 +168,10 @@ namespace Scenes.Online
         void OnStartWithPlayers(List<CSteamID> players)
         {
             _players = new List<CSteamID>(players);
+            // go to live connection directory
             SceneLoader
                 .Instance.LoadNewScene()
-                .Load(SceneID.Battle, SceneDatabase.BATTLE)
+                .Load(SceneID.LiveConnection, SceneDatabase.LIVE_CONNECTION)
                 .Unload(SceneID.Online)
                 .Unload(SceneID.MenuBase)
                 .WithOverlay()
