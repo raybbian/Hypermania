@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Game.Sim;
 using Netcode.P2P;
 using Netcode.Rollback;
@@ -78,10 +79,8 @@ namespace Scenes.Online
         {
             SceneLoader
                 .Instance.LoadNewScene()
-                .Load(SceneID.Online, SceneDatabase.ONLINE)
-                // force unload battle scene and restart scene
-                .Unload(SceneID.Battle)
                 .Unload(SceneID.BattleEnd)
+                .Unload(SceneID.Battle)
                 .Unload(SceneID.LiveConnection)
                 .WithOverlay()
                 .Execute();

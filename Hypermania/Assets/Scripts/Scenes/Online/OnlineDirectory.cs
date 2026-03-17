@@ -54,6 +54,8 @@ namespace Scenes.Online
 
         public void OnDisable()
         {
+            // sometimes the online scene gets unloaded, in which case we should leave the lobby
+            _matchmakingClient.Leave();
             _matchmakingClient.OnStartWithPlayers -= OnStartWithPlayers;
         }
 
@@ -172,7 +174,6 @@ namespace Scenes.Online
             SceneLoader
                 .Instance.LoadNewScene()
                 .Load(SceneID.LiveConnection, SceneDatabase.LIVE_CONNECTION)
-                .Unload(SceneID.Online)
                 .Unload(SceneID.MenuBase)
                 .WithOverlay()
                 .Execute();
