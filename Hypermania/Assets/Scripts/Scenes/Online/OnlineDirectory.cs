@@ -169,7 +169,8 @@ namespace Scenes.Online
 
         void OnStartWithPlayers(List<CSteamID> players)
         {
-            _players = players;
+            Debug.Log($"onstartwithplayers players: {players}");
+            _players = new List<CSteamID>(players);
             SceneLoader
                 .Instance.LoadNewScene()
                 .Load(SceneID.Battle, SceneDatabase.BATTLE)

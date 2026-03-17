@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Steamworks;
 using UnityEngine;
@@ -205,7 +206,9 @@ namespace Netcode.P2P
             if (startPresent)
             {
                 CSteamID host = SteamMatchmaking.GetLobbyOwner(_currentLobby);
-                Debug.Log($"[Matchmaking] Received START. host={host.m_SteamID}, me={SteamUser.GetSteamID()}");
+                Debug.Log(
+                    $"[Matchmaking] Received START. host={host.m_SteamID}, me={SteamUser.GetSteamID()} players={string.Join(", ", players.Select(player => player.m_SteamID.ToString()))}"
+                );
 
                 OnStartWithPlayers?.Invoke(players);
             }

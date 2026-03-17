@@ -81,7 +81,6 @@ namespace Scenes
             if (plan.Overlay)
             {
                 yield return _sceneTransitionAnimator.FadeInBlack();
-                yield return new WaitForSeconds(0.5f);
             }
             foreach (SceneID id in plan.ScenesToUnload)
             {
