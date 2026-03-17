@@ -162,7 +162,9 @@ namespace Scenes.Online
 
             var players = _matchmakingClient.PlayersInLobby();
             _playerList.UpdatePlayerList(players);
-            _startGameButton.interactable = players == null ? false : players.Count == 2;
+
+            CSteamID host = SteamMatchmaking.GetLobbyOwner(_matchmakingClient.CurrentLobby);
+            _startGameButton.interactable = players != null && players.Count == 2 && host == SteamUser.GetSteamID();
         }
 
         void OnStartWithPlayers(List<CSteamID> players)
