@@ -476,47 +476,47 @@ namespace Game.Sim
                     }
 
                     //to start a rhythm combo, we must sure that the move was not traded
-                    if (
-                        attackerBox.Data.StartsRhythmCombo
-                        && !PhysicsCtx.HurtHitCollisions.ContainsKey((owners.Item2, owners.Item1))
-                        && GameMode == GameMode.Fighting
-                        && outcome.Kind == HitKind.Hit
-                    )
-                    {
-                        // set hitstop to the next beat
-                        Frame nextBeat = RealFrame;
-                        while (nextBeat - RealFrame < options.Global.ManiaSlowTicks)
-                        {
-                            nextBeat = options.Global.Audio.NextBeat(
-                                nextBeat + 1,
-                                AudioConfig.BeatSubdivision.QuarterNote
-                            );
-                        }
-
-                        HitstopFramesRemaining = nextBeat - (RealFrame + options.Global.ManiaSlowTicks);
-                        for (int i = 0; i < 16; i++)
-                        {
-                            Manias[owners.Item1]
-                                .QueueNote(
-                                    i % 4,
-                                    new ManiaNote
-                                    {
-                                        Length = 0,
-                                        Tick = nextBeat,
-                                        HitInput = InputFlags.MediumAttack,
-                                    }
-                                );
-                            nextBeat = options.Global.Audio.NextBeat(
-                                nextBeat + 1,
-                                AudioConfig.BeatSubdivision.QuarterNote
-                            );
-                        }
-
-                        Manias[owners.Item1].Enable(nextBeat);
-                        GameMode = GameMode.ManiaStart;
-                        ModeStart = RealFrame;
-                        // TODO: show mania screen only after the maximum rollback frames to ensure no visual artifacting
-                    }
+                    // if (
+                    //     attackerBox.Data.StartsRhythmCombo
+                    //     && !PhysicsCtx.HurtHitCollisions.ContainsKey((owners.Item2, owners.Item1))
+                    //     && GameMode == GameMode.Fighting
+                    //     && outcome.Kind == HitKind.Hit
+                    // )
+                    // {
+                    //     // set hitstop to the next beat
+                    //     Frame nextBeat = RealFrame;
+                    //     while (nextBeat - RealFrame < options.Global.ManiaSlowTicks)
+                    //     {
+                    //         nextBeat = options.Global.Audio.NextBeat(
+                    //             nextBeat + 1,
+                    //             AudioConfig.BeatSubdivision.QuarterNote
+                    //         );
+                    //     }
+                    //
+                    //     HitstopFramesRemaining = nextBeat - (RealFrame + options.Global.ManiaSlowTicks);
+                    //     for (int i = 0; i < 16; i++)
+                    //     {
+                    //         Manias[owners.Item1]
+                    //             .QueueNote(
+                    //                 i % 4,
+                    //                 new ManiaNote
+                    //                 {
+                    //                     Length = 0,
+                    //                     Tick = nextBeat,
+                    //                     HitInput = InputFlags.MediumAttack,
+                    //                 }
+                    //             );
+                    //         nextBeat = options.Global.Audio.NextBeat(
+                    //             nextBeat + 1,
+                    //             AudioConfig.BeatSubdivision.QuarterNote
+                    //         );
+                    //     }
+                    //
+                    //     Manias[owners.Item1].Enable(nextBeat);
+                    //     GameMode = GameMode.ManiaStart;
+                    //     ModeStart = RealFrame;
+                    //     // TODO: show mania screen only after the maximum rollback frames to ensure no visual artifacting
+                    // }
                 }
             }
             else if (clank.HasValue)
