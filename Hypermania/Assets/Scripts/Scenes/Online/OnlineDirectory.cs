@@ -167,7 +167,7 @@ namespace Scenes.Online
             SceneLoader
                 .Instance.LoadNewScene()
                 .Load(SceneID.Battle, SceneDatabase.BATTLE)
-                .Unload(SceneID.InputSelect)
+                .Unload(SceneID.Online)
                 .Unload(SceneID.MenuBase)
                 .WithOverlay()
                 .Execute();
