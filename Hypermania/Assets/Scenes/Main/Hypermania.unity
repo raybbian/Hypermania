@@ -558,7 +558,7 @@ GameObject:
   - component: {fileID: 286925406}
   - component: {fileID: 286925405}
   m_Layer: 0
-  m_Name: SingleplayerRunner
+  m_Name: LocalRunner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -888,7 +888,7 @@ GameObject:
   - component: {fileID: 731679221}
   - component: {fileID: 731679223}
   m_Layer: 0
-  m_Name: MultiplayerRunner
+  m_Name: OnlineRunner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1448,6 +1448,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gameManager: {fileID: 556815174}
+  _localRunner: {fileID: 286925405}
+  _onlineRunner: {fileID: 731679223}
 --- !u!4 &1316500705
 Transform:
   m_ObjectHideFlags: 0
