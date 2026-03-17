@@ -41,18 +41,22 @@ namespace Scenes.Online
 
         public static bool InLobby => _matchmakingClient.InLobby;
 
-        public void OnEnable()
+        public void Awake()
         {
             _players = new List<CSteamID>();
             _matchmakingClient = new();
+        }
+
+        public void OnEnable()
+        {
+            _players.Clear();
             _matchmakingClient.OnStartWithPlayers += OnStartWithPlayers;
         }
 
         public void OnDisable()
         {
+            _players.Clear();
             _matchmakingClient.OnStartWithPlayers -= OnStartWithPlayers;
-            _matchmakingClient = null;
-            _players = null;
         }
 
         public void CreateLobby() => StartCoroutine(CreateLobbyRoutine());
