@@ -11,7 +11,8 @@ namespace Game.View.Projectiles
         [SerializeField]
         private HitboxData _hitboxData;
 
-        [SerializeField] private string _animStateName;
+        [SerializeField]
+        private string _animStateName;
 
         public override void Render(Frame simFrame, in ProjectileState state)
         {
@@ -20,11 +21,7 @@ namespace Game.View.Projectiles
             pos.y = (float)state.Position.y;
             transform.position = pos;
 
-            transform.localScale = new Vector3(
-                state.FacingDir == FighterFacing.Left ? -1 : 1,
-                1f,
-                1f
-            );
+            transform.localScale = new Vector3(state.FacingDir == FighterFacing.Left ? -1 : 1, 1f, 1f);
 
             int ticks = simFrame - state.CreationFrame;
             int totalTicks = _hitboxData.TotalTicks;

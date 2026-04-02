@@ -508,32 +508,7 @@ namespace Game.Sim
         {
             for (int i = 0; i < Projectiles.Length; i++)
             {
-                if (!Projectiles[i].Active)
-                    continue;
-
-                if (Projectiles[i].MarkedForDestroy)
-                {
-                    Projectiles[i].Active = false;
-                    continue;
-                }
-
-                int age = SimFrame - Projectiles[i].CreationFrame;
-                if (age >= Projectiles[i].LifetimeTicks)
-                {
-                    Projectiles[i].Active = false;
-                    continue;
-                }
-
-                Projectiles[i].Position += Projectiles[i].Velocity * 1 / GameManager.TPS;
-
-                // Despawn if past stage bounds
-                if (
-                    Projectiles[i].Position.x > options.Global.WallsX + 2
-                    || Projectiles[i].Position.x < -options.Global.WallsX - 2
-                )
-                {
-                    Projectiles[i].Active = false;
-                }
+                Projectiles[i].Advance(SimFrame, options.Global.WallsX);
             }
         }
 
@@ -544,37 +519,11 @@ namespace Game.Sim
                 if (!Projectiles[i].Active)
                     continue;
 
-                int owner = Projectiles[i].Owner;
-                var projConfigs = options.Players[owner].Character.Projectiles;
+                var projConfigs = options.Players[Projectiles[i].Owner].Character.Projectiles;
                 if (projConfigs == null || Projectiles[i].ConfigIndex >= projConfigs.Count)
                     continue;
 
-                var projConfig = projConfigs[Projectiles[i].ConfigIndex];
-                if (projConfig.HitboxData == null)
-                    continue;
-
-                int tick = SimFrame - Projectiles[i].CreationFrame;
-                FrameData frameData = projConfig.HitboxData.GetFrame(tick);
-                if (frameData == null)
-                    continue;
-
-                foreach (var box in frameData.Boxes)
-                {
-                    SVector2 centerLocal = box.CenterLocal;
-                    if (Projectiles[i].FacingDir == FighterFacing.Left)
-                    {
-                        centerLocal.x *= -1;
-                    }
-
-                    SVector2 centerWorld = Projectiles[i].Position + centerLocal;
-                    BoxProps newProps = box.Props;
-                    if (Projectiles[i].FacingDir == FighterFacing.Left)
-                    {
-                        newProps.Knockback.x *= -1;
-                    }
-
-                    PhysicsCtx.Physics.AddBox(owner, centerWorld, box.SizeLocal, newProps);
-                }
+                Projectiles[i].AddBoxes(SimFrame, projConfigs[Projectiles[i].ConfigIndex], PhysicsCtx.Physics);
             }
         }
 

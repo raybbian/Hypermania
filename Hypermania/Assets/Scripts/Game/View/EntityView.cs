@@ -2,8 +2,5 @@
 
 namespace Game.View
 {
-    public class EntityView: MonoBehaviour
-    {
-        
-    }
+    public class EntityView : MonoBehaviour { }
 }
