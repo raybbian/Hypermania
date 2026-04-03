@@ -693,7 +693,10 @@ namespace Game.Sim
                 throw new InvalidOperationException("Not push");
             }
 
-            if (Fighters[c.BoxA.Owner].State == CharacterState.Grabbed || Fighters[c.BoxB.Owner].State == CharacterState.Grabbed)
+            if (
+                Fighters[c.BoxA.Owner].State == CharacterState.Grabbed
+                || Fighters[c.BoxB.Owner].State == CharacterState.Grabbed
+            )
             {
                 return;
             }
@@ -732,18 +735,9 @@ namespace Game.Sim
             if (attacker.Data.Kind == HitboxKind.Grabbox)
             {
                 Fighters[defender.Owner]
-                    .ApplyGrab(
-                        SimFrame,
-                        attacker.Data,
-                        attacker.Box.Pos,
-                        ref Fighters[attacker.Owner]
-                    );
+                    .ApplyGrab(SimFrame, attacker.Data, attacker.Box.Pos, ref Fighters[attacker.Owner]);
 
-                return new HitOutcome
-                {
-                    Kind = HitKind.Grabbed,
-                    Props = attacker.Data,
-                };
+                return new HitOutcome { Kind = HitKind.Grabbed, Props = attacker.Data };
             }
 
             sfloat mult = 1 + (sfloat)0.2f * (HypeMeter / options.Global.MaxHype) * (attacker.Owner * -2 + 1);

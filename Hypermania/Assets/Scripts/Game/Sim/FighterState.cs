@@ -66,7 +66,12 @@ namespace Game.Sim
         public bool HitLastRealFrame =>
             HitProps.HasValue
             && HitLocation.HasValue
-            && (State == CharacterState.Death || State == CharacterState.Knockdown || State == CharacterState.Hit || State == CharacterState.Grabbed);
+            && (
+                State == CharacterState.Death
+                || State == CharacterState.Knockdown
+                || State == CharacterState.Hit
+                || State == CharacterState.Grabbed
+            );
 
         public bool BlockedLastRealFrame =>
             HitProps.HasValue
@@ -706,12 +711,7 @@ namespace Game.Sim
             return new HitOutcome { Kind = HitKind.Hit, Props = props };
         }
 
-        public void ApplyGrab(
-            Frame frame,
-            BoxProps props,
-            SVector2 hitboxCenter,
-            ref FighterState attacker
-        )
+        public void ApplyGrab(Frame frame, BoxProps props, SVector2 hitboxCenter, ref FighterState attacker)
         {
             if (State != CharacterState.Grabbed)
             {
