@@ -41,6 +41,14 @@ MonoBehaviour:
           y:
             rawValue: 0
     FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -68,6 +76,14 @@ MonoBehaviour:
           y:
             rawValue: 0
     FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -95,6 +111,14 @@ MonoBehaviour:
           y:
             rawValue: 0
     FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -122,6 +146,14 @@ MonoBehaviour:
           y:
             rawValue: 0
     FrameType: 1
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -195,10 +227,18 @@ MonoBehaviour:
         KnockdownKind: 0
         Knockback:
           x:
-            rawValue: 1065353216
+            rawValue: 1050113204
           y:
-            rawValue: 0
+            rawValue: 998045184
     FrameType: 2
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -272,10 +312,18 @@ MonoBehaviour:
         KnockdownKind: 0
         Knockback:
           x:
-            rawValue: 1065353216
+            rawValue: 1050113204
           y:
-            rawValue: 0
+            rawValue: 998045184
     FrameType: 2
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -349,10 +397,18 @@ MonoBehaviour:
         KnockdownKind: 0
         Knockback:
           x:
-            rawValue: 1065353216
+            rawValue: 1050113204
           y:
-            rawValue: 0
+            rawValue: 998045184
     FrameType: 2
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -426,10 +482,18 @@ MonoBehaviour:
         KnockdownKind: 0
         Knockback:
           x:
-            rawValue: 1065353216
+            rawValue: 1050113204
           y:
-            rawValue: 0
+            rawValue: 998045184
     FrameType: 2
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -503,10 +567,18 @@ MonoBehaviour:
         KnockdownKind: 0
         Knockback:
           x:
-            rawValue: 1065353216
+            rawValue: 1050113204
           y:
-            rawValue: 0
+            rawValue: 998045184
     FrameType: 2
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -534,6 +606,14 @@ MonoBehaviour:
           y:
             rawValue: 0
     FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -561,6 +641,14 @@ MonoBehaviour:
           y:
             rawValue: 0
     FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -588,6 +676,14 @@ MonoBehaviour:
           y:
             rawValue: 0
     FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -615,6 +711,14 @@ MonoBehaviour:
           y:
             rawValue: 0
     FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -642,6 +746,14 @@ MonoBehaviour:
           y:
             rawValue: 0
     FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -669,6 +781,14 @@ MonoBehaviour:
           y:
             rawValue: 0
     FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -696,3 +816,11 @@ MonoBehaviour:
           y:
             rawValue: 0
     FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0

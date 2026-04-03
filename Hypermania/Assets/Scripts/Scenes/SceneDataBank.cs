@@ -28,5 +28,17 @@ namespace Scenes
         public const string ONLINE = "Online";
         public const string LIVE_CONNECTION = "LiveConnection";
         public const string BATTLE_END = "BattleEnd";
+
+        public static readonly Dictionary<string, SceneID> NameToID = new()
+        {
+            { SESSION, SceneID.Session },
+            { MENU_BASE, SceneID.MenuBase },
+            { MAIN_MENU, SceneID.MainMenu },
+            { INPUT_SELECT, SceneID.InputSelect },
+            { BATTLE, SceneID.Battle },
+            { ONLINE, SceneID.Online },
+            { LIVE_CONNECTION, SceneID.LiveConnection },
+            { BATTLE_END, SceneID.BattleEnd },
+        };
     }
 }

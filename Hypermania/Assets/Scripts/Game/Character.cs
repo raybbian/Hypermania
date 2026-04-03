@@ -37,6 +37,9 @@ namespace Game
         Crouch = 27,
         Falling = 30,
         Landing = 31,
+        Grabbed = 32,
+        Grab = 33,
+        Throw = 34,
     }
 
     [Serializable]

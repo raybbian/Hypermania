@@ -10,6 +10,7 @@ namespace Scenes.Menus.MainMenu
     {
         Local,
         Training,
+        Manual,
         Online,
     }
 

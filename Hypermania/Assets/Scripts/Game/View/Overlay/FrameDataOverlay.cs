@@ -110,6 +110,10 @@ namespace Game.View.Overlay
                 {
                     _cells[i, baseIdx].SetType(FrameType.Hitstop);
                 }
+                else if (state.Fighters[i].State == CharacterState.Grabbed)
+                {
+                    _cells[i, baseIdx].SetType(FrameType.Grabbed);
+                }
                 else
                 {
                     _cells[i, baseIdx].SetType(state.SimFrame, state.Fighters[i], options.Players[i].Character);

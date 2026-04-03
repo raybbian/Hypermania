@@ -33,8 +33,10 @@ namespace Design.Configs
             { InputFlags.Mania2, new Binding(Key.J, Key.None, GamepadButtons.West, GamepadButtons.South) },
             { InputFlags.Mania3, new Binding(Key.S, Key.None, GamepadButtons.DpadDown, GamepadButtons.LeftShoulder) },
             { InputFlags.Mania4, new Binding(Key.K, Key.None, GamepadButtons.North, GamepadButtons.RightShoulder) },
-            { InputFlags.Mania5, new Binding(Key.A, Key.None, GamepadButtons.DpadLeft, GamepadButtons.None) },
-            { InputFlags.Mania6, new Binding(Key.L, Key.None, GamepadButtons.South, GamepadButtons.None) },
+            { InputFlags.Mania5, new Binding(Key.None, Key.None, GamepadButtons.None, GamepadButtons.None) },
+            { InputFlags.Mania6, new Binding(Key.None, Key.None, GamepadButtons.None, GamepadButtons.None) },
+            { InputFlags.Dash, new Binding(Key.LeftShift, Key.None, GamepadButtons.LeftStick, GamepadButtons.None) },
+            { InputFlags.Grab, new Binding(Key.U, Key.None, GamepadButtons.LeftShoulder, GamepadButtons.None) },
         };
 
         public static EnumArray<InputFlags, Binding> DefaultBindings

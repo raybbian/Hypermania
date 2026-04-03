@@ -181,7 +181,7 @@ namespace Game.Sim
                 else if (hasInput && frame <= noteTick + Config.HitHalfRange)
                 {
                     // hit note
-                    int diff = Mathsf.Abs(frame - noteTick);
+                    int diff = frame - noteTick;
                     ManiaEvents.Add(ManiaEvent.HitEvent(note, diff));
                     Channels[i].Notes.PopFront();
                 }

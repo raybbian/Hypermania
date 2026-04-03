@@ -163,6 +163,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec42da99973845d38a8a27aa01af49b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _config: 0
+  _options:
+    Global: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
+    Players:
+    - HealOnActionable: 1
+      Immortal: 1
+      Character: {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}
+      SkinIndex: 0
+    - HealOnActionable: 1
+      Immortal: 1
+      Character: {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}
+      SkinIndex: 1
+    LocalPlayers:
+    - Controls: {fileID: 0}
+    InfoOptions:
+      ShowFrameData: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -7,6 +7,7 @@ using Game.View.Events.Vfx;
 using Game.View.Fighters;
 using Game.View.Mania;
 using Game.View.Overlay;
+using Game.View.Projectiles;
 using Steamworks;
 using UnityEngine;
 using Utils;
@@ -48,6 +49,7 @@ namespace Game.View
 
         public FighterView[] Fighters => _fighters;
         private FighterView[] _fighters;
+        private ProjectileView[] _projectileViews;
 
         private GameOptions _options;
 
@@ -94,6 +96,8 @@ namespace Game.View
                 _playerParams[i].BurstBarView.SetMaxBurst((float)config.BurstMax);
             }
 
+            _projectileViews = new ProjectileView[GameState.MAX_PROJECTILES];
+
             _params.HypeBarView.SetMaxHype((float)options.Global.MaxHype);
             _conductor.Init(options);
             _rollbackStart = Frame.NullFrame;
@@ -113,6 +117,37 @@ namespace Game.View
             }
 
             _conductor.PublishTick(state.RealFrame, deltaTime);
+
+            // Manage projectile views
+            for (int i = 0; i < state.Projectiles.Length; i++)
+            {
+                if (state.Projectiles[i].Active)
+                {
+                    if (_projectileViews[i] == null)
+                    {
+                        int owner = state.Projectiles[i].Owner;
+                        var characterConfig = _options.Players[owner].Character;
+                        var projConfigs = characterConfig.Projectiles;
+                        if (projConfigs != null && state.Projectiles[i].ConfigIndex < projConfigs.Count)
+                        {
+                            var prefab = projConfigs[state.Projectiles[i].ConfigIndex].Prefab;
+                            if (prefab != null)
+                            {
+                                _projectileViews[i] = Instantiate(prefab);
+                                _projectileViews[i].transform.SetParent(transform, true);
+                                _projectileViews[i].Init(characterConfig, _options.Players[owner].SkinIndex);
+                            }
+                        }
+                    }
+                    _projectileViews[i]?.Render(state.SimFrame, state.Projectiles[i]);
+                }
+                else if (_projectileViews[i] != null)
+                {
+                    _projectileViews[i].DeInit();
+                    Destroy(_projectileViews[i].gameObject);
+                    _projectileViews[i] = null;
+                }
+            }
 
             List<Vector2> interestPoints = new List<Vector2>();
             for (int i = 0; i < _options.Players.Length; i++)
@@ -236,7 +271,21 @@ namespace Game.View
                 _playerParams[i].ManiaView.DeInit();
             }
 
+            if (_projectileViews != null)
+            {
+                for (int i = 0; i < _projectileViews.Length; i++)
+                {
+                    if (_projectileViews[i] != null)
+                    {
+                        _projectileViews[i].DeInit();
+                        Destroy(_projectileViews[i].gameObject);
+                        _projectileViews[i] = null;
+                    }
+                }
+            }
+
             _fighters = null;
+            _projectileViews = null;
             _options = null;
         }
     }

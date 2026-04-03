@@ -63,9 +63,9 @@ MonoBehaviour:
     - {fileID: 783228396018316731}
     Notes:
     - {fileID: 2695417746142566024, guid: 2a99394db2f1b0083a7c5433f8f8d7d9, type: 3}
-    - {fileID: 2695417746142566024, guid: 51eee259c0ace2d32b76f07064a7080f, type: 3}
-    - {fileID: 2695417746142566024, guid: dcc143f976a280614bf17e0cd17d2b44, type: 3}
-    - {fileID: 2695417746142566024, guid: 09c66dd508b6cc0868f969f8848f4f72, type: 3}
+    - {fileID: 8688098423924273461, guid: 51eee259c0ace2d32b76f07064a7080f, type: 3}
+    - {fileID: 8688098423924273461, guid: fabce5694683e237db4bb5becf2d3340, type: 3}
+    - {fileID: 8688098423924273461, guid: 5fd0d02a0489c15c5876a4d7a3c7d7df, type: 3}
 --- !u!222 &5468672741909906833
 CanvasRenderer:
   m_ObjectHideFlags: 0

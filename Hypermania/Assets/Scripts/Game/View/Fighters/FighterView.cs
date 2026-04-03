@@ -11,7 +11,7 @@ namespace Game.View.Fighters
 {
     [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(SpriteLibrary))]
-    public class FighterView : MonoBehaviour
+    public class FighterView : EntityView
     {
         private Animator _animator;
         private SpriteLibrary _spriteLibrary;

@@ -24,6 +24,9 @@ namespace Scenes.Battle
         [SerializeField]
         private GameRunner _onlineRunner;
 
+        [SerializeField]
+        private GameRunner _manualRunner;
+
         private static readonly List<(
             PlayerHandle handle,
             PlayerKind playerKind,
@@ -42,6 +45,10 @@ namespace Scenes.Battle
                 case GameConfig.Local:
                 case GameConfig.Training:
                     _gameManager.Runner = _localRunner;
+                    _gameManager.StartGame(LOCAL_DEFAULT, null, SessionDirectory.Options);
+                    break;
+                case GameConfig.Manual:
+                    _gameManager.Runner = _manualRunner;
                     _gameManager.StartGame(LOCAL_DEFAULT, null, SessionDirectory.Options);
                     break;
                 case GameConfig.Online:

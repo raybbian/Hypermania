@@ -1407,6 +1407,7 @@ MonoBehaviour:
   _gameManager: {fileID: 556815174}
   _localRunner: {fileID: 286925405}
   _onlineRunner: {fileID: 731679223}
+  _manualRunner: {fileID: 182256081}
 --- !u!4 &1316500705
 Transform:
   m_ObjectHideFlags: 0

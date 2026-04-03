@@ -28,7 +28,7 @@ MonoBehaviour:
   JumpVelocity:
     rawValue: 1089470464
   Health:
-    rawValue: 1120403456
+    rawValue: 1132068864
   BurstMax:
     rawValue: 1112014848
   ForwardDashDistance:
@@ -74,3 +74,10 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 14a63c9ee180e6815a798c717c53def4, type: 2}
     - {fileID: 11400000, guid: f43038ecce381d3519c8d5d7e3d176ae, type: 2}
     - {fileID: 11400000, guid: 7df773ebc66a3903eade94cab88d8482, type: 2}
+    - {fileID: 11400000, guid: 5500f7246b7ab4e46bf16bbf8031a43d, type: 2}
+    - {fileID: 11400000, guid: 16bd5e4831fe7ea44a55e99b0c2de25d, type: 2}
+    - {fileID: 11400000, guid: 4bc7b5e3f82fd5546b2510cbf9f3d05f, type: 2}
+  Combos:
+  - {fileID: 11400000, guid: b997b2bf67ce87ec2ad78220aa1d20ca, type: 2}
+  Projectiles:
+  - {fileID: 11400000, guid: b45871cdc2550e849ad28a3a712b2d32, type: 2}

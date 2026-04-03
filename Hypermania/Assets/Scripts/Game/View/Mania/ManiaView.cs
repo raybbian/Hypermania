@@ -39,11 +39,11 @@ namespace Game.View.Mania
         [SerializeField]
         public ManiaViewConfig Config;
 
-        private Dictionary<int, GameObject> _activeNotes;
+        private Dictionary<int, ManiaNoteView> _activeNotes;
 
         public void Init()
         {
-            _activeNotes = new Dictionary<int, GameObject>();
+            _activeNotes = new Dictionary<int, ManiaNoteView>();
             gameObject.SetActive(false);
         }
 
@@ -51,7 +51,7 @@ namespace Game.View.Mania
         {
             foreach (var obj in _activeNotes.Values)
             {
-                Destroy(obj);
+                Destroy(obj.gameObject);
             }
             _activeNotes = null;
         }
@@ -113,7 +113,7 @@ namespace Game.View.Mania
         {
             gameObject.SetActive(state.EndFrame != Frame.NullFrame);
 
-            Dictionary<int, GameObject> renderedNow = new Dictionary<int, GameObject>();
+            Dictionary<int, ManiaNoteView> renderedNow = new Dictionary<int, ManiaNoteView>();
 
             for (int i = 0; i < state.Channels.Length; i++)
             {
@@ -140,13 +140,13 @@ namespace Game.View.Mania
             {
                 if (!renderedNow.ContainsKey(id))
                 {
-                    Destroy(obj);
+                    Destroy(obj.gameObject);
                 }
             }
             _activeNotes = renderedNow;
         }
 
-        private bool RenderNote(Frame frame, int channel, in ManiaNote note, out GameObject noteView)
+        private bool RenderNote(Frame frame, int channel, in ManiaNote note, out ManiaNoteView noteView)
         {
             noteView = null;
             float x = Config.Anchors[channel].localPosition.x;
@@ -159,14 +159,15 @@ namespace Game.View.Mania
 
             if (!_activeNotes.ContainsKey(note.Id))
             {
-                noteView = Instantiate(Config.Notes[channel], transform, false);
+                GameObject noteObj = Instantiate(Config.Notes[channel], transform, false);
+                noteView = noteObj.GetComponent<ManiaNoteView>();
             }
             else
             {
                 noteView = _activeNotes[note.Id];
             }
 
-            noteView.transform.SetLocalPositionAndRotation(new Vector3(x, y, -1), Quaternion.identity);
+            noteView.Render(x, y, note, Config.ScrollSpeed);
             return true;
         }
     }

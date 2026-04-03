@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Game.Sim;
 using Scenes.Menus.InputSelect;
@@ -13,5 +14,27 @@ namespace Scenes.Session
         public static GameConfig Config;
         public static GameOptions Options;
         public static Dictionary<InputDevice, DeviceAssignment> RegisteredDevices { get; private set; } = new();
+
+        [SerializeField]
+        private GameConfig _config;
+
+        [SerializeField]
+        private GameOptions _options;
+
+        private void Awake()
+        {
+            Config = _config;
+            Options = _options;
+        }
+
+        private void OnValidate()
+        {
+            Config = _config;
+            Options = _options;
+            if (_options.LocalPlayers.Length >= 1)
+            {
+                _options.LocalPlayers[0].InputDevice = Keyboard.current;
+            }
+        }
     }
 }

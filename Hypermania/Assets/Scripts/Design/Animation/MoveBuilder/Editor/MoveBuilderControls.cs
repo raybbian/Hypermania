@@ -1,3 +1,4 @@
+using Game.View;
 using Game.View.Fighters;
 using UnityEditor;
 using UnityEngine;
@@ -5,7 +6,7 @@ using Utils.SoftFloat;
 
 namespace Design.Animation.MoveBuilder.Editor
 {
-    [CustomEditor(typeof(FighterView), true)]
+    [CustomEditor(typeof(EntityView), true)]
     public sealed class MoveBuilderControls : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
@@ -15,7 +16,7 @@ namespace Design.Animation.MoveBuilder.Editor
             EditorGUILayout.Space(8);
             EditorGUILayout.LabelField("MoveBuilder Controls", EditorStyles.boldLabel);
 
-            var fighter = (FighterView)target;
+            var fighter = (EntityView)target;
             var m = MoveBuilderModelStore.Get(fighter);
             var animState = MoveBuilderAnimationState.GetAnimState();
 
@@ -80,6 +81,8 @@ namespace Design.Animation.MoveBuilder.Editor
                 m.AddBox(state, HitboxKind.Hurtbox);
             if (GUILayout.Button("Add Hitbox (A)"))
                 m.AddBox(state, HitboxKind.Hitbox);
+            if (GUILayout.Button("Add Grabbox (G)"))
+                m.AddBox(state, HitboxKind.Grabbox);
 
             using (new EditorGUI.DisabledScope(m.SelectedBoxIndex < 0 || m.SelectedBoxIndex >= frame.Boxes.Count))
             {
@@ -204,6 +207,11 @@ namespace Design.Animation.MoveBuilder.Editor
                 p.BlockstopTicks = EditorGUILayout.IntField("Blockstop Ticks", p.BlockstopTicks);
                 p.Knockback = SFloatGUI.Field("Knockback", p.Knockback);
                 p.StartsRhythmCombo = EditorGUILayout.Toggle("Starts rhythm combo", p.StartsRhythmCombo);
+            }
+
+            using (new EditorGUI.DisabledScope(p.Kind != HitboxKind.Grabbox))
+            {
+                p.GrabPosition = SFloatGUI.Field("Grab Position", p.GrabPosition);
             }
 
             if (p.Kind == HitboxKind.Hitbox)

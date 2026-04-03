@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Design.Animation;
 using Game;
 using Game.View.Events;
@@ -30,6 +32,8 @@ namespace Design.Configs
         public sfloat ForwardAirDashDistance;
         public sfloat BackAirDashDistance;
         public EnumArray<CharacterState, HitboxData> Hitboxes;
+        public List<ComboConfig> Combos;
+        public List<ProjectileConfig> Projectiles;
 
         public FrameData GetFrameData(CharacterState anim, int tick)
         {
