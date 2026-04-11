@@ -45,6 +45,7 @@ namespace Game.View
             public RoundCountdownView RoundCountdownView;
             public HypeBarView HypeBarView;
             public KOScreenView KOScreenView;
+            public BoxVisualizer BoxVisualizer;
         }
 
         public FighterView[] Fighters => _fighters;
@@ -210,6 +211,13 @@ namespace Game.View
             _params.FrameDataOverlay.gameObject.SetActive(options.InfoOptions.ShowFrameData);
             if (options.InfoOptions.ShowFrameData)
                 _params.FrameDataOverlay.AddFrameData(state, options);
+
+            if (_params.BoxVisualizer != null)
+            {
+                _params.BoxVisualizer.gameObject.SetActive(options.InfoOptions.ShowBoxes);
+                if (options.InfoOptions.ShowBoxes)
+                    _params.BoxVisualizer.Render(state, options, _fighters);
+            }
         }
 
         public void RollbackRender(in GameState state)

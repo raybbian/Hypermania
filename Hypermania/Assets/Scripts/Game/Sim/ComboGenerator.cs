@@ -1,7 +1,8 @@
-using System;
+using System.Buffers;
 using System.Collections.Generic;
 using Design.Animation;
 using Design.Configs;
+using MemoryPack;
 using Netcode.Rollback;
 using Utils;
 using Utils.SoftFloat;
@@ -17,15 +18,13 @@ namespace Game.Sim
             {
                 Beats = new[]
                 {
-                    AudioConfig.BeatSubdivision.EighthNote,
-                    AudioConfig.BeatSubdivision.EighthNote,
                     AudioConfig.BeatSubdivision.QuarterNote,
                     AudioConfig.BeatSubdivision.QuarterNote,
                     AudioConfig.BeatSubdivision.QuarterNote,
                     AudioConfig.BeatSubdivision.QuarterNote,
                     AudioConfig.BeatSubdivision.QuarterNote,
-                    AudioConfig.BeatSubdivision.EighthNote,
-                    AudioConfig.BeatSubdivision.EighthNote,
+                    AudioConfig.BeatSubdivision.QuarterNote,
+                    AudioConfig.BeatSubdivision.QuarterNote,
                     AudioConfig.BeatSubdivision.QuarterNote,
                 },
             };
@@ -44,8 +43,21 @@ namespace Game.Sim
         public Frame EndFrame;
     }
 
-    public static class ComboGenerator
+    /// <summary>
+    /// Generates a dynamic combo for a rhythm pattern by simulating candidate
+    /// moves against a working copy of the game state. The generator owns the
+    /// working state and a beat snapshot, so each beat is advanced exactly once:
+    /// candidates are tried by reverting to the snapshot, not by cloning from
+    /// scratch on every try.
+    /// </summary>
+    public class ComboGenerator
     {
+        /// <summary>
+        /// Maximum frames to simulate when testing if a move hits.
+        /// Should cover the longest attack animation (startup + active).
+        /// </summary>
+        private const int MAX_TEST_FRAMES = 40;
+
         private static readonly InputFlags[] AttackInputs =
         {
             InputFlags.LightAttack,
@@ -54,19 +66,683 @@ namespace Game.Sim
             InputFlags.SpecialAttack,
         };
 
-        private static InputFlags[] GetMovementInputs(FighterState attacker)
+        [System.ThreadStatic]
+        private static ArrayBufferWriter<byte> _cloneWriter;
+
+        private static ArrayBufferWriter<byte> CloneWriter
         {
-            return new[] { InputFlags.Dash | attacker.ForwardInput, InputFlags.Up | attacker.ForwardInput };
+            get
+            {
+                if (_cloneWriter == null)
+                    _cloneWriter = new ArrayBufferWriter<byte>(4096);
+                return _cloneWriter;
+            }
         }
 
         /// <summary>
-        /// Maximum frames to simulate when testing if a move hits.
-        /// Should cover the longest attack animation (startup + active).
+        /// Single canonical simulation state that advances monotonically through
+        /// the pattern. Every candidate trial reverts this back to _beatSnapshot.
         /// </summary>
-        private const int MAX_TEST_FRAMES = 40;
+        private GameState _working;
 
         /// <summary>
-        /// Deterministic hash for random selection, derived from game state.
+        /// Snapshot of _working at the start of the current beat, used to revert
+        /// between candidate tests within a single beat.
+        /// </summary>
+        private GameState _beatSnapshot;
+
+        /// <summary>
+        /// Secondary snapshot used by the movement lookahead path. Holds the
+        /// post-movement state at the next beat so each trial attack can be
+        /// tested in isolation without clobbering <see cref="_beatSnapshot"/>.
+        /// </summary>
+        private GameState _lookaheadSnapshot;
+
+        private GameOptions _options;
+        private int _attackerIndex;
+        private CharacterConfig _attackerConfig;
+
+        /// <summary>
+        /// Half-window (in frames) of the rhythm note hit window, matching
+        /// ManiaConfig.HitHalfRange as initialized in GameState.Create. A note
+        /// at BeatFrame can be hit during [BeatFrame - _noteHitHalfRange,
+        /// BeatFrame + _noteHitHalfRange].
+        /// </summary>
+        private int _noteHitHalfRange;
+
+        /// <summary>
+        /// Cache of move reach (max horizontal hitbox extent from attacker origin)
+        /// per CharacterState. Reach is config-static so it only needs to be
+        /// computed once per run.
+        /// </summary>
+        private readonly Dictionary<CharacterState, sfloat> _reachCache =
+            new Dictionary<CharacterState, sfloat>();
+
+        /// <summary>
+        /// Result of a single candidate trial.
+        /// </summary>
+        private struct MoveTestResult
+        {
+            public bool Hit;
+            public InputFlags Input;
+            public sfloat KnockbackSqr;
+            public sfloat Reach;
+        }
+
+        /// <summary>
+        /// Static shim so existing callers (RhythmComboManager) continue to
+        /// work without changes.
+        /// </summary>
+        public static GeneratedCombo Generate(
+            GameState state,
+            GameOptions options,
+            int attackerIndex,
+            RhythmPattern pattern,
+            Frame firstBeatFrame
+        )
+        {
+            ComboGenerator gen = new ComboGenerator();
+            return gen.Run(state, options, attackerIndex, pattern, firstBeatFrame);
+        }
+
+        public GeneratedCombo Run(
+            GameState state,
+            GameOptions options,
+            int attackerIndex,
+            RhythmPattern pattern,
+            Frame firstBeatFrame
+        )
+        {
+            _attackerIndex = attackerIndex;
+            _attackerConfig = options.Players[attackerIndex].Character;
+            _noteHitHalfRange = options.Global.Input.BeatCancelWindow;
+
+            _options = new GameOptions
+            {
+                Global = options.Global,
+                Players = options.Players,
+                LocalPlayers = options.LocalPlayers,
+                InfoOptions = options.InfoOptions,
+                EnableMania = false,
+                // Default off. Toggled to true only on the exact single frame
+                // an attacker input is applied (either in TryCandidate's frame
+                // 0 or when applying a chosen move in ApplyInputToWorking).
+                // Leaving this on across inter-beat empty-input advances lets
+                // buffered attack presses retrigger mid-recovery and overwrite
+                // crouching variants with standing ones, desyncing the sim
+                // from the real Mania-mode game.
+                AlwaysRhythmCancel = false,
+            };
+
+            // Seed the working state from a clone of the caller's state so we
+            // never mutate the real game state.
+            _working = null;
+            CloneInto(ref _working, state);
+            _working.RoundEnd = Frame.Infinity;
+
+            // Mania alignment preamble: match the real game's ManiaStart slow-mo
+            // curve so the simulation arrives at firstBeatFrame with the same
+            // timing the actual combo will run with.
+            int maniaHitstop = firstBeatFrame - _working.RealFrame - options.Global.ManiaSlowTicks;
+            if (maniaHitstop < 0)
+                maniaHitstop = 0;
+            _working.HitstopFramesRemaining = maniaHitstop;
+            _working.GameMode = GameMode.ManiaStart;
+            _working.ModeStart = _working.RealFrame;
+
+            AdvanceWorkingTo(firstBeatFrame);
+
+            // Override back to Fighting so candidate trials run at full speed
+            // instead of through the ManiaStart slow-mo curve.
+            _working.GameMode = GameMode.Fighting;
+            _working.SpeedRatio = (sfloat)1f;
+
+            List<GeneratedComboMove> moves = new List<GeneratedComboMove>();
+            List<MoveTestResult> candidates = new List<MoveTestResult>();
+
+            // Progression constraint: any move after the first must strictly
+            // exceed the previous move on knockback OR reach. Movement (dash
+            // fallback) resets the constraint.
+            bool hasPrev = false;
+            sfloat prevKb = sfloat.Zero;
+            sfloat prevReach = sfloat.Zero;
+
+            Frame currentBeat = firstBeatFrame;
+
+            for (int i = 0; i < pattern.Beats.Length; i++)
+            {
+                if (i > 0)
+                {
+                    currentBeat = _options.Global.Audio.NextBeat(currentBeat + 1, pattern.Beats[i]);
+                    AdvanceWorkingTo(currentBeat);
+                }
+
+                // Compute the next beat (if any) so we can reject candidates
+                // whose hitstun bleeds into the next note's input window.
+                Frame nextBeat = (i + 1 < pattern.Beats.Length)
+                    ? _options.Global.Audio.NextBeat(currentBeat + 1, pattern.Beats[i + 1])
+                    : Frame.Infinity;
+
+                // Snapshot the pristine beat state so each candidate trial can
+                // revert to it before applying its own input.
+                SnapshotWorking();
+
+                candidates.Clear();
+                foreach (InputFlags atk in AttackInputs)
+                {
+                    TryCandidate(candidates, atk, nextBeat);
+                    TryCandidate(candidates, atk | InputFlags.Down, nextBeat);
+                }
+
+                int hashValue = DeterministicHash(state.RealFrame.No, i);
+                bool isLastBeat = i == pattern.Beats.Length - 1;
+                int chosenIdx = PickBestCandidate(
+                    candidates,
+                    hasPrev,
+                    prevKb,
+                    prevReach,
+                    hashValue,
+                    isLastBeat
+                );
+
+                if (chosenIdx >= 0)
+                {
+                    MoveTestResult chosen = candidates[chosenIdx];
+
+                    // Apply the chosen input to _working for real. This is the
+                    // single advance past this beat — no duplicate advancing.
+                    RestoreWorking();
+                    ApplyInputToWorking(chosen.Input);
+
+                    moves.Add(
+                        new GeneratedComboMove
+                        {
+                            Input = chosen.Input,
+                            BeatFrame = currentBeat,
+                            IsMovement = false,
+                        }
+                    );
+
+                    hasPrev = true;
+                    prevKb = chosen.KnockbackSqr;
+                    prevReach = chosen.Reach;
+                    continue;
+                }
+
+                // No direct attack qualified. Before settling for an
+                // unconditional dash, check whether a forward dash or a
+                // forward jump would set up a direct attack on the next beat
+                // without needing yet another movement. A movement note
+                // resets the progression constraint.
+                //
+                // Preference order:
+                //  - If the defender is airborne, try jump first (grounded
+                //    moves struggle to convert on an airborne target).
+                //  - Otherwise try dash first.
+                InputFlags forwardInput = _working.Fighters[_attackerIndex].ForwardInput;
+                InputFlags dashMove = InputFlags.Dash | forwardInput;
+                InputFlags jumpMove = InputFlags.Up | forwardInput;
+
+                // Beat after nextBeat, used so the lookahead's candidate
+                // attack must also satisfy the hitstop-in-window rule against
+                // its own next-note window (i.e., not chain two fallbacks'
+                // worth of hitstop into the note after nextBeat).
+                Frame beatAfterNext = (i + 2 < pattern.Beats.Length)
+                    ? _options.Global.Audio.NextBeat(nextBeat + 1, pattern.Beats[i + 2])
+                    : Frame.Infinity;
+
+                bool defenderAirborne =
+                    _working.Fighters[1 - _attackerIndex].Location == FighterLocation.Airborne;
+                InputFlags firstTry = defenderAirborne ? jumpMove : dashMove;
+                InputFlags secondTry = defenderAirborne ? dashMove : jumpMove;
+
+                InputFlags chosenMovement;
+                if (nextBeat < Frame.Infinity && TryMovementLookahead(firstTry, nextBeat, beatAfterNext))
+                {
+                    chosenMovement = firstTry;
+                }
+                else if (nextBeat < Frame.Infinity && TryMovementLookahead(secondTry, nextBeat, beatAfterNext))
+                {
+                    chosenMovement = secondTry;
+                }
+                else
+                {
+                    // Neither setup move enables a hit. Fall back to the
+                    // preferred movement (jump if defender airborne, else
+                    // dash) so the note is at least thematically appropriate.
+                    chosenMovement = firstTry;
+                }
+
+                RestoreWorking();
+                ApplyInputToWorking(chosenMovement);
+
+                moves.Add(
+                    new GeneratedComboMove
+                    {
+                        Input = chosenMovement,
+                        BeatFrame = currentBeat,
+                        IsMovement = true,
+                    }
+                );
+
+                hasPrev = false;
+                prevKb = sfloat.Zero;
+                prevReach = sfloat.Zero;
+            }
+
+            Frame endFrame = _options.Global.Audio.NextBeat(
+                currentBeat + 1,
+                AudioConfig.BeatSubdivision.QuarterNote
+            );
+            return new GeneratedCombo { Moves = moves, EndFrame = endFrame };
+        }
+
+        /// <summary>
+        /// Try a single candidate input. Restores the working state from the
+        /// beat snapshot, applies the input, and advances until the move hits
+        /// or MAX_TEST_FRAMES is reached. Appends a result to <paramref name="candidates"/>
+        /// only if the move connected AND the resulting hitstop does not overlap
+        /// the next note's hit window.
+        /// </summary>
+        private void TryCandidate(List<MoveTestResult> candidates, InputFlags input, Frame nextBeat)
+        {
+            // Respect per-move opt-out: moves whose HitboxData.ComboEligible is
+            // false must never appear in a generated combo.
+            CharacterState state = MapInputToState(input);
+            HitboxData data = _attackerConfig.GetHitboxData(state);
+            if (data == null || !data.ComboEligible)
+                return;
+
+            RestoreWorking();
+
+            int defenderIndex = 1 - _attackerIndex;
+
+            bool checkWindow = nextBeat < Frame.Infinity;
+            Frame windowStart = checkWindow ? nextBeat - _noteHitHalfRange : Frame.Infinity;
+            Frame windowEnd = checkWindow ? nextBeat + _noteHitHalfRange : Frame.Infinity;
+
+            bool hit = false;
+            BoxProps hitProps = default;
+            bool hitstopInWindow = false;
+
+            // Phase 1: advance up to MAX_TEST_FRAMES looking for the hit.
+            // While advancing, also watch for the game being in hitstop inside
+            // the next note's window — residual hitstop from a prior move can
+            // land in the window even before this candidate connects.
+            for (int frame = 0; frame < MAX_TEST_FRAMES; frame++)
+            {
+                InputFlags attackerFlags = frame == 0 ? input : InputFlags.None;
+
+                // AlwaysRhythmCancel must only be true on the input frame
+                // itself. If it stays true on subsequent frames, ApplyActiveState
+                // can override the attack with a different variant (e.g.
+                // standing overriding crouching once Down is no longer held).
+                _options.AlwaysRhythmCancel = frame == 0;
+
+                AdvanceOnce(attackerFlags);
+
+                if (checkWindow && IsHitstopInWindow(windowStart, windowEnd))
+                    hitstopInWindow = true;
+
+                if (_working.Fighters[defenderIndex].HitProps.HasValue)
+                {
+                    hit = true;
+                    hitProps = _working.Fighters[defenderIndex].HitProps.Value;
+                    break;
+                }
+            }
+
+            _options.AlwaysRhythmCancel = false;
+
+            if (!hit)
+                return;
+
+            // Phase 2: the current move connected. Continue advancing through
+            // the end of the next note's window, checking whether the fresh
+            // hitstop overlaps. Early-exit as soon as we find overlap.
+            if (checkWindow && !hitstopInWindow)
+            {
+                while (_working.RealFrame < windowEnd)
+                {
+                    AdvanceOnce(InputFlags.None);
+                    if (IsHitstopInWindow(windowStart, windowEnd))
+                    {
+                        hitstopInWindow = true;
+                        break;
+                    }
+                }
+            }
+
+            if (hitstopInWindow)
+                return;
+
+            candidates.Add(
+                new MoveTestResult
+                {
+                    Hit = true,
+                    Input = input,
+                    KnockbackSqr = hitProps.Knockback.sqrMagnitude,
+                    Reach = GetReach(input),
+                }
+            );
+        }
+
+        /// <summary>
+        /// True if _working.RealFrame is inside the inclusive window
+        /// [windowStart, windowEnd] and the game is currently in hitstop
+        /// (HitstopFramesRemaining &gt; 0).
+        /// </summary>
+        private bool IsHitstopInWindow(Frame windowStart, Frame windowEnd)
+        {
+            return _working.RealFrame >= windowStart
+                && _working.RealFrame <= windowEnd
+                && _working.HitstopFramesRemaining > 0;
+        }
+
+        /// <summary>
+        /// Lookahead: restore to the current beat snapshot, apply
+        /// <paramref name="movement"/> on the beat frame, advance to
+        /// <paramref name="nextBeat"/>, then test whether any grounded attack
+        /// (standing or crouching, each tier) would land a direct hit from
+        /// that post-movement position AND not cause hitstop overlap with
+        /// <paramref name="beatAfterNext"/>'s input window. Returns true on
+        /// the first attack that passes both checks. Mutates _working; the
+        /// caller is expected to RestoreWorking() before committing the
+        /// chosen movement for real.
+        /// </summary>
+        private bool TryMovementLookahead(InputFlags movement, Frame nextBeat, Frame beatAfterNext)
+        {
+            RestoreWorking();
+            ApplyInputToWorking(movement);
+            AdvanceWorkingTo(nextBeat);
+            CloneInto(ref _lookaheadSnapshot, _working);
+
+            foreach (InputFlags atk in AttackInputs)
+            {
+                if (LookaheadAttackHits(atk, beatAfterNext))
+                    return true;
+                if (LookaheadAttackHits(atk | InputFlags.Down, beatAfterNext))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Restore _working from _lookaheadSnapshot, apply <paramref name="input"/>
+        /// for one frame with rhythm cancel, and advance up to MAX_TEST_FRAMES
+        /// looking for a hit on the defender. Respects ComboEligible and the
+        /// hitstop-in-window rule against <paramref name="beatAfterNext"/>'s
+        /// input window, matching the main TryCandidate logic one beat
+        /// further out. Used exclusively by the movement lookahead path.
+        /// </summary>
+        private bool LookaheadAttackHits(InputFlags input, Frame beatAfterNext)
+        {
+            CharacterState state = MapInputToState(input);
+            HitboxData data = _attackerConfig.GetHitboxData(state);
+            if (data == null || !data.ComboEligible)
+                return false;
+
+            CloneInto(ref _working, _lookaheadSnapshot);
+
+            int defenderIndex = 1 - _attackerIndex;
+
+            bool checkWindow = beatAfterNext < Frame.Infinity;
+            Frame windowStart = checkWindow ? beatAfterNext - _noteHitHalfRange : Frame.Infinity;
+            Frame windowEnd = checkWindow ? beatAfterNext + _noteHitHalfRange : Frame.Infinity;
+
+            bool hit = false;
+            bool hitstopInWindow = false;
+
+            // Phase 1: advance up to MAX_TEST_FRAMES looking for the hit.
+            // Also watch for hitstop inside the window — residual hitstop
+            // from a prior move can land in the window before the trial
+            // attack connects.
+            for (int frame = 0; frame < MAX_TEST_FRAMES; frame++)
+            {
+                InputFlags attackerFlags = frame == 0 ? input : InputFlags.None;
+                _options.AlwaysRhythmCancel = frame == 0;
+                AdvanceOnce(attackerFlags);
+
+                if (checkWindow && IsHitstopInWindow(windowStart, windowEnd))
+                    hitstopInWindow = true;
+
+                if (_working.Fighters[defenderIndex].HitProps.HasValue)
+                {
+                    hit = true;
+                    break;
+                }
+            }
+            _options.AlwaysRhythmCancel = false;
+
+            if (!hit)
+                return false;
+
+            // Phase 2: continue advancing through the end of the window,
+            // checking whether the fresh hitstop overlaps.
+            if (checkWindow && !hitstopInWindow)
+            {
+                while (_working.RealFrame < windowEnd)
+                {
+                    AdvanceOnce(InputFlags.None);
+                    if (IsHitstopInWindow(windowStart, windowEnd))
+                    {
+                        hitstopInWindow = true;
+                        break;
+                    }
+                }
+            }
+
+            return !hitstopInWindow;
+        }
+
+        /// <summary>
+        /// Pick the index of the best candidate.
+        ///
+        /// Non-last-beat rule:
+        ///  - If there is no previous move, all hitting candidates qualify.
+        ///  - Otherwise a candidate qualifies only if its knockback strictly
+        ///    exceeds prev OR its reach strictly exceeds prev.
+        ///  - Among qualifying candidates, smallest knockback wins, with one
+        ///    exception: if the smallest-knockback move is a heavy attack,
+        ///    every qualifying heavy attack (standing and crouching) enters
+        ///    a deterministic random pick instead of selecting by knockback.
+        ///
+        /// Last-beat rule (the final note in the pattern, no chain to build):
+        ///  - Ignore the progression filter entirely: every hitting candidate
+        ///    qualifies regardless of previous move.
+        ///  - Prefer the LARGEST knockback (finisher semantics).
+        ///  - Random-pick among every candidate sharing the best's attack
+        ///    tier bit (Light / Medium / Heavy / Special), generalizing the
+        ///    heavy-attack randomization to whichever tier wins.
+        ///
+        /// Ties are broken deterministically via <paramref name="hashValue"/>.
+        /// Returns -1 if no candidate qualifies.
+        /// </summary>
+        private static int PickBestCandidate(
+            List<MoveTestResult> pool,
+            bool hasPrev,
+            sfloat prevKb,
+            sfloat prevReach,
+            int hashValue,
+            bool isLastBeat
+        )
+        {
+            // First pass: find the best candidate under the active rule.
+            // Last beat: highest knockback, no progression filter.
+            // Otherwise: lowest knockback, progression filter applies.
+            bool any = false;
+            sfloat bestKb = sfloat.Zero;
+            InputFlags bestInput = InputFlags.None;
+            for (int i = 0; i < pool.Count; i++)
+            {
+                MoveTestResult c = pool[i];
+                if (!isLastBeat && hasPrev && !(c.KnockbackSqr > prevKb || c.Reach > prevReach))
+                    continue;
+
+                bool better;
+                if (!any)
+                    better = true;
+                else if (isLastBeat)
+                    better = c.KnockbackSqr > bestKb;
+                else
+                    better = c.KnockbackSqr < bestKb;
+
+                if (better)
+                {
+                    bestKb = c.KnockbackSqr;
+                    bestInput = c.Input;
+                    any = true;
+                }
+            }
+            if (!any)
+                return -1;
+
+            bool bestIsHeavy = (bestInput & InputFlags.HeavyAttack) != 0;
+            InputFlags bestTier = GetAttackTierBit(bestInput);
+
+            // Second pass: count and pick among eligible candidates.
+            int tieCount = 0;
+            for (int i = 0; i < pool.Count; i++)
+            {
+                if (IsEligibleForPick(
+                        pool[i],
+                        hasPrev,
+                        prevKb,
+                        prevReach,
+                        bestKb,
+                        bestIsHeavy,
+                        isLastBeat,
+                        bestTier
+                    ))
+                    tieCount++;
+            }
+            if (tieCount == 0)
+                return -1;
+
+            int pick = hashValue % tieCount;
+            int seen = 0;
+            for (int i = 0; i < pool.Count; i++)
+            {
+                if (!IsEligibleForPick(
+                        pool[i],
+                        hasPrev,
+                        prevKb,
+                        prevReach,
+                        bestKb,
+                        bestIsHeavy,
+                        isLastBeat,
+                        bestTier
+                    ))
+                    continue;
+                if (seen == pick)
+                    return i;
+                seen++;
+            }
+            return -1;
+        }
+
+        private static bool IsEligibleForPick(
+            MoveTestResult c,
+            bool hasPrev,
+            sfloat prevKb,
+            sfloat prevReach,
+            sfloat bestKb,
+            bool bestIsHeavy,
+            bool isLastBeat,
+            InputFlags bestTier
+        )
+        {
+            if (isLastBeat)
+            {
+                // Progression filter disabled for the finisher. Eligible set
+                // is every hitting candidate sharing the winner's tier bit.
+                return (c.Input & bestTier) != 0;
+            }
+            if (hasPrev && !(c.KnockbackSqr > prevKb || c.Reach > prevReach))
+                return false;
+            if (bestIsHeavy)
+                return (c.Input & InputFlags.HeavyAttack) != 0;
+            return c.KnockbackSqr == bestKb;
+        }
+
+        /// <summary>
+        /// Returns the tier bit (Light/Medium/Heavy/Special) carried by an
+        /// attack input, or <see cref="InputFlags.None"/> if none is present.
+        /// Candidates are always generated from a single tier bit OR'd with
+        /// an optional <see cref="InputFlags.Down"/> modifier, so exactly one
+        /// tier bit is set in practice.
+        /// </summary>
+        private static InputFlags GetAttackTierBit(InputFlags input)
+        {
+            if ((input & InputFlags.SpecialAttack) != 0)
+                return InputFlags.SpecialAttack;
+            if ((input & InputFlags.HeavyAttack) != 0)
+                return InputFlags.HeavyAttack;
+            if ((input & InputFlags.MediumAttack) != 0)
+                return InputFlags.MediumAttack;
+            if ((input & InputFlags.LightAttack) != 0)
+                return InputFlags.LightAttack;
+            return InputFlags.None;
+        }
+
+        /// <summary>
+        /// Maximum horizontal hitbox/grabbox extent from attacker origin for the
+        /// given attack input, across every frame of the move. Uses attacker-
+        /// local coordinates (not mirrored by facing) since BoxData.CenterLocal
+        /// is stored facing-agnostic — see FighterState.AddBoxes where the X
+        /// mirror is applied at read time.
+        /// </summary>
+        private sfloat GetReach(InputFlags input)
+        {
+            CharacterState state = MapInputToState(input);
+            if (_reachCache.TryGetValue(state, out sfloat cached))
+                return cached;
+
+            HitboxData data = _attackerConfig.GetHitboxData(state);
+            sfloat maxExtent = sfloat.Zero;
+            if (data != null)
+            {
+                for (int f = 0; f < data.Frames.Count; f++)
+                {
+                    FrameData frame = data.Frames[f];
+                    for (int b = 0; b < frame.Boxes.Count; b++)
+                    {
+                        BoxData box = frame.Boxes[b];
+                        if (box.Props.Kind != HitboxKind.Hitbox && box.Props.Kind != HitboxKind.Grabbox)
+                            continue;
+                        sfloat right = box.CenterLocal.x + box.SizeLocal.x * (sfloat)0.5f;
+                        if (right > maxExtent)
+                            maxExtent = right;
+                    }
+                }
+            }
+
+            _reachCache[state] = maxExtent;
+            return maxExtent;
+        }
+
+        /// <summary>
+        /// Map an attack InputFlags (with optional Down modifier) to the
+        /// corresponding grounded CharacterState. Mirrors the Standing/Crouching
+        /// rows of FighterState._attackDictionary.
+        /// </summary>
+        private static CharacterState MapInputToState(InputFlags input)
+        {
+            bool crouching = (input & InputFlags.Down) != 0;
+            if ((input & InputFlags.LightAttack) != 0)
+                return crouching ? CharacterState.LightCrouching : CharacterState.LightAttack;
+            if ((input & InputFlags.MediumAttack) != 0)
+                return crouching ? CharacterState.MediumCrouching : CharacterState.MediumAttack;
+            if ((input & InputFlags.HeavyAttack) != 0)
+                return crouching ? CharacterState.SuperCrouching : CharacterState.SuperAttack;
+            if ((input & InputFlags.SpecialAttack) != 0)
+                return crouching ? CharacterState.SpecialCrouching : CharacterState.SpecialAttack;
+            return CharacterState.Idle;
+        }
+
+        /// <summary>
+        /// Deterministic hash for tie-breaking, derived from game state so
+        /// rollback produces identical selections.
         /// </summary>
         private static int DeterministicHash(int realFrame, int beatIndex)
         {
@@ -76,363 +752,73 @@ namespace Game.Sim
                 h ^= h >> 16;
                 h *= unchecked((int)0x45d9f3b);
                 h ^= h >> 16;
-                return h & 0x7FFFFFFF; // ensure non-negative
+                return h & 0x7FFFFFFF;
             }
         }
 
-        private struct ValidCandidate
+        // ------------------------------------------------------------------
+        // State management: snapshot / restore / advance
+        // ------------------------------------------------------------------
+
+        private void SnapshotWorking()
         {
-            public InputFlags Input;
-            public MoveTestResult Result;
+            CloneInto(ref _beatSnapshot, _working);
         }
 
-        private struct ValidMovementCandidate
+        private void RestoreWorking()
         {
-            public InputFlags MovementInput;
-            public InputFlags AttackInput;
-            public MoveTestResult Result;
-        }
-
-        public static GeneratedCombo Generate(
-            GameState state,
-            GameOptions options,
-            int attackerIndex,
-            RhythmPattern pattern,
-            Frame firstBeatFrame
-        )
-        {
-            GameOptions simOptions = new GameOptions
-            {
-                Global = options.Global,
-                Players = options.Players,
-                LocalPlayers = options.LocalPlayers,
-                InfoOptions = options.InfoOptions,
-                EnableMania = false,
-                AlwaysRhythmCancel = true,
-            };
-
-            GameState simState = ComboValidationRunner.CloneState(state);
-            simState.RoundEnd = Frame.Infinity;
-
-            // Match real game: set correct mania alignment hitstop and ManiaStart mode
-            // so the SpeedRatio curve (0.25 → 0.5 → 1.0) matches actual gameplay.
-            // The clone inherits the original hit's hitstop, but the real game overwrites it
-            // with the mania alignment value after StartRhythmCombo returns.
-            int maniaHitstop = firstBeatFrame - simState.RealFrame - options.Global.ManiaSlowTicks;
-            if (maniaHitstop < 0)
-                maniaHitstop = 0;
-            simState.HitstopFramesRemaining = maniaHitstop;
-            simState.GameMode = GameMode.ManiaStart;
-            simState.ModeStart = simState.RealFrame;
-
-            // Advance through ManiaStart to first beat (DoManiaStart runs naturally with slow-mo)
-            AdvanceStateTo(simState, simOptions, firstBeatFrame);
-
-            // After ManiaStart, override for move testing
-            simState.GameMode = GameMode.Fighting;
-            simState.SpeedRatio = (sfloat)1f;
-
-            List<GeneratedComboMove> moves = new List<GeneratedComboMove>();
-            List<ValidCandidate> candidates = new List<ValidCandidate>();
-            List<ValidCandidate> preferred = new List<ValidCandidate>();
-            List<ValidMovementCandidate> movementCandidates = new List<ValidMovementCandidate>();
-            List<ValidMovementCandidate> preferredMovement = new List<ValidMovementCandidate>();
-            List<InputFlags> recentMoves = new List<InputFlags>();
-            const int RECENCY_BUFFER_SIZE = 3;
-            Frame currentBeat = firstBeatFrame;
-
-            int beatCancelWindow = options.Global.Input.BeatCancelWindow;
-
-            for (int i = 0; i < pattern.Beats.Length; i++)
-            {
-                if (i > 0)
-                {
-                    currentBeat = options.Global.Audio.NextBeat(currentBeat + 1, pattern.Beats[i]);
-                }
-
-                // Advance simulation state to this beat frame
-                AdvanceStateTo(simState, simOptions, currentBeat);
-
-                // Compute next beat for hitstop deadline
-                bool hasNextBeat = i + 1 < pattern.Beats.Length;
-                Frame nextBeat = hasNextBeat
-                    ? options.Global.Audio.NextBeat(currentBeat + 1, pattern.Beats[i + 1])
-                    : Frame.Infinity;
-
-                // Collect all valid attack moves (standing and crouching)
-                bool isLastBeat = !hasNextBeat;
-                candidates.Clear();
-                foreach (InputFlags attackInput in AttackInputs)
-                {
-                    TryAddCandidate(
-                        candidates,
-                        simState,
-                        simOptions,
-                        attackerIndex,
-                        attackInput,
-                        currentBeat,
-                        nextBeat,
-                        beatCancelWindow,
-                        isLastBeat
-                    );
-
-                    // Also try crouching variant
-                    TryAddCandidate(
-                        candidates,
-                        simState,
-                        simOptions,
-                        attackerIndex,
-                        attackInput | InputFlags.Down,
-                        currentBeat,
-                        nextBeat,
-                        beatCancelWindow,
-                        isLastBeat
-                    );
-                }
-
-                if (candidates.Count > 0)
-                {
-                    // Prefer moves not recently used
-                    preferred.Clear();
-                    foreach (var c in candidates)
-                    {
-                        if (!recentMoves.Contains(c.Input))
-                            preferred.Add(c);
-                    }
-
-                    var pool = preferred.Count > 0 ? preferred : candidates;
-                    int pick = DeterministicHash(state.RealFrame.No, i) % pool.Count;
-                    ValidCandidate chosen = pool[pick];
-                    moves.Add(
-                        new GeneratedComboMove
-                        {
-                            Input = chosen.Input,
-                            BeatFrame = currentBeat,
-                            IsMovement = false,
-                        }
-                    );
-                    simState = chosen.Result.ResultState;
-
-                    if (recentMoves.Count >= RECENCY_BUFFER_SIZE)
-                        recentMoves.RemoveAt(0);
-                    recentMoves.Add(chosen.Input);
-                    continue;
-                }
-
-                // No direct attack hits — try movement on this beat, then attack on next beat
-                if (hasNextBeat)
-                {
-                    // The attack lands on nextBeat, so its deadline comes from beat i+2
-                    bool hasNextNextBeat = i + 2 < pattern.Beats.Length;
-                    Frame nextNextBeat = hasNextNextBeat
-                        ? options.Global.Audio.NextBeat(nextBeat + 1, pattern.Beats[i + 2])
-                        : Frame.Infinity;
-
-                    bool isAttackLastBeat = !hasNextNextBeat;
-                    movementCandidates.Clear();
-
-                    foreach (InputFlags movementInput in GetMovementInputs(simState.Fighters[attackerIndex]))
-                    {
-                        GameState movedState = ComboValidationRunner.CloneState(simState);
-                        ApplyInputAndAdvance(movedState, simOptions, attackerIndex, movementInput, nextBeat);
-
-                        foreach (InputFlags attackInput in AttackInputs)
-                        {
-                            MoveTestResult result = ComboValidationRunner.TestMove(
-                                movedState,
-                                simOptions,
-                                attackerIndex,
-                                attackInput,
-                                MAX_TEST_FRAMES
-                            );
-                            if (
-                                result.Hit
-                                && HitstopResolvesInTime(result, nextBeat, nextNextBeat, beatCancelWindow)
-                                && (isAttackLastBeat || !IsMultiHit(simOptions, attackerIndex, result))
-                            )
-                            {
-                                movementCandidates.Add(
-                                    new ValidMovementCandidate
-                                    {
-                                        MovementInput = movementInput,
-                                        AttackInput = attackInput,
-                                        Result = result,
-                                    }
-                                );
-                            }
-                        }
-                    }
-
-                    if (movementCandidates.Count > 0)
-                    {
-                        // Prefer attack moves not recently used
-                        preferredMovement.Clear();
-                        foreach (var c in movementCandidates)
-                        {
-                            if (!recentMoves.Contains(c.AttackInput))
-                                preferredMovement.Add(c);
-                        }
-
-                        var movPool = preferredMovement.Count > 0 ? preferredMovement : movementCandidates;
-                        int pick = DeterministicHash(state.RealFrame.No, i) % movPool.Count;
-                        ValidMovementCandidate chosen = movPool[pick];
-                        moves.Add(
-                            new GeneratedComboMove
-                            {
-                                Input = chosen.MovementInput,
-                                BeatFrame = currentBeat,
-                                IsMovement = true,
-                            }
-                        );
-                        moves.Add(
-                            new GeneratedComboMove
-                            {
-                                Input = chosen.AttackInput,
-                                BeatFrame = nextBeat,
-                                IsMovement = false,
-                            }
-                        );
-                        simState = chosen.Result.ResultState;
-                        currentBeat = nextBeat;
-                        i++;
-
-                        if (recentMoves.Count >= RECENCY_BUFFER_SIZE)
-                            recentMoves.RemoveAt(0);
-                        recentMoves.Add(chosen.AttackInput);
-                        continue;
-                    }
-                }
-
-                // Fallback: insert a forward dash note anyway
-                InputFlags fallbackDash = InputFlags.Dash | simState.Fighters[attackerIndex].ForwardInput;
-                moves.Add(
-                    new GeneratedComboMove
-                    {
-                        Input = fallbackDash,
-                        BeatFrame = currentBeat,
-                        IsMovement = true,
-                    }
-                );
-                ApplyInputAndAdvance(simState, simOptions, attackerIndex, fallbackDash, currentBeat);
-            }
-
-            Frame endFrame = options.Global.Audio.NextBeat(currentBeat + 1, AudioConfig.BeatSubdivision.QuarterNote);
-            return new GeneratedCombo { Moves = moves, EndFrame = endFrame };
+            CloneInto(ref _working, _beatSnapshot);
         }
 
         /// <summary>
-        /// Returns true if the hitstop from a hit resolves before the next beat's cancel window opens.
-        /// Advance() increments RealFrame before collision, so the hit's absolute frame = inputBeat + result.HitFrame + 1.
-        /// Hitstop then freezes for HitstopTicks additional frames before the player is free.
+        /// Serialize <paramref name="src"/> and deserialize into
+        /// <paramref name="dst"/>. Uses a thread-static ArrayBufferWriter to
+        /// avoid per-call allocations.
         /// </summary>
-        private static bool HitstopResolvesInTime(
-            MoveTestResult result,
-            Frame inputBeat,
-            Frame deadlineBeat,
-            int beatCancelWindow
-        )
+        private static void CloneInto(ref GameState dst, GameState src)
         {
-            if (deadlineBeat == Frame.Infinity)
-                return true;
-            int absoluteHitFrame = inputBeat.No + result.HitFrame + 1;
-            int hitstopResolvesAt = absoluteHitFrame + result.HitProps.HitstopTicks;
-            return hitstopResolvesAt < deadlineBeat.No - beatCancelWindow;
+            CloneWriter.Clear();
+            MemoryPackSerializer.Serialize(CloneWriter, src);
+            dst = MemoryPackSerializer.Deserialize<GameState>(CloneWriter.WrittenSpan.ToArray());
         }
 
         /// <summary>
-        /// Returns true if a move has multiple distinct hitbox BoxProps in its animation,
-        /// meaning it can hit more than once (different props bypass immunity hash).
+        /// Advance _working forward with empty inputs until its RealFrame
+        /// reaches <paramref name="targetRealFrame"/>.
         /// </summary>
-        private static bool IsMultiHit(GameOptions options, int attackerIndex, MoveTestResult result)
+        private void AdvanceWorkingTo(Frame targetRealFrame)
         {
-            CharacterState moveState = result.ResultState.Fighters[attackerIndex].State;
-            CharacterConfig config = options.Players[attackerIndex].Character;
-            HitboxData data = config.GetHitboxData(moveState);
-
-            BoxProps? first = null;
-            for (int t = 0; t < data.TotalTicks; t++)
+            while (_working.RealFrame < targetRealFrame)
             {
-                FrameData frame = data.GetFrame(t);
-                if (frame.HasHitbox(out BoxProps props))
-                {
-                    if (!first.HasValue)
-                    {
-                        first = props;
-                    }
-                    else if (!props.Equals(first.Value))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private static void TryAddCandidate(
-            List<ValidCandidate> candidates,
-            GameState simState,
-            GameOptions simOptions,
-            int attackerIndex,
-            InputFlags input,
-            Frame currentBeat,
-            Frame nextBeat,
-            int beatCancelWindow,
-            bool isLastBeat
-        )
-        {
-            MoveTestResult result = ComboValidationRunner.TestMove(
-                simState,
-                simOptions,
-                attackerIndex,
-                input,
-                MAX_TEST_FRAMES
-            );
-            if (
-                result.Hit
-                && HitstopResolvesInTime(result, currentBeat, nextBeat, beatCancelWindow)
-                && (isLastBeat || !IsMultiHit(simOptions, attackerIndex, result))
-            )
-            {
-                candidates.Add(new ValidCandidate { Input = input, Result = result });
+                AdvanceOnce(InputFlags.None);
             }
         }
 
         /// <summary>
-        /// Advance a GameState forward by feeding empty inputs until its RealFrame reaches the target.
+        /// Apply a single attacker input for one frame on _working. Used to
+        /// consume a chosen move permanently (not to test). Rhythm cancel is
+        /// enabled for exactly this one frame and disabled afterward so the
+        /// subsequent inter-beat empty-input catch-up cannot retrigger the
+        /// attack from the buffered press.
         /// </summary>
-        private static void AdvanceStateTo(GameState state, GameOptions options, Frame targetRealFrame)
+        private void ApplyInputToWorking(InputFlags input)
         {
-            (GameInput input, InputStatus status)[] emptyInputs =
-            {
-                (GameInput.None, InputStatus.Confirmed),
-                (GameInput.None, InputStatus.Confirmed),
-            };
-
-            while (state.RealFrame < targetRealFrame)
-            {
-                state.Advance(options, emptyInputs);
-            }
+            _options.AlwaysRhythmCancel = true;
+            AdvanceOnce(input);
+            _options.AlwaysRhythmCancel = false;
         }
 
         /// <summary>
-        /// Apply a single input on the attacker for one frame, then advance with empty inputs to the target frame.
+        /// Advance _working by exactly one frame with the given attacker input.
         /// </summary>
-        private static void ApplyInputAndAdvance(
-            GameState state,
-            GameOptions options,
-            int attackerIndex,
-            InputFlags input,
-            Frame targetRealFrame
-        )
+        private void AdvanceOnce(InputFlags attackerInput)
         {
-            // Apply the input for one frame
             (GameInput input, InputStatus status)[] inputs;
-            if (attackerIndex == 0)
+            if (_attackerIndex == 0)
             {
                 inputs = new (GameInput, InputStatus)[]
                 {
-                    (new GameInput(input), InputStatus.Confirmed),
+                    (new GameInput(attackerInput), InputStatus.Confirmed),
                     (GameInput.None, InputStatus.Confirmed),
                 };
             }
@@ -441,14 +827,10 @@ namespace Game.Sim
                 inputs = new (GameInput, InputStatus)[]
                 {
                     (GameInput.None, InputStatus.Confirmed),
-                    (new GameInput(input), InputStatus.Confirmed),
+                    (new GameInput(attackerInput), InputStatus.Confirmed),
                 };
             }
-
-            state.Advance(options, inputs);
-
-            // Advance rest with empty inputs
-            AdvanceStateTo(state, options, targetRealFrame);
+            _working.Advance(_options, inputs);
         }
     }
 }

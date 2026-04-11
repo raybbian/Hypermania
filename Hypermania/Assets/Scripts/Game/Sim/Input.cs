@@ -44,10 +44,12 @@ namespace Game.Sim
 
         public static InputFlags FlipHorizontalInputs(InputFlags input)
         {
-            bool tmp = (input & InputFlags.Right) != 0;
-            if ((input & InputFlags.Left) != 0)
+            bool hasLeft = (input & InputFlags.Left) != 0;
+            bool hasRight = (input & InputFlags.Right) != 0;
+            input &= ~(InputFlags.Left | InputFlags.Right);
+            if (hasLeft)
                 input |= InputFlags.Right;
-            if (tmp)
+            if (hasRight)
                 input |= InputFlags.Left;
             return input;
         }

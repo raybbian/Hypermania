@@ -204,6 +204,7 @@ namespace Design.Animation
     {
         public AnimationClip Clip;
         public int TotalTicks => Frames.Count;
+        public bool ComboEligible = true;
         public List<FrameData> Frames = new List<FrameData>();
 
         public bool BindToClip(AnimationClip clip)

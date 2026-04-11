@@ -32,22 +32,21 @@ namespace Game.Sim
             RhythmPattern pattern = RhythmPattern.Default;
             GeneratedCombo combo = ComboGenerator.Generate(gameState, options, attackerIndex, pattern, nextBeat);
 
-            // Queue notes to mania channels
+            // Queue notes to mania channels. ComboGenerator already emits
+            // world-space inputs (e.g. Dash | Left for a left-facing attacker's
+            // forward dash), computed from the sim's per-beat facing. Do not
+            // flip them here — the blanket flip based on combo-start facing
+            // both inverts the dash direction and mishandles mid-combo
+            // cross-ups, where the attacker's facing changes between beats.
             for (int i = 0; i < combo.Moves.Count; i++)
             {
-                InputFlags hitInput = combo.Moves[i].Input;
-                if (facingDir == FighterFacing.Left)
-                {
-                    hitInput = GameInput.FlipHorizontalInputs(hitInput);
-                }
-
                 state.QueueNote(
                     i % 4,
                     new ManiaNote
                     {
                         Length = 0,
                         Tick = combo.Moves[i].BeatFrame,
-                        HitInput = hitInput,
+                        HitInput = combo.Moves[i].Input,
                     }
                 );
             }

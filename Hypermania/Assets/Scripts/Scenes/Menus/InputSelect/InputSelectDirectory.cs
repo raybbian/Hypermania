@@ -60,7 +60,7 @@ namespace Scenes.Menus.InputSelect
                 InputDevice = p1,
                 Controls = _controlsConfigs?.Length >= 1 ? _controlsConfigs[0] : null,
             };
-            options.InfoOptions = new InfoOptions { ShowFrameData = false };
+            options.InfoOptions = new InfoOptions { ShowFrameData = false, ShowBoxes = false };
             options.EnableMania = true;
 
             SessionDirectory.Options = options;
@@ -96,7 +96,11 @@ namespace Scenes.Menus.InputSelect
                     Controls = _controlsConfigs?.Length >= i + 1 ? _controlsConfigs[i] : null,
                 };
             }
-            options.InfoOptions = new InfoOptions { ShowFrameData = SessionDirectory.Config == GameConfig.Training };
+            options.InfoOptions = new InfoOptions
+            {
+                ShowFrameData = SessionDirectory.Config == GameConfig.Training,
+                ShowBoxes = SessionDirectory.Config == GameConfig.Training,
+            };
             options.EnableMania = true;
 
             SessionDirectory.Options = options;

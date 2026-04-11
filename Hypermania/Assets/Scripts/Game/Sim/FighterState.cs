@@ -533,6 +533,20 @@ namespace Game.Sim
 
         public void UpdatePosition(Frame frame, GameOptions options, SVector2 otherFighterPos)
         {
+            // Dash beat-snap: under rhythm cancel, ApplyMovementState pushes
+            // a dash's StateStart to (noteTick + BeatCancelWindow), while the
+            // velocity is set on the actual input frame. Integrating that
+            // velocity before StateStart would give an extra (BeatCancelWindow
+            // - beatOffset) frames of motion whose length varies with how
+            // early/late the player hit the note. Gate the entire position
+            // update to the dash's own [StateStart, StateEnd) window so the
+            // dash only ever moves for exactly dashTicks frames, matching the
+            // combo generator's beatOffset == 0 simulation.
+            if (IsDash && (frame < StateStart || frame >= StateEnd))
+            {
+                return;
+            }
+
             // Apply gravity if not grounded and not in airdash
             FrameData curData = options.Players[Index].Character.GetFrameData(State, frame - StateStart);
             if (curData.Floating)
@@ -622,6 +636,19 @@ namespace Game.Sim
 
         public void AddBoxes(Frame frame, CharacterConfig config, Physics<BoxProps> physics, int handle)
         {
+            // If the current state's StateStart is in the future (dash under
+            // rhythm cancel waiting for its beat snap, etc.), don't add any
+            // boxes at all. The negative tick would wraparound via modulo to
+            // the tail of the animation and expose hurtboxes/pushboxes that
+            // the fighter shouldn't have during the pre-state window. In
+            // particular, a pushbox present here lets the other fighter
+            // nudge them out of position before the dash even fires, which
+            // is enough to throw off combo positioning.
+            if (frame < StateStart)
+            {
+                return;
+            }
+
             int tick = frame - StateStart;
             FrameData frameData = config.GetFrameData(State, tick);
 
