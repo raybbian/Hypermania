@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Design.Configs;
 using Game.Sim;
 using Game.View.Events;
 using Game.View.Events.Vfx;
 using Steamworks;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 using Utils;
 
 namespace Game.View.Mania
@@ -16,6 +18,7 @@ namespace Game.View.Mania
         public float ScrollSpeed;
         public Transform[] Anchors;
         public GameObject[] Notes;
+        public RectTransform BeatLineContainer;
 
         public void Validate()
         {
@@ -41,9 +44,42 @@ namespace Game.View.Mania
 
         private Dictionary<int, ManiaNoteView> _activeNotes;
 
-        public void Init()
+        private AudioConfig _audioConfig;
+        private List<RectTransform> _beatLinePool;
+
+        public void Init(AudioConfig audioConfig)
         {
+            _audioConfig = audioConfig;
             _activeNotes = new Dictionary<int, ManiaNoteView>();
+            _beatLinePool = new List<RectTransform>();
+
+            RectTransform rect = GetComponent<RectTransform>();
+            float viewHeight = rect.rect.height;
+            int framesVisible = Mathf.CeilToInt(viewHeight / Config.ScrollSpeed);
+            int poolSize = framesVisible / _audioConfig.FramesPerBeat + 3;
+
+            Transform lineParent = Config.BeatLineContainer != null
+                ? Config.BeatLineContainer.transform
+                : transform;
+
+            for (int i = 0; i < poolSize; i++)
+            {
+                GameObject lineObj = new GameObject("BeatLine", typeof(RectTransform), typeof(Image));
+                lineObj.transform.SetParent(lineParent, false);
+
+                RectTransform lineRect = lineObj.GetComponent<RectTransform>();
+                lineRect.sizeDelta = new Vector2(rect.rect.width, 1f);
+                lineRect.anchorMin = new Vector2(0.5f, 0.5f);
+                lineRect.anchorMax = new Vector2(0.5f, 0.5f);
+
+                Image img = lineObj.GetComponent<Image>();
+                img.color = new Color(1f, 1f, 1f, 0.15f);
+                img.raycastTarget = false;
+
+                lineObj.SetActive(false);
+                _beatLinePool.Add(lineRect);
+            }
+
             gameObject.SetActive(false);
         }
 
@@ -54,6 +90,16 @@ namespace Game.View.Mania
                 Destroy(obj.gameObject);
             }
             _activeNotes = null;
+
+            if (_beatLinePool != null)
+            {
+                foreach (var line in _beatLinePool)
+                {
+                    Destroy(line.gameObject);
+                }
+                _beatLinePool = null;
+            }
+            _audioConfig = null;
         }
 
         public void OnValidate()
@@ -144,6 +190,48 @@ namespace Game.View.Mania
                 }
             }
             _activeNotes = renderedNow;
+
+            RenderBeatLines(frame);
+        }
+
+        private void RenderBeatLines(Frame frame)
+        {
+            if (_audioConfig == null || _beatLinePool == null)
+                return;
+
+            int framesPerBeat = _audioConfig.FramesPerBeat;
+            int firstBeat = _audioConfig.FirstMusicalBeat.No;
+            float anchorY = Config.Anchors[0].localPosition.y;
+            float halfHeight = GetComponent<RectTransform>().rect.height / 2;
+
+            // Find the first beat index that could be visible (below bottom of view)
+            int minBeatIndex = Mathf.FloorToInt((float)(frame.No - firstBeat) / framesPerBeat) - 1;
+            if (minBeatIndex < 0) minBeatIndex = 0;
+
+            int poolIndex = 0;
+            for (int b = minBeatIndex; poolIndex < _beatLinePool.Count; b++)
+            {
+                int beatFrame = firstBeat + _audioConfig.BeatsToFrame(b);
+                float y = (beatFrame - frame) * Config.ScrollSpeed + anchorY;
+
+                if (y > halfHeight)
+                    break;
+
+                // skip lines below the view
+                if (y < -halfHeight)
+                    continue;
+
+                RectTransform line = _beatLinePool[poolIndex];
+                line.gameObject.SetActive(true);
+                line.localPosition = new Vector3(0f, y, 0f);
+                poolIndex++;
+            }
+
+            // hide unused lines
+            for (int i = poolIndex; i < _beatLinePool.Count; i++)
+            {
+                _beatLinePool[i].gameObject.SetActive(false);
+            }
         }
 
         private bool RenderNote(Frame frame, int channel, in ManiaNote note, out ManiaNoteView noteView)

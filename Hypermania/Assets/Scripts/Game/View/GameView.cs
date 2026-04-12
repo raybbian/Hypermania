@@ -92,7 +92,7 @@ namespace Game.View
                 _fighters[i].transform.SetParent(transform, true);
                 _fighters[i].Init(config, options.Players[i].SkinIndex);
 
-                _playerParams[i].ManiaView.Init();
+                _playerParams[i].ManiaView.Init(options.Global.Audio);
                 _playerParams[i].HealthBarView.SetMaxHealth((float)config.Health);
                 _playerParams[i].BurstBarView.SetMaxBurst((float)config.BurstMax);
             }
