@@ -286,6 +286,10 @@ namespace Game.Sim
                 {
                     Velocity.x = 0;
                 }
+                if (State == CharacterState.Hit)
+                {
+                    Velocity = SVector2.zero;
+                }
 
                 if (State == CharacterState.PreJump)
                 {

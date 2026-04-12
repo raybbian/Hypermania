@@ -248,9 +248,10 @@ namespace Design.Animation.ComboFinder.Editor
             simFighters[1] = FighterState.Create(1, 9999, new SVector2((sfloat)0.5, 0), FighterFacing.Right, 1);
 
             Frame firstFrame =
-                _audioConfig.NextBeat(
+                NextQuarterBeat(
                     Frame.FirstFrame + move.FirstHitboxTick + 1,
-                    AudioConfig.BeatSubdivision.QuarterNote
+                    _audioConfig.FirstMusicalBeat,
+                    _audioConfig.FramesPerBeat
                 )
                 - move.FirstHitboxTick
                 + 3;
@@ -297,9 +298,10 @@ namespace Design.Animation.ComboFinder.Editor
                     }
 
                     if (
-                        _audioConfig.BeatWithinWindow(
+                        IsOnBeat(
                             firstFrame + col,
-                            AudioConfig.BeatSubdivision.QuarterNote,
+                            _audioConfig.FirstMusicalBeat,
+                            _audioConfig.FramesPerBeat,
                             _globalConfig.Input.BeatCancelWindow
                         )
                     )
@@ -331,9 +333,10 @@ namespace Design.Animation.ComboFinder.Editor
                     );
                 }
                 if (
-                    _audioConfig.BeatWithinWindow(
+                    IsOnBeat(
                         firstFrame + col,
-                        AudioConfig.BeatSubdivision.QuarterNote,
+                        _audioConfig.FirstMusicalBeat,
+                        _audioConfig.FramesPerBeat,
                         _globalConfig.Input.BeatCancelWindow
                     )
                 )
@@ -342,6 +345,30 @@ namespace Design.Animation.ComboFinder.Editor
                     DrawGridCell(beatRect, FrameType.Active, 2, col);
                 }
             }
+        }
+
+        private static bool IsOnBeat(Frame frame, Frame firstBeat, int framesPerBeat, int window)
+        {
+            if (framesPerBeat <= 0)
+                return false;
+            int delta = (frame - firstBeat) % framesPerBeat;
+            if (delta < 0)
+                delta += framesPerBeat;
+            int distance = delta <= framesPerBeat / 2 ? delta : framesPerBeat - delta;
+            return distance <= window;
+        }
+
+        private static Frame NextQuarterBeat(Frame frame, Frame firstBeat, int framesPerBeat)
+        {
+            if (framesPerBeat <= 0)
+                return frame;
+            int delta = frame - firstBeat;
+            int beats;
+            if (delta >= 0)
+                beats = (delta + framesPerBeat - 1) / framesPerBeat; // ceil
+            else
+                beats = delta / framesPerBeat; // C# truncation toward zero == ceil for negatives
+            return firstBeat + beats * framesPerBeat;
         }
 
         private void DrawGridCell(Rect rect, FrameType frameType, int row, int tick)

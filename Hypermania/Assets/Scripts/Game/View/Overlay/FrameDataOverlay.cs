@@ -137,9 +137,10 @@ namespace Game.View.Overlay
             _curFrameBar.GetComponent<RectTransform>().anchoredPosition = new Vector2((baseIdx + 1) * _cellWidth, 0f);
 
             if (
-                options.Global.Audio.BeatWithinWindow(
+                IsOnBeat(
                     state.RealFrame,
-                    AudioConfig.BeatSubdivision.QuarterNote,
+                    options.Global.Audio.FirstMusicalBeat,
+                    options.Global.Audio.FramesPerBeat,
                     options.Global.Input.BeatCancelWindow
                 )
             )
@@ -150,6 +151,17 @@ namespace Game.View.Overlay
             {
                 _cells[2, baseIdx].SetType(FrameType.Neutral);
             }
+        }
+
+        private static bool IsOnBeat(Frame frame, Frame firstBeat, int framesPerBeat, int window)
+        {
+            if (framesPerBeat <= 0)
+                return false;
+            int delta = (frame - firstBeat) % framesPerBeat;
+            if (delta < 0)
+                delta += framesPerBeat;
+            int distance = delta <= framesPerBeat / 2 ? delta : framesPerBeat - delta;
+            return distance <= window;
         }
     }
 }

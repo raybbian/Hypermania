@@ -101,6 +101,7 @@ namespace Game.View
 
             _params.HypeBarView.SetMaxHype((float)options.Global.MaxHype);
             _conductor.Init(options);
+            _conductor.SetFrame(Frame.FirstFrame);
             _rollbackStart = Frame.NullFrame;
         }
 
@@ -118,6 +119,12 @@ namespace Game.View
             }
 
             _conductor.PublishTick(state.RealFrame, deltaTime);
+
+            // Re-anchor audio position to RealFrame periodically to prevent
+            // cumulative drift between the wall-clock-driven audio cursor
+            // and the fixed-rate sim frame counter.
+            if (state.RealFrame.No % 25 == 0)
+                _conductor.SetFrame(state.RealFrame);
 
             // Manage projectile views
             for (int i = 0; i < state.Projectiles.Length; i++)
@@ -159,13 +166,6 @@ namespace Game.View
                     (Vector2)state.Fighters[i].Position
                         + new Vector2(0, (float)_options.Players[i].Character.CharacterHeight)
                 );
-                if (
-                    (state.GameMode == GameMode.Mania || state.GameMode == GameMode.ManiaStart)
-                    && state.Manias[i].Enabled(state.RealFrame)
-                )
-                {
-                    interestPoints.Add(_playerParams[i].ManiaView.transform.position);
-                }
             }
 
             for (int i = 0; i < _options.Players.Length; i++)
@@ -212,12 +212,9 @@ namespace Game.View
             if (options.InfoOptions.ShowFrameData)
                 _params.FrameDataOverlay.AddFrameData(state, options);
 
-            if (_params.BoxVisualizer != null)
-            {
-                _params.BoxVisualizer.gameObject.SetActive(options.InfoOptions.ShowBoxes);
-                if (options.InfoOptions.ShowBoxes)
-                    _params.BoxVisualizer.Render(state, options, _fighters);
-            }
+            _params.BoxVisualizer.gameObject.SetActive(options.InfoOptions.ShowBoxes);
+            if (options.InfoOptions.ShowBoxes)
+                _params.BoxVisualizer.Render(state, options, _fighters);
         }
 
         public void RollbackRender(in GameState state)

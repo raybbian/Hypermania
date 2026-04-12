@@ -5,6 +5,7 @@ using MemoryPack;
 namespace Utils
 {
     [MemoryPackable]
+    [Serializable]
     public partial struct Frame : IComparable<Frame>, IEquatable<Frame>, IFormattable, ISerializable
     {
         public int No;
@@ -13,6 +14,8 @@ namespace Utils
         public static readonly Frame Infinity = new Frame { No = int.MaxValue };
 
         public Frame(int No) => this.No = No;
+
+        public static implicit operator Frame(int no) => new Frame { No = no };
 
         public int CompareTo(Frame other) => No.CompareTo(other.No);
 

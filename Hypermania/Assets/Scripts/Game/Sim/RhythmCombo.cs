@@ -19,18 +19,37 @@ namespace Game.Sim
             int attackerIndex
         )
         {
-            // Find the first beat after the mania slow-motion startup
-            Frame nextBeat = realFrame;
-            while (nextBeat - realFrame < options.Global.ManiaSlowTicks)
+            // Hitstop bridges slow-mo end to the nearest beat boundary,
+            // independent of where the first authored note falls.
+            int fpb = options.Global.Audio.FramesPerBeat;
+            Frame earliestStart = realFrame + options.Global.ManiaSlowTicks;
+
+            // Next quarter-note boundary at or after earliestStart.
+            int delta = earliestStart - options.Global.Audio.FirstMusicalBeat;
+            int beats = delta >= 0
+                ? (delta + fpb - 1) / fpb  // ceil
+                : delta / fpb;             // C# truncation toward zero == ceil for negatives
+            Frame nextBeat = options.Global.Audio.FirstMusicalBeat + options.Global.Audio.BeatsToFrame(beats);
+
+            int hitstop = nextBeat - earliestStart;
+
+            Frame[] noteFrames = options.Global.Audio.SliceFrom(earliestStart);
+
+            if (noteFrames.Length == 0)
             {
-                nextBeat = options.Global.Audio.NextBeat(nextBeat + 1, AudioConfig.BeatSubdivision.QuarterNote);
+                // Song chart exhausted — no combo to run this trigger.
+                return 0;
             }
 
-            int hitstop = nextBeat - (realFrame + options.Global.ManiaSlowTicks);
-
-            // Generate combo dynamically via simulation
-            RhythmPattern pattern = RhythmPattern.Default;
-            GeneratedCombo combo = ComboGenerator.Generate(gameState, options, attackerIndex, pattern, nextBeat);
+            // Generate combo dynamically via simulation against the authored
+            // frame slice.
+            GeneratedCombo combo = ComboGenerator.Generate(
+                gameState,
+                options,
+                attackerIndex,
+                noteFrames,
+                hitstop
+            );
 
             // Queue notes to mania channels. ComboGenerator already emits
             // world-space inputs (e.g. Dash | Left for a left-facing attacker's

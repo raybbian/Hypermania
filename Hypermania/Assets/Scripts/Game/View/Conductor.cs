@@ -29,6 +29,9 @@ namespace Game.View
         public float t;
 
         [SerializeField]
+        private float _msOffset = -83f;
+
+        [SerializeField]
         private float _maxQueuedSeconds = 0.2f;
 
         [SerializeField]
@@ -116,12 +119,12 @@ namespace Game.View
 
         public void SetFrame(Frame frame)
         {
-            SetFrame(frame.No);
+            SetFrame((long)frame.No);
         }
 
         public void SetFrame(long frameNo)
         {
-            double seconds = (double)frameNo / GameManager.TPS;
+            double seconds = (double)frameNo / GameManager.TPS - _msOffset / 1000.0;
             double sourceFrames = seconds * _sampleRate;
 
             lock (_lock)

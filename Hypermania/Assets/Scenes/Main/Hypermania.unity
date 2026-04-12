@@ -2428,6 +2428,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   t: 0
+  _msOffset: -50
   _maxQueuedSeconds: 1
   _loopSong: 1
 --- !u!1 &562816628700700719

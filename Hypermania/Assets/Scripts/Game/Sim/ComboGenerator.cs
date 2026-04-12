@@ -9,27 +9,6 @@ using Utils.SoftFloat;
 
 namespace Game.Sim
 {
-    public struct RhythmPattern
-    {
-        public AudioConfig.BeatSubdivision[] Beats;
-
-        public static RhythmPattern Default =>
-            new RhythmPattern
-            {
-                Beats = new[]
-                {
-                    AudioConfig.BeatSubdivision.QuarterNote,
-                    AudioConfig.BeatSubdivision.QuarterNote,
-                    AudioConfig.BeatSubdivision.QuarterNote,
-                    AudioConfig.BeatSubdivision.QuarterNote,
-                    AudioConfig.BeatSubdivision.QuarterNote,
-                    AudioConfig.BeatSubdivision.QuarterNote,
-                    AudioConfig.BeatSubdivision.QuarterNote,
-                    AudioConfig.BeatSubdivision.QuarterNote,
-                },
-            };
-    }
-
     public struct GeneratedComboMove
     {
         public InputFlags Input;
@@ -137,22 +116,30 @@ namespace Game.Sim
             GameState state,
             GameOptions options,
             int attackerIndex,
-            RhythmPattern pattern,
-            Frame firstBeatFrame
+            Frame[] noteFrames,
+            int gameHitstop
         )
         {
             ComboGenerator gen = new ComboGenerator();
-            return gen.Run(state, options, attackerIndex, pattern, firstBeatFrame);
+            return gen.Run(state, options, attackerIndex, noteFrames, gameHitstop);
         }
 
         public GeneratedCombo Run(
             GameState state,
             GameOptions options,
             int attackerIndex,
-            RhythmPattern pattern,
-            Frame firstBeatFrame
+            Frame[] noteFrames,
+            int gameHitstop
         )
         {
+            if (noteFrames == null || noteFrames.Length == 0)
+            {
+                return new GeneratedCombo
+                {
+                    Moves = new List<GeneratedComboMove>(),
+                    EndFrame = state.RealFrame,
+                };
+            }
             _attackerIndex = attackerIndex;
             _attackerConfig = options.Players[attackerIndex].Character;
             _noteHitHalfRange = options.Global.Input.BeatCancelWindow;
@@ -180,13 +167,13 @@ namespace Game.Sim
             CloneInto(ref _working, state);
             _working.RoundEnd = Frame.Infinity;
 
-            // Mania alignment preamble: match the real game's ManiaStart slow-mo
-            // curve so the simulation arrives at firstBeatFrame with the same
-            // timing the actual combo will run with.
-            int maniaHitstop = firstBeatFrame - _working.RealFrame - options.Global.ManiaSlowTicks;
-            if (maniaHitstop < 0)
-                maniaHitstop = 0;
-            _working.HitstopFramesRemaining = maniaHitstop;
+            // Mania alignment preamble: use the game's hitstop (which aligns
+            // to the next quarter-note beat boundary) so the simulation's
+            // hitstop/slow-mo split matches the real game exactly. This
+            // ensures the SimFrame count at firstBeatFrame is identical,
+            // keeping fighter positions and animation frames in sync.
+            Frame firstBeatFrame = noteFrames[0];
+            _working.HitstopFramesRemaining = gameHitstop;
             _working.GameMode = GameMode.ManiaStart;
             _working.ModeStart = _working.RealFrame;
 
@@ -209,18 +196,15 @@ namespace Game.Sim
 
             Frame currentBeat = firstBeatFrame;
 
-            for (int i = 0; i < pattern.Beats.Length; i++)
+            for (int i = 0; i < noteFrames.Length; i++)
             {
-                if (i > 0)
-                {
-                    currentBeat = _options.Global.Audio.NextBeat(currentBeat + 1, pattern.Beats[i]);
-                    AdvanceWorkingTo(currentBeat);
-                }
+                currentBeat = noteFrames[i];
+                AdvanceWorkingTo(currentBeat);
 
-                // Compute the next beat (if any) so we can reject candidates
-                // whose hitstun bleeds into the next note's input window.
-                Frame nextBeat = (i + 1 < pattern.Beats.Length)
-                    ? _options.Global.Audio.NextBeat(currentBeat + 1, pattern.Beats[i + 1])
+                // Next authored note (if any) so we can reject candidates
+                // whose hitstun bleeds into its input window.
+                Frame nextBeat = (i + 1 < noteFrames.Length)
+                    ? noteFrames[i + 1]
                     : Frame.Infinity;
 
                 // Snapshot the pristine beat state so each candidate trial can
@@ -235,7 +219,7 @@ namespace Game.Sim
                 }
 
                 int hashValue = DeterministicHash(state.RealFrame.No, i);
-                bool isLastBeat = i == pattern.Beats.Length - 1;
+                bool isLastBeat = i == noteFrames.Length - 1;
                 int chosenIdx = PickBestCandidate(
                     candidates,
                     hasPrev,
@@ -287,8 +271,8 @@ namespace Game.Sim
                 // attack must also satisfy the hitstop-in-window rule against
                 // its own next-note window (i.e., not chain two fallbacks'
                 // worth of hitstop into the note after nextBeat).
-                Frame beatAfterNext = (i + 2 < pattern.Beats.Length)
-                    ? _options.Global.Audio.NextBeat(nextBeat + 1, pattern.Beats[i + 2])
+                Frame beatAfterNext = (i + 2 < noteFrames.Length)
+                    ? noteFrames[i + 2]
                     : Frame.Infinity;
 
                 bool defenderAirborne =
@@ -330,10 +314,18 @@ namespace Game.Sim
                 prevReach = sfloat.Zero;
             }
 
-            Frame endFrame = _options.Global.Audio.NextBeat(
-                currentBeat + 1,
-                AudioConfig.BeatSubdivision.QuarterNote
-            );
+            // ManiaState deactivation frame: trail the last note by the
+            // median gap of the authored slice, so the window closes at a
+            // musically sensible distance past the finisher. Falls back to
+            // 30 frames (half a second at 60 TPS) for single-note slices.
+            int trailingPad = 30;
+            if (noteFrames.Length >= 2)
+            {
+                int lastGap = noteFrames[noteFrames.Length - 1] - noteFrames[noteFrames.Length - 2];
+                if (lastGap > 0)
+                    trailingPad = lastGap;
+            }
+            Frame endFrame = noteFrames[noteFrames.Length - 1] + trailingPad;
             return new GeneratedCombo { Moves = moves, EndFrame = endFrame };
         }
 

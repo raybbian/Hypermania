@@ -280,7 +280,7 @@ namespace Game.Sim
 
                     break;
                 case GameMode.Mania:
-                    rhythmCancel = DoManiaStep(inputs, remapInputs);
+                    rhythmCancel = DoManiaStep(options, inputs, remapInputs);
                     break;
                 case GameMode.ManiaStart:
                     DoManiaStart(options, remapInputs);
@@ -498,7 +498,11 @@ namespace Game.Sim
             }
         }
 
-        private (bool, int) DoManiaStep((GameInput input, InputStatus status)[] inputs, Span<GameInput> outInputs)
+        private (bool, int) DoManiaStep(
+            GameOptions options,
+            (GameInput input, InputStatus status)[] inputs,
+            Span<GameInput> outInputs
+        )
         {
             (bool, int) rhythmCancel = (false, 0);
 
@@ -519,6 +523,18 @@ namespace Game.Sim
                             rhythmCancel = (true, ev.Offset);
                             break;
                         case ManiaEventKind.Missed:
+                            // Punish the missing fighter: stun for
+                            // ManiaFailStunTicks frames and apply a small
+                            // knockback away from the opponent.
+                            Fighters[i]
+                                .SetState(
+                                    CharacterState.Hit,
+                                    SimFrame,
+                                    SimFrame + options.Global.ManiaFailStunTicks,
+                                    true
+                                );
+                            Fighters[i].Velocity =
+                                Fighters[i].BackwardVector * options.Global.ManiaFailKnockbackMagnitude;
                             GameMode = GameMode.Fighting;
                             Manias[i].End();
                             ClearLockedHitstun();
