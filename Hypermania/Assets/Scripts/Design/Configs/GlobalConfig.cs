@@ -37,7 +37,7 @@ namespace Design.Configs
         public sfloat RunningSpeedMultiplier = 2;
         public sfloat SuperJumpMultiplier = (sfloat)1.25f;
         public int RoundTimeTicks = 10800;
-        public int RoundCountdownTicks = 180;
+        public int RoundCountdownTicks => Audio.BeatsToFrame(8);
         public sfloat MaxHype = 100;
         public sfloat HypeMovementFactor = (sfloat)0.3f;
         public sfloat CameraHalfHeight = (sfloat)1.5f;
