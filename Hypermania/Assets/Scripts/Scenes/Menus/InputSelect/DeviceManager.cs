@@ -144,11 +144,9 @@ namespace Scenes.Menus.InputSelect
                 {
                     case Gamepad gamepad:
                         bool currLeft =
-                            gamepad.leftStick.x.value < -AxisThreshold
-                            || gamepad.rightStick.x.value < -AxisThreshold;
+                            gamepad.leftStick.x.value < -AxisThreshold || gamepad.rightStick.x.value < -AxisThreshold;
                         bool currRight =
-                            gamepad.leftStick.x.value > AxisThreshold
-                            || gamepad.rightStick.x.value > AxisThreshold;
+                            gamepad.leftStick.x.value > AxisThreshold || gamepad.rightStick.x.value > AxisThreshold;
                         (bool prevLeft, bool prevRight) = _stickLatch.TryGetValue(device, out var prev)
                             ? prev
                             : (false, false);

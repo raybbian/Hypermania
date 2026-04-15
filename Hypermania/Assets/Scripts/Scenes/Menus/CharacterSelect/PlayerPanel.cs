@@ -203,9 +203,10 @@ namespace Scenes.Menus.CharacterSelect
             {
                 // While still browsing the grid, show the default skin (index 0)
                 // regardless of SkinIndex — the player hasn't picked a skin yet.
-                int skinIdx = _state.Phase == SelectPhase.Character
-                    ? 0
-                    : Mathf.Clamp(_state.SkinIndex, 0, config.Skins.Length - 1);
+                int skinIdx =
+                    _state.Phase == SelectPhase.Character
+                        ? 0
+                        : Mathf.Clamp(_state.SkinIndex, 0, config.Skins.Length - 1);
                 skin = config.Skins[skinIdx];
             }
 
