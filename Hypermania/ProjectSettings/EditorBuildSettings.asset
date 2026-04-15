@@ -21,6 +21,12 @@ EditorBuildSettings:
     path: Assets/Scenes/Main/InputSelect.unity
     guid: 707831a7b8ac0be48b6e0fc09ff12c53
   - enabled: 1
+    path: Assets/Scenes/Main/CharacterSelect.unity
+    guid: f51c04da0c292104584a0868ac2a3782
+  - enabled: 1
+    path: Assets/Scenes/Main/OnlineBase.unity
+    guid: 0c3b7a91e2d54f6789abcdef01234567
+  - enabled: 1
     path: Assets/Scenes/Main/Online.unity
     guid: 9245a8df58553ad4588037e78d9d5493
   - enabled: 1

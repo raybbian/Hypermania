@@ -12,7 +12,7 @@ namespace Design.Configs
         public int DashWindow;
         public int SuperJumpWindow;
         public int InputBufferWindow;
-        public int BeatCancelWindow;
+        public int SuperAttackWindow;
     }
 
     [Serializable]
@@ -37,14 +37,19 @@ namespace Design.Configs
         public sfloat RunningSpeedMultiplier = 2;
         public sfloat SuperJumpMultiplier = (sfloat)1.25f;
         public int RoundTimeTicks = 10800;
-        public int RoundCountdownTicks = 180;
+        public int RoundCountdownTicks => Audio.BeatsToFrame(8);
         public sfloat MaxHype = 100;
         public sfloat HypeMovementFactor = (sfloat)0.3f;
+        public sfloat PassiveSuperGain = (sfloat)5f;
         public sfloat CameraHalfHeight = (sfloat)1.5f;
         public sfloat CameraPadding = (sfloat)0.3f;
         public int RoundEndTicks = 120;
+        public int SuperDisplayHitstopTicks = 60;
+        public int SuperPostDisplayHitstopTicks = 0;
         public sfloat FloatingFactor = (sfloat)1.3f;
         public int ManiaSlowTicks = 60;
+        public int ManiaFailStunTicks = 30;
+        public sfloat ManiaFailKnockbackMagnitude = (sfloat)1.5f;
         public sfloat CameraHalfWidth => CameraHalfHeight * (sfloat)1.7777777f;
 
         [SerializeField]

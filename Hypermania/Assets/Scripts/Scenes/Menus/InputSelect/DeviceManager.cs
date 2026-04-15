@@ -43,6 +43,9 @@ namespace Scenes.Menus.InputSelect
         [SerializeField]
         private bool _debug = false;
 
+        private const float AxisThreshold = 0.75f;
+        private readonly Dictionary<InputDevice, (bool prevLeft, bool prevRight)> _stickLatch = new();
+
         public bool ValidAssignments(out InputDevice player1, out InputDevice player2)
         {
             player1 = SessionDirectory
@@ -123,6 +126,7 @@ namespace Scenes.Menus.InputSelect
             {
                 if (SessionDirectory.RegisteredDevices.Remove(device))
                 {
+                    _stickLatch.Remove(device);
                     if (_debug)
                         Debug.Log($"Device {device.name} has disconnected.");
                 }
@@ -139,18 +143,24 @@ namespace Scenes.Menus.InputSelect
                 switch (device)
                 {
                     case Gamepad gamepad:
+                        bool currLeft =
+                            gamepad.leftStick.x.value < -AxisThreshold || gamepad.rightStick.x.value < -AxisThreshold;
+                        bool currRight =
+                            gamepad.leftStick.x.value > AxisThreshold || gamepad.rightStick.x.value > AxisThreshold;
+                        (bool prevLeft, bool prevRight) = _stickLatch.TryGetValue(device, out var prev)
+                            ? prev
+                            : (false, false);
                         left =
                             gamepad.leftTrigger.wasPressedThisFrame
                             || gamepad.leftShoulder.wasPressedThisFrame
                             || gamepad.dpad.left.wasPressedThisFrame
-                            || gamepad.leftStick.x.value < -0.5f
-                            || gamepad.rightStick.x.value < -0.5f;
+                            || (currLeft && !prevLeft);
                         right =
                             gamepad.rightTrigger.wasPressedThisFrame
                             || gamepad.rightShoulder.wasPressedThisFrame
                             || gamepad.dpad.right.wasPressedThisFrame
-                            || gamepad.leftStick.x.value > 0.5f
-                            || gamepad.rightStick.x.value > 0.5f;
+                            || (currRight && !prevRight);
+                        _stickLatch[device] = (currLeft, currRight);
                         break;
                     case Keyboard keyboard:
                         left = keyboard.aKey.wasPressedThisFrame || keyboard.leftArrowKey.wasPressedThisFrame;

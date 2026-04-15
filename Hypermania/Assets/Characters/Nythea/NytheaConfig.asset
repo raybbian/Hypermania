@@ -16,8 +16,18 @@ MonoBehaviour:
   Prefab: {fileID: 5766376669795590084, guid: 692614c6f0138c5709de58dbca0159e4, type: 3}
   MoveSfx: {fileID: 11400000, guid: 4e16a963506edac26ae5b3acd6883da1, type: 2}
   Skins:
-  - {fileID: 7108339969198208228, guid: 7bce4506c706589b0ba441fd802927e8, type: 3}
-  - {fileID: 7108339969198208228, guid: f6fdaaf67e68349c7961174219f92281, type: 3}
+  - MainColor: {r: 0.27058825, g: 0.30980393, b: 0.93725497, a: 1}
+    LightColor: {r: 0.7137255, g: 0.8352942, b: 0.95294124, a: 1}
+    AccentColor: {r: 0.8078432, g: 0.21960786, b: 0.20392159, a: 1}
+    SpriteLibrary: {fileID: 7108339969198208228, guid: 7bce4506c706589b0ba441fd802927e8, type: 3}
+    Portrait: {fileID: 2800000, guid: 66bd42930e8db0f4b911bfdc119f8c13, type: 3}
+    Splash: {fileID: 2800000, guid: 04a46b432d6a62443800ebef7de33dce, type: 3}
+  - MainColor: {r: 0.27058825, g: 0.30980393, b: 0.93725497, a: 1}
+    LightColor: {r: 0.7607844, g: 0.8745099, b: 0.9960785, a: 1}
+    AccentColor: {r: 0.6901961, g: 0.454902, b: 0.92549026, a: 1}
+    SpriteLibrary: {fileID: 7108339969198208228, guid: f6fdaaf67e68349c7961174219f92281, type: 3}
+    Portrait: {fileID: 2800000, guid: 02b2dafe45ba6af4181a6795730a3e14, type: 3}
+    Splash: {fileID: 2800000, guid: 515b1a4207a987d4b9ef99b7d025f51e, type: 3}
   AnimationController: {fileID: 22100000, guid: b2247d1bd644d04a3a78e3aa68904cb8, type: 2}
   CharacterHeight:
     rawValue: 1071225242
@@ -28,6 +38,8 @@ MonoBehaviour:
   JumpVelocity:
     rawValue: 1089470464
   Health:
+    rawValue: 1132068864
+  SuperMax:
     rawValue: 1120403456
   BurstMax:
     rawValue: 1112014848
@@ -40,6 +52,12 @@ MonoBehaviour:
     rawValue: 1114636288
   BackAirDashDistance:
     rawValue: 1113325568
+  SuperDisplay:
+    AnimState: 11
+    StartFrame: 12
+    CameraLocalPosition: {x: 0, y: 1.35, z: -2}
+    CameraOrthoSize:
+      rawValue: 1053609165
   Hitboxes:
     values:
     - {fileID: 11400000, guid: b3afc991f416967e5b3e636cd58f772a, type: 2}
@@ -74,3 +92,10 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 14a63c9ee180e6815a798c717c53def4, type: 2}
     - {fileID: 11400000, guid: f43038ecce381d3519c8d5d7e3d176ae, type: 2}
     - {fileID: 11400000, guid: 7df773ebc66a3903eade94cab88d8482, type: 2}
+    - {fileID: 11400000, guid: 5500f7246b7ab4e46bf16bbf8031a43d, type: 2}
+    - {fileID: 11400000, guid: 16bd5e4831fe7ea44a55e99b0c2de25d, type: 2}
+    - {fileID: 11400000, guid: 4bc7b5e3f82fd5546b2510cbf9f3d05f, type: 2}
+  Combos:
+  - {fileID: 11400000, guid: b997b2bf67ce87ec2ad78220aa1d20ca, type: 2}
+  Projectiles:
+  - {fileID: 11400000, guid: b45871cdc2550e849ad28a3a712b2d32, type: 2}

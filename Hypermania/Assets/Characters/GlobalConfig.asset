@@ -30,25 +30,32 @@ MonoBehaviour:
   SuperJumpMultiplier:
     rawValue: 1067450368
   RoundTimeTicks: 10800
-  RoundCountdownTicks: 180
   MaxHype:
     rawValue: 1120403456
   HypeMovementFactor:
     rawValue: 1050253722
+  PassiveSuperGain:
+    rawValue: 1028443341
   CameraHalfHeight:
-    rawValue: 1069547520
+    rawValue: 1070386381
   CameraPadding:
     rawValue: 1050253722
-  RoundEndTicks: 160
+  RoundEndTicks: 240
+  SuperDisplayHitstopTicks: 40
+  SuperPostDisplayHitstopTicks: 10
   FloatingFactor:
     rawValue: 1066192077
   ManiaSlowTicks: 45
+  ManiaFailStunTicks: 30
+  ManiaFailKnockbackMagnitude:
+    rawValue: 1069547520
   _inputConfig:
     DashWindow: 12
     SuperJumpWindow: 8
     InputBufferWindow: 8
-    BeatCancelWindow: 3
+    SuperAttackWindow: 12
   _audioConfig: {fileID: 11400000, guid: 390bdf2077e7858679ef87c91e25471c, type: 2}
   _configs:
     values:
     - {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}
+    - {fileID: 11400000, guid: 53758779623dce9459d3eee5c2432b39, type: 2}

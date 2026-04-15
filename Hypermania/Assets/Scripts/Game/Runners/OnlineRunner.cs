@@ -15,9 +15,12 @@ namespace Game.Runners
     {
         private P2PSession<GameState, GameInput, SteamNetworkingIdentity> _session;
 
+        private bool _disconnected;
         private uint _waitRemaining;
         private PlayerHandle _myHandle;
         private PlayerHandle _remoteHandle;
+
+        public override bool Disconnected => _disconnected;
 
         public override void Init(
             List<(PlayerHandle playerHandle, PlayerKind playerKind, SteamNetworkingIdentity address)> players,
@@ -66,6 +69,7 @@ namespace Game.Runners
 
         public override void DeInit()
         {
+            _disconnected = false;
             _waitRemaining = 0;
             _session = null;
             _myHandle = new PlayerHandle(-1);
@@ -75,42 +79,55 @@ namespace Game.Runners
 
         public override bool Poll(float deltaTime)
         {
-            if (!_initialized)
+            if (!_initialized || _disconnected)
             {
                 return false;
             }
 
-            _inputBuffers[0].Clear();
-            _inputBuffers[0].Saturate();
-
-            _session.PollRemoteClients();
-
-            foreach (RollbackEvent<GameInput, SteamNetworkingIdentity> ev in _session.DrainEvents())
+            try
             {
-                Debug.Log($"[Game] Received {ev.Kind} event");
-                switch (ev.Kind)
+                _inputBuffers[0].Clear();
+                _inputBuffers[0].Saturate();
+
+                _session.PollRemoteClients();
+
+                foreach (RollbackEvent<GameInput, SteamNetworkingIdentity> ev in _session.DrainEvents())
                 {
-                    case RollbackEventKind.WaitRecommendation:
-                        var waitRec = ev.GetWaitRecommendation();
-                        _waitRemaining = waitRec.SkipFrames;
-                        break;
+                    Debug.Log($"[Game] Received {ev.Kind} event");
+                    switch (ev.Kind)
+                    {
+                        case RollbackEventKind.WaitRecommendation:
+                            var waitRec = ev.GetWaitRecommendation();
+                            _waitRemaining = waitRec.SkipFrames;
+                            break;
+                        case RollbackEventKind.Disconnected:
+                        case RollbackEventKind.DesyncDetected:
+                            Debug.LogWarning($"[Game] Disconnected due to {ev.Kind}");
+                            _disconnected = true;
+                            return false;
+                    }
+                }
+
+                // accumulate time and update frame
+                float fpsDelta = 1.0f / GameManager.TPS;
+                if (_session.FramesAhead > 0)
+                {
+                    fpsDelta *= 1.1f;
+                }
+
+                _time += deltaTime;
+                while (_time > fpsDelta)
+                {
+                    _time -= fpsDelta;
+                    bool finished = GameLoop(fpsDelta);
+                    if (finished)
+                        return true;
                 }
             }
-
-            // accumulate time and update frame
-            float fpsDelta = 1.0f / GameManager.TPS;
-            if (_session.FramesAhead > 0)
+            catch (Exception e)
             {
-                fpsDelta *= 1.1f;
-            }
-
-            _time += deltaTime;
-            while (_time > fpsDelta)
-            {
-                _time -= fpsDelta;
-                bool finished = GameLoop(fpsDelta);
-                if (finished)
-                    return true;
+                Debug.LogWarning($"[Game] Session error, disconnecting: {e.Message}");
+                _disconnected = true;
             }
 
             return false;

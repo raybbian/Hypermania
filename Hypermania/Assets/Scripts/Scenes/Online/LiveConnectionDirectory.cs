@@ -19,8 +19,10 @@ namespace Scenes.Online
 
         public void OnEnable()
         {
-            // start connecting when scene loads
-            if (!OnlineDirectory.InLobby)
+            // start connecting when scene loads. Players is a static populated
+            // by OnlineDirectory.OnStartWithPlayers; it survives scene unloads
+            // (unlike InLobby, which depends on OnlineBase still being loaded).
+            if (OnlineDirectory.Players == null || OnlineDirectory.Players.Count < 2)
                 return;
             StartWithPlayers(OnlineDirectory.Players);
         }

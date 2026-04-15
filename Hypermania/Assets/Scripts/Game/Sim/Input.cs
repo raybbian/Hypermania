@@ -42,6 +42,18 @@ namespace Game.Sim
 
         public static GameInput None => new GameInput(InputFlags.None);
 
+        public static InputFlags FlipHorizontalInputs(InputFlags input)
+        {
+            bool hasLeft = (input & InputFlags.Left) != 0;
+            bool hasRight = (input & InputFlags.Right) != 0;
+            input &= ~(InputFlags.Left | InputFlags.Right);
+            if (hasLeft)
+                input |= InputFlags.Right;
+            if (hasRight)
+                input |= InputFlags.Left;
+            return input;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool HasInput(InputFlags input)
         {
@@ -71,5 +83,7 @@ namespace Game.Sim
         Mania4 = 1 << 13,
         Mania5 = 1 << 14,
         Mania6 = 1 << 15,
+        Dash = 1 << 16,
+        Grab = 1 << 17,
     }
 }

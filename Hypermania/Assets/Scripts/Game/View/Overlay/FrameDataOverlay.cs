@@ -110,6 +110,10 @@ namespace Game.View.Overlay
                 {
                     _cells[i, baseIdx].SetType(FrameType.Hitstop);
                 }
+                else if (state.Fighters[i].State == CharacterState.Grabbed)
+                {
+                    _cells[i, baseIdx].SetType(FrameType.Grabbed);
+                }
                 else
                 {
                     _cells[i, baseIdx].SetType(state.SimFrame, state.Fighters[i], options.Players[i].Character);
@@ -132,20 +136,30 @@ namespace Game.View.Overlay
 
             _curFrameBar.GetComponent<RectTransform>().anchoredPosition = new Vector2((baseIdx + 1) * _cellWidth, 0f);
 
-            if (
-                options.Global.Audio.BeatWithinWindow(
-                    state.RealFrame,
-                    AudioConfig.BeatSubdivision.QuarterNote,
-                    options.Global.Input.BeatCancelWindow
-                )
-            )
+            _cells[2, baseIdx].SetType(InActiveManiaHitWindow(state) ? FrameType.Active : FrameType.Neutral);
+        }
+
+        private static bool InActiveManiaHitWindow(in GameState state)
+        {
+            for (int p = 0; p < state.Manias.Length; p++)
             {
-                _cells[2, baseIdx].SetType(FrameType.Active);
+                if (!state.Manias[p].Enabled(state.RealFrame))
+                    continue;
+
+                int halfRange = state.Manias[p].Config.HitHalfRange;
+                ManiaNoteChannel[] channels = state.Manias[p].Channels;
+                for (int c = 0; c < channels.Length; c++)
+                {
+                    Deque<ManiaNote> notes = channels[c].Notes;
+                    for (int n = 0; n < notes.Count; n++)
+                    {
+                        int delta = state.RealFrame - notes[n].Tick;
+                        if (delta >= -halfRange && delta <= halfRange)
+                            return true;
+                    }
+                }
             }
-            else
-            {
-                _cells[2, baseIdx].SetType(FrameType.Neutral);
-            }
+            return false;
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Game
         public const int ROLLBACK_FRAMES = 8;
 
         public Action OnGameFinished;
+        public Action OnGameDisconnected;
         public bool FirstFinish;
 
         void OnValidate()
@@ -53,6 +54,11 @@ namespace Game
         void Update()
         {
             bool finished = Runner.Poll(Time.deltaTime);
+            if (Runner.Disconnected && Runner.Initialized)
+            {
+                OnGameDisconnected?.Invoke();
+                return;
+            }
             if (finished && FirstFinish)
             {
                 OnGameFinished?.Invoke();

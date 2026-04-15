@@ -18,9 +18,9 @@ namespace Game
         MediumAttack = 8,
         MediumAerial = 9,
         MediumCrouching = 10,
-        SuperAttack = 11,
-        SuperAerial = 12,
-        SuperCrouching = 13,
+        HeavyAttack = 11,
+        HeavyAerial = 12,
+        HeavyCrouching = 13,
         SpecialAttack = 14,
         SpecialAerial = 15,
         SpecialCrouching = 16,
@@ -37,6 +37,9 @@ namespace Game
         Crouch = 27,
         Falling = 30,
         Landing = 31,
+        Grabbed = 32,
+        Grab = 33,
+        Throw = 34,
     }
 
     [Serializable]
@@ -44,5 +47,6 @@ namespace Game
     {
         // SampleFighter = 0,
         Nythea = 1,
+        Via = 2,
     }
 }

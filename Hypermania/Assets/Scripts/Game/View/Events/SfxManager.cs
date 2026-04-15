@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Utils;
 
 namespace Game.View.Events
 {
@@ -52,6 +53,18 @@ namespace Game.View.Events
             {
                 StartCoroutine(FadeOut(source, _fadeOutDuration));
             }
+        }
+
+        public void AddDesired(SfxKind kind, Frame frame, int hash = 0)
+        {
+            AddDesired(
+                new ViewEvent<SfxEvent>
+                {
+                    Event = new SfxEvent { Kind = kind },
+                    StartFrame = frame,
+                    Hash = hash,
+                }
+            );
         }
 
         public override bool EffectIsFinished(AudioSource effect)

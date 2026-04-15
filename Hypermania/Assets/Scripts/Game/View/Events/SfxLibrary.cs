@@ -16,6 +16,8 @@ namespace Game.View.Events
         Woosh,
         ScytheSwing,
         Sweep,
+        SuperReady,
+        SuperStart,
     }
 
     [Serializable]

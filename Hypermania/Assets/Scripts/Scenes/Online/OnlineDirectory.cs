@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +13,6 @@ namespace Scenes.Online
     [DisallowMultipleComponent]
     public class OnlineDirectory : MonoBehaviour
     {
-        private static SteamMatchmakingClient _matchmakingClient;
         private static List<CSteamID> _players;
         public static IReadOnlyList<CSteamID> Players => _players;
 
@@ -39,31 +37,38 @@ namespace Scenes.Online
         [SerializeField]
         private TMP_InputField _createLobbyText;
 
-        public static bool InLobby => _matchmakingClient.InLobby;
+        public static bool InLobby =>
+            OnlineBaseDirectory.Matchmaking != null && OnlineBaseDirectory.Matchmaking.InLobby;
+
+        private SteamMatchmakingClient Matchmaking => OnlineBaseDirectory.Matchmaking;
 
         public void Awake()
         {
-            _players = new List<CSteamID>();
-            _matchmakingClient = new();
+            _players ??= new List<CSteamID>();
         }
 
         public void OnEnable()
         {
-            _matchmakingClient.OnStartWithPlayers += OnStartWithPlayers;
+            if (Matchmaking != null)
+                Matchmaking.OnStartWithPlayers += OnStartWithPlayers;
         }
 
         public void OnDisable()
         {
-            // sometimes the online scene gets unloaded, in which case we should leave the lobby
-            _matchmakingClient.Leave();
-            _matchmakingClient.OnStartWithPlayers -= OnStartWithPlayers;
+            if (Matchmaking != null)
+                Matchmaking.OnStartWithPlayers -= OnStartWithPlayers;
         }
 
         public void CreateLobby() => StartCoroutine(CreateLobbyRoutine());
 
         IEnumerator CreateLobbyRoutine()
         {
-            var task = _matchmakingClient.Create();
+            if (Matchmaking == null)
+            {
+                Debug.LogError("[Online] Matchmaking unavailable; OnlineBase scene missing or Steam not initialized.");
+                yield break;
+            }
+            var task = Matchmaking.Create();
             while (!task.IsCompleted)
                 yield return null;
             if (task.IsFaulted)
@@ -75,6 +80,11 @@ namespace Scenes.Online
 
         public void JoinLobby()
         {
+            if (Matchmaking == null)
+            {
+                Debug.LogError("[Online] Matchmaking unavailable; OnlineBase scene missing or Steam not initialized.");
+                return;
+            }
             string txt = new string(_joinLobbyText.text.Where(char.IsDigit).ToArray());
 
             if (string.IsNullOrWhiteSpace(txt))
@@ -102,7 +112,7 @@ namespace Scenes.Online
 
         IEnumerator JoinLobbyRoutine(CSteamID lobbyId)
         {
-            var task = _matchmakingClient.Join(lobbyId);
+            var task = Matchmaking.Join(lobbyId);
             while (!task.IsCompleted)
                 yield return null;
             if (task.IsFaulted)
@@ -116,7 +126,9 @@ namespace Scenes.Online
 
         IEnumerator LeaveLobbyRoutine()
         {
-            var task = _matchmakingClient.Leave();
+            if (Matchmaking == null)
+                yield break;
+            var task = Matchmaking.Leave();
             while (!task.IsCompleted)
                 yield return null;
             if (task.IsFaulted)
@@ -130,7 +142,9 @@ namespace Scenes.Online
 
         IEnumerator StartGameRoutine()
         {
-            var task = _matchmakingClient.StartGame();
+            if (Matchmaking == null)
+                yield break;
+            var task = Matchmaking.StartGame();
             while (!task.IsCompleted)
                 yield return null;
             if (task.IsFaulted)
@@ -146,34 +160,41 @@ namespace Scenes.Online
                 .Instance.LoadNewScene()
                 .Load(SceneID.InputSelect, SceneDatabase.INPUT_SELECT)
                 .Unload(SceneID.Online)
+                .Unload(SceneID.OnlineBase)
                 .WithOverlay()
                 .Execute();
         }
 
         void Update()
         {
+            if (!SteamManager.IsInitialized || Matchmaking == null)
+                return;
+
             _createLobbyButton.interactable = !InLobby;
             _joinLobbyButton.interactable = !InLobby;
             _leaveLobbyButton.interactable = InLobby;
             if (InLobby)
             {
-                _createLobbyText.text = _matchmakingClient.CurrentLobby.ToString();
+                _createLobbyText.text = Matchmaking.CurrentLobby.ToString();
             }
 
-            var players = _matchmakingClient.PlayersInLobby();
+            var players = Matchmaking.PlayersInLobby();
             _playerList.UpdatePlayerList(players);
 
-            CSteamID host = SteamMatchmaking.GetLobbyOwner(_matchmakingClient.CurrentLobby);
+            CSteamID host = SteamMatchmaking.GetLobbyOwner(Matchmaking.CurrentLobby);
             _startGameButton.interactable = players != null && players.Count == 2 && host == SteamUser.GetSteamID();
         }
 
         void OnStartWithPlayers(List<CSteamID> players)
         {
             _players = new List<CSteamID>(players);
-            // go to live connection directory
+            // Transition from Online lobby to CharacterSelect. OnlineBase stays
+            // loaded so the SteamMatchmakingClient (and its lobby) survive the
+            // scene swap.
             SceneLoader
                 .Instance.LoadNewScene()
-                .Load(SceneID.LiveConnection, SceneDatabase.LIVE_CONNECTION)
+                .Load(SceneID.CharacterSelect, SceneDatabase.CHARACTER_SELECT)
+                .Unload(SceneID.Online)
                 .Unload(SceneID.MenuBase)
                 .WithOverlay()
                 .Execute();

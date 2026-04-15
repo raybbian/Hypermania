@@ -24,6 +24,9 @@ namespace Scenes.Battle
         [SerializeField]
         private GameRunner _onlineRunner;
 
+        [SerializeField]
+        private GameRunner _manualRunner;
+
         private static readonly List<(
             PlayerHandle handle,
             PlayerKind playerKind,
@@ -37,11 +40,16 @@ namespace Scenes.Battle
         public void OnEnable()
         {
             _gameManager.OnGameFinished += OnGameFinished;
+            _gameManager.OnGameDisconnected += OnGameDisconnected;
             switch (SessionDirectory.Config)
             {
                 case GameConfig.Local:
                 case GameConfig.Training:
                     _gameManager.Runner = _localRunner;
+                    _gameManager.StartGame(LOCAL_DEFAULT, null, SessionDirectory.Options);
+                    break;
+                case GameConfig.Manual:
+                    _gameManager.Runner = _manualRunner;
                     _gameManager.StartGame(LOCAL_DEFAULT, null, SessionDirectory.Options);
                     break;
                 case GameConfig.Online:
@@ -75,9 +83,21 @@ namespace Scenes.Battle
                 .Execute();
         }
 
+        void OnGameDisconnected()
+        {
+            _gameManager.DeInit();
+            SceneLoader
+                .Instance.LoadNewScene()
+                .Unload(SceneID.Battle)
+                .Unload(SceneID.LiveConnection)
+                .WithOverlay()
+                .Execute();
+        }
+
         public void OnDisable()
         {
             _gameManager.OnGameFinished -= OnGameFinished;
+            _gameManager.OnGameDisconnected -= OnGameDisconnected;
         }
     }
 }

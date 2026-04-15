@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Game;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -10,6 +12,10 @@ namespace Design.Configs
     [CreateAssetMenu(menuName = "Hypermania/Audio Config")]
     public class AudioConfig : ScriptableObject
     {
+        [Header("MIDI Source")]
+        public UnityEngine.Object MidiFile;
+        public string MidiTrackName;
+
         public Frame FirstMusicalBeat = Frame.FirstFrame;
 
         [FormerlySerializedAs("BPM")]
@@ -17,6 +23,20 @@ namespace Design.Configs
         public AudioClip AudioClip;
         public EnumArray<Character, AudioClip> CharacterThemes;
         public int LoopBeat = 0;
+
+        /// <summary>Total song length in quarter-note beats. Used with
+        /// <see cref="LoopBeat"/> to determine where the note chart wraps.</summary>
+        public int SongLengthBeats = 232;
+
+        /// <summary>Number of quarter-note beats a single combo spans.</summary>
+        public int ComboBeatCount = 8;
+
+        /// <summary>
+        /// Authored note positions as absolute sim-frame indices for the
+        /// first playthrough of the song. Generated from MIDI via the
+        /// editor "Generate Notes from MIDI" button.
+        /// </summary>
+        public Frame[] Notes = Array.Empty<Frame>();
 
         //Convert BPM to seconds per frame, then seconds to frames
         public int FramesPerBeat => Mathsf.RoundToInt((sfloat)60f / Bpm * GameManager.TPS);
@@ -34,31 +54,93 @@ namespace Design.Configs
             Quartertriplet = 12,
         }
 
-        public Frame NextBeat(Frame frame, BeatSubdivision subdivision)
+        /// <summary>
+        /// Convert a beat number to a sim-frame using continuous math,
+        /// rounding once at the end. This matches the Python MIDI script's
+        /// approach and avoids the cumulative rounding error of
+        /// <c>beats * FramesPerBeat</c> (where FramesPerBeat is pre-rounded).
+        /// </summary>
+        public int BeatsToFrame(int beats)
         {
-            sfloat framesPerSubdivision = FramesPerBeat * ((sfloat)(int)BeatSubdivision.QuarterNote / (int)subdivision);
-            int framesSinceFirstBeat = frame - FirstMusicalBeat;
-
-            return new Frame(
-                Mathsf.RoundToInt(Mathsf.CeilToInt(framesSinceFirstBeat / framesPerSubdivision) * framesPerSubdivision)
-            );
+            return Mathsf.RoundToInt((sfloat)beats * (sfloat)60f / Bpm * GameManager.TPS);
         }
 
-        public Frame ClosestBeat(Frame frame, BeatSubdivision subdivision)
+        /// <summary>
+        /// Return a slice of the note chart spanning <see cref="ComboBeatCount"/>
+        /// beats starting at or after <paramref name="minStart"/>. When the song
+        /// loops, notes from the loop section are re-emitted at correct absolute
+        /// frame positions. Loop iteration offsets are computed via continuous math
+        /// (<see cref="BeatsToFrame"/>) to avoid cumulative rounding drift.
+        /// </summary>
+        public Frame[] SliceFrom(Frame minStart)
         {
-            int framesSinceFirstBeat = frame - FirstMusicalBeat;
-            sfloat framesPerSubdivision = FramesPerBeat * ((sfloat)(int)BeatSubdivision.QuarterNote / (int)subdivision);
-            return new Frame(
-                Mathsf.RoundToInt(Mathsf.RoundToInt(framesSinceFirstBeat / framesPerSubdivision) * framesPerSubdivision)
-            );
+            if (Notes == null || Notes.Length == 0)
+                return Array.Empty<Frame>();
+
+            Frame endBound = minStart + BeatsToFrame(ComboBeatCount);
+            int songEnd = BeatsToFrame(SongLengthBeats);
+            int loopStartFrame = BeatsToFrame(LoopBeat);
+            int loopBeats = SongLengthBeats - LoopBeat;
+
+            var result = new List<Frame>();
+
+            int first = LowerBound(Notes, minStart);
+
+            // First playthrough: notes in [minStart, min(endBound, songEnd))
+            for (int i = first; i < Notes.Length; i++)
+            {
+                if (Notes[i].No >= songEnd || Notes[i] > endBound)
+                    break;
+                result.Add(Notes[i]);
+            }
+
+            if (endBound.No <= songEnd || loopBeats <= 0)
+                return result.ToArray();
+
+            // Loop-section note indices via binary search
+            int loopFirst = LowerBound(Notes, (Frame)loopStartFrame);
+            int loopEnd = LowerBound(Notes, (Frame)songEnd);
+            if (loopFirst >= loopEnd)
+                return result.ToArray();
+
+            int approxLoopLen = songEnd - loopStartFrame;
+            int startIter = minStart.No >= songEnd ? Math.Max(1, (minStart.No - songEnd) / approxLoopLen) : 1;
+
+            for (int n = startIter; ; n++)
+            {
+                // Continuous math: rounds once per iteration, no cumulative drift.
+                int iterStart = BeatsToFrame(LoopBeat + n * loopBeats);
+
+                int firstAbsolute = Notes[loopFirst].No - loopStartFrame + iterStart;
+                if (firstAbsolute > endBound.No)
+                    break;
+
+                for (int i = loopFirst; i < loopEnd; i++)
+                {
+                    int absolute = Notes[i].No - loopStartFrame + iterStart;
+                    if (absolute > endBound.No)
+                        break;
+                    if (absolute >= minStart.No)
+                        result.Add((Frame)absolute);
+                }
+            }
+
+            return result.ToArray();
         }
 
-        public bool BeatWithinWindow(Frame frame, BeatSubdivision subdivision, int windowFrames)
+        private static int LowerBound(Frame[] arr, Frame target)
         {
-            Frame beatFrame = ClosestBeat(frame, subdivision);
-            int distanceToNearestBeat = Mathsf.Abs(frame - beatFrame);
-            bool isInWindow = distanceToNearestBeat <= windowFrames;
-            return isInWindow;
+            int lo = 0,
+                hi = arr.Length;
+            while (lo < hi)
+            {
+                int mid = (lo + hi) / 2;
+                if (arr[mid] < target)
+                    lo = mid + 1;
+                else
+                    hi = mid;
+            }
+            return lo;
         }
     }
 }

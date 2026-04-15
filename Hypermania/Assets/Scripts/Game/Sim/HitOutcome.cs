@@ -8,6 +8,7 @@ namespace Game.Sim
         None,
         Blocked,
         Hit,
+        Grabbed,
     }
 
     public struct HitOutcome

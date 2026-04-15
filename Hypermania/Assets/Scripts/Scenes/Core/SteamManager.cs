@@ -44,6 +44,9 @@ public class SteamManager : MonoBehaviour
 		}
 	}
 
+	// Safe to call during shutdown — does not auto-create a SteamManager
+	public static bool IsInitialized => s_instance != null && s_instance.m_bInitialized;
+
 	protected SteamAPIWarningMessageHook_t m_SteamAPIWarningMessageHook;
 
 	[AOT.MonoPInvokeCallback(typeof(SteamAPIWarningMessageHook_t))]
@@ -162,6 +165,7 @@ public class SteamManager : MonoBehaviour
 			return;
 		}
 
+		m_bInitialized = false;
 		SteamAPI.Shutdown();
 	}
 

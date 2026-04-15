@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Design.Configs;
 using Game.Sim;
 using Game.View.Events;
 using Game.View.Events.Vfx;
 using Steamworks;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 using Utils;
 
 namespace Game.View.Mania
@@ -16,6 +18,7 @@ namespace Game.View.Mania
         public float ScrollSpeed;
         public Transform[] Anchors;
         public GameObject[] Notes;
+        public RectTransform BeatLineContainer;
 
         public void Validate()
         {
@@ -39,11 +42,42 @@ namespace Game.View.Mania
         [SerializeField]
         public ManiaViewConfig Config;
 
-        private Dictionary<int, GameObject> _activeNotes;
+        private Dictionary<int, ManiaNoteView> _activeNotes;
 
-        public void Init()
+        private AudioConfig _audioConfig;
+        private List<RectTransform> _beatLinePool;
+
+        public void Init(AudioConfig audioConfig)
         {
-            _activeNotes = new Dictionary<int, GameObject>();
+            _audioConfig = audioConfig;
+            _activeNotes = new Dictionary<int, ManiaNoteView>();
+            _beatLinePool = new List<RectTransform>();
+
+            RectTransform rect = GetComponent<RectTransform>();
+            float viewHeight = rect.rect.height;
+            int framesVisible = Mathf.CeilToInt(viewHeight / Config.ScrollSpeed);
+            int poolSize = framesVisible / _audioConfig.FramesPerBeat + 3;
+
+            Transform lineParent = Config.BeatLineContainer != null ? Config.BeatLineContainer.transform : transform;
+
+            for (int i = 0; i < poolSize; i++)
+            {
+                GameObject lineObj = new GameObject("BeatLine", typeof(RectTransform), typeof(Image));
+                lineObj.transform.SetParent(lineParent, false);
+
+                RectTransform lineRect = lineObj.GetComponent<RectTransform>();
+                lineRect.sizeDelta = new Vector2(rect.rect.width, 1f);
+                lineRect.anchorMin = new Vector2(0.5f, 0.5f);
+                lineRect.anchorMax = new Vector2(0.5f, 0.5f);
+
+                Image img = lineObj.GetComponent<Image>();
+                img.color = new Color(1f, 1f, 1f, 0.15f);
+                img.raycastTarget = false;
+
+                lineObj.SetActive(false);
+                _beatLinePool.Add(lineRect);
+            }
+
             gameObject.SetActive(false);
         }
 
@@ -51,9 +85,19 @@ namespace Game.View.Mania
         {
             foreach (var obj in _activeNotes.Values)
             {
-                Destroy(obj);
+                Destroy(obj.gameObject);
             }
             _activeNotes = null;
+
+            if (_beatLinePool != null)
+            {
+                foreach (var line in _beatLinePool)
+                {
+                    Destroy(line.gameObject);
+                }
+                _beatLinePool = null;
+            }
+            _audioConfig = null;
         }
 
         public void OnValidate()
@@ -68,43 +112,13 @@ namespace Game.View.Mania
             {
                 if (maniaState.ManiaEvents[i].Kind == ManiaEventKind.Hit)
                 {
-                    sfx.AddDesired(
-                        new ViewEvent<SfxEvent>
-                        {
-                            Event = new SfxEvent { Kind = SfxKind.ComboGood },
-                            StartFrame = realFrame,
-                            Hash = i,
-                        }
-                    );
-
-                    vfx.AddDesired(
-                        new ViewEvent<VfxEvent>
-                        {
-                            Event = new VfxEvent { Kind = VfxKind.NoteHit, Position = world },
-                            StartFrame = realFrame,
-                            Hash = i,
-                        }
-                    );
+                    sfx.AddDesired(SfxKind.ComboGood, realFrame, hash: i);
+                    vfx.AddDesired(VfxKind.NoteHit, realFrame, hash: i, position: world);
                 }
                 else if (maniaState.ManiaEvents[i].Kind == ManiaEventKind.Missed)
                 {
-                    sfx.AddDesired(
-                        new ViewEvent<SfxEvent>
-                        {
-                            Event = new SfxEvent { Kind = SfxKind.ComboMiss },
-                            StartFrame = realFrame,
-                            Hash = i,
-                        }
-                    );
-
-                    vfx.AddDesired(
-                        new ViewEvent<VfxEvent>
-                        {
-                            Event = new VfxEvent { Kind = VfxKind.NoteMiss, Position = world },
-                            StartFrame = realFrame,
-                            Hash = i,
-                        }
-                    );
+                    sfx.AddDesired(SfxKind.ComboMiss, realFrame, hash: i);
+                    vfx.AddDesired(VfxKind.NoteMiss, realFrame, hash: i, position: world);
                 }
             }
         }
@@ -113,7 +127,7 @@ namespace Game.View.Mania
         {
             gameObject.SetActive(state.EndFrame != Frame.NullFrame);
 
-            Dictionary<int, GameObject> renderedNow = new Dictionary<int, GameObject>();
+            Dictionary<int, ManiaNoteView> renderedNow = new Dictionary<int, ManiaNoteView>();
 
             for (int i = 0; i < state.Channels.Length; i++)
             {
@@ -125,7 +139,7 @@ namespace Game.View.Mania
 
             for (int i = 0; i < state.Config.NumKeys; i++)
             {
-                for (int j = 0; j < state.Channels[i].Notes.Count; j++)
+                for (int j = state.Channels[i].NextActiveIdx; j < state.Channels[i].Notes.Count; j++)
                 {
                     if (!RenderNote(frame, i, state.Channels[i].Notes[j], out var noteView))
                     {
@@ -140,13 +154,56 @@ namespace Game.View.Mania
             {
                 if (!renderedNow.ContainsKey(id))
                 {
-                    Destroy(obj);
+                    Destroy(obj.gameObject);
                 }
             }
             _activeNotes = renderedNow;
+
+            RenderBeatLines(frame);
         }
 
-        private bool RenderNote(Frame frame, int channel, in ManiaNote note, out GameObject noteView)
+        private void RenderBeatLines(Frame frame)
+        {
+            if (_audioConfig == null || _beatLinePool == null)
+                return;
+
+            int framesPerBeat = _audioConfig.FramesPerBeat;
+            int firstBeat = _audioConfig.FirstMusicalBeat.No;
+            float anchorY = Config.Anchors[0].localPosition.y;
+            float halfHeight = GetComponent<RectTransform>().rect.height / 2;
+
+            // Find the first beat index that could be visible (below bottom of view)
+            int minBeatIndex = Mathf.FloorToInt((float)(frame.No - firstBeat) / framesPerBeat) - 1;
+            if (minBeatIndex < 0)
+                minBeatIndex = 0;
+
+            int poolIndex = 0;
+            for (int b = minBeatIndex; poolIndex < _beatLinePool.Count; b++)
+            {
+                int beatFrame = firstBeat + _audioConfig.BeatsToFrame(b);
+                float y = (beatFrame - frame) * Config.ScrollSpeed + anchorY;
+
+                if (y > halfHeight)
+                    break;
+
+                // skip lines below the view
+                if (y < -halfHeight)
+                    continue;
+
+                RectTransform line = _beatLinePool[poolIndex];
+                line.gameObject.SetActive(true);
+                line.localPosition = new Vector3(0f, y, 0f);
+                poolIndex++;
+            }
+
+            // hide unused lines
+            for (int i = poolIndex; i < _beatLinePool.Count; i++)
+            {
+                _beatLinePool[i].gameObject.SetActive(false);
+            }
+        }
+
+        private bool RenderNote(Frame frame, int channel, in ManiaNote note, out ManiaNoteView noteView)
         {
             noteView = null;
             float x = Config.Anchors[channel].localPosition.x;
@@ -159,14 +216,15 @@ namespace Game.View.Mania
 
             if (!_activeNotes.ContainsKey(note.Id))
             {
-                noteView = Instantiate(Config.Notes[channel], transform, false);
+                GameObject noteObj = Instantiate(Config.Notes[channel], transform, false);
+                noteView = noteObj.GetComponent<ManiaNoteView>();
             }
             else
             {
                 noteView = _activeNotes[note.Id];
             }
 
-            noteView.transform.SetLocalPositionAndRotation(new Vector3(x, y, -1), Quaternion.identity);
+            noteView.Render(x, y, note, Config.ScrollSpeed);
             return true;
         }
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Utils;
 
 namespace Game.View.Events.Vfx
 {
@@ -16,8 +17,6 @@ namespace Game.View.Events.Vfx
         }
     }
 
-    // TODO: should create vfxeffect base component that determines how to start/stop/play each effect, and then call
-    // that here
     public class VfxManager : ViewEventManager<VfxEvent, VfxEffect>
     {
         [SerializeField]
@@ -41,6 +40,29 @@ namespace Game.View.Events.Vfx
         {
             effect.EndEffect();
             Destroy(effect.gameObject);
+        }
+
+        public void AddDesired(
+            VfxKind kind,
+            Frame frame,
+            int hash = 0,
+            Vector2 position = default,
+            Vector2 direction = default
+        )
+        {
+            AddDesired(
+                new ViewEvent<VfxEvent>
+                {
+                    Event = new VfxEvent
+                    {
+                        Kind = kind,
+                        Position = position,
+                        Direction = direction,
+                    },
+                    StartFrame = frame,
+                    Hash = hash,
+                }
+            );
         }
 
         public override bool EffectIsFinished(VfxEffect effect)

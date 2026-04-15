@@ -168,11 +168,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _params:
     CameraSpeed: 10
-    MaxZoom: 2.5
-    MinZoom: 1.5
     Config: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
     Margin: 0.3
-    Padding: 0.3
     Camera: {fileID: 562816628700700724}
 --- !u!114 &102352432
 MonoBehaviour:
@@ -316,6 +313,7 @@ GameObject:
   m_Component:
   - component: {fileID: 182256080}
   - component: {fileID: 182256081}
+  - component: {fileID: 182256082}
   m_Layer: 0
   m_Name: ManualRunner
   m_TagString: Untagged
@@ -351,11 +349,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _view: {fileID: 2114326934}
-  _config: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
+  _options:
+    Global: {fileID: 0}
+    Players: []
+    LocalPlayers: []
   _drawHitboxes: 1
-  _controlsConfig: {fileID: 0}
   _advanceKey: 62
   _holdS: 0.3
+--- !u!114 &182256082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 182256079}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fa09b2976563014987345734764742f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &258473215
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -488,6 +500,7 @@ GameObject:
   m_Component:
   - component: {fileID: 286925406}
   - component: {fileID: 286925405}
+  - component: {fileID: 286925407}
   m_Layer: 0
   m_Name: SingleplayerRunner
   m_TagString: Untagged
@@ -508,9 +521,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _view: {fileID: 2114326934}
-  _config: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
+  _options:
+    Global: {fileID: 0}
+    Players: []
+    LocalPlayers: []
   _drawHitboxes: 1
-  _controlsConfig: {fileID: 0}
 --- !u!4 &286925406
 Transform:
   m_ObjectHideFlags: 0
@@ -526,6 +541,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 556815173}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &286925407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 286925404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fa09b2976563014987345734764742f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &345038340
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -732,7 +759,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Runner: {fileID: 286925405}
-  Started: 0
 --- !u!1 &652384486
 GameObject:
   m_ObjectHideFlags: 0
@@ -792,6 +818,7 @@ GameObject:
   m_Component:
   - component: {fileID: 731679221}
   - component: {fileID: 731679223}
+  - component: {fileID: 731679224}
   m_Layer: 0
   m_Name: MultiplayerRunner
   m_TagString: Untagged
@@ -827,9 +854,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _view: {fileID: 2114326934}
-  _config: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
+  _options:
+    Global: {fileID: 0}
+    Players: []
+    LocalPlayers: []
   _drawHitboxes: 1
-  _controlsConfig: {fileID: 0}
+--- !u!114 &731679224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731679220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fa09b2976563014987345734764742f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &994059579
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1750,6 +1791,7 @@ MonoBehaviour:
     FrameDataOverlay: {fileID: 258473216}
     RoundCountdownView: {fileID: 1350160259}
     HypeBarView: {fileID: 2901949813414236108}
+    KOScreenView: {fileID: 0}
   _disableCameraShake: 0
 --- !u!4 &2114326935
 Transform:

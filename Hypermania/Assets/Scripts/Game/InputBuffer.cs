@@ -13,6 +13,7 @@ namespace Game
         private EnumArray<InputFlags, Binding> _controlScheme;
         private InputDevice _inputDevice;
         private float _joystickDeadzone;
+        private float _triggerThreshold;
 
         /**
          * Base InputBuffer Constructor
@@ -26,12 +27,14 @@ namespace Game
         public InputBuffer(
             InputDevice inputDevice,
             EnumArray<InputFlags, Binding> controlScheme,
-            float joystickDeadzone = 0.25f
+            float joystickDeadzone = 0.25f,
+            float triggerThreshold = 0.25f
         )
         {
             _controlScheme = controlScheme;
             _inputDevice = inputDevice;
             _joystickDeadzone = joystickDeadzone;
+            _triggerThreshold = triggerThreshold;
         }
 
         private InputFlags _input = InputFlags.None;
@@ -82,14 +85,8 @@ namespace Game
                     // Checks if either the primary or alt button set in config is pressed
                     // Ignores keys set to none
                     if (
-                        (
-                            _controlScheme[flag].GetPrimaryGamepadButton() != GamepadButtons.None
-                            && gamePad[(GamepadButton)_controlScheme[flag].GetPrimaryGamepadButton()].isPressed
-                        )
-                        || (
-                            _controlScheme[flag].GetAltGamepadButton() != GamepadButtons.None
-                            && gamePad[(GamepadButton)_controlScheme[flag].GetAltGamepadButton()].isPressed
-                        )
+                        IsGamepadButtonPressed(gamePad, _controlScheme[flag].GetPrimaryGamepadButton())
+                        || IsGamepadButtonPressed(gamePad, _controlScheme[flag].GetAltGamepadButton())
                     )
                     {
                         _input |= flag;
@@ -124,6 +121,23 @@ namespace Game
                     _input &= ~opp;
                 }
             }
+        }
+
+        // Handles both binary and analog trigger reports. Binary-reporting devices
+        // populate the bit/value as 0/1 and register via ButtonControl.isPressed.
+        // Analog-reporting devices get a lower _triggerThreshold so partial pulls
+        // register instead of having to cross Unity's default pressPoint (0.5).
+        private bool IsGamepadButtonPressed(Gamepad gamepad, GamepadButtons button)
+        {
+            if (button == GamepadButtons.None)
+                return false;
+            if (gamepad[(GamepadButton)button].isPressed)
+                return true;
+            if (button == GamepadButtons.LeftTrigger)
+                return gamepad.leftTrigger.value >= _triggerThreshold;
+            if (button == GamepadButtons.RightTrigger)
+                return gamepad.rightTrigger.value >= _triggerThreshold;
+            return false;
         }
 
         public void Clear()

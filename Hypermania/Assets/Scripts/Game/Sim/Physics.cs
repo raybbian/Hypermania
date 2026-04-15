@@ -15,6 +15,7 @@ namespace Game.Sim
         public struct BoxEntry
         {
             public int Owner;
+            public int ProjectileIndex;
             public Box Box;
             public TData Data;
         }
@@ -83,12 +84,13 @@ namespace Game.Sim
             _boxInds = new List<int>(maxHitboxes);
         }
 
-        public int AddBox(int handle, SVector2 boxPos, SVector2 boxSize, in TData data)
+        public int AddBox(int handle, SVector2 boxPos, SVector2 boxSize, in TData data, int projectileIndex = -1)
         {
             int ind = _boxPool.Spawn(
                 new BoxEntry
                 {
                     Owner = handle,
+                    ProjectileIndex = projectileIndex,
                     Box = new Box { Pos = boxPos, Size = boxSize },
                     Data = data,
                 }

@@ -1,3 +1,4 @@
+using Design.Configs;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,12 @@ namespace Game.View.Overlay
         [Header("UI")]
         [SerializeField]
         private Transform _disk;
+
+        [SerializeField]
+        private RawImage _portrait;
+
+        [SerializeField]
+        private Image[] _tint;
 
         [SerializeField]
         private Slider _healthSlider;
@@ -29,9 +36,12 @@ namespace Game.View.Overlay
         private float _prevHealth;
         private Vector3 _baseScale;
 
-        public void Awake()
+        public void Init(CharacterConfig config, int skinIndex)
         {
             _baseScale = _disk.localScale;
+            _portrait.texture = config.Skins[skinIndex].Portrait;
+            foreach (var tint in _tint)
+                tint.color = config.Skins[skinIndex].AccentColor;
         }
 
         public void SetMaxHealth(float health)

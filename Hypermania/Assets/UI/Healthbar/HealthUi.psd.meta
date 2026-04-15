@@ -122,7 +122,7 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 3203, y: -191}
     spritePosition: {x: 354, y: 195}
-  - name: disc
+  - name: discOuter
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -134,7 +134,7 @@ ScriptedImporter:
       y: 588
       width: 440
       height: 440
-    spriteID: 14f9e7f37fa962388ba42396bbf61054
+    spriteID: f9454af30bd084a42ba47989964036fc
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -143,6 +143,28 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 4, y: 588}
+    spritePosition: {x: 62, y: 27}
+  - name: disc
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 452
+      y: 588
+      width: 440
+      height: 440
+    spriteID: 14f9e7f37fa962388ba42396bbf61054
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 452, y: 588}
     spritePosition: {x: 62, y: 27}
   - name: metalContainer
     originalName: 
@@ -266,7 +288,7 @@ ScriptedImporter:
     allowsAlphaSplitting: 0
     androidETC2FallbackOverride: 0
   mosaicLayers: 1
-  characterMode: 1
+  characterMode: 0
   documentPivot: {x: 0, y: 0}
   documentAlignment: 7
   importHiddenLayers: 1
@@ -295,16 +317,26 @@ ScriptedImporter:
     flatten: 0
     isImported: 1
     isVisible: 0
+  - name: discOuter
+    spriteName: discOuter
+    isGroup: 0
+    parentIndex: -1
+    spriteID: f9454af30bd084a42ba47989964036fc
+    layerID: 11
+    mosaicPosition: {x: 4, y: 588}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
   - name: disc
     spriteName: disc
     isGroup: 0
     parentIndex: -1
     spriteID: 14f9e7f37fa962388ba42396bbf61054
     layerID: 4
-    mosaicPosition: {x: 4, y: 588}
+    mosaicPosition: {x: 452, y: 588}
     flatten: 0
     isImported: 1
-    isVisible: 1
+    isVisible: 0
   - name: metalContainer
     spriteName: metalContainer
     isGroup: 0

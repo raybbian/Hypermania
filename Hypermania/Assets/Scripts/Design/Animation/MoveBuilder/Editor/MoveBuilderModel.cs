@@ -110,8 +110,8 @@ namespace Design.Animation.MoveBuilder.Editor
                 {
                     Kind = kind,
                     HitstunTicks = kind == HitboxKind.Hitbox ? 12 : 0,
-                    Knockback = new SVector2(1, 0),
-                    StartsRhythmCombo = false,
+                    Knockback = kind == HitboxKind.Hitbox ? new SVector2(1, 0) : SVector2.zero,
+                    GrabPosition = kind == HitboxKind.Grabbox ? new SVector2(1, 0) : SVector2.zero,
                 },
             };
 

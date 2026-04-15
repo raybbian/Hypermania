@@ -13,6 +13,14 @@ namespace Netcode.P2P
         public bool InLobby => _currentLobby.IsValid();
         public Action<List<CSteamID>> OnStartWithPlayers;
 
+        /// <summary>
+        /// Fires when any lobby member broadcasts a back request (see
+        /// <see cref="SendBackRequest"/>). Fires on the sender too — all
+        /// peers should treat this as "leave the current in-lobby scene
+        /// and return to the Online lobby screen."
+        /// </summary>
+        public Action OnBackRequested;
+
         public SteamMatchmakingClient()
         {
             if (!SteamManager.Initialized)
@@ -71,8 +79,11 @@ namespace Netcode.P2P
             Debug.Log("[Matchmaking] Leave()");
             if (_currentLobby.IsValid())
             {
-                Debug.Log($"[Matchmaking] Leaving lobby {_currentLobby.m_SteamID}");
-                SteamMatchmaking.LeaveLobby(_currentLobby);
+                if (SteamManager.IsInitialized)
+                {
+                    Debug.Log($"[Matchmaking] Leaving lobby {_currentLobby.m_SteamID}");
+                    SteamMatchmaking.LeaveLobby(_currentLobby);
+                }
                 _currentLobby = default;
             }
             return Task.CompletedTask;
@@ -98,7 +109,25 @@ namespace Netcode.P2P
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Broadcasts a back-to-lobby signal to every member (sender included).
+        /// Callers subscribe to <see cref="OnBackRequested"/> to react. Fire-
+        /// and-forget: no state is persisted, so there are no stale-signal
+        /// issues across sessions.
+        /// </summary>
+        public Task SendBackRequest()
+        {
+            if (!_currentLobby.IsValid())
+                return Task.CompletedTask;
+
+            Debug.Log($"[Matchmaking] SendBackRequest(): lobby={_currentLobby.m_SteamID}");
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(BACK_MSG);
+            SteamMatchmaking.SendLobbyChatMsg(_currentLobby, bytes, bytes.Length);
+            return Task.CompletedTask;
+        }
+
         private const string START_MSG = "__START";
+        private const string BACK_MSG = "__BACK";
 
         private CSteamID _currentLobby;
 
@@ -199,6 +228,13 @@ namespace Netcode.P2P
 
             string text = System.Text.Encoding.UTF8.GetString(buffer, 0, len).TrimEnd('\0');
             Debug.Log($"[Matchmaking] OnLobbyChatMessage: from={user.m_SteamID}, type={type}, text='{text}'");
+
+            if (text == BACK_MSG)
+            {
+                Debug.Log($"[Matchmaking] Received BACK from={user.m_SteamID}, me={SteamUser.GetSteamID()}");
+                OnBackRequested?.Invoke();
+                return;
+            }
 
             var players = new List<CSteamID>();
             bool startPresent = TryParseStartMessage(text, players);

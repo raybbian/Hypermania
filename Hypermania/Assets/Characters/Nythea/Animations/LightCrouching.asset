@@ -42,6 +42,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 1
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -70,6 +77,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 1
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -98,6 +112,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 1
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -126,6 +147,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 1
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -154,14 +182,14 @@ MonoBehaviour:
             rawValue: 0
     - CenterLocal:
         x:
-          rawValue: 1059629118
+          rawValue: 1058415708
         y:
           rawValue: 1058845606
       SizeLocal:
         x:
-          rawValue: 1044981892
+          rawValue: 1055047466
         y:
-          rawValue: 1048115950
+          rawValue: 1048115952
       Props:
         Kind: 1
         AttackKind: 2
@@ -204,6 +232,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 2
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -232,14 +267,14 @@ MonoBehaviour:
             rawValue: 0
     - CenterLocal:
         x:
-          rawValue: 1059629118
+          rawValue: 1058415708
         y:
           rawValue: 1058845606
       SizeLocal:
         x:
-          rawValue: 1044981892
+          rawValue: 1055047466
         y:
-          rawValue: 1048115950
+          rawValue: 1048115952
       Props:
         Kind: 1
         AttackKind: 2
@@ -282,6 +317,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 2
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -310,14 +352,14 @@ MonoBehaviour:
             rawValue: 0
     - CenterLocal:
         x:
-          rawValue: 1059629118
+          rawValue: 1058415708
         y:
           rawValue: 1058845606
       SizeLocal:
         x:
-          rawValue: 1044981892
+          rawValue: 1055047466
         y:
-          rawValue: 1048115950
+          rawValue: 1048115952
       Props:
         Kind: 1
         AttackKind: 2
@@ -360,6 +402,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 2
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -388,14 +437,14 @@ MonoBehaviour:
             rawValue: 0
     - CenterLocal:
         x:
-          rawValue: 1059629118
+          rawValue: 1058415708
         y:
           rawValue: 1058845606
       SizeLocal:
         x:
-          rawValue: 1044981892
+          rawValue: 1055047466
         y:
-          rawValue: 1048115950
+          rawValue: 1048115952
       Props:
         Kind: 1
         AttackKind: 2
@@ -438,6 +487,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 2
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -491,6 +547,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -544,6 +607,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -597,6 +667,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -650,6 +727,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -703,6 +787,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -731,6 +822,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -759,6 +857,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -787,6 +892,13 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -815,3 +927,10 @@ MonoBehaviour:
             rawValue: 0
     FrameType: 3
     Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0

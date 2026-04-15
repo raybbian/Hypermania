@@ -3,7 +3,6 @@ using Game.Sim;
 using Scenes.Menus.MainMenu;
 using Scenes.Session;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Scenes.Menus.InputSelect
 {
@@ -15,9 +14,6 @@ namespace Scenes.Menus.InputSelect
 
         [SerializeField]
         private GlobalConfig _globalConfig;
-
-        [SerializeField]
-        private CharacterConfig _nytheaConfig;
 
         public void StartGame()
         {
@@ -35,29 +31,14 @@ namespace Scenes.Menus.InputSelect
 
         private void ContinueOnline()
         {
-            if (!_deviceManager.ValidAssignments(out var p1, out _))
+            if (!_deviceManager.ValidAssignments(out _, out _))
             {
                 return;
             }
-            GameOptions options = new GameOptions();
-            options.Global = _globalConfig;
-            options.Players = new PlayerOptions[2];
-            options.LocalPlayers = new LocalPlayerOptions[1];
-            for (int i = 0; i < 2; i++)
-            {
-                options.Players[i] = new PlayerOptions
-                {
-                    SkinIndex = i,
-                    Character = _nytheaConfig,
-                    HealOnActionable = SessionDirectory.Config == GameConfig.Training,
-                };
-            }
-            options.LocalPlayers[0] = new LocalPlayerOptions { InputDevice = p1 };
-            options.InfoOptions = new InfoOptions { ShowFrameData = false };
-
-            SessionDirectory.Options = options;
+            SessionDirectory.Options = BuildScaffoldOptions();
             SceneLoader
                 .Instance.LoadNewScene()
+                .Load(SceneID.OnlineBase, SceneDatabase.ONLINE_BASE)
                 .Load(SceneID.Online, SceneDatabase.ONLINE)
                 .Unload(SceneID.InputSelect)
                 .WithOverlay()
@@ -66,34 +47,28 @@ namespace Scenes.Menus.InputSelect
 
         private void StartLocal()
         {
-            if (!_deviceManager.ValidAssignments(out var p1, out var p2))
+            if (!_deviceManager.ValidAssignments(out _, out _))
             {
                 return;
             }
-            GameOptions options = new GameOptions();
-            options.Global = _globalConfig;
-            options.Players = new PlayerOptions[2];
-            options.LocalPlayers = new LocalPlayerOptions[2];
-            for (int i = 0; i < 2; i++)
-            {
-                options.Players[i] = new PlayerOptions
-                {
-                    SkinIndex = i,
-                    Character = _nytheaConfig,
-                    HealOnActionable = SessionDirectory.Config == GameConfig.Training,
-                };
-                options.LocalPlayers[i] = new LocalPlayerOptions { InputDevice = i == 0 ? p1 : p2 };
-            }
-            options.InfoOptions = new InfoOptions { ShowFrameData = SessionDirectory.Config == GameConfig.Training };
-
-            SessionDirectory.Options = options;
+            SessionDirectory.Options = BuildScaffoldOptions();
             SceneLoader
                 .Instance.LoadNewScene()
-                .Load(SceneID.Battle, SceneDatabase.BATTLE)
+                .Load(SceneID.CharacterSelect, SceneDatabase.CHARACTER_SELECT)
                 .Unload(SceneID.InputSelect)
-                .Unload(SceneID.MenuBase)
                 .WithOverlay()
                 .Execute();
+        }
+
+        private GameOptions BuildScaffoldOptions()
+        {
+            bool training = SessionDirectory.Config == GameConfig.Training;
+            return new GameOptions
+            {
+                Global = _globalConfig,
+                InfoOptions = new InfoOptions { ShowFrameData = training, ShowBoxes = training },
+                AlwaysRhythmCancel = false,
+            };
         }
 
         public void Back()

@@ -94,30 +94,34 @@ namespace Netcode.P2P
             _connStatusCb?.Dispose();
             _connStatusCb = null;
 
-            if (_connections != null)
+            if (SteamManager.IsInitialized)
             {
-                foreach (var kv in _connections)
+                if (_connections != null)
                 {
-                    var c = kv.Value;
-                    if (c.Incoming != HSteamNetConnection.Invalid)
+                    foreach (var kv in _connections)
                     {
-                        SteamNetworkingSockets.CloseConnection(c.Incoming, 0, "dispose", false);
-                        c.Incoming = HSteamNetConnection.Invalid;
-                    }
-                    if (c.Outgoing != HSteamNetConnection.Invalid)
-                    {
-                        SteamNetworkingSockets.CloseConnection(c.Outgoing, 0, "dispose", false);
-                        c.Outgoing = HSteamNetConnection.Invalid;
+                        var c = kv.Value;
+                        if (c.Incoming != HSteamNetConnection.Invalid)
+                        {
+                            SteamNetworkingSockets.CloseConnection(c.Incoming, 0, "dispose", false);
+                            c.Incoming = HSteamNetConnection.Invalid;
+                        }
+                        if (c.Outgoing != HSteamNetConnection.Invalid)
+                        {
+                            SteamNetworkingSockets.CloseConnection(c.Outgoing, 0, "dispose", false);
+                            c.Outgoing = HSteamNetConnection.Invalid;
+                        }
                     }
                 }
-                _connections.Clear();
+
+                if (_listen != HSteamListenSocket.Invalid)
+                {
+                    SteamNetworkingSockets.CloseListenSocket(_listen);
+                    _listen = HSteamListenSocket.Invalid;
+                }
             }
 
-            if (_listen != HSteamListenSocket.Invalid)
-            {
-                SteamNetworkingSockets.CloseListenSocket(_listen);
-                _listen = HSteamListenSocket.Invalid;
-            }
+            _connections?.Clear();
         }
 
         public void ConnectToPeers()
@@ -163,6 +167,9 @@ namespace Netcode.P2P
         public void DisconnectAllPeers(string reason = "disconnect_all")
         {
             if (!_initialized || _connections == null)
+                return;
+
+            if (!SteamManager.IsInitialized)
                 return;
 
             foreach (var kv in _connections)

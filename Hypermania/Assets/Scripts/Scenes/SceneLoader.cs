@@ -64,6 +64,11 @@ namespace Scenes
         public delegate void SceneLoad(SceneID loaded);
         public event SceneLoad OnSceneLoad;
 
+        public void RegisterLoadedScene(SceneID id, string sceneName)
+        {
+            _sceneIDMap[id] = sceneName;
+        }
+
         public SceneLoadPlan LoadNewScene()
         {
             return new SceneLoadPlan();
