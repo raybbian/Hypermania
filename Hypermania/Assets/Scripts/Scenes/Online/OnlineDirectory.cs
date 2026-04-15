@@ -37,7 +37,8 @@ namespace Scenes.Online
         [SerializeField]
         private TMP_InputField _createLobbyText;
 
-        public static bool InLobby => OnlineBaseDirectory.Matchmaking != null && OnlineBaseDirectory.Matchmaking.InLobby;
+        public static bool InLobby =>
+            OnlineBaseDirectory.Matchmaking != null && OnlineBaseDirectory.Matchmaking.InLobby;
 
         private SteamMatchmakingClient Matchmaking => OnlineBaseDirectory.Matchmaking;
 

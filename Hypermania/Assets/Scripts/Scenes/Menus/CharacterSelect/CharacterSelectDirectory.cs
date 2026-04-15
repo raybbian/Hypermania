@@ -30,7 +30,9 @@ namespace Scenes.Menus.CharacterSelect
         private ControlsConfig[] _controlsPresets;
 
         [SerializeField]
-        [Tooltip("Skin used for the \"Random\" grid tile, the Random preview on a player panel, and any ready marker tinting when a slot is on Random. When Portrait is null, no Random tile is shown.")]
+        [Tooltip(
+            "Skin used for the \"Random\" grid tile, the Random preview on a player panel, and any ready marker tinting when a slot is on Random. When Portrait is null, no Random tile is shown."
+        )]
         private SkinConfig _randomSkin;
 
         /// <summary>
@@ -274,7 +276,7 @@ namespace Scenes.Menus.CharacterSelect
                 if (panel == null)
                     continue;
                 bool isLocal = _isOnline ? (i == _onlineLocalPlayerIndex) : true;
-                panel.Bind(_state.Players[i], _roster, _controlsPresets, _randomSkin, isLocal);
+                panel.Bind(_state.Players[i], _state.Players[1 - i], _roster, _controlsPresets, _randomSkin, isLocal);
             }
 
             for (int i = 0; i < _playerCursors.Length; i++)
@@ -385,7 +387,8 @@ namespace Scenes.Menus.CharacterSelect
                 characterCount: _roster != null ? _roster.Length : 0,
                 controlsPresetCount: _controlsPresets != null ? _controlsPresets.Length : 0,
                 skinCount: skinCount,
-                isRowInteractable: row => OptionsRows.IsInteractable(slot, isLocal, row, _roster != null ? _roster.Length : int.MaxValue),
+                isRowInteractable: row =>
+                    OptionsRows.IsInteractable(slot, isLocal, row, _roster != null ? _roster.Length : int.MaxValue),
                 otherCharacter: otherSlot.CharacterIndex,
                 otherSkin: otherSlot.SkinIndex,
                 skinCountForChar: SkinCountForChar,
@@ -523,11 +526,8 @@ namespace Scenes.Menus.CharacterSelect
             GameOptions options = new GameOptions
             {
                 Global = _globalConfig != null ? _globalConfig : scaffold.Global,
-                InfoOptions = scaffold.InfoOptions ?? new InfoOptions
-                {
-                    ShowFrameData = training,
-                    ShowBoxes = training,
-                },
+                InfoOptions =
+                    scaffold.InfoOptions ?? new InfoOptions { ShowFrameData = training, ShowBoxes = training },
                 Players = new PlayerOptions[2],
                 AlwaysRhythmCancel = false,
             };

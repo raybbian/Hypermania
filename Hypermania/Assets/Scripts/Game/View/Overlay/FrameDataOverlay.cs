@@ -158,7 +158,6 @@ namespace Game.View.Overlay
                             return true;
                     }
                 }
-                return false;
             }
             return false;
         }

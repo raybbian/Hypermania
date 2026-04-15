@@ -26,9 +26,10 @@ namespace Game.Sim
 
             // Next quarter-note boundary at or after earliestStart.
             int delta = earliestStart - options.Global.Audio.FirstMusicalBeat;
-            int beats = delta >= 0
-                ? (delta + fpb - 1) / fpb  // ceil
-                : delta / fpb;             // C# truncation toward zero == ceil for negatives
+            int beats =
+                delta >= 0
+                    ? (delta + fpb - 1) / fpb // ceil
+                    : delta / fpb; // C# truncation toward zero == ceil for negatives
             Frame nextBeat = options.Global.Audio.FirstMusicalBeat + options.Global.Audio.BeatsToFrame(beats);
 
             int hitstop = nextBeat - earliestStart;
@@ -43,13 +44,7 @@ namespace Game.Sim
 
             // Generate combo dynamically via simulation against the authored
             // frame slice.
-            GeneratedCombo combo = ComboGenerator.Generate(
-                gameState,
-                options,
-                attackerIndex,
-                noteFrames,
-                hitstop
-            );
+            GeneratedCombo combo = ComboGenerator.Generate(gameState, options, attackerIndex, noteFrames, hitstop);
 
             // Queue notes to mania channels. ComboGenerator already emits
             // world-space inputs (e.g. Dash | Left for a left-facing attacker's

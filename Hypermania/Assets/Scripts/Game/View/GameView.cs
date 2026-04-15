@@ -99,11 +99,12 @@ namespace Game.View
                 _playerParams[i].HealthBarView.SetMaxHealth((float)config.Health);
                 _playerParams[i].BurstBarView.SetMaxValue((float)config.BurstMax);
                 _playerParams[i].SuperBarView.SetMaxValue((float)config.SuperMax);
-                _playerParams[i].SuperDisplayView.Init(
-                    config,
-                    options.Players[i].SkinIndex,
-                    options.Global.SuperPostDisplayHitstopTicks
-                );
+                _playerParams[i]
+                    .SuperDisplayView.Init(
+                        config,
+                        options.Players[i].SkinIndex,
+                        options.Global.SuperPostDisplayHitstopTicks
+                    );
             }
 
             _projectileViews = new ProjectileView[GameState.MAX_PROJECTILES];
@@ -285,8 +286,8 @@ namespace Game.View
         private int GetManiaViewIndex(in GameState state, int fighterIndex)
         {
             int other = fighterIndex ^ 1;
-            bool toRightOfOpponent = (float)state.Fighters[fighterIndex].Position.x
-                                   > (float)state.Fighters[other].Position.x;
+            bool toRightOfOpponent =
+                (float)state.Fighters[fighterIndex].Position.x > (float)state.Fighters[other].Position.x;
             return toRightOfOpponent ? 0 : 1;
         }
 

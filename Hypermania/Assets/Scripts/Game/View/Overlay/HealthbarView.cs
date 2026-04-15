@@ -10,8 +10,11 @@ namespace Game.View.Overlay
         [SerializeField]
         private Transform _disk;
 
-        [SerializeField] private RawImage _portrait;
-        [SerializeField] private Image[] _tint;
+        [SerializeField]
+        private RawImage _portrait;
+
+        [SerializeField]
+        private Image[] _tint;
 
         [SerializeField]
         private Slider _healthSlider;
@@ -37,7 +40,8 @@ namespace Game.View.Overlay
         {
             _baseScale = _disk.localScale;
             _portrait.texture = config.Skins[skinIndex].Portrait;
-            foreach(var tint in _tint) tint.color = config.Skins[skinIndex].AccentColor;
+            foreach (var tint in _tint)
+                tint.color = config.Skins[skinIndex].AccentColor;
         }
 
         public void SetMaxHealth(float health)

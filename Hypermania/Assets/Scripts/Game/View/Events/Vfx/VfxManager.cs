@@ -42,15 +42,27 @@ namespace Game.View.Events.Vfx
             Destroy(effect.gameObject);
         }
 
-        public void AddDesired(VfxKind kind, Frame frame, int hash = 0,
-            Vector2 position = default, Vector2 direction = default)
+        public void AddDesired(
+            VfxKind kind,
+            Frame frame,
+            int hash = 0,
+            Vector2 position = default,
+            Vector2 direction = default
+        )
         {
-            AddDesired(new ViewEvent<VfxEvent>
-            {
-                Event = new VfxEvent { Kind = kind, Position = position, Direction = direction },
-                StartFrame = frame,
-                Hash = hash,
-            });
+            AddDesired(
+                new ViewEvent<VfxEvent>
+                {
+                    Event = new VfxEvent
+                    {
+                        Kind = kind,
+                        Position = position,
+                        Direction = direction,
+                    },
+                    StartFrame = frame,
+                    Hash = hash,
+                }
+            );
         }
 
         public override bool EffectIsFinished(VfxEffect effect)

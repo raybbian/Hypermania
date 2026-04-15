@@ -11,7 +11,8 @@ namespace Game.View.Overlay
     [RequireComponent(typeof(AudioSource))]
     public class RoundCountdownView : MonoBehaviour
     {
-        [SerializeField] private AudioClip _countdownSfx;
+        [SerializeField]
+        private AudioClip _countdownSfx;
 
         private TMP_Text _roundCD;
         private AudioSource _audioSource;

@@ -66,11 +66,7 @@ namespace Scenes.Menus.InputSelect
             return new GameOptions
             {
                 Global = _globalConfig,
-                InfoOptions = new InfoOptions
-                {
-                    ShowFrameData = training,
-                    ShowBoxes = training,
-                },
+                InfoOptions = new InfoOptions { ShowFrameData = training, ShowBoxes = training },
                 AlwaysRhythmCancel = false,
             };
         }

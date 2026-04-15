@@ -104,9 +104,7 @@ namespace Design.Configs
                 return result.ToArray();
 
             int approxLoopLen = songEnd - loopStartFrame;
-            int startIter = minStart.No >= songEnd
-                ? Math.Max(1, (minStart.No - songEnd) / approxLoopLen)
-                : 1;
+            int startIter = minStart.No >= songEnd ? Math.Max(1, (minStart.No - songEnd) / approxLoopLen) : 1;
 
             for (int n = startIter; ; n++)
             {
@@ -132,7 +130,8 @@ namespace Design.Configs
 
         private static int LowerBound(Frame[] arr, Frame target)
         {
-            int lo = 0, hi = arr.Length;
+            int lo = 0,
+                hi = arr.Length;
             while (lo < hi)
             {
                 int mid = (lo + hi) / 2;

@@ -13,15 +13,32 @@ namespace Game.View.Overlay
     [RequireComponent(typeof(Animator))]
     public class SuperDisplayView : MonoBehaviour
     {
-        [SerializeField] private RenderTexture _renderTexture;
-        [SerializeField] private GameObject _stageRoot;
-        [SerializeField] private RectTransform _sizeTarget;
-        [SerializeField] private string _hiddenLayerName = "SuperDisplay";
-        [SerializeField] private string _showStateName;
-        [SerializeField] private string _hideStateName;
-        [SerializeField] private Image[] _mainImages;
-        [SerializeField] private Image[] _lightImages;
-        [SerializeField] private Image[] _accentImages;
+        [SerializeField]
+        private RenderTexture _renderTexture;
+
+        [SerializeField]
+        private GameObject _stageRoot;
+
+        [SerializeField]
+        private RectTransform _sizeTarget;
+
+        [SerializeField]
+        private string _hiddenLayerName = "SuperDisplay";
+
+        [SerializeField]
+        private string _showStateName;
+
+        [SerializeField]
+        private string _hideStateName;
+
+        [SerializeField]
+        private Image[] _mainImages;
+
+        [SerializeField]
+        private Image[] _lightImages;
+
+        [SerializeField]
+        private Image[] _accentImages;
         private Animator _overlayAnimator;
         private Camera _spawnedCamera;
         private FighterView _spawnedFighter;
@@ -38,15 +55,18 @@ namespace Game.View.Overlay
             _config = config;
             _postDisplayHitstopTicks = postDisplayHitstopTicks;
 
-            foreach (var img in _mainImages) img.color = config.Skins[skinIndex].MainColor;
-            foreach (var img in _lightImages) img.color = config.Skins[skinIndex].LightColor;
-            foreach (var img in _accentImages) img.color = config.Skins[skinIndex].AccentColor;
+            foreach (var img in _mainImages)
+                img.color = config.Skins[skinIndex].MainColor;
+            foreach (var img in _lightImages)
+                img.color = config.Skins[skinIndex].LightColor;
+            foreach (var img in _accentImages)
+                img.color = config.Skins[skinIndex].AccentColor;
             int hiddenLayer = LayerMask.NameToLayer(_hiddenLayerName);
 
             _spawnedFighter = Instantiate(config.Prefab, _stageRoot.transform);
             _spawnedFighter.Init(config, skinIndex);
             SetLayerRecursive(_spawnedFighter.gameObject, hiddenLayer);
-            
+
             var camGo = new GameObject("SuperDisplayCamera");
             camGo.transform.SetParent(_stageRoot.transform, false);
             camGo.transform.localPosition = config.SuperDisplay.CameraLocalPosition;
@@ -63,9 +83,9 @@ namespace Game.View.Overlay
 
             _overlayAnimator = GetComponent<Animator>();
             _overlayAnimator.speed = 0f;
-            
+
             _stageRoot.SetActive(false);
-            
+
             ResizeRenderTextureToTarget();
         }
 
@@ -111,7 +131,8 @@ namespace Game.View.Overlay
 
         public void Hide()
         {
-            if (_hideRoutine != null) return;
+            if (_hideRoutine != null)
+                return;
             _hideRoutine = StartCoroutine(HideRoutine());
         }
 
@@ -130,13 +151,15 @@ namespace Game.View.Overlay
 
         private void ResizeRenderTextureToTarget()
         {
-            if (_renderTexture == null || _sizeTarget == null) return;
+            if (_renderTexture == null || _sizeTarget == null)
+                return;
 
             var size = _sizeTarget.rect.size;
             int w = Mathf.Abs(Mathf.RoundToInt(size.x));
             int h = Mathf.Abs(Mathf.RoundToInt(size.y));
 
-            if (_renderTexture.width == w && _renderTexture.height == h) return;
+            if (_renderTexture.width == w && _renderTexture.height == h)
+                return;
 
             _renderTexture.Release();
             _renderTexture.width = w;

@@ -57,12 +57,14 @@ namespace Game.View.Events
 
         public void AddDesired(SfxKind kind, Frame frame, int hash = 0)
         {
-            AddDesired(new ViewEvent<SfxEvent>
-            {
-                Event = new SfxEvent { Kind = kind },
-                StartFrame = frame,
-                Hash = hash,
-            });
+            AddDesired(
+                new ViewEvent<SfxEvent>
+                {
+                    Event = new SfxEvent { Kind = kind },
+                    StartFrame = frame,
+                    Hash = hash,
+                }
+            );
         }
 
         public override bool EffectIsFinished(AudioSource effect)

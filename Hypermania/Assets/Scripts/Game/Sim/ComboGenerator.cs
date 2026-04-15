@@ -94,8 +94,7 @@ namespace Game.Sim
         /// per CharacterState. Reach is config-static so it only needs to be
         /// computed once per run.
         /// </summary>
-        private readonly Dictionary<CharacterState, sfloat> _reachCache =
-            new Dictionary<CharacterState, sfloat>();
+        private readonly Dictionary<CharacterState, sfloat> _reachCache = new Dictionary<CharacterState, sfloat>();
 
         /// <summary>
         /// Result of a single candidate trial.
@@ -134,11 +133,7 @@ namespace Game.Sim
         {
             if (noteFrames == null || noteFrames.Length == 0)
             {
-                return new GeneratedCombo
-                {
-                    Moves = new List<GeneratedComboMove>(),
-                    EndFrame = state.RealFrame,
-                };
+                return new GeneratedCombo { Moves = new List<GeneratedComboMove>(), EndFrame = state.RealFrame };
             }
             _attackerIndex = attackerIndex;
             _attackerConfig = options.Players[attackerIndex].Character;
@@ -226,9 +221,7 @@ namespace Game.Sim
 
                 // Next authored note (if any) so we can reject candidates
                 // whose hitstun bleeds into its input window.
-                Frame nextBeat = (i + 1 < noteFrames.Length)
-                    ? noteFrames[i + 1]
-                    : Frame.Infinity;
+                Frame nextBeat = (i + 1 < noteFrames.Length) ? noteFrames[i + 1] : Frame.Infinity;
 
                 // Snapshot the pristine beat state so each candidate trial can
                 // revert to it before applying its own input.
@@ -243,14 +236,7 @@ namespace Game.Sim
 
                 int hashValue = DeterministicHash(state.RealFrame.No, i);
                 bool isLastBeat = i == noteFrames.Length - 1;
-                int chosenIdx = PickBestCandidate(
-                    candidates,
-                    hasPrev,
-                    prevKb,
-                    prevReach,
-                    hashValue,
-                    isLastBeat
-                );
+                int chosenIdx = PickBestCandidate(candidates, hasPrev, prevKb, prevReach, hashValue, isLastBeat);
 
                 if (chosenIdx >= 0)
                 {
@@ -304,12 +290,9 @@ namespace Game.Sim
                 // attack must also satisfy the hitstop-in-window rule against
                 // its own next-note window (i.e., not chain two fallbacks'
                 // worth of hitstop into the note after nextBeat).
-                Frame beatAfterNext = (i + 2 < noteFrames.Length)
-                    ? noteFrames[i + 2]
-                    : Frame.Infinity;
+                Frame beatAfterNext = (i + 2 < noteFrames.Length) ? noteFrames[i + 2] : Frame.Infinity;
 
-                bool defenderAirborne =
-                    _working.Fighters[1 - _attackerIndex].Location == FighterLocation.Airborne;
+                bool defenderAirborne = _working.Fighters[1 - _attackerIndex].Location == FighterLocation.Airborne;
                 InputFlags firstTry = defenderAirborne ? jumpMove : dashMove;
                 InputFlags secondTry = defenderAirborne ? dashMove : jumpMove;
 
@@ -629,16 +612,7 @@ namespace Game.Sim
             int tieCount = 0;
             for (int i = 0; i < pool.Count; i++)
             {
-                if (IsEligibleForPick(
-                        pool[i],
-                        hasPrev,
-                        prevKb,
-                        prevReach,
-                        bestKb,
-                        bestIsHeavy,
-                        isLastBeat,
-                        bestTier
-                    ))
+                if (IsEligibleForPick(pool[i], hasPrev, prevKb, prevReach, bestKb, bestIsHeavy, isLastBeat, bestTier))
                     tieCount++;
             }
             if (tieCount == 0)
@@ -648,16 +622,7 @@ namespace Game.Sim
             int seen = 0;
             for (int i = 0; i < pool.Count; i++)
             {
-                if (!IsEligibleForPick(
-                        pool[i],
-                        hasPrev,
-                        prevKb,
-                        prevReach,
-                        bestKb,
-                        bestIsHeavy,
-                        isLastBeat,
-                        bestTier
-                    ))
+                if (!IsEligibleForPick(pool[i], hasPrev, prevKb, prevReach, bestKb, bestIsHeavy, isLastBeat, bestTier))
                     continue;
                 if (seen == pick)
                     return i;

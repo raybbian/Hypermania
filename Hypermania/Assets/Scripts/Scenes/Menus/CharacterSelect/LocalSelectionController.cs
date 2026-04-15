@@ -174,7 +174,7 @@ namespace Scenes.Menus.CharacterSelect
         private static BeatCancelWindow CycleBeatCancel(BeatCancelWindow current, int delta)
         {
             // Order by intended difficulty progression: Easy → Medium → Hard.
-            BeatCancelWindow[] order = { BeatCancelWindow.Easy, BeatCancelWindow.Medium, BeatCancelWindow.Hard };
+            BeatCancelWindow[] order = { BeatCancelWindow.Medium, BeatCancelWindow.Hard };
             int idx = Array.IndexOf(order, current);
             if (idx < 0)
                 idx = 1;
@@ -411,12 +411,16 @@ namespace Scenes.Menus.CharacterSelect
         /// ManiaDifficulty and BeatCancel are non-interactable when ComboMode
         /// is <see cref="Game.Sim.ComboMode.Freestyle"/>.
         /// </summary>
-        public static bool IsInteractable(PlayerSelectionState state, bool isLocal, int row, int rosterLength = int.MaxValue)
+        public static bool IsInteractable(
+            PlayerSelectionState state,
+            bool isLocal,
+            int row,
+            int rosterLength = int.MaxValue
+        )
         {
             if (!IsVisible(state, isLocal, row))
                 return false;
-            if (state.ComboMode == Game.Sim.ComboMode.Freestyle
-                && (row == ManiaDifficulty || row == BeatCancel))
+            if (state.ComboMode == Game.Sim.ComboMode.Freestyle && (row == ManiaDifficulty || row == BeatCancel))
                 return false;
             // Skin row is meaningless while the slot is on the Random tile —
             // the concrete skin isn't picked until commit.

@@ -21,7 +21,7 @@ namespace Design.Configs.Editor
             // --- Header chunk: MThd ---
             ReadChunkId(reader, "MThd");
             int headerLen = ReadInt32BE(reader);
-            /*format*/ ReadInt16BE(reader);
+            /*format*/ReadInt16BE(reader);
             int numTracks = ReadInt16BE(reader);
             int ticksPerBeat = ReadInt16BE(reader);
             if (headerLen > 6)
@@ -66,13 +66,16 @@ namespace Design.Configs.Editor
                         break;
                     }
                 }
-                if (name != null) available.Add(name);
-                if (name == trackName) targetTrack = track;
+                if (name != null)
+                    available.Add(name);
+                if (name == trackName)
+                    targetTrack = track;
             }
 
             if (targetTrack == null)
                 throw new InvalidOperationException(
-                    $"Track '{trackName}' not found. Available tracks: [{string.Join(", ", available)}]");
+                    $"Track '{trackName}' not found. Available tracks: [{string.Join(", ", available)}]"
+                );
 
             // Convert to frames.
             sfloat elapsedSeconds = (sfloat)0.0;
@@ -101,15 +104,21 @@ namespace Design.Configs.Editor
         // Internal types
         // -------------------------------------------------------------------
 
-        private enum EventType { Other, TrackName, SetTempo, NoteOn }
+        private enum EventType
+        {
+            Other,
+            TrackName,
+            SetTempo,
+            NoteOn,
+        }
 
         private struct MidiEvent
         {
             public int DeltaTicks;
             public EventType Type;
-            public int Tempo;    // only for SetTempo
+            public int Tempo; // only for SetTempo
             public int Velocity; // only for NoteOn
-            public string Text;  // only for TrackName
+            public string Text; // only for TrackName
         }
 
         // -------------------------------------------------------------------
@@ -125,13 +134,17 @@ namespace Design.Configs.Editor
 
         private static int ReadInt32BE(BinaryReader r)
         {
-            byte a = r.ReadByte(), b = r.ReadByte(), c = r.ReadByte(), d = r.ReadByte();
+            byte a = r.ReadByte(),
+                b = r.ReadByte(),
+                c = r.ReadByte(),
+                d = r.ReadByte();
             return (a << 24) | (b << 16) | (c << 8) | d;
         }
 
         private static int ReadInt16BE(BinaryReader r)
         {
-            byte a = r.ReadByte(), b = r.ReadByte();
+            byte a = r.ReadByte(),
+                b = r.ReadByte();
             return (a << 8) | b;
         }
 
@@ -219,14 +232,16 @@ namespace Design.Configs.Editor
 
                     case 0x90: // Note On: 2 data bytes
                     {
-                        /*note*/ r.ReadByte();
+                        /*note*/r.ReadByte();
                         byte velocity = r.ReadByte();
-                        events.Add(new MidiEvent
-                        {
-                            DeltaTicks = delta,
-                            Type = EventType.NoteOn,
-                            Velocity = velocity
-                        });
+                        events.Add(
+                            new MidiEvent
+                            {
+                                DeltaTicks = delta,
+                                Type = EventType.NoteOn,
+                                Velocity = velocity,
+                            }
+                        );
                         break;
                     }
 

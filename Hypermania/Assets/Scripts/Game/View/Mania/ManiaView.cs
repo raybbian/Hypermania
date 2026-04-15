@@ -58,9 +58,7 @@ namespace Game.View.Mania
             int framesVisible = Mathf.CeilToInt(viewHeight / Config.ScrollSpeed);
             int poolSize = framesVisible / _audioConfig.FramesPerBeat + 3;
 
-            Transform lineParent = Config.BeatLineContainer != null
-                ? Config.BeatLineContainer.transform
-                : transform;
+            Transform lineParent = Config.BeatLineContainer != null ? Config.BeatLineContainer.transform : transform;
 
             for (int i = 0; i < poolSize; i++)
             {
@@ -141,7 +139,7 @@ namespace Game.View.Mania
 
             for (int i = 0; i < state.Config.NumKeys; i++)
             {
-                for (int j = 0; j < state.Channels[i].Notes.Count; j++)
+                for (int j = state.Channels[i].NextActiveIdx; j < state.Channels[i].Notes.Count; j++)
                 {
                     if (!RenderNote(frame, i, state.Channels[i].Notes[j], out var noteView))
                     {
@@ -176,7 +174,8 @@ namespace Game.View.Mania
 
             // Find the first beat index that could be visible (below bottom of view)
             int minBeatIndex = Mathf.FloorToInt((float)(frame.No - firstBeat) / framesPerBeat) - 1;
-            if (minBeatIndex < 0) minBeatIndex = 0;
+            if (minBeatIndex < 0)
+                minBeatIndex = 0;
 
             int poolIndex = 0;
             for (int b = minBeatIndex; poolIndex < _beatLinePool.Count; b++)

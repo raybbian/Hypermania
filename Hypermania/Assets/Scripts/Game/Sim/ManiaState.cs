@@ -19,6 +19,7 @@ namespace Game.Sim
     public partial struct ManiaNoteChannel
     {
         public Deque<ManiaNote> Notes;
+        public int NextActiveIdx;
         public bool Pressed;
     }
 
@@ -125,7 +126,12 @@ namespace Game.Sim
             sim.Channels = new ManiaNoteChannel[config.NumKeys];
             for (int i = 0; i < config.NumKeys; i++)
             {
-                sim.Channels[i] = new ManiaNoteChannel { Notes = new Deque<ManiaNote>(MAX_NOTES), Pressed = false };
+                sim.Channels[i] = new ManiaNoteChannel
+                {
+                    Notes = new Deque<ManiaNote>(MAX_NOTES),
+                    NextActiveIdx = 0,
+                    Pressed = false,
+                };
             }
             sim.EndFrame = Frame.NullFrame;
             sim.ManiaEvents = new();
@@ -144,6 +150,7 @@ namespace Game.Sim
             {
                 Channels[i].Pressed = false;
                 Channels[i].Notes.Clear();
+                Channels[i].NextActiveIdx = 0;
             }
             TotalNoteCount = 0;
         }
@@ -162,11 +169,11 @@ namespace Game.Sim
             {
                 bool hasInput = input.HasInput(CHANNEL_INPUT[i]);
                 Channels[i].Pressed = hasInput;
-                if (Channels[i].Notes.Count == 0)
+                if (Channels[i].NextActiveIdx >= Channels[i].Notes.Count)
                 {
                     continue;
                 }
-                ManiaNote note = Channels[i].Notes.Front();
+                ManiaNote note = Channels[i].Notes[Channels[i].NextActiveIdx];
                 Frame noteTick = note.Tick;
                 if (hasInput && frame < noteTick - Config.MissTotalRange)
                 {
@@ -176,26 +183,26 @@ namespace Game.Sim
                 {
                     // missed note early
                     ManiaEvents.Add(ManiaEvent.MissEvent(note, true));
-                    Channels[i].Notes.PopFront();
+                    Channels[i].NextActiveIdx++;
                 }
                 else if (hasInput && frame <= noteTick + Config.HitHalfRange)
                 {
                     // hit note
                     int diff = frame - noteTick;
                     ManiaEvents.Add(ManiaEvent.HitEvent(note, diff));
-                    Channels[i].Notes.PopFront();
+                    Channels[i].NextActiveIdx++;
                 }
                 else if (hasInput && frame <= noteTick + Config.MissTotalRange)
                 {
                     // missed note late
                     ManiaEvents.Add(ManiaEvent.MissEvent(note, false));
-                    Channels[i].Notes.PopFront();
+                    Channels[i].NextActiveIdx++;
                 }
                 else if (frame > noteTick + Config.MissTotalRange)
                 {
                     // note was missed automatically (too late)
                     ManiaEvents.Add(ManiaEvent.MissEvent(note, false));
-                    Channels[i].Notes.PopFront();
+                    Channels[i].NextActiveIdx++;
                 }
             }
             if (frame == EndFrame)

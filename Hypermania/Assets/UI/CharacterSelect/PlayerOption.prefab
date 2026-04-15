@@ -147,6 +147,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2759151465376182547}
   - component: {fileID: 1005845974781741566}
+  - component: {fileID: 6918492303180073361}
   m_Layer: 0
   m_Name: PlayerOption
   m_TagString: Untagged
@@ -201,6 +202,18 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!225 &6918492303180073361
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8366782801792937272}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &9180198097403441297
 GameObject:
   m_ObjectHideFlags: 0

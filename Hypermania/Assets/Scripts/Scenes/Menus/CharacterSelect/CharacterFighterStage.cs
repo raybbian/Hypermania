@@ -25,7 +25,9 @@ namespace Scenes.Menus.CharacterSelect
         private Transform[] _slotRest = new Transform[2];
 
         [SerializeField]
-        [Tooltip("World-space delta added to the rest position to reach the offscreen staging point. Typically pushes slot 0 left and slot 1 right so each enters from its own edge.")]
+        [Tooltip(
+            "World-space delta added to the rest position to reach the offscreen staging point. Typically pushes slot 0 left and slot 1 right so each enters from its own edge."
+        )]
         private Vector3[] _slotSlideOffset = new Vector3[2];
 
         [SerializeField]

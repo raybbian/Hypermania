@@ -49,7 +49,8 @@ namespace Game.View.Fighters
 
             CharacterState animState = state.State;
             HitboxData data = _characterConfig.GetHitboxData(animState);
-            if (data == null) return;
+            if (data == null)
+                return;
             float normalizedTime = data.GetAnimNormalizedTime(frame - state.StateStart);
             _animator.Play(animState.ToString(), 0, normalizedTime);
             _animator.Update(0f); // force pose evaluation this frame while paused
@@ -71,15 +72,17 @@ namespace Game.View.Fighters
             }
             if (state.BlockedLastRealFrame)
             {
-                vfxManager.AddDesired(VfxKind.Block, realFrame,
+                vfxManager.AddDesired(
+                    VfxKind.Block,
+                    realFrame,
                     position: (Vector2)state.HitLocation.Value,
-                    direction: (Vector2)state.HitProps.Value.Knockback);
+                    direction: (Vector2)state.HitProps.Value.Knockback
+                );
                 sfxManager.AddDesired(SfxKind.Block, realFrame);
             }
             if (state.HitLastRealFrame)
             {
-                vfxManager.AddDesired(VfxKind.SmallHit, realFrame,
-                    position: (Vector2)state.HitLocation);
+                vfxManager.AddDesired(VfxKind.SmallHit, realFrame, position: (Vector2)state.HitLocation);
             }
             if (state.DashedLastRealFrame)
             {
@@ -87,9 +90,12 @@ namespace Game.View.Fighters
                     state.State == CharacterState.ForwardDash ? state.ForwardVector : state.BackwardVector
                 );
 
-                vfxManager.AddDesired(VfxKind.DashDust, realFrame,
+                vfxManager.AddDesired(
+                    VfxKind.DashDust,
+                    realFrame,
                     position: (Vector2)state.Position + dir * _dustEmitterLocation.localPosition.x,
-                    direction: dir);
+                    direction: dir
+                );
             }
         }
 

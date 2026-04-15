@@ -36,8 +36,7 @@ namespace Game.Sim
 
     public enum BeatCancelWindow
     {
-        Easy = 5,
-        Medium = 4,
+        Medium = 5,
         Hard = 3,
     }
 
@@ -220,7 +219,9 @@ namespace Game.Sim
             // so aligning RealFrame here keeps every subsequent beat transition on-beat.
             var audio = options.Global.Audio;
             int framesPerWholeNote = audio.FramesPerBeat * 4;
-            int phase = ((RealFrame.No - audio.FirstMusicalBeat.No) % framesPerWholeNote + framesPerWholeNote) % framesPerWholeNote;
+            int phase =
+                ((RealFrame.No - audio.FirstMusicalBeat.No) % framesPerWholeNote + framesPerWholeNote)
+                % framesPerWholeNote;
             int delay = (framesPerWholeNote - phase) % framesPerWholeNote;
             RoundStart = SimFrame + delay;
             SpeedRatio = 1;
@@ -380,8 +381,8 @@ namespace Game.Sim
                     );
             }
 
-            bool anySuperStarted = (!wasSuper0 && Fighters[0].IsSuperAttack)
-                || (!wasSuper1 && Fighters[1].IsSuperAttack);
+            bool anySuperStarted =
+                (!wasSuper0 && Fighters[0].IsSuperAttack) || (!wasSuper1 && Fighters[1].IsSuperAttack);
             if (anySuperStarted)
             {
                 HitstopFramesRemaining = Mathsf.Max(
@@ -748,7 +749,10 @@ namespace Game.Sim
                     //owners[0] hits owners[1]
                     HitOutcome outcome = HandleCollision(options, collision);
 
-                    HitstopFramesRemaining = Mathsf.Min(Mathsf.Max(outcome.Props.HitstopTicks, HitstopFramesRemaining), 12);
+                    HitstopFramesRemaining = Mathsf.Min(
+                        Mathsf.Max(outcome.Props.HitstopTicks, HitstopFramesRemaining),
+                        12
+                    );
 
                     var attackerBox = collision.BoxA.Owner == owners.Item1 ? collision.BoxA : collision.BoxB;
 
@@ -791,7 +795,7 @@ namespace Game.Sim
                         PendingRhythmComboAttacker = owners.Item1;
                         // TODO: show mania screen only after the maximum rollback frames to ensure no visual artifacting
                     }
-                    
+
                     // Add super checking to start a combo so that the combo only starts if the meter is alr at max
                     if (outcome.Kind == HitKind.Hit && GameMode == GameMode.Fighting)
                     {

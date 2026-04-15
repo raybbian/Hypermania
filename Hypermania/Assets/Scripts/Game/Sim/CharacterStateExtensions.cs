@@ -30,8 +30,6 @@ namespace Game.Sim
             || state == CharacterState.Crouch;
 
         public static bool IsActionable(this CharacterState state) =>
-            state == CharacterState.Jump
-            || state == CharacterState.Falling
-            || state.IsGroundedActionable();
+            state == CharacterState.Jump || state == CharacterState.Falling || state.IsGroundedActionable();
     }
 }

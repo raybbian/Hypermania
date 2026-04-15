@@ -20,6 +20,10 @@ namespace Scenes.Menus.CharacterSelect
         [SerializeField]
         private TMP_Text[] _rowValues = new TMP_Text[OptionsRows.Count];
 
+        [Header("Skin row — visual picker replaces the TMP_Text value")]
+        [SerializeField]
+        private SkinSelector _skinSelector;
+
         [Header("Highlight indicator moved to current row")]
         [SerializeField]
         private RectTransform _rowHighlight;
@@ -47,6 +51,7 @@ namespace Scenes.Menus.CharacterSelect
 
         public void Bind(
             PlayerSelectionState state,
+            PlayerSelectionState otherState,
             CharacterConfig[] roster,
             ControlsConfig[] controlsPresets,
             bool isLocal
@@ -56,6 +61,9 @@ namespace Scenes.Menus.CharacterSelect
             _roster = roster;
             _controlsPresets = controlsPresets;
             _isLocal = isLocal;
+
+            if (_skinSelector != null)
+                _skinSelector.Bind(state, otherState, roster);
         }
 
         private void Update()
@@ -103,7 +111,12 @@ namespace Scenes.Menus.CharacterSelect
                 CanvasGroup group = _rowGroups[i];
                 if (group == null)
                     continue;
-                bool interactable = OptionsRows.IsInteractable(_state, _isLocal, i, _roster != null ? _roster.Length : int.MaxValue);
+                bool interactable = OptionsRows.IsInteractable(
+                    _state,
+                    _isLocal,
+                    i,
+                    _roster != null ? _roster.Length : int.MaxValue
+                );
                 float targetAlpha = interactable ? _enabledAlpha : _disabledAlpha;
                 if (!Mathf.Approximately(group.alpha, targetAlpha))
                     group.alpha = targetAlpha;
@@ -115,7 +128,7 @@ namespace Scenes.Menus.CharacterSelect
         private void RefreshRowValues()
         {
             SetRowText(OptionsRows.ComboMode, _state.ComboMode == ComboMode.Assisted ? "Assisted" : "Freestyle");
-            SetRowText(OptionsRows.Skin, FormatSkin(_state.SkinIndex));
+            // OptionsRows.Skin is rendered by _skinSelector, not a TMP_Text.
             SetRowText(
                 OptionsRows.ManiaDifficulty,
                 _state.ManiaDifficulty == ManiaDifficulty.Normal ? "Normal" : "Hard"
@@ -137,28 +150,12 @@ namespace Scenes.Menus.CharacterSelect
             }
         }
 
-        private string FormatSkin(int skinIndex)
-        {
-            if (_roster == null || _state == null)
-                return "-";
-            if (_state.CharacterIndex >= _roster.Length)
-                return "Random";
-            int charIdx = Mathf.Clamp(_state.CharacterIndex, 0, _roster.Length - 1);
-            CharacterConfig config = _roster.Length > 0 ? _roster[charIdx] : null;
-            if (config == null || config.Skins == null || config.Skins.Length == 0)
-                return "-";
-            int clamped = Mathf.Clamp(skinIndex, 0, config.Skins.Length - 1);
-            return $"Skin {clamped + 1}/{config.Skins.Length}";
-        }
-
         private static string FormatBeatCancel(BeatCancelWindow window)
         {
             switch (window)
             {
-                case BeatCancelWindow.Easy:
-                    return "Easy (5)";
                 case BeatCancelWindow.Medium:
-                    return "Medium (4)";
+                    return "Medium (5)";
                 case BeatCancelWindow.Hard:
                     return "Hard (3)";
                 default:

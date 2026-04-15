@@ -66,15 +66,7 @@ namespace Design.Animation
 
         public override int GetHashCode() =>
             HashCode.Combine(
-                HashCode.Combine(
-                    Kind,
-                    AttackKind,
-                    HitstunTicks,
-                    Damage,
-                    BlockstunTicks,
-                    KnockdownKind,
-                    Knockback
-                ),
+                HashCode.Combine(Kind, AttackKind, HitstunTicks, Damage, BlockstunTicks, KnockdownKind, Knockback),
                 HitstopTicks,
                 BlockstopTicks,
                 GrabPosition

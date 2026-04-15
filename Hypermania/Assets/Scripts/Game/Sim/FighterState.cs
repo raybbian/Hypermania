@@ -480,7 +480,11 @@ namespace Game.Sim
                     return;
                 }
             }
-            else if (State == CharacterState.Jump || State == CharacterState.Falling || (State.IsAerial() && isRhythmCancel))
+            else if (
+                State == CharacterState.Jump
+                || State == CharacterState.Falling
+                || (State.IsAerial() && isRhythmCancel)
+            )
             {
                 if (Velocity.y < 0)
                 {
@@ -569,17 +573,19 @@ namespace Game.Sim
 
             // Double-tap heavy: if in a heavy attack and heavy pressed again within the super window, mark as super
             int superWindow = options.Global.Input.SuperAttackWindow;
-            bool isHeavyAttackState = State == CharacterState.HeavyAttack
+            bool isHeavyAttackState =
+                State == CharacterState.HeavyAttack
                 || State == CharacterState.HeavyAerial
                 || State == CharacterState.HeavyCrouching;
-            if (isHeavyAttackState
+            if (
+                isHeavyAttackState
                 && !IsSuperAttack
                 && InputH.PressedRecently(InputFlags.HeavyAttack, bufferWindow)
                 && simFrame - StateStart > bufferWindow
                 && simFrame - StateStart <= superWindow
                 && Super >= options.Players[Index].Character.SuperMax
                 && gameMode == GameMode.Fighting
-                )
+            )
             {
                 IsSuperAttack = true;
                 Super = 0;
@@ -631,8 +637,7 @@ namespace Game.Sim
                         // matter where inside the window the player pressed.
                         // Two different-timed presses on the same note then
                         // produce identical combo behaviour.
-                        RhythmCancelInputEnd =
-                            simFrame + (-beatOffset + (int)options.Players[Index].BeatCancelWindow);
+                        RhythmCancelInputEnd = simFrame + (-beatOffset + (int)options.Players[Index].BeatCancelWindow);
                     }
                     if (state == CharacterState.Grab)
                     {
@@ -672,8 +677,7 @@ namespace Game.Sim
             // late presses on the same note should produce exactly the same
             // frame-data progression afterwards, so the combo simulator's
             // predictions stay correct regardless of player timing.
-            bool rhythmCancelLockout =
-                RhythmCancelInputEnd != Frame.NullFrame && frame < RhythmCancelInputEnd;
+            bool rhythmCancelLockout = RhythmCancelInputEnd != Frame.NullFrame && frame < RhythmCancelInputEnd;
             if (!rhythmCancelLockout)
             {
                 // Apply gravity if not grounded and not in airdash

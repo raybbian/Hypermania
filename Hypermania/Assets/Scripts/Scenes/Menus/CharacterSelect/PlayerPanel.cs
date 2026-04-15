@@ -17,34 +17,24 @@ namespace Scenes.Menus.CharacterSelect
         [SerializeField]
         private int _playerIndex;
 
-        [Header("Preview elements (visible during Character phase)")]
+        [Header("Animator")]
         [SerializeField]
-        private GameObject _previewRoot;
+        [Tooltip("Resting state names in the Animator Controller, indexed by SelectPhase.")]
+        private string _characterState = "SelectingCharacter";
 
-        [FormerlySerializedAs("_portrait")] [SerializeField]
+        [SerializeField]
+        private string _optionsState = "Options";
+
+        [SerializeField]
+        private string _selectedState = "Selected";
+
+        [Header("Preview elements")]
+        [FormerlySerializedAs("_portrait")]
+        [SerializeField]
         private Image _splash;
 
         [SerializeField]
         private TMP_Text _characterName;
-
-        [Header("Preview pulse (while slot is in Character phase)")]
-        [SerializeField]
-        [Tooltip("Transform scaled between 1 and _previewPulseMaxScale while the player is still hovering (Character phase).")]
-        private RectTransform _previewPulseTarget;
-
-        [SerializeField]
-        [Tooltip("CanvasGroup whose alpha oscillates between _previewPulseMinAlpha and 1 while the player is still hovering.")]
-        private CanvasGroup _previewPulseGroup;
-
-        [SerializeField]
-        private float _previewPulseSpeed = 3f;
-
-        [SerializeField]
-        [Range(0f, 1f)]
-        private float _previewPulseMinAlpha = 0.7f;
-
-        [SerializeField]
-        private float _previewPulseMaxScale = 1.05f;
 
         [SerializeField]
         private Image[] _mainImages;
@@ -55,20 +45,17 @@ namespace Scenes.Menus.CharacterSelect
         [SerializeField]
         private Image[] _accentImages;
 
-        [Header("Options panel (visible during Options / Confirmed phases)")]
+        [Header("Options panel")]
         [SerializeField]
         private PlayerOptionsPanel _optionsPanel;
-
-        [SerializeField]
-        private FadeToggle _optionsFade;
-
-        [SerializeField]
-        private FadeToggle _confirmedBanner;
 
         [Header("Shared fighter stage (both panels point at the same stage component)")]
         [SerializeField]
         private CharacterFighterStage _fighterStage;
 
+        private static readonly int PhaseParam = Animator.StringToHash("Phase");
+
+        private Animator _animator;
         private PlayerSelectionState _state;
         private CharacterConfig[] _roster;
         private SkinConfig _randomSkin;
@@ -87,6 +74,7 @@ namespace Scenes.Menus.CharacterSelect
 
         public void Bind(
             PlayerSelectionState state,
+            PlayerSelectionState otherState,
             CharacterConfig[] roster,
             ControlsConfig[] controlsPresets,
             SkinConfig randomSkin,
@@ -100,17 +88,22 @@ namespace Scenes.Menus.CharacterSelect
             _lastCharIndex = -1;
             _lastSkinIndex = -1;
 
+            _animator = GetComponent<Animator>();
+
             if (_optionsPanel != null)
             {
-                _optionsPanel.Bind(state, roster, controlsPresets, isLocal);
+                _optionsPanel.Bind(state, otherState, roster, controlsPresets, isLocal);
             }
 
-            // Snap fade state to the initial phase so we don't fade in/out
-            // from the scene's serialized default on first frame.
-            if (_optionsFade != null)
-                _optionsFade.SnapTo(_state.Phase == SelectPhase.Options);
-            if (_confirmedBanner != null)
-                _confirmedBanner.SnapTo(_state.Phase == SelectPhase.Confirmed);
+            // Jump directly to the resting state for the initial phase,
+            // bypassing any transitions in the controller.
+            if (_animator != null)
+            {
+                _animator.SetInteger(PhaseParam, (int)_state.Phase);
+                _animator.Play(PhaseToStateName(_state.Phase), 0, 0f);
+                _animator.Update(0f);
+            }
+
             _lastPhase = _state.Phase;
         }
 
@@ -121,7 +114,8 @@ namespace Scenes.Menus.CharacterSelect
 
             if (_state.Phase != _lastPhase)
             {
-                ApplyPhaseVisibility(_state.Phase);
+                if (_animator != null)
+                    _animator.SetInteger(PhaseParam, (int)_state.Phase);
                 _lastPhase = _state.Phase;
             }
 
@@ -132,7 +126,6 @@ namespace Scenes.Menus.CharacterSelect
                 _lastSkinIndex = _state.SkinIndex;
             }
 
-            ApplyPreviewPulse();
             ApplyFighterPreview();
         }
 
@@ -156,54 +149,15 @@ namespace Scenes.Menus.CharacterSelect
             _fighterStage.Render(_playerIndex, config, _state.SkinIndex, visible);
         }
 
-        /// <summary>
-        /// While the slot is still in the Character phase (player hasn't
-        /// locked in), pulse the preview's alpha and scale so it reads as
-        /// "still hovering." Once the player confirms out of Character,
-        /// snap both back to their rest values.
-        /// </summary>
-        private void ApplyPreviewPulse()
+        private string PhaseToStateName(SelectPhase phase)
         {
-            bool pulsing = _state.Phase == SelectPhase.Character;
-            float alpha;
-            float scale;
-            if (pulsing)
+            return phase switch
             {
-                // Map a sine wave to [0, 1] so scale stays at or above 1
-                // and alpha stays above the floor. Alpha is inverted
-                // against scale so the preview is most transparent at the
-                // peak of the pulse (most "zoomed out") and fully opaque
-                // at rest scale.
-                float t = Mathf.Sin(Time.time * _previewPulseSpeed) * 0.5f + 0.5f;
-                scale = Mathf.Lerp(1f, _previewPulseMaxScale, t);
-                alpha = Mathf.Lerp(1f, _previewPulseMinAlpha, t);
-            }
-            else
-            {
-                alpha = 1f;
-                scale = 1f;
-            }
-
-            if (_previewPulseGroup != null)
-                _previewPulseGroup.alpha = alpha;
-            if (_previewPulseTarget != null)
-                _previewPulseTarget.localScale = new Vector3(scale, scale, 1f);
-        }
-
-        private void ApplyPhaseVisibility(SelectPhase phase)
-        {
-            if (_optionsFade != null)
-            {
-                _optionsFade.SetVisible(phase == SelectPhase.Options);
-            }
-            if (_confirmedBanner != null)
-            {
-                _confirmedBanner.SetVisible(phase == SelectPhase.Confirmed);
-            }
-            if (_previewRoot != null)
-            {
-                _previewRoot.SetActive(true); // preview stays visible in all phases as backdrop
-            }
+                SelectPhase.Character => _characterState,
+                SelectPhase.Options => _optionsState,
+                SelectPhase.Confirmed => _selectedState,
+                _ => _characterState,
+            };
         }
 
         private void ApplyCharacterPreview()
@@ -279,11 +233,7 @@ namespace Scenes.Menus.CharacterSelect
                 return null;
             if (_splashSprites.TryGetValue(tex, out Sprite cached))
                 return cached;
-            Sprite sprite = Sprite.Create(
-                tex,
-                new Rect(0f, 0f, tex.width, tex.height),
-                new Vector2(0.5f, 0.5f)
-            );
+            Sprite sprite = Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
             _splashSprites[tex] = sprite;
             return sprite;
         }
