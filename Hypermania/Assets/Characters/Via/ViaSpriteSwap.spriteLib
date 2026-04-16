@@ -85,8 +85,13 @@ MonoBehaviour:
       m_Sprite: {fileID: 1637036467572861080, guid: 9f785f954604d304898bb06f209dd380, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: 1637036467572861080, guid: 9f785f954604d304898bb06f209dd380, type: 3}
+    - m_Name: none
+      m_Hash: 1066401999
+      m_Sprite: {fileID: 0}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 0}
     m_FromMain: 0
-    m_EntryOverrideCount: 4
+    m_EntryOverrideCount: 5
   - m_Name: eye
     m_Hash: 846759857
     m_CategoryList: []
@@ -101,8 +106,13 @@ MonoBehaviour:
       m_Sprite: {fileID: -6271261411530985344, guid: 9f785f954604d304898bb06f209dd380, type: 3}
       m_FromMain: 0
       m_SpriteOverride: {fileID: -6271261411530985344, guid: 9f785f954604d304898bb06f209dd380, type: 3}
+    - m_Name: none
+      m_Hash: 1066401999
+      m_Sprite: {fileID: 0}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 0}
     m_FromMain: 0
-    m_EntryOverrideCount: 2
+    m_EntryOverrideCount: 3
   - m_Name: R_fingers
     m_Hash: 735875030
     m_CategoryList: []
@@ -534,5 +544,5 @@ MonoBehaviour:
     m_FromMain: 0
     m_EntryOverrideCount: 1
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 639117226704199010
+  m_ModificationHash: 639118887943344962
   m_Version: 1

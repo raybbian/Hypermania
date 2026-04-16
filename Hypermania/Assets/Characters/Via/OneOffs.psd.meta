@@ -110,8 +110,8 @@ ScriptedImporter:
       serializedVersion: 2
       x: 4
       y: 4
-      width: 1282
-      height: 868
+      width: 2217
+      height: 1627
     spriteID: a20418375f5610f4696a43a0b7d9f643
     spriteBone: []
     spriteOutline: []
@@ -121,8 +121,8 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 4, y: 4}
-    spritePosition: {x: 1477, y: 1288}
-  - name: L smear 1.5
+    spritePosition: {x: 604, y: 692}
+  - name: L smear wide
     originalName: 
     pivot: {x: 0.5, y: 0.5}
     alignment: 0
@@ -131,7 +131,29 @@ ScriptedImporter:
     rect:
       serializedVersion: 2
       x: 4
-      y: 2569
+      y: 1639
+      width: 1669
+      height: 741
+    spriteID: 2a3482f411947384088c1dd6e7043a83
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 1639}
+    spritePosition: {x: 657, y: 1008}
+  - name: L smear 1.5
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 559
+      y: 2385
       width: 283
       height: 1264
     spriteID: 93784f5b7f148a346b05a592efebe3c0
@@ -142,7 +164,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 4, y: 2569}
+    uvTransform: {x: 559, y: 2385}
     spritePosition: {x: 2704, y: 439}
   - name: L smear 1
     originalName: 
@@ -153,7 +175,7 @@ ScriptedImporter:
     rect:
       serializedVersion: 2
       x: 4
-      y: 880
+      y: 2385
       width: 547
       height: 1681
     spriteID: ef45bf8b9833f494cad675bb857976eb
@@ -164,7 +186,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 4, y: 880}
+    uvTransform: {x: 4, y: 2385}
     spritePosition: {x: 2440, y: 439}
   spriteImportData: []
   rigSpriteImportData: []
@@ -239,13 +261,23 @@ ScriptedImporter:
     flatten: 0
     isImported: 1
     isVisible: 1
+  - name: L smear wide
+    spriteName: L smear wide
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 2a3482f411947384088c1dd6e7043a83
+    layerID: 15
+    mosaicPosition: {x: 4, y: 1639}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
   - name: L smear 1.5
     spriteName: L smear 1.5
     isGroup: 0
     parentIndex: -1
     spriteID: 93784f5b7f148a346b05a592efebe3c0
     layerID: 8
-    mosaicPosition: {x: 4, y: 2569}
+    mosaicPosition: {x: 559, y: 2385}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -255,7 +287,7 @@ ScriptedImporter:
     parentIndex: -1
     spriteID: ef45bf8b9833f494cad675bb857976eb
     layerID: 7
-    mosaicPosition: {x: 4, y: 880}
+    mosaicPosition: {x: 4, y: 2385}
     flatten: 0
     isImported: 1
     isVisible: 1
