@@ -556,16 +556,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5267077866956378727, guid: b3893dbf31233fa9084fcce0e7185d4d, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 2278443907166571058, guid: b3893dbf31233fa9084fcce0e7185d4d, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 2423708408096716031, guid: b3893dbf31233fa9084fcce0e7185d4d, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b3893dbf31233fa9084fcce0e7185d4d, type: 3}
 --- !u!114 &258473216 stripped
 MonoBehaviour:
@@ -1761,11 +1752,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 229592284259376917, guid: 21febfc11dc4f39459ea82755895ba72, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 300
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 229592284259376917, guid: 21febfc11dc4f39459ea82755895ba72, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 125
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 229592284259376917, guid: 21febfc11dc4f39459ea82755895ba72, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3885,11 +3876,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5562712372260411993, guid: 36b880e6a4ec35263a75cc8beca9f6fc, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 400
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 5562712372260411993, guid: 36b880e6a4ec35263a75cc8beca9f6fc, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 50
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 5562712372260411993, guid: 36b880e6a4ec35263a75cc8beca9f6fc, type: 3}
       propertyPath: m_LocalPosition.x
