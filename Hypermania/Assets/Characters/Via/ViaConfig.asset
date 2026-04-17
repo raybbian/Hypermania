@@ -26,7 +26,7 @@ MonoBehaviour:
     - {r: 0.5049953, g: 0.709, b: 0, a: 1}
     SpriteLibrary: {fileID: 7108339969198208228, guid: 310dc92627b48b44fadb2a6a8146ee08, type: 3}
     Portrait: {fileID: 2800000, guid: 9e588d52a7abc7049b36c2d5fcf9177f, type: 3}
-    Splash: {fileID: 2800000, guid: 9e588d52a7abc7049b36c2d5fcf9177f, type: 3}
+    Splash: {fileID: 2800000, guid: e8019f20b82205f41bf0fec5eb135362, type: 3}
   AnimationController: {fileID: 22100000, guid: 152e3c4ee00aa684189ad47f4fecc5f2, type: 2}
   CharacterHeight:
     rawValue: 1072064102
@@ -92,5 +92,5 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 0e5f6ca573beadf46814c95b25a61a2d, type: 2}
     - {fileID: 11400000, guid: 022d752e9a246aa41ae29614571729b2, type: 2}
     - {fileID: 11400000, guid: 204e568b025849d489d2d831807a21da, type: 2}
-  Combos: []
+  Gatlings: []
   Projectiles: []
