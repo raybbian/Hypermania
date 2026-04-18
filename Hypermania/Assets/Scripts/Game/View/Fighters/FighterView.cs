@@ -23,6 +23,9 @@ namespace Game.View.Fighters
         private Transform _dustEmitterLocation;
 
         [SerializeField]
+        private Transform _visualCenter;
+
+        [SerializeField]
         private float _hitJitterMagnitude = 0.04f;
 
         private int _jitterFramesRemaining;
@@ -89,11 +92,13 @@ namespace Game.View.Fighters
             }
             if (state.BlockedLastRealFrame)
             {
+                Vector2 center = (Vector2)_visualCenter.position;
+                Vector2 hit = (Vector2)state.HitLocation.Value;
                 vfxManager.AddDesired(
                     VfxKind.Block,
                     realFrame,
-                    position: (Vector2)state.HitLocation.Value,
-                    direction: (Vector2)state.HitProps.Value.Knockback
+                    position: center,
+                    direction: center - hit
                 );
                 sfxManager.AddDesired(SfxKind.Block, realFrame);
             }
