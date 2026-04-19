@@ -26,7 +26,8 @@ namespace Scenes.Menus.CharacterSelect
 
         /// <summary>
         /// Currently-highlighted row inside <see cref="PlayerOptionsPanel"/>.
-        /// Local-only; not synced to remote peers.
+        /// Synced to remote peers so the remote panel can mirror the peer's
+        /// highlight position.
         /// </summary>
         public int OptionsRow;
 
@@ -40,6 +41,7 @@ namespace Scenes.Menus.CharacterSelect
                 ComboMode = ComboMode,
                 ManiaDifficulty = ManiaDifficulty,
                 BeatCancelWindow = BeatCancelWindow,
+                OptionsRow = OptionsRow,
             };
         }
 
@@ -51,6 +53,7 @@ namespace Scenes.Menus.CharacterSelect
             ComboMode = payload.ComboMode;
             ManiaDifficulty = payload.ManiaDifficulty;
             BeatCancelWindow = payload.BeatCancelWindow;
+            OptionsRow = payload.OptionsRow;
         }
     }
 

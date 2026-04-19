@@ -21,9 +21,12 @@ namespace Scenes.Battle
                         .Execute();
                     break;
                 case GameConfig.Online:
-                    // go back to online
+                    // Back to the Online lobby UI. OnlineBase stayed loaded
+                    // through the match, so the Steam lobby and both players
+                    // are still in it — the host can start again directly.
                     SceneLoader
                         .Instance.LoadNewScene()
+                        .Load(SceneID.Online, SceneDatabase.ONLINE)
                         .Unload(SceneID.BattleEnd)
                         .Unload(SceneID.LiveConnection)
                         .WithOverlay()
@@ -42,6 +45,7 @@ namespace Scenes.Battle
                 .Unload(SceneID.Battle)
                 .Unload(SceneID.LiveConnection)
                 .Unload(SceneID.Online)
+                .Unload(SceneID.OnlineBase)
                 .WithOverlay()
                 .Execute();
         }

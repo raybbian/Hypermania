@@ -503,11 +503,13 @@ namespace Scenes.Menus.CharacterSelect
 
             if (_isOnline)
             {
+                // OnlineBase stays loaded through LiveConnection → Battle →
+                // BattleEnd so the Steam lobby survives the match; that lets
+                // Restart drop both players straight back into the same lobby.
                 SceneLoader
                     .Instance.LoadNewScene()
                     .Load(SceneID.LiveConnection, SceneDatabase.LIVE_CONNECTION)
                     .Unload(SceneID.CharacterSelect)
-                    .Unload(SceneID.OnlineBase)
                     .WithOverlay()
                     .Execute();
             }
