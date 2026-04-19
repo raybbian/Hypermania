@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Throw
   m_EditorClassIdentifier: 
   Clip: {fileID: 7400000, guid: 8b36575ba21ec0243a40645c797b8f03, type: 2}
+  ComboEligible: 1
   Frames:
   - Boxes:
     - CenterLocal:
@@ -33,7 +34,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -63,7 +63,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -103,7 +102,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -133,7 +131,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -173,7 +170,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -203,7 +199,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -243,7 +238,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -273,7 +267,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -313,7 +306,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -343,7 +335,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -383,7 +374,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -413,7 +403,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -453,7 +442,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -483,7 +471,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -523,7 +510,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -553,7 +539,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -593,7 +578,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -623,7 +607,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -663,7 +646,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -693,7 +675,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -733,7 +714,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -763,7 +743,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -803,7 +782,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -833,7 +811,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -873,7 +850,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -903,7 +879,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -943,7 +918,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -973,13 +947,12 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
-            rawValue: 1066596960
+            rawValue: 1074765384
           y:
-            rawValue: 1089341006
+            rawValue: 3182734144
         GrabPosition:
           x:
             rawValue: 0
@@ -1013,7 +986,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -1053,7 +1025,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -1093,7 +1064,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -1133,7 +1103,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -1173,7 +1142,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -1213,7 +1181,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -1253,7 +1220,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -1293,7 +1259,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
@@ -1333,7 +1298,6 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
