@@ -290,18 +290,14 @@ namespace Netcode.P2P
 
             if (text == CS_LAUNCH_REQ_MSG)
             {
-                Debug.Log(
-                    $"[Matchmaking] Received CS_LAUNCH_REQ from={user.m_SteamID}, me={SteamUser.GetSteamID()}"
-                );
+                Debug.Log($"[Matchmaking] Received CS_LAUNCH_REQ from={user.m_SteamID}, me={SteamUser.GetSteamID()}");
                 OnCharacterSelectLaunchRequested?.Invoke();
                 return;
             }
 
             if (text == CS_LAUNCH_MSG)
             {
-                Debug.Log(
-                    $"[Matchmaking] Received CS_LAUNCH from={user.m_SteamID}, me={SteamUser.GetSteamID()}"
-                );
+                Debug.Log($"[Matchmaking] Received CS_LAUNCH from={user.m_SteamID}, me={SteamUser.GetSteamID()}");
                 OnCharacterSelectLaunch?.Invoke();
                 return;
             }
