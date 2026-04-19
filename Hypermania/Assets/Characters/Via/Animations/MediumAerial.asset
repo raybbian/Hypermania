@@ -593,11 +593,11 @@ MonoBehaviour:
           rawValue: 1070923028
       Props:
         Kind: 1
-        AttackKind: 0
-        Damage: 0
-        HitstunTicks: 12
-        BlockstunTicks: 0
-        HitstopTicks: 0
+        AttackKind: 1
+        Damage: 10
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 10
         BlockstopTicks: 0
         KnockdownKind: 0
         Knockback:
@@ -661,11 +661,11 @@ MonoBehaviour:
           rawValue: 1070923028
       Props:
         Kind: 1
-        AttackKind: 0
-        Damage: 0
-        HitstunTicks: 12
-        BlockstunTicks: 0
-        HitstopTicks: 0
+        AttackKind: 1
+        Damage: 10
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 10
         BlockstopTicks: 0
         KnockdownKind: 0
         Knockback:
@@ -729,11 +729,11 @@ MonoBehaviour:
           rawValue: 1070923028
       Props:
         Kind: 1
-        AttackKind: 0
-        Damage: 0
-        HitstunTicks: 12
-        BlockstunTicks: 0
-        HitstopTicks: 0
+        AttackKind: 1
+        Damage: 10
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 10
         BlockstopTicks: 0
         KnockdownKind: 0
         Knockback:
@@ -797,11 +797,11 @@ MonoBehaviour:
           rawValue: 1070923028
       Props:
         Kind: 1
-        AttackKind: 0
-        Damage: 0
-        HitstunTicks: 12
-        BlockstunTicks: 0
-        HitstopTicks: 0
+        AttackKind: 1
+        Damage: 10
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 10
         BlockstopTicks: 0
         KnockdownKind: 0
         Knockback:
@@ -865,11 +865,11 @@ MonoBehaviour:
           rawValue: 1070923028
       Props:
         Kind: 1
-        AttackKind: 0
-        Damage: 0
-        HitstunTicks: 12
-        BlockstunTicks: 0
-        HitstopTicks: 0
+        AttackKind: 1
+        Damage: 10
+        HitstunTicks: 20
+        BlockstunTicks: 12
+        HitstopTicks: 10
         BlockstopTicks: 0
         KnockdownKind: 0
         Knockback:
@@ -892,7 +892,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -902,7 +902,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -912,7 +912,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -922,7 +922,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -932,7 +932,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -942,7 +942,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -952,7 +952,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -962,7 +962,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -972,7 +972,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -982,7 +982,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -992,7 +992,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -1002,7 +1002,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0

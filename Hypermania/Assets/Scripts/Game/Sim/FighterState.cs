@@ -182,37 +182,52 @@ namespace Game.Sim
             FacingDir = facingDirection;
         }
 
-        public void DoFrameStart(GameOptions options, bool maniaActive, GameMode gameMode)
+        public void DoFrameStart(GameOptions options, bool maniaActive)
         {
             // Latch the mania hitstun lock: if this fighter is currently in
             // hitstun while a mania is running, they must remain treated as
             // non-actionable for the rest of the mania even after
             // TickStateMachine transitions them out of CharacterState.Hit.
+            // Must run before TickStateMachine — otherwise a fighter whose
+            // hitstun ends this frame would transition to Idle and be missed.
             if (maniaActive && State == CharacterState.Hit)
             {
                 LockedHitstun = true;
             }
 
-            if (Actionable)
-            {
-                ComboedCount = 0;
-                if (options.Players[Index].HealOnActionable)
-                {
-                    Health = options.Players[Index].Character.Health;
-                }
-                if (options.Players[Index].SuperMaxOnActionable && gameMode == GameMode.Fighting)
-                {
-                    Super = options.Global.SuperMax;
-                }
-                if (options.Players[Index].BurstMaxOnActionable)
-                {
-                    Burst = options.Players[Index].Character.BurstMax;
-                }
-            }
-
             if (OnGround(options))
             {
                 AirDashCount = 0;
+            }
+        }
+
+        /// <summary>
+        /// Applies the actionable-gated resets (combo count, heal-on-actionable,
+        /// super/burst max-on-actionable). Must run after <see cref="TickStateMachine"/>
+        /// so <see cref="Actionable"/> reflects the state the fighter will act
+        /// from this frame — otherwise a fighter whose stun ends this frame
+        /// would be seen as non-actionable and skip the resets even though
+        /// they're about to process input normally.
+        /// </summary>
+        public void ApplyActionableFrameResets(GameOptions options, GameMode gameMode)
+        {
+            if (!Actionable)
+            {
+                return;
+            }
+
+            ComboedCount = 0;
+            if (options.Players[Index].HealOnActionable)
+            {
+                Health = options.Players[Index].Character.Health;
+            }
+            if (options.Players[Index].SuperMaxOnActionable && gameMode == GameMode.Fighting)
+            {
+                Super = options.Global.SuperMax;
+            }
+            if (options.Players[Index].BurstMaxOnActionable)
+            {
+                Burst = options.Players[Index].Character.BurstMax;
             }
         }
 
@@ -520,8 +535,10 @@ namespace Game.Sim
 
             int bufferWindow = options.Global.Input.InputBufferWindow;
 
-            // Double-tap heavy: if in a heavy attack and heavy pressed again within the super window, mark as super
-            int superWindow = options.Global.Input.SuperAttackWindow;
+            // Hold-to-super: once the heavy attack has been active for
+            // SuperDelayWindow ticks, promote to a super if the heavy button
+            // is still held at that frame.
+            int superDelayWindow = options.Global.Input.SuperDelayWindow;
             bool isHeavyAttackState =
                 State == CharacterState.HeavyAttack
                 || State == CharacterState.HeavyAerial
@@ -529,9 +546,8 @@ namespace Game.Sim
             if (
                 isHeavyAttackState
                 && !IsSuperAttack
-                && InputH.PressedRecently(InputFlags.HeavyAttack, bufferWindow)
-                && simFrame - StateStart > bufferWindow
-                && simFrame - StateStart <= superWindow
+                && InputH.IsHeld(InputFlags.HeavyAttack)
+                && simFrame - StateStart == superDelayWindow
                 && gameMode == GameMode.Fighting
             )
             {
@@ -813,7 +829,7 @@ namespace Game.Sim
                 Velocity = new SVector2(props.Knockback.x * (sfloat)0.5f, sfloat.Zero);
 
                 // TODO: check if other move is special, if so apply chip
-                return new HitOutcome { Kind = HitKind.Blocked };
+                return new HitOutcome { Kind = HitKind.Blocked, Props = props };
             }
 
             switch (props.KnockdownKind)

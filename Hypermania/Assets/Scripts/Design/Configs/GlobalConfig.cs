@@ -12,7 +12,12 @@ namespace Design.Configs
         public int DashWindow;
         public int SuperJumpWindow;
         public int InputBufferWindow;
-        public int SuperAttackWindow;
+
+        /// <summary>
+        /// Number of frames into a heavy attack after which, if the heavy
+        /// attack button is still held, the move upgrades to a super.
+        /// </summary>
+        public int SuperDelayWindow;
     }
 
     [Serializable]

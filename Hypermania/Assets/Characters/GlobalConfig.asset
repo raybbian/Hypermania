@@ -59,7 +59,7 @@ MonoBehaviour:
     DashWindow: 12
     SuperJumpWindow: 8
     InputBufferWindow: 8
-    SuperAttackWindow: 12
+    SuperDelayWindow: 12
   _audioConfig: {fileID: 11400000, guid: 390bdf2077e7858679ef87c91e25471c, type: 2}
   _configs:
     values:

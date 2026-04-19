@@ -27,6 +27,17 @@ MonoBehaviour:
     SpriteLibrary: {fileID: 7108339969198208228, guid: 310dc92627b48b44fadb2a6a8146ee08, type: 3}
     Portrait: {fileID: 2800000, guid: 9e588d52a7abc7049b36c2d5fcf9177f, type: 3}
     Splash: {fileID: 2800000, guid: e8019f20b82205f41bf0fec5eb135362, type: 3}
+  - MainColor: {r: 0.91372555, g: 0.3019608, b: 0.53333336, a: 1}
+    LightColor: {r: 0.94117653, g: 0.58431375, b: 0.72156864, a: 1}
+    AccentColor: {r: 0.7137255, g: 0.2901961, b: 0.6039216, a: 1}
+    HypeBarColors:
+    - {r: 1, g: 0.656, b: 0.7883077, a: 1}
+    - {r: 0.936, g: 0.451152, b: 0.637632, a: 1}
+    - {r: 0.9411765, g: 0.32752946, b: 0.56354755, a: 1}
+    - {r: 0.766, g: 0.114133984, b: 0.36485168, a: 1}
+    SpriteLibrary: {fileID: 7108339969198208228, guid: df01b8c0109101644bb6fa40d3f91d4c, type: 3}
+    Portrait: {fileID: 2800000, guid: 9e588d52a7abc7049b36c2d5fcf9177f, type: 3}
+    Splash: {fileID: 2800000, guid: e8019f20b82205f41bf0fec5eb135362, type: 3}
   AnimationController: {fileID: 22100000, guid: 152e3c4ee00aa684189ad47f4fecc5f2, type: 2}
   CharacterHeight:
     rawValue: 1072064102
@@ -50,11 +61,11 @@ MonoBehaviour:
   BackAirDashDistance:
     rawValue: 1113325568
   SuperDisplay:
-    AnimState: 0
-    StartFrame: 0
-    CameraLocalPosition: {x: 0, y: 0, z: 0}
+    AnimState: 11
+    StartFrame: 8
+    CameraLocalPosition: {x: 0, y: 1.7, z: -2}
     CameraOrthoSize:
-      rawValue: 0
+      rawValue: 1050253722
   Hitboxes:
     values:
     - {fileID: 11400000, guid: 888af7c8677801b4e98813875190acde, type: 2}
@@ -92,5 +103,9 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 0e5f6ca573beadf46814c95b25a61a2d, type: 2}
     - {fileID: 11400000, guid: 022d752e9a246aa41ae29614571729b2, type: 2}
     - {fileID: 11400000, guid: 204e568b025849d489d2d831807a21da, type: 2}
-  Gatlings: []
+  Gatlings:
+  - From: 5
+    To: 8
+  - From: 8
+    To: 11
   Projectiles: []

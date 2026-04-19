@@ -356,13 +356,21 @@ namespace Game.Sim
             bool maniaActive = GameMode == GameMode.Mania || GameMode == GameMode.ManiaStart;
             for (int i = 0; i < Fighters.Length; i++)
             {
-                Fighters[i].DoFrameStart(options, maniaActive, GameMode);
+                Fighters[i].DoFrameStart(options, maniaActive);
             }
 
             // Tick the state machine, making the character idle if an animation/stun finishes
             for (int i = 0; i < Fighters.Length; i++)
             {
                 Fighters[i].TickStateMachine(SimFrame, options);
+            }
+
+            // Actionable-gated resets run after TickStateMachine so a fighter
+            // whose stun/animation ends this frame is seen as actionable when
+            // their combo count, heal, super, and burst are decided.
+            for (int i = 0; i < Fighters.Length; i++)
+            {
+                Fighters[i].ApplyActionableFrameResets(options, GameMode);
             }
 
             for (int i = 0; i < Fighters.Length; i++)
@@ -789,10 +797,9 @@ namespace Game.Sim
                     //owners[0] hits owners[1]
                     HitOutcome outcome = HandleCollision(options, collision);
 
-                    HitstopFramesRemaining = Mathsf.Min(
-                        Mathsf.Max(outcome.Props.HitstopTicks, HitstopFramesRemaining),
-                        12
-                    );
+                    int stopTicks =
+                        outcome.Kind == HitKind.Blocked ? outcome.Props.BlockstopTicks : outcome.Props.HitstopTicks;
+                    HitstopFramesRemaining = Mathsf.Min(Mathsf.Max(stopTicks, HitstopFramesRemaining), 12);
 
                     var attackerBox = collision.BoxA.Owner == owners.Item1 ? collision.BoxA : collision.BoxB;
 

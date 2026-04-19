@@ -543,6 +543,32 @@ MonoBehaviour:
       m_SpriteOverride: {fileID: -341999786481769111, guid: 9f785f954604d304898bb06f209dd380, type: 3}
     m_FromMain: 0
     m_EntryOverrideCount: 1
+  - m_Name: oneoffs
+    m_Hash: 369805573
+    m_CategoryList: []
+    m_OverrideEntries:
+    - m_Name: L smear 1
+      m_Hash: 257204260
+      m_Sprite: {fileID: -5618122234616636702, guid: 157d6919b21060b4990be3373e45dd41, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: -5618122234616636702, guid: 157d6919b21060b4990be3373e45dd41, type: 3}
+    - m_Name: L smear 1.5
+      m_Hash: 995332842
+      m_Sprite: {fileID: 1009729502385752591, guid: 157d6919b21060b4990be3373e45dd41, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 1009729502385752591, guid: 157d6919b21060b4990be3373e45dd41, type: 3}
+    - m_Name: L smear wide
+      m_Hash: 120902175
+      m_Sprite: {fileID: 2055780611938850605, guid: 157d6919b21060b4990be3373e45dd41, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 2055780611938850605, guid: 157d6919b21060b4990be3373e45dd41, type: 3}
+    - m_Name: straight whipsmear
+      m_Hash: 934679691
+      m_Sprite: {fileID: 5096727699688679799, guid: 157d6919b21060b4990be3373e45dd41, type: 3}
+      m_FromMain: 0
+      m_SpriteOverride: {fileID: 5096727699688679799, guid: 157d6919b21060b4990be3373e45dd41, type: 3}
+    m_FromMain: 0
+    m_EntryOverrideCount: 4
   m_PrimaryLibraryGUID: 
-  m_ModificationHash: 639118887943344962
+  m_ModificationHash: 639121515780934626
   m_Version: 1
