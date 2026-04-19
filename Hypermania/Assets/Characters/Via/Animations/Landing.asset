@@ -15,7 +15,36 @@ MonoBehaviour:
   Clip: {fileID: 7400000, guid: 7baa6d0720aa6ee47bd2fd6789a2ae19, type: 2}
   ComboEligible: 1
   Frames:
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3168099328
+        y:
+          rawValue: 1061946972
+      SizeLocal:
+        x:
+          rawValue: 1062033342
+        y:
+          rawValue: 1071820732
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
@@ -25,7 +54,36 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3168099328
+        y:
+          rawValue: 1061946972
+      SizeLocal:
+        x:
+          rawValue: 1062033342
+        y:
+          rawValue: 1071820732
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
@@ -35,7 +93,36 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3168099328
+        y:
+          rawValue: 1060068044
+      SizeLocal:
+        x:
+          rawValue: 1062033342
+        y:
+          rawValue: 1069941804
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
@@ -45,7 +132,36 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3168099328
+        y:
+          rawValue: 1060068044
+      SizeLocal:
+        x:
+          rawValue: 1062033342
+        y:
+          rawValue: 1069941804
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
@@ -55,7 +171,36 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3168099328
+        y:
+          rawValue: 1060068044
+      SizeLocal:
+        x:
+          rawValue: 1062033342
+        y:
+          rawValue: 1069941804
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
@@ -65,7 +210,36 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3140137088
+        y:
+          rawValue: 1062209147
+      SizeLocal:
+        x:
+          rawValue: 1062819869
+        y:
+          rawValue: 1072082907
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
@@ -75,7 +249,36 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3140137088
+        y:
+          rawValue: 1062209147
+      SizeLocal:
+        x:
+          rawValue: 1062819869
+        y:
+          rawValue: 1072082907
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
@@ -85,7 +288,36 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 3140137088
+        y:
+          rawValue: 1062209147
+      SizeLocal:
+        x:
+          rawValue: 1062819869
+        y:
+          rawValue: 1072082907
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1

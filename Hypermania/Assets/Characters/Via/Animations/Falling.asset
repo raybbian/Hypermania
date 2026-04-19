@@ -15,7 +15,36 @@ MonoBehaviour:
   Clip: {fileID: 7400000, guid: 4170461d6266c7f419ffaf668531ad4d, type: 2}
   ComboEligible: 1
   Frames:
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019665592
+        y:
+          rawValue: 1066215444
+      SizeLocal:
+        x:
+          rawValue: 1062666380
+        y:
+          rawValue: 1070002480
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
@@ -25,7 +54,36 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019665592
+        y:
+          rawValue: 1066215444
+      SizeLocal:
+        x:
+          rawValue: 1062666380
+        y:
+          rawValue: 1070002480
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
@@ -35,7 +93,36 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019665592
+        y:
+          rawValue: 1066215444
+      SizeLocal:
+        x:
+          rawValue: 1062666380
+        y:
+          rawValue: 1070002480
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
@@ -45,7 +132,36 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019665600
+        y:
+          rawValue: 1064251658
+      SizeLocal:
+        x:
+          rawValue: 1062666380
+        y:
+          rawValue: 1072828494
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
