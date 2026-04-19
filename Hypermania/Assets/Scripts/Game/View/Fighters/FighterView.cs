@@ -94,12 +94,7 @@ namespace Game.View.Fighters
             {
                 Vector2 center = (Vector2)_visualCenter.position;
                 Vector2 hit = (Vector2)state.HitLocation.Value;
-                vfxManager.AddDesired(
-                    VfxKind.Block,
-                    realFrame,
-                    position: center,
-                    direction: center - hit
-                );
+                vfxManager.AddDesired(VfxKind.Block, realFrame, position: center, direction: center - hit);
                 sfxManager.AddDesired(SfxKind.Block, realFrame);
             }
             if (state.HitLastRealFrame)

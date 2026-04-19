@@ -197,16 +197,48 @@ namespace Design.Animation
         public bool ComboEligible = true;
         public List<FrameData> Frames = new List<FrameData>();
 
-        [NonSerialized] private int _startupTicks;
-        [NonSerialized] private int _activeTicks;
-        [NonSerialized] private int _recoveryTicks;
-        [NonSerialized] private int _lastHitReferenceFrame;
-        [NonSerialized] private int _lastHitHitstunTicks;
-        [NonSerialized] private bool _frameDataCached;
+        [NonSerialized]
+        private int _startupTicks;
 
-        public int StartupTicks { get { EnsureFrameDataCached(); return _startupTicks; } }
-        public int ActiveTicks { get { EnsureFrameDataCached(); return _activeTicks; } }
-        public int RecoveryTicks { get { EnsureFrameDataCached(); return _recoveryTicks; } }
+        [NonSerialized]
+        private int _activeTicks;
+
+        [NonSerialized]
+        private int _recoveryTicks;
+
+        [NonSerialized]
+        private int _lastHitReferenceFrame;
+
+        [NonSerialized]
+        private int _lastHitHitstunTicks;
+
+        [NonSerialized]
+        private bool _frameDataCached;
+
+        public int StartupTicks
+        {
+            get
+            {
+                EnsureFrameDataCached();
+                return _startupTicks;
+            }
+        }
+        public int ActiveTicks
+        {
+            get
+            {
+                EnsureFrameDataCached();
+                return _activeTicks;
+            }
+        }
+        public int RecoveryTicks
+        {
+            get
+            {
+                EnsureFrameDataCached();
+                return _recoveryTicks;
+            }
+        }
 
         /// <summary>
         /// Frame-advantage on hit, measured from the first hitbox in the last contiguous
@@ -219,7 +251,8 @@ namespace Design.Animation
             get
             {
                 EnsureFrameDataCached();
-                if (_lastHitReferenceFrame < 0) return 0;
+                if (_lastHitReferenceFrame < 0)
+                    return 0;
                 return _lastHitHitstunTicks - (TotalTicks - _lastHitReferenceFrame);
             }
         }
@@ -232,7 +265,8 @@ namespace Design.Animation
 
         private void EnsureFrameDataCached()
         {
-            if (_frameDataCached) return;
+            if (_frameDataCached)
+                return;
 
             int[] counts = new int[ATTACK_FRAME_TYPE_ORDER.Length];
             if (IsValidAttack(counts))

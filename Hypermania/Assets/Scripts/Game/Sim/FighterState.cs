@@ -421,11 +421,7 @@ namespace Game.Sim
                 if (DashInputs(ForwardInput, ref this) && AirDashCount < config.NumAirDashes)
                 {
                     AirDashCount += 1;
-                    SetState(
-                        CharacterState.ForwardAirDash,
-                        frame,
-                        frame + options.Global.ForwardAirDashTicks
-                    );
+                    SetState(CharacterState.ForwardAirDash, frame, frame + options.Global.ForwardAirDashTicks);
                     return;
                 }
 
@@ -438,12 +434,7 @@ namespace Game.Sim
             }
         }
 
-        private void TriggerPreJump(
-            Frame frame,
-            GameOptions options,
-            bool isRhythmCancel,
-            sfloat runMult
-        )
+        private void TriggerPreJump(Frame frame, GameOptions options, bool isRhythmCancel, sfloat runMult)
         {
             CharacterConfig config = options.Players[Index].Character;
 
@@ -481,11 +472,7 @@ namespace Game.Sim
                 return;
             }
 
-            SetState(
-                CharacterState.PreJump,
-                frame,
-                frame + config.GetHitboxData(CharacterState.PreJump).TotalTicks
-            );
+            SetState(CharacterState.PreJump, frame, frame + config.GetHitboxData(CharacterState.PreJump).TotalTicks);
         }
 
         private static Dictionary<(FighterAttackLocation, InputFlags), CharacterState> _attackDictionary =
@@ -619,17 +606,21 @@ namespace Game.Sim
 
         private bool IsGatlingCancelAllowed(CharacterState to, Frame simFrame, CharacterConfig config)
         {
-            if (!AttackConnected) return false;
-            if (!config.HasGatling(State, to)) return false;
+            if (!AttackConnected)
+                return false;
+            if (!config.HasGatling(State, to))
+                return false;
 
             HitboxData fromData = config.GetHitboxData(State);
             int total = fromData.StartupTicks + fromData.ActiveTicks + fromData.RecoveryTicks;
-            if (total == 0) return false;
+            if (total == 0)
+                return false;
 
             int ticksIntoState = simFrame - StateStart;
             int recoveryStart = fromData.StartupTicks + fromData.ActiveTicks;
             int recoveryEnd = total;
-            if (ticksIntoState < recoveryStart || ticksIntoState >= recoveryEnd) return false;
+            if (ticksIntoState < recoveryStart || ticksIntoState >= recoveryEnd)
+                return false;
 
             HitboxData toData = config.GetHitboxData(to);
 

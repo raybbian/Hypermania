@@ -169,11 +169,7 @@ namespace Game.View.Overlay
 
         private void SmoothBand(int band, float energy)
         {
-            _bandFloor[band] = Mathf.Lerp(
-                _bandFloor[band],
-                energy,
-                1f - Mathf.Exp(-_floorFollow * Time.deltaTime)
-            );
+            _bandFloor[band] = Mathf.Lerp(_bandFloor[band], energy, 1f - Mathf.Exp(-_floorFollow * Time.deltaTime));
 
             _bandPeak[band] = Mathf.Max(_bandPeak[band], energy);
             _bandPeak[band] = Mathf.Lerp(
@@ -189,11 +185,7 @@ namespace Game.View.Overlay
                 norm = Mathf.Pow(norm, 1f - _compress);
 
             float rate = (norm > _bandSmoothed[band]) ? _attack : _release;
-            _bandSmoothed[band] = Mathf.Lerp(
-                _bandSmoothed[band],
-                norm,
-                1f - Mathf.Exp(-rate * Time.deltaTime)
-            );
+            _bandSmoothed[band] = Mathf.Lerp(_bandSmoothed[band], norm, 1f - Mathf.Exp(-rate * Time.deltaTime));
         }
 
         private static float ComputeBandEnergy(float[] spectrum, float lowHz, float highHz, int sampleRate)

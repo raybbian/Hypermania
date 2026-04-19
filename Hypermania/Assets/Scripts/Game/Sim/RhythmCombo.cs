@@ -82,9 +82,7 @@ namespace Game.Sim
 
             state.Enable(combo.EndFrame);
 
-            if (options.InfoOptions != null
-                && options.InfoOptions.VerifyComboPrediction
-                && combo.BeatSnapshots != null)
+            if (options.InfoOptions != null && options.InfoOptions.VerifyComboPrediction && combo.BeatSnapshots != null)
             {
                 for (int i = 0; i < combo.BeatSnapshots.Count; i++)
                 {

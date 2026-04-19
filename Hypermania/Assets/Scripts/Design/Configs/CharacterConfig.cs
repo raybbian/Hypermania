@@ -66,10 +66,12 @@ namespace Design.Configs
 
         public bool HasGatling(CharacterState from, CharacterState to)
         {
-            if (Gatlings == null) return false;
+            if (Gatlings == null)
+                return false;
             for (int i = 0; i < Gatlings.Count; i++)
             {
-                if (Gatlings[i].From == from && Gatlings[i].To == to) return true;
+                if (Gatlings[i].From == from && Gatlings[i].To == to)
+                    return true;
             }
             return false;
         }
@@ -81,17 +83,21 @@ namespace Design.Configs
 
         private void ValidateGatlings()
         {
-            if (Gatlings == null) return;
+            if (Gatlings == null)
+                return;
             for (int i = 0; i < Gatlings.Count; i++)
             {
                 GatlingEntry entry = Gatlings[i];
                 HitboxData fromData = Hitboxes != null ? Hitboxes[entry.From] : null;
                 HitboxData toData = Hitboxes != null ? Hitboxes[entry.To] : null;
-                if (fromData == null || toData == null) continue;
+                if (fromData == null || toData == null)
+                    continue;
 
                 int fromTotal = fromData.StartupTicks + fromData.ActiveTicks + fromData.RecoveryTicks;
-                if (fromTotal == 0) continue;
-                if (toData.StartupTicks == 0) continue;
+                if (fromTotal == 0)
+                    continue;
+                if (toData.StartupTicks == 0)
+                    continue;
 
                 int cancelWindow = Mathsf.Max(0, toData.StartupTicks - fromData.OnHitAdvantage + 1);
                 int overlap = cancelWindow - fromData.RecoveryTicks;

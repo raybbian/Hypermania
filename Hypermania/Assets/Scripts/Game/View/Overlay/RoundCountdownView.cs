@@ -17,7 +17,7 @@ namespace Game.View.Overlay
         private Animator _animator;
         private AudioSource _audioSource;
         private int _lastBeatIndex;
-        
+
         private static readonly int CountParam = Animator.StringToHash("Count");
 
         public void Awake()

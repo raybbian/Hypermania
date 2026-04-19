@@ -52,9 +52,7 @@ namespace Game.View
         {
             _interestPoints = interestPoints;
             bool inMania = gameMode == GameMode.ManiaStart || gameMode == GameMode.Mania;
-            _targetZoom = inMania
-                ? _params.ManiaHalfHeight
-                : (float)_params.Config.CameraHalfHeight;
+            _targetZoom = inMania ? _params.ManiaHalfHeight : (float)_params.Config.CameraHalfHeight;
         }
 
         public void Update()

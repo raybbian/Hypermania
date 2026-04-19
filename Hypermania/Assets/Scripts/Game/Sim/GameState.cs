@@ -382,14 +382,7 @@ namespace Game.Sim
             // If a player applies inputs to start a state at the start of the frame, we should apply those immediately
             for (int i = 0; i < Fighters.Length; i++)
             {
-                Fighters[i]
-                    .ApplyActiveState(
-                        SimFrame,
-                        options,
-                        options.Players[i].Character,
-                        rhythmCancel,
-                        GameMode
-                    );
+                Fighters[i].ApplyActiveState(SimFrame, options, options.Players[i].Character, rhythmCancel, GameMode);
             }
 
             bool anySuperStarted =
@@ -592,8 +585,7 @@ namespace Game.Sim
             bool rhythmCancel = false;
 
             // Dissipate SuperCost super per 8 beats from the combo attacker.
-            sfloat dissipationPerFrame =
-                options.Global.SuperCost / (sfloat)options.Global.Audio.BeatsToFrame(8);
+            sfloat dissipationPerFrame = options.Global.SuperCost / (sfloat)options.Global.Audio.BeatsToFrame(8);
 
             for (int i = 0; i < Manias.Length; i++)
             {

@@ -58,11 +58,7 @@ namespace Game.Sim
         /// auto-property backing fields like <c>&lt;Super&gt;k__BackingField</c>
         /// are matched as <c>Super</c>).
         /// </summary>
-        private static readonly HashSet<string> IgnoredFields = new HashSet<string>
-        {
-            "InputH",
-            "Super",
-        };
+        private static readonly HashSet<string> IgnoredFields = new HashSet<string> { "InputH", "Super" };
 
         /// <summary>Max recursion depth for the field-by-field diff.</summary>
         private const int MAX_DIFF_DEPTH = 10;
@@ -75,11 +71,7 @@ namespace Game.Sim
 
         public static void StorePrediction(Frame frame, GameState predicted, int attackerIndex)
         {
-            _pending[frame] = new Pending
-            {
-                Predicted = predicted,
-                AttackerIndex = attackerIndex,
-            };
+            _pending[frame] = new Pending { Predicted = predicted, AttackerIndex = attackerIndex };
         }
 
         public static void CheckAtFrame(Frame frame, GameState actual)
@@ -190,14 +182,7 @@ namespace Game.Sim
                 }
                 for (int i = 0; i < eArr.Length; i++)
                 {
-                    DiffValue(
-                        eArr.GetValue(i),
-                        aArr.GetValue(i),
-                        $"{path}[{i}]",
-                        sb,
-                        depth + 1,
-                        ref lineCount
-                    );
+                    DiffValue(eArr.GetValue(i), aArr.GetValue(i), $"{path}[{i}]", sb, depth + 1, ref lineCount);
                     if (lineCount >= MAX_DIFF_LINES)
                         return;
                 }
@@ -233,9 +218,7 @@ namespace Game.Sim
 
             // Fall through: walk instance fields (including backing fields
             // for auto-properties).
-            FieldInfo[] fields = t.GetFields(
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-            );
+            FieldInfo[] fields = t.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             for (int i = 0; i < fields.Length; i++)
             {
                 FieldInfo f = fields[i];

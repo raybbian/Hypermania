@@ -832,11 +832,7 @@ namespace Game.Sim
         /// <paramref name="snapshots"/>. No-op when the caller passed a null
         /// list (verify flag off).
         /// </summary>
-        private void CaptureBeatSnapshot(
-            List<ComboBeatSnapshot> snapshots,
-            Frame currentBeat,
-            Frame nextBeat
-        )
+        private void CaptureBeatSnapshot(List<ComboBeatSnapshot> snapshots, Frame currentBeat, Frame nextBeat)
         {
             if (snapshots == null)
                 return;
@@ -853,9 +849,7 @@ namespace Game.Sim
 
             GameState cloned = null;
             CloneInto(ref cloned, _working);
-            snapshots.Add(
-                new ComboBeatSnapshot { CompareFrame = _working.RealFrame, Predicted = cloned }
-            );
+            snapshots.Add(new ComboBeatSnapshot { CompareFrame = _working.RealFrame, Predicted = cloned });
         }
 
         /// <summary>

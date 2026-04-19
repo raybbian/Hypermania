@@ -98,9 +98,7 @@ namespace Game.View
                 _playerParams[i].HealthBarView.Init(config, options.Players[i].SkinIndex);
                 _playerParams[i].HealthBarView.SetMaxHealth((float)config.Health);
                 _playerParams[i].BurstBarView.SetMaxValue((float)config.BurstMax);
-                _playerParams[i].SuperBarView.Init(
-                    (float)options.Global.SuperCost
-                );
+                _playerParams[i].SuperBarView.Init((float)options.Global.SuperCost);
                 _playerParams[i]
                     .SuperDisplayView.Init(
                         config,
