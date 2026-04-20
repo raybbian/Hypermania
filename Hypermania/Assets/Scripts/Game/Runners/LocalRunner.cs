@@ -6,12 +6,18 @@ using Netcode.P2P;
 using Netcode.Rollback;
 using Netcode.Rollback.Sessions;
 using Steamworks;
+using UnityEngine;
 
 namespace Game.Runners
 {
     public class LocalRunner : GameRunner
     {
         protected SyncTestSession<GameState, GameInput> _session;
+        private bool _paused = false;
+
+        [SerializeField]
+        private UnityEngine.GameObject pauseMenuPrefab;
+        private UnityEngine.GameObject _pauseMenuInstance;
 
         public override void Init(
             List<(PlayerHandle playerHandle, PlayerKind playerKind, SteamNetworkingIdentity address)> players,
@@ -55,6 +61,12 @@ namespace Game.Runners
                 return false;
             }
 
+            if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Escape))
+            {
+                _paused = !_paused;
+                OnPauseChanged(_paused);
+            }
+
             for (int i = 0; i < _inputBuffers.Length; i++)
             {
                 _inputBuffers[i].Clear();
@@ -63,6 +75,11 @@ namespace Game.Runners
 
             float fpsDelta = 1.0f / GameManager.TPS;
             _time += deltaTime;
+
+            if (_paused)
+            {
+                return false;
+            }
 
             while (_time > fpsDelta)
             {
@@ -73,6 +90,33 @@ namespace Game.Runners
             }
 
             return false;
+        }
+
+        private void OnPauseChanged(bool paused)
+        {
+            if (paused)
+            {
+                if (_pauseMenuInstance == null)
+                {
+                    _pauseMenuInstance = UnityEngine.Object.Instantiate(pauseMenuPrefab);
+                }
+                _pauseMenuInstance.SetActive(true);
+                UnityEngine.Time.timeScale = 0f;
+            }
+            else
+            {
+                if (_pauseMenuInstance != null)
+                {
+                    _pauseMenuInstance.SetActive(false);
+                }
+                UnityEngine.Time.timeScale = 1f;
+            }
+        }
+
+        public void ResumeGame()
+        {
+            _paused = false;
+            OnPauseChanged(false);
         }
 
         protected bool GameLoop(float deltaTime)

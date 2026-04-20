@@ -397,6 +397,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _view: {fileID: 2114326934}
+  pauseMenuPrefab: {fileID: 0}
   _advanceKey: 62
   _holdS: 0.3
 --- !u!1001 &228016475
@@ -556,16 +557,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5267077866956378727, guid: b3893dbf31233fa9084fcce0e7185d4d, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 2278443907166571058, guid: b3893dbf31233fa9084fcce0e7185d4d, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 0}
-    - targetCorrespondingSourceObject: {fileID: 2423708408096716031, guid: b3893dbf31233fa9084fcce0e7185d4d, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b3893dbf31233fa9084fcce0e7185d4d, type: 3}
 --- !u!114 &258473216 stripped
 MonoBehaviour:
@@ -613,6 +605,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _view: {fileID: 2114326934}
+  pauseMenuPrefab: {fileID: 1419659386900743875, guid: 82481568ae4064ed0b4721ac58c5b922, type: 3}
 --- !u!4 &286925406
 Transform:
   m_ObjectHideFlags: 0
