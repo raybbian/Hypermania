@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
@@ -7,6 +8,11 @@ using UnityEngine.Rendering.Universal;
 public class OutlinePass : ScriptableRenderPass
 {
     readonly OutlineFeature.Settings settings;
+    readonly OutlineFeature feature;
+
+    static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
+    static readonly int OutlineWidthId = Shader.PropertyToID("_OutlineWidth");
+    static readonly int AlphaThresholdId = Shader.PropertyToID("_AlphaThreshold");
 
     static readonly List<ShaderTagId> shaderTags = new List<ShaderTagId>
     {
@@ -16,14 +22,45 @@ public class OutlinePass : ScriptableRenderPass
         new ShaderTagId("Universal2D"),
     };
 
-    public OutlinePass(OutlineFeature.Settings s)
+    // Per-player material instances so concurrent blit passes don't stomp
+    // each other's _OutlineColor/_OutlineWidth/_AlphaThreshold.
+    Material[] _perPlayerMaterials;
+    Material _materialSource;
+
+    public OutlinePass(OutlineFeature.Settings s, OutlineFeature f)
     {
         settings = s;
+        feature = f;
         renderPassEvent = s.renderPassEvent;
     }
 
-    // One PassData class per graph pass. Keep them tiny and POCO — the
-    // graph reuses them across frames.
+    public void Cleanup()
+    {
+        if (_perPlayerMaterials == null) return;
+        foreach (var m in _perPlayerMaterials)
+        {
+            if (m == null) continue;
+            if (Application.isPlaying) Object.Destroy(m);
+            else Object.DestroyImmediate(m);
+        }
+        _perPlayerMaterials = null;
+        _materialSource = null;
+    }
+
+    void EnsureMaterials(int count)
+    {
+        if (_perPlayerMaterials != null
+            && _perPlayerMaterials.Length == count
+            && _materialSource == settings.outlineMaterial)
+            return;
+
+        Cleanup();
+        _materialSource = settings.outlineMaterial;
+        _perPlayerMaterials = new Material[count];
+        for (int i = 0; i < count; i++)
+            _perPlayerMaterials[i] = new Material(settings.outlineMaterial);
+    }
+
     class SilhouettePassData
     {
         public RendererListHandle rendererList;
@@ -37,76 +74,114 @@ public class OutlinePass : ScriptableRenderPass
 
     public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
     {
-        if (settings.outlineMaterial == null || settings.layerMask == 0)
+        if (settings.outlineMaterial == null || settings.players == null || settings.players.Count == 0)
             return;
 
-        // URP exposes its per-frame state through typed containers on frameData.
+        EnsureMaterials(settings.players.Count);
+
         var resourceData = frameData.Get<UniversalResourceData>();
         var cameraData = frameData.Get<UniversalCameraData>();
         var renderingData = frameData.Get<UniversalRenderingData>();
         var lightData = frameData.Get<UniversalLightData>();
 
-        // --- Create a transient silhouette texture, cleared to transparent. ---
-        // Base it on the camera color's descriptor so size/format match.
-        var desc = resourceData.activeColorTexture.GetDescriptor(renderGraph);
-        desc.name = "_CharacterSilhouette";
-        desc.depthBufferBits = 0;
-        desc.msaaSamples = MSAASamples.None;
-        desc.clearBuffer = true;
-        desc.clearColor = Color.clear;
-        TextureHandle silhouette = renderGraph.CreateTexture(desc);
+        var baseDesc = resourceData.activeColorTexture.GetDescriptor(renderGraph);
 
-        // --- Pass 1: draw the character layer into the silhouette RT. ---
-        using (
-            var builder = renderGraph.AddRasterRenderPass<SilhouettePassData>("CharacterSilhouette", out var passData)
-        )
+        // Outline width is authored at a 720p reference so visual thickness
+        // stays constant across display resolutions.
+        const float kReferenceHeight = 720f;
+        float thicknessScale = baseDesc.height / kReferenceHeight;
+
+        for (int i = 0; i < settings.players.Count; i++)
         {
-            var filtering = new FilteringSettings(RenderQueueRange.all, settings.layerMask);
-            var drawing = RenderingUtils.CreateDrawingSettings(
-                shaderTags,
-                renderingData,
-                cameraData,
-                lightData,
-                cameraData.defaultOpaqueSortFlags
-            );
+            var player = settings.players[i];
+            if (player == null || player.layerMask == 0)
+                continue;
 
-            var rlParams = new RendererListParams(renderingData.cullResults, drawing, filtering);
-            passData.rendererList = renderGraph.CreateRendererList(rlParams);
+            // Hype-driven glow multiplier. 0 means the other player has more
+            // hype — skip the entire pass so this player doesn't glow at all.
+            float glow = feature != null ? feature.GetPlayerGlow(i) : 1f;
+            if (glow <= 0f)
+                continue;
 
-            if (!passData.rendererList.IsValid())
-                return;
+            // Per-player silhouette RT; unique name prevents RenderGraph aliasing.
+            var desc = baseDesc;
+            desc.name = $"_CharacterSilhouette_{i}";
+            desc.depthBufferBits = 0;
+            desc.msaaSamples = settings.msaaSamples;
+            desc.clearBuffer = true;
+            desc.clearColor = Color.clear;
+            desc.format = GraphicsFormat.R8G8B8A8_UNorm;
+            TextureHandle silhouette = renderGraph.CreateTexture(desc);
 
-            builder.UseRendererList(passData.rendererList);
-            builder.SetRenderAttachment(silhouette, 0, AccessFlags.ReadWrite);
+            using (
+                var builder = renderGraph.AddRasterRenderPass<SilhouettePassData>(
+                    $"CharacterSilhouette_{i}",
+                    out var passData
+                )
+            )
+            {
+                var filtering = new FilteringSettings(RenderQueueRange.all, player.layerMask);
+                var drawing = RenderingUtils.CreateDrawingSettings(
+                    shaderTags,
+                    renderingData,
+                    cameraData,
+                    lightData,
+                    cameraData.defaultOpaqueSortFlags
+                );
 
-            builder.SetRenderFunc(
-                static (SilhouettePassData d, RasterGraphContext ctx) =>
-                {
-                    ctx.cmd.DrawRendererList(d.rendererList);
-                }
-            );
-        }
+                var rlParams = new RendererListParams(renderingData.cullResults, drawing, filtering);
+                passData.rendererList = renderGraph.CreateRendererList(rlParams);
 
-        // --- Pass 2: blit silhouette onto camera color through the outline material. ---
-        settings.outlineMaterial.SetColor("_OutlineColor", settings.outlineColor);
-        settings.outlineMaterial.SetFloat("_OutlineWidth", settings.outlineWidth);
-        settings.outlineMaterial.SetFloat("_AlphaThreshold", settings.alphaThreshold);
+                if (!passData.rendererList.IsValid())
+                    continue;
 
-        using (var builder = renderGraph.AddRasterRenderPass<OutlineBlitPassData>("OutlineBlit", out var passData))
-        {
-            passData.source = silhouette;
-            passData.material = settings.outlineMaterial;
+                builder.UseRendererList(passData.rendererList);
+                builder.SetRenderAttachment(silhouette, 0, AccessFlags.ReadWrite);
+                builder.AllowPassCulling(false);
 
-            builder.UseTexture(silhouette);
-            builder.SetRenderAttachment(resourceData.activeColorTexture, 0);
+                builder.SetRenderFunc(
+                    static (SilhouettePassData d, RasterGraphContext ctx) =>
+                    {
+                        ctx.cmd.DrawRendererList(d.rendererList);
+                    }
+                );
+            }
 
-            builder.SetRenderFunc(
-                static (OutlineBlitPassData d, RasterGraphContext ctx) =>
-                {
-                    // Blitter binds d.source as _BlitTexture automatically.
-                    Blitter.BlitTexture(ctx.cmd, d.source, new Vector4(1, 1, 0, 0), d.material, 0);
-                }
-            );
+            // Runtime color override (from GameView: hype/mania/burst) takes
+            // precedence over the authored color. Scale HDR (drives bloom) and
+            // width by glow; at glow=1 the outline matches the authored look.
+            Color baseColor = feature != null
+                ? feature.GetPlayerColor(i, player.outlineColor)
+                : player.outlineColor;
+            Color scaledColor = baseColor * glow;
+            scaledColor.a = baseColor.a;
+
+            var mat = _perPlayerMaterials[i];
+            mat.SetColor(OutlineColorId, scaledColor);
+            mat.SetFloat(OutlineWidthId, player.outlineWidth * glow * thicknessScale);
+            mat.SetFloat(AlphaThresholdId, player.alphaThreshold);
+
+            using (
+                var builder = renderGraph.AddRasterRenderPass<OutlineBlitPassData>(
+                    $"OutlineBlit_{i}",
+                    out var passData
+                )
+            )
+            {
+                passData.source = silhouette;
+                passData.material = mat;
+
+                builder.UseTexture(silhouette);
+                builder.SetRenderAttachment(resourceData.activeColorTexture, 0);
+                builder.AllowPassCulling(false);
+
+                builder.SetRenderFunc(
+                    static (OutlineBlitPassData d, RasterGraphContext ctx) =>
+                    {
+                        Blitter.BlitTexture(ctx.cmd, d.source, new Vector4(1, 1, 0, 0), d.material, 0);
+                    }
+                );
+            }
         }
     }
 }

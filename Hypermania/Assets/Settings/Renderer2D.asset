@@ -14,14 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   settings:
-    layerMask:
-      serializedVersion: 2
-      m_Bits: 64
     outlineMaterial: {fileID: 2100000, guid: 807f3c81866f9cf769dbc562ad0f658a, type: 2}
-    renderPassEvent: 1000
-    outlineColor: {r: 1, g: 0, b: 0, a: 1}
-    outlineWidth: 10.69
-    alphaThreshold: 0.52
+    renderPassEvent: 550
+    msaaSamples: 1
+    players:
+    - layerMask:
+        serializedVersion: 2
+        m_Bits: 64
+      outlineColor: {r: 1.781479, g: 0.29664773, b: 0, a: 1}
+      outlineWidth: 3
+      alphaThreshold: 0.25
+    - layerMask:
+        serializedVersion: 2
+        m_Bits: 128
+      outlineColor: {r: 1.781479, g: 0.29846767, b: 0, a: 1}
+      outlineWidth: 3
+      alphaThreshold: 0.25
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

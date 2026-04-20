@@ -48,6 +48,7 @@ namespace Game.View
             public HypeBarView HypeBarView;
             public KOScreenView KOScreenView;
             public BoxVisualizer BoxVisualizer;
+            public OutlineGlowView OutlineGlowView;
         }
 
         public FighterView[] Fighters => _fighters;
@@ -93,9 +94,11 @@ namespace Game.View
                 _fighters[i].name = "Fighter View";
                 _fighters[i].transform.SetParent(transform, true);
                 _fighters[i].Init(config, options.Players[i].SkinIndex);
+                _fighters[i].SetOutlinePlayerIndex(i);
 
                 _playerParams[i].ManiaView.Init(options.Global.Audio);
                 _playerParams[i].HealthBarView.Init(config, options.Players[i].SkinIndex);
+                _playerParams[i].HealthBarView.SetOutlinePlayerIndex(i);
                 _playerParams[i].HealthBarView.SetMaxHealth((float)config.Health);
                 _playerParams[i].BurstBarView.SetMaxValue((float)config.BurstMax);
                 _playerParams[i].SuperBarView.Init((float)options.Global.SuperCost);
@@ -158,6 +161,7 @@ namespace Game.View
                                 _projectileViews[i] = Instantiate(prefab);
                                 _projectileViews[i].transform.SetParent(transform, true);
                                 _projectileViews[i].Init(characterConfig, _options.Players[owner].SkinIndex);
+                                _projectileViews[i].SetOutlinePlayerIndex(owner);
                             }
                         }
                     }
@@ -222,6 +226,8 @@ namespace Game.View
                 );
             }
             _params.HypeBarView.SetHype((float)state.HypeMeter);
+
+            _params.OutlineGlowView.Render(deltaTime, state, options);
 
             _params.FrameDataOverlay.gameObject.SetActive(options.InfoOptions.ShowFrameData);
             if (options.InfoOptions.ShowFrameData)

@@ -119,53 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &40457623
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 40457624}
-  - component: {fileID: 40457625}
-  m_Layer: 0
-  m_Name: BoxVisualizer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &40457624
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 40457623}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -2}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2114326935}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &40457625
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 40457623}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7171c312ab3c2ed40bbab9e2b1a74ae9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _lineMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  _borderPixels: 3
-  _fillAlpha: 0.05
 --- !u!1 &102352429
 GameObject:
   m_ObjectHideFlags: 0
@@ -2457,6 +2410,8 @@ GameObject:
   - component: {fileID: 2114326934}
   - component: {fileID: 2114326937}
   - component: {fileID: 2114326936}
+  - component: {fileID: 2114326939}
+  - component: {fileID: 2114326938}
   m_Layer: 0
   m_Name: GameView
   m_TagString: Untagged
@@ -2503,7 +2458,8 @@ MonoBehaviour:
     RoundCountdownView: {fileID: 1350160259}
     HypeBarView: {fileID: 2901949813414236108}
     KOScreenView: {fileID: 5203012344204750237}
-    BoxVisualizer: {fileID: 40457625}
+    BoxVisualizer: {fileID: 2114326939}
+    OutlineGlowView: {fileID: 2114326938}
   _conductorLerpSpeed: 5
   _disableCameraShake: 0
 --- !u!4 &2114326935
@@ -2523,7 +2479,6 @@ Transform:
   - {fileID: 102352430}
   - {fileID: 1739994607}
   - {fileID: 1270020799}
-  - {fileID: 40457624}
   - {fileID: 581962721}
   m_Father: {fileID: 556815173}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2640,6 +2595,41 @@ MonoBehaviour:
   _msOffset: -50
   _maxQueuedSeconds: 1
   _loopSong: 1
+--- !u!114 &2114326938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114326933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4efc1ef8669960f439861df6884c6a8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _colors:
+    Hype: {r: 0.2136, g: 0.8899999, b: 0.6081666, a: 1}
+    Mania: {r: 0.98, g: 0.1274, b: 0.5992793, a: 1}
+    Burst: {r: 0.050399996, g: 0.6622368, b: 0.8399999, a: 1}
+  _colorLerpSpeed: 5
+  _beatPulseMagnitude: 0.4
+  _beatPulseAttack: 60
+  _beatPulseDecay: 10
+--- !u!114 &2114326939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114326933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7171c312ab3c2ed40bbab9e2b1a74ae9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _lineMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  _borderPixels: 3
+  _fillAlpha: 0.05
 --- !u!1 &562816628700700719
 GameObject:
   m_ObjectHideFlags: 0
@@ -3016,6 +3006,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HealthBarR
       objectReference: {fileID: 0}
+    - target: {fileID: 8290759685543649226, guid: b05e2d1e1cd7f8154b89157e168d00eb, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3310,10 +3304,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8896375444309855147, guid: 24c5c7e6f99de2a93b83f322f76450b6, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8896375444309855147, guid: 24c5c7e6f99de2a93b83f322f76450b6, type: 3}
-      propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
