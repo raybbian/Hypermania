@@ -49,6 +49,7 @@ namespace Design.Configs
         public FighterMoveSfx MoveSfx;
         public SkinConfig[] Skins;
         public AnimatorOverrideController AnimationController;
+        public sfloat CharacterHeight;
         public sfloat ForwardSpeed;
         public sfloat BackSpeed;
         public sfloat JumpVelocity;

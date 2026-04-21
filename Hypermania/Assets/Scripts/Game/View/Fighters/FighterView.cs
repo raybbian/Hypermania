@@ -27,11 +27,6 @@ namespace Game.View.Fighters
         private Transform _visualCenter;
 
         [SerializeField]
-        private Transform[] _interestPoints;
-
-        public Transform[] InterestPoints => _interestPoints;
-
-        [SerializeField]
         private float _hitJitterMagnitude = 0.04f;
 
         [SerializeField]
