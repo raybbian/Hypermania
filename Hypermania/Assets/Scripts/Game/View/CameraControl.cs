@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Design.Configs;
+using Game.Sim;
 using Game.View.Events;
 using UnityEngine;
 
@@ -16,6 +17,8 @@ namespace Game.View
         public struct Params
         {
             public float CameraSpeed;
+            public float ZoomSpeed;
+            public float ManiaHalfHeight;
             public GlobalConfig Config;
 
             // Additional area outside the arena bounds that the camera is allowed to see
@@ -26,11 +29,13 @@ namespace Game.View
         [SerializeField]
         private Params _params;
         private List<Vector2> _interestPoints;
+        private float _targetZoom;
 
         void Start()
         {
             _interestPoints = new List<Vector2>();
-            _params.Camera.orthographicSize = (float)_params.Config.CameraHalfHeight;
+            _targetZoom = (float)_params.Config.CameraHalfHeight;
+            _params.Camera.orthographicSize = _targetZoom;
         }
 
         public void OnValidate()
@@ -43,9 +48,11 @@ namespace Game.View
             }
         }
 
-        public void UpdateCamera(List<Vector2> interestPoints)
+        public void UpdateCamera(List<Vector2> interestPoints, GameMode gameMode)
         {
             _interestPoints = interestPoints;
+            bool inMania = gameMode == GameMode.ManiaStart || gameMode == GameMode.Mania;
+            _targetZoom = inMania ? _params.ManiaHalfHeight : (float)_params.Config.CameraHalfHeight;
         }
 
         public void Update()
@@ -69,6 +76,9 @@ namespace Game.View
             float dt = Time.deltaTime;
             float k = _params.CameraSpeed;
             float a = 1f - Mathf.Exp(-k * dt);
+
+            float zoomA = 1f - Mathf.Exp(-_params.ZoomSpeed * dt);
+            _params.Camera.orthographicSize = Mathf.Lerp(_params.Camera.orthographicSize, _targetZoom, zoomA);
 
             // adjust position with respect to zoom
             Vector3 p = transform.position;

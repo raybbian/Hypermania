@@ -22,7 +22,13 @@ namespace Game.View.Overlay
         [Tooltip("Border thickness in screen pixels.")]
         private float _borderPixels = 3f;
 
+        [SerializeField]
+        [Tooltip("Alpha of the filled interior (0 = invisible, 1 = opaque).")]
+        [Range(0f, 1f)]
+        private float _fillAlpha = 0.5f;
+
         private readonly List<LineRenderer> _pool = new List<LineRenderer>();
+        private readonly List<LineRenderer> _fillPool = new List<LineRenderer>();
         private Camera _cam;
 
         public void Render(in GameState state, GameOptions options, FighterView[] fighters)
@@ -78,7 +84,7 @@ namespace Game.View.Overlay
                     p2.z = parentZ;
                     p3.z = parentZ;
 
-                    LineRenderer lr = GetOrCreate(active++);
+                    LineRenderer lr = GetOrCreate(_pool, active, loop: true, positionCount: 4);
                     lr.enabled = true;
                     lr.startColor = color;
                     lr.endColor = color;
@@ -88,12 +94,39 @@ namespace Game.View.Overlay
                     lr.SetPosition(1, p1);
                     lr.SetPosition(2, p2);
                     lr.SetPosition(3, p3);
+
+                    // Fill: a 2-point LineRenderer spanning horizontally across
+                    // the box with width equal to the box height renders as a
+                    // filled quad matching the outline.
+                    Vector3 leftCenter = centerWorld - halfWorldX;
+                    Vector3 rightCenter = centerWorld + halfWorldX;
+                    leftCenter.z = parentZ;
+                    rightCenter.z = parentZ;
+                    float fillWidth = halfWorldY.magnitude * 2f;
+
+                    Color fillColor = color;
+                    fillColor.a = _fillAlpha;
+
+                    LineRenderer fill = GetOrCreate(_fillPool, active, loop: false, positionCount: 2);
+                    fill.enabled = true;
+                    fill.startColor = fillColor;
+                    fill.endColor = fillColor;
+                    fill.startWidth = fillWidth;
+                    fill.endWidth = fillWidth;
+                    fill.SetPosition(0, leftCenter);
+                    fill.SetPosition(1, rightCenter);
+
+                    active++;
                 }
             }
 
             for (int i = active; i < _pool.Count; i++)
             {
                 _pool[i].enabled = false;
+            }
+            for (int i = active; i < _fillPool.Count; i++)
+            {
+                _fillPool[i].enabled = false;
             }
         }
 
@@ -104,16 +137,16 @@ namespace Game.View.Overlay
             return (_cam.orthographicSize * 2f) / Screen.height * pixels;
         }
 
-        private LineRenderer GetOrCreate(int index)
+        private LineRenderer GetOrCreate(List<LineRenderer> pool, int index, bool loop, int positionCount)
         {
-            while (_pool.Count <= index)
+            while (pool.Count <= index)
             {
                 var go = new GameObject("BoxLine");
                 go.transform.SetParent(transform, false);
                 var lr = go.AddComponent<LineRenderer>();
                 lr.useWorldSpace = true;
-                lr.loop = true;
-                lr.positionCount = 4;
+                lr.loop = loop;
+                lr.positionCount = positionCount;
                 lr.alignment = LineAlignment.View;
                 lr.textureMode = LineTextureMode.Stretch;
                 lr.numCapVertices = 0;
@@ -122,9 +155,9 @@ namespace Game.View.Overlay
                 lr.receiveShadows = false;
                 if (_lineMaterial != null)
                     lr.sharedMaterial = _lineMaterial;
-                _pool.Add(lr);
+                pool.Add(lr);
             }
-            return _pool[index];
+            return pool[index];
         }
     }
 }

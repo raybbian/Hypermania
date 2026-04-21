@@ -25,7 +25,7 @@ namespace Game.View
         public struct PlayerParams
         {
             public AnimatedBarView BurstBarView;
-            public AnimatedBarView SuperBarView;
+            public SuperBarView SuperBarView;
             public HealthBarView HealthBarView;
             public ManiaView ManiaView;
             public ComboCountView ComboCountView;
@@ -48,6 +48,7 @@ namespace Game.View
             public HypeBarView HypeBarView;
             public KOScreenView KOScreenView;
             public BoxVisualizer BoxVisualizer;
+            public OutlineGlowView OutlineGlowView;
         }
 
         public FighterView[] Fighters => _fighters;
@@ -93,12 +94,14 @@ namespace Game.View
                 _fighters[i].name = "Fighter View";
                 _fighters[i].transform.SetParent(transform, true);
                 _fighters[i].Init(config, options.Players[i].SkinIndex);
+                _fighters[i].SetOutlinePlayerIndex(i);
 
                 _playerParams[i].ManiaView.Init(options.Global.Audio);
                 _playerParams[i].HealthBarView.Init(config, options.Players[i].SkinIndex);
+                _playerParams[i].HealthBarView.SetOutlinePlayerIndex(i);
                 _playerParams[i].HealthBarView.SetMaxHealth((float)config.Health);
                 _playerParams[i].BurstBarView.SetMaxValue((float)config.BurstMax);
-                _playerParams[i].SuperBarView.SetMaxValue((float)config.SuperMax);
+                _playerParams[i].SuperBarView.Init((float)options.Global.SuperCost);
                 _playerParams[i]
                     .SuperDisplayView.Init(
                         config,
@@ -109,7 +112,11 @@ namespace Game.View
 
             _projectileViews = new ProjectileView[GameState.MAX_PROJECTILES];
 
-            _params.HypeBarView.SetMaxHype((float)options.Global.MaxHype);
+            _params.HypeBarView.Init(
+                (float)options.Global.MaxHype,
+                options.Players[0].Character.Skins[options.Players[0].SkinIndex],
+                options.Players[1].Character.Skins[options.Players[1].SkinIndex]
+            );
             _conductor.Init(options);
             _conductor.SetFrame(Frame.FirstFrame);
             _rollbackStart = Frame.NullFrame;
@@ -121,12 +128,11 @@ namespace Game.View
             for (int i = 0; i < _options.Players.Length; i++)
             {
                 _fighters[i].Render(state.SimFrame, state.Fighters[i]);
-                int maniaViewIdx = GetManiaViewIndex(state, i);
-                _playerParams[maniaViewIdx].ManiaView.Render(state.RealFrame, state.Manias[i]);
+                _playerParams[i].ManiaView.Render(state.RealFrame, state.Manias[i]);
 
                 maniasEnabled |= state.Manias[i].Enabled(state.RealFrame);
                 if (state.Manias[i].Enabled(state.RealFrame))
-                    _conductor.t = Mathf.Lerp(_conductor.t, maniaViewIdx * 2 - 1, deltaTime * _conductorLerpSpeed);
+                    _conductor.t = Mathf.Lerp(_conductor.t, i * 2 - 1, deltaTime * _conductorLerpSpeed);
             }
 
             _conductor.PublishTick(state.RealFrame, deltaTime);
@@ -155,6 +161,7 @@ namespace Game.View
                                 _projectileViews[i] = Instantiate(prefab);
                                 _projectileViews[i].transform.SetParent(transform, true);
                                 _projectileViews[i].Init(characterConfig, _options.Players[owner].SkinIndex);
+                                _projectileViews[i].SetOutlinePlayerIndex(owner);
                             }
                         }
                     }
@@ -183,11 +190,11 @@ namespace Game.View
             {
                 _playerParams[i].HealthBarView.SetHealth((int)state.Fighters[i].Health);
                 _playerParams[i].BurstBarView.SetValue((int)state.Fighters[i].Burst);
-                _playerParams[i].SuperBarView.SetValue((int)state.Fighters[i].Super);
+                _playerParams[i].SuperBarView.SetValue((float)state.Fighters[i].Super);
                 _playerParams[i].VictoryMarkView.SetVictories(state.Fighters[i].Victories, (i == 0 ? -1 : 1));
             }
 
-            _params.CameraControl.UpdateCamera(interestPoints);
+            _params.CameraControl.UpdateCamera(interestPoints, state.GameMode);
             _params.FighterIndicatorManager.Track(state.Fighters);
 
             for (int i = 0; i < _options.Players.Length; i++)
@@ -219,6 +226,8 @@ namespace Game.View
                 );
             }
             _params.HypeBarView.SetHype((float)state.HypeMeter);
+
+            _params.OutlineGlowView.Render(deltaTime, state, options);
 
             _params.FrameDataOverlay.gameObject.SetActive(options.InfoOptions.ShowFrameData);
             if (options.InfoOptions.ShowFrameData)
@@ -252,8 +261,7 @@ namespace Game.View
             for (int i = 0; i < _options.Players.Length; i++)
             {
                 _fighters[i].RollbackRender(state.RealFrame, state.Fighters[i], _params.VfxManager, _params.SfxManager);
-                int maniaViewIdx = GetManiaViewIndex(state, i);
-                _playerParams[maniaViewIdx]
+                _playerParams[i]
                     .ManiaView.RollbackRender(state.RealFrame, state.Manias[i], _params.VfxManager, _params.SfxManager);
                 if (state.Fighters[i].SuperMaxedThisRealFrame)
                 {
@@ -281,14 +289,6 @@ namespace Game.View
                     }
                 }
             }
-        }
-
-        private int GetManiaViewIndex(in GameState state, int fighterIndex)
-        {
-            int other = fighterIndex ^ 1;
-            bool toRightOfOpponent =
-                (float)state.Fighters[fighterIndex].Position.x > (float)state.Fighters[other].Position.x;
-            return toRightOfOpponent ? 0 : 1;
         }
 
         public void DeInit()

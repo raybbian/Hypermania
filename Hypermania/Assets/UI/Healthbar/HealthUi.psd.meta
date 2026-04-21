@@ -316,7 +316,7 @@ ScriptedImporter:
     mosaicPosition: {x: 3557, y: 4}
     flatten: 0
     isImported: 1
-    isVisible: 0
+    isVisible: 1
   - name: discOuter
     spriteName: discOuter
     isGroup: 0
@@ -336,7 +336,7 @@ ScriptedImporter:
     mosaicPosition: {x: 452, y: 588}
     flatten: 0
     isImported: 1
-    isVisible: 0
+    isVisible: 1
   - name: metalContainer
     spriteName: metalContainer
     isGroup: 0
@@ -346,7 +346,7 @@ ScriptedImporter:
     mosaicPosition: {x: 2062, y: 328}
     flatten: 0
     isImported: 1
-    isVisible: 0
+    isVisible: 1
   - name: healthbar
     spriteName: healthbar
     isGroup: 0
@@ -356,7 +356,7 @@ ScriptedImporter:
     mosaicPosition: {x: 2062, y: 4}
     flatten: 0
     isImported: 1
-    isVisible: 0
+    isVisible: 1
   - name: Background
     spriteName: Background
     isGroup: 0

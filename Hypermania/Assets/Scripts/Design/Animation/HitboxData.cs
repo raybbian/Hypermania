@@ -197,6 +197,118 @@ namespace Design.Animation
         public bool ComboEligible = true;
         public List<FrameData> Frames = new List<FrameData>();
 
+        [NonSerialized]
+        private int _startupTicks;
+
+        [NonSerialized]
+        private int _activeTicks;
+
+        [NonSerialized]
+        private int _recoveryTicks;
+
+        [NonSerialized]
+        private int _lastHitReferenceFrame;
+
+        [NonSerialized]
+        private int _lastHitHitstunTicks;
+
+        [NonSerialized]
+        private bool _frameDataCached;
+
+        public int StartupTicks
+        {
+            get
+            {
+                EnsureFrameDataCached();
+                return _startupTicks;
+            }
+        }
+        public int ActiveTicks
+        {
+            get
+            {
+                EnsureFrameDataCached();
+                return _activeTicks;
+            }
+        }
+        public int RecoveryTicks
+        {
+            get
+            {
+                EnsureFrameDataCached();
+                return _recoveryTicks;
+            }
+        }
+
+        /// <summary>
+        /// Frame-advantage on hit, measured from the first hitbox in the last contiguous
+        /// interval of hitbox-bearing frames (the reference hit). Positive means the
+        /// attacker becomes actionable before the defender leaves hitstun.
+        /// Returns 0 for moves with no hitbox.
+        /// </summary>
+        public int OnHitAdvantage
+        {
+            get
+            {
+                EnsureFrameDataCached();
+                if (_lastHitReferenceFrame < 0)
+                    return 0;
+                return _lastHitHitstunTicks - (TotalTicks - _lastHitReferenceFrame);
+            }
+        }
+
+        private void OnEnable()
+        {
+            _frameDataCached = false;
+            EnsureFrameDataCached();
+        }
+
+        private void EnsureFrameDataCached()
+        {
+            if (_frameDataCached)
+                return;
+
+            int[] counts = new int[ATTACK_FRAME_TYPE_ORDER.Length];
+            if (IsValidAttack(counts))
+            {
+                _startupTicks = counts[0];
+                _activeTicks = counts[1];
+                _recoveryTicks = counts[2];
+            }
+            else
+            {
+                _startupTicks = _activeTicks = _recoveryTicks = 0;
+            }
+
+            int lastIntervalStart = -1;
+            bool inInterval = false;
+            for (int i = 0; i < Frames.Count; i++)
+            {
+                bool has = Frames[i].HasHitbox(out _);
+                if (has && !inInterval)
+                {
+                    lastIntervalStart = i;
+                    inInterval = true;
+                }
+                else if (!has)
+                {
+                    inInterval = false;
+                }
+            }
+            if (lastIntervalStart >= 0 && Frames[lastIntervalStart].HasHitbox(out BoxProps props))
+            {
+                _lastHitReferenceFrame = lastIntervalStart;
+                _lastHitHitstunTicks = props.HitstunTicks;
+            }
+            else
+            {
+                _lastHitReferenceFrame = -1;
+                _lastHitHitstunTicks = 0;
+            }
+
+            _frameDataCached = true;
+        }
+
         public float GetAnimNormalizedTime(int frame)
         {
             int totalTicks = TotalTicks;

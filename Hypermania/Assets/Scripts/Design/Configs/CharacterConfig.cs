@@ -27,15 +27,24 @@ namespace Design.Configs
         public Color MainColor;
         public Color LightColor;
         public Color AccentColor;
+        public Color[] HypeBarColors;
         public SpriteLibraryAsset SpriteLibrary;
         public Texture2D Portrait;
         public Texture2D Splash;
+    }
+
+    [Serializable]
+    public struct GatlingEntry
+    {
+        public CharacterState From;
+        public CharacterState To;
     }
 
     [CreateAssetMenu(menuName = "Hypermania/Character Config")]
     public class CharacterConfig : ScriptableObject
     {
         public Character Character;
+        public bool Enabled = true;
         public FighterView Prefab;
         public FighterMoveSfx MoveSfx;
         public SkinConfig[] Skins;
@@ -45,7 +54,6 @@ namespace Design.Configs
         public sfloat BackSpeed;
         public sfloat JumpVelocity;
         public sfloat Health;
-        public sfloat SuperMax;
         public sfloat BurstMax;
         public sfloat ForwardDashDistance;
         public sfloat BackDashDistance;
@@ -54,8 +62,57 @@ namespace Design.Configs
         public sfloat BackAirDashDistance;
         public SuperDisplayConfig SuperDisplay;
         public EnumArray<CharacterState, HitboxData> Hitboxes;
-        public List<ComboConfig> Combos;
+        public List<GatlingEntry> Gatlings;
         public List<ProjectileConfig> Projectiles;
+
+        public bool HasGatling(CharacterState from, CharacterState to)
+        {
+            if (Gatlings == null)
+                return false;
+            for (int i = 0; i < Gatlings.Count; i++)
+            {
+                if (Gatlings[i].From == from && Gatlings[i].To == to)
+                    return true;
+            }
+            return false;
+        }
+
+        private void OnEnable()
+        {
+            ValidateGatlings();
+        }
+
+        private void ValidateGatlings()
+        {
+            if (Gatlings == null)
+                return;
+            for (int i = 0; i < Gatlings.Count; i++)
+            {
+                GatlingEntry entry = Gatlings[i];
+                HitboxData fromData = Hitboxes != null ? Hitboxes[entry.From] : null;
+                HitboxData toData = Hitboxes != null ? Hitboxes[entry.To] : null;
+                if (fromData == null || toData == null)
+                    continue;
+
+                int fromTotal = fromData.StartupTicks + fromData.ActiveTicks + fromData.RecoveryTicks;
+                if (fromTotal == 0)
+                    continue;
+                if (toData.StartupTicks == 0)
+                    continue;
+
+                int cancelWindow = Mathsf.Max(0, toData.StartupTicks - fromData.OnHitAdvantage + 1);
+                int overlap = cancelWindow - fromData.RecoveryTicks;
+                if (overlap > 0)
+                {
+                    Debug.LogWarning(
+                        $"[Gatling] {Character} {entry.From}->{entry.To}: cancel window "
+                            + $"({cancelWindow}f) exceeds {entry.From} recovery "
+                            + $"({fromData.RecoveryTicks}f) by {overlap} frame(s) — "
+                            + $"window clamped to recovery phase, opponent escapes hitstun."
+                    );
+                }
+            }
+        }
 
         public FrameData GetFrameData(CharacterState anim, int tick)
         {

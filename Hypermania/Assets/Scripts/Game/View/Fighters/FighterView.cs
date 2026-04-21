@@ -22,12 +22,24 @@ namespace Game.View.Fighters
         [SerializeField]
         private Transform _dustEmitterLocation;
 
+        [SerializeField]
+        private Transform _visualCenter;
+
+        [SerializeField]
+        private float _hitJitterMagnitude = 0.04f;
+
+        [SerializeField]
+        private float _thinHitKnockbackMagnitude = 0.04f;
+
+        private int _jitterFramesRemaining;
+
         public virtual void Init(CharacterConfig characterConfig, int skinIndex)
         {
             if (skinIndex < 0 || skinIndex >= characterConfig.Skins.Length)
             {
                 throw new InvalidOperationException("Skin index out of range");
             }
+
             _animator = GetComponent<Animator>();
             _spriteLibrary = GetComponent<SpriteLibrary>();
             _animator.speed = 0f;
@@ -43,6 +55,19 @@ namespace Game.View.Fighters
             Vector3 pos = transform.position;
             pos.x = (float)state.Position.x;
             pos.y = (float)state.Position.y;
+
+            if (state.HitProps.HasValue && IsHitRecipient(state.State))
+            {
+                _jitterFramesRemaining = state.HitProps.Value.HitstopTicks;
+            }
+
+            if (_jitterFramesRemaining > 0)
+            {
+                Vector2 jitter = UnityEngine.Random.insideUnitCircle * _hitJitterMagnitude;
+                pos.x += jitter.x;
+                pos.y += jitter.y;
+                _jitterFramesRemaining--;
+            }
 
             transform.position = pos;
             transform.localScale = new Vector3(state.FacingDir == FighterFacing.Left ? -1 : 1, 1f, 1f);
@@ -70,20 +95,29 @@ namespace Game.View.Fighters
                     sfxManager.AddDesired(sfxKind, realFrame);
                 }
             }
+
             if (state.BlockedLastRealFrame)
             {
-                vfxManager.AddDesired(
-                    VfxKind.Block,
-                    realFrame,
-                    position: (Vector2)state.HitLocation.Value,
-                    direction: (Vector2)state.HitProps.Value.Knockback
-                );
+                Vector2 center = _visualCenter.position;
+                Vector2 hit = (Vector2)state.HitLocation.Value;
+                vfxManager.AddDesired(VfxKind.Block, realFrame, position: center, direction: center - hit);
                 sfxManager.AddDesired(SfxKind.Block, realFrame);
             }
+
             if (state.HitLastRealFrame)
             {
-                vfxManager.AddDesired(VfxKind.SmallHit, realFrame, position: (Vector2)state.HitLocation);
+                VfxKind kind =
+                    (float)state.HitProps.Value.Knockback.magnitude < _thinHitKnockbackMagnitude
+                        ? VfxKind.SmallHit
+                        : VfxKind.ThinHit;
+                vfxManager.AddDesired(
+                    kind,
+                    realFrame,
+                    position: (Vector2)state.HitLocation,
+                    direction: (Vector2)state.HitProps.Value.Knockback
+                );
             }
+
             if (state.DashedLastRealFrame)
             {
                 Vector2 dir = (Vector2)(
@@ -98,6 +132,9 @@ namespace Game.View.Fighters
                 );
             }
         }
+
+        private static bool IsHitRecipient(CharacterState s) =>
+            s == CharacterState.Hit || s == CharacterState.Knockdown || s == CharacterState.Death;
 
         public void DeInit()
         {

@@ -24,7 +24,12 @@ namespace Game.View.Events.Vfx
 
         public override VfxEffect OnStartEffect(ViewEvent<VfxEvent> ev)
         {
-            GameObject vfx = Instantiate(_vfxLibrary.Library[ev.Event.Kind].Effect, transform, true);
+            // worldPositionStays: false so the spawned VFX starts at local
+            // (0,0,0) under the VfxManager. StartEffect then only overwrites
+            // world x/y, leaving local z = 0 so the effect sits on the
+            // VfxManager parent's z plane (in front of the player) rather
+            // than wherever the prefab was saved in world space.
+            GameObject vfx = Instantiate(_vfxLibrary.Library[ev.Event.Kind].Effect, transform, false);
             VfxEffect effect = vfx.GetComponent<VfxEffect>();
             if (effect == null)
             {

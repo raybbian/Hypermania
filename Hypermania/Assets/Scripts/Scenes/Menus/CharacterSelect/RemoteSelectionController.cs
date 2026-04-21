@@ -1,3 +1,4 @@
+using System;
 using Netcode.P2P;
 using Steamworks;
 using UnityEngine;
@@ -14,6 +15,15 @@ namespace Scenes.Menus.CharacterSelect
         private readonly CharacterSelectNetSync _sync;
         private readonly CSteamID _remoteId;
         private readonly PlayerSelectionState _target;
+
+        /// <summary>
+        /// Fires when a payload from the remote peer fails to parse. The
+        /// build-hash gate at lobby-join time makes this path effectively
+        /// unreachable in production, so this signal is treated as a
+        /// protocol-level error — the owning directory should abort the
+        /// session (back to the Online lobby) rather than try to recover.
+        /// </summary>
+        public event Action OnProtocolError;
 
         public RemoteSelectionController(CharacterSelectNetSync sync, CSteamID remoteId, PlayerSelectionState target)
         {
@@ -36,6 +46,7 @@ namespace Scenes.Menus.CharacterSelect
             {
                 _sync.OnMemberUpdate -= OnMemberUpdate;
             }
+            OnProtocolError = null;
         }
 
         private void OnMemberUpdate(CSteamID member, string payload)
@@ -49,7 +60,8 @@ namespace Scenes.Menus.CharacterSelect
         {
             if (!CharacterSelectPayload.TryParse(payload, out CharacterSelectPayload parsed))
             {
-                Debug.LogWarning($"[CharacterSelect] Ignoring malformed remote payload: {payload}");
+                Debug.LogError($"[CharacterSelect] Malformed remote payload — treating as protocol error: {payload}");
+                OnProtocolError?.Invoke();
                 return;
             }
             _target.ApplyPayload(parsed);

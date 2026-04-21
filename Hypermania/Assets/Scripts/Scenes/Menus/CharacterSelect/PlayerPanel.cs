@@ -17,17 +17,6 @@ namespace Scenes.Menus.CharacterSelect
         [SerializeField]
         private int _playerIndex;
 
-        [Header("Animator")]
-        [SerializeField]
-        [Tooltip("Resting state names in the Animator Controller, indexed by SelectPhase.")]
-        private string _characterState = "SelectingCharacter";
-
-        [SerializeField]
-        private string _optionsState = "Options";
-
-        [SerializeField]
-        private string _selectedState = "Selected";
-
         [Header("Preview elements")]
         [FormerlySerializedAs("_portrait")]
         [SerializeField]
@@ -95,14 +84,8 @@ namespace Scenes.Menus.CharacterSelect
                 _optionsPanel.Bind(state, otherState, roster, controlsPresets, isLocal);
             }
 
-            // Jump directly to the resting state for the initial phase,
-            // bypassing any transitions in the controller.
             if (_animator != null)
-            {
                 _animator.SetInteger(PhaseParam, (int)_state.Phase);
-                _animator.Play(PhaseToStateName(_state.Phase), 0, 0f);
-                _animator.Update(0f);
-            }
 
             _lastPhase = _state.Phase;
         }
@@ -151,17 +134,6 @@ namespace Scenes.Menus.CharacterSelect
                 : null;
 
             _fighterStage.Render(_playerIndex, config, _state.SkinIndex, visible);
-        }
-
-        private string PhaseToStateName(SelectPhase phase)
-        {
-            return phase switch
-            {
-                SelectPhase.Character => _characterState,
-                SelectPhase.Options => _optionsState,
-                SelectPhase.Confirmed => _selectedState,
-                _ => _characterState,
-            };
         }
 
         private void ApplyCharacterPreview()

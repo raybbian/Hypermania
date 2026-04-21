@@ -165,6 +165,10 @@ namespace Scenes.Menus.CharacterSelect
 
         private string FormatControls(int idx)
         {
+            // Controls are inherently local and never synced, so the remote
+            // panel always shows the placeholder rather than our own preset.
+            if (!_isLocal)
+                return "-";
             if (_controlsPresets == null || _controlsPresets.Length == 0)
                 return "-";
             int clamped = Mathf.Clamp(idx, 0, _controlsPresets.Length - 1);

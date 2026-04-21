@@ -411,15 +411,11 @@ namespace Scenes.Menus.CharacterSelect
         public const int Count = 5;
 
         /// <summary>
-        /// Whether the row is rendered at all. ControlsPreset is fully hidden
-        /// on the remote player's mirrored panel since the value is never
-        /// synced; all other rows are always rendered (non-interactable rows
-        /// are grayed out rather than hidden).
+        /// Whether the row is rendered at all. All rows are always rendered;
+        /// non-interactable rows are grayed out rather than hidden.
         /// </summary>
         public static bool IsVisible(PlayerSelectionState state, bool isLocal, int row)
         {
-            if (row == ControlsPreset && !isLocal)
-                return false;
             return true;
         }
 
@@ -427,7 +423,9 @@ namespace Scenes.Menus.CharacterSelect
         /// Whether the row is selectable / editable. Non-interactable rows
         /// remain visible but grayed out; nav skips them and L/R is a no-op.
         /// ManiaDifficulty and BeatCancel are non-interactable when ComboMode
-        /// is <see cref="Game.Sim.ComboMode.Freestyle"/>.
+        /// is <see cref="Game.Sim.ComboMode.Freestyle"/>. ControlsPreset is
+        /// non-interactable on the remote player's mirrored panel since the
+        /// value is never synced.
         /// </summary>
         public static bool IsInteractable(
             PlayerSelectionState state,
@@ -437,6 +435,8 @@ namespace Scenes.Menus.CharacterSelect
         )
         {
             if (!IsVisible(state, isLocal, row))
+                return false;
+            if (row == ControlsPreset && !isLocal)
                 return false;
             if (state.ComboMode == Game.Sim.ComboMode.Freestyle && (row == ManiaDifficulty || row == BeatCancel))
                 return false;

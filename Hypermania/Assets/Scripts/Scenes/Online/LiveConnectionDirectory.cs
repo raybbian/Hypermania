@@ -17,8 +17,11 @@ namespace Scenes.Online
         public static List<(PlayerHandle handle, PlayerKind playerKind, SteamNetworkingIdentity netId)> _players =
             new();
 
+        private static bool _returningToLobby;
+
         public void OnEnable()
         {
+            _returningToLobby = false;
             // start connecting when scene loads. Players is a static populated
             // by OnlineDirectory.OnStartWithPlayers; it survives scene unloads
             // (unlike InLobby, which depends on OnlineBase still being loaded).
@@ -79,14 +82,30 @@ namespace Scenes.Online
 
         void OnPeerDisconnected(SteamNetworkingIdentity id)
         {
+            ReturnToLobby();
+        }
+
+        /// <summary>
+        /// Tears down the live match and drops back to the Online lobby UI.
+        /// Both the P2P-level disconnect (this class) and the rollback-session
+        /// disconnect (<see cref="Scenes.Battle.BattleDirectory"/>) route here so
+        /// Battle, BattleEnd, and LiveConnection are all torn down together and
+        /// Online is reloaded exactly once. OnlineBase stays loaded, so the
+        /// Steam lobby survives the return.
+        /// </summary>
+        public static void ReturnToLobby()
+        {
+            if (_returningToLobby)
+                return;
+            _returningToLobby = true;
             SceneLoader
                 .Instance.LoadNewScene()
+                .Load(SceneID.Online, SceneDatabase.ONLINE)
                 .Unload(SceneID.BattleEnd)
                 .Unload(SceneID.Battle)
                 .Unload(SceneID.LiveConnection)
                 .WithOverlay()
                 .Execute();
-            // switch back to lobby scene, should disable the p2p client automagically
         }
     }
 }

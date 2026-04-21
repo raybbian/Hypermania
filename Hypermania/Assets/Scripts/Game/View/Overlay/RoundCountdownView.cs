@@ -7,20 +7,22 @@ using Utils;
 // Round Countdown View, designed to countdown at the start of a round.
 namespace Game.View.Overlay
 {
-    [RequireComponent(typeof(TextMeshProUGUI))]
+    [RequireComponent(typeof(Animator))]
     [RequireComponent(typeof(AudioSource))]
     public class RoundCountdownView : MonoBehaviour
     {
         [SerializeField]
         private AudioClip _countdownSfx;
 
-        private TMP_Text _roundCD;
+        private Animator _animator;
         private AudioSource _audioSource;
         private int _lastBeatIndex;
 
+        private static readonly int CountParam = Animator.StringToHash("Count");
+
         public void Awake()
         {
-            _roundCD = GetComponent<TextMeshProUGUI>();
+            _animator = GetComponent<Animator>();
             _audioSource = GetComponent<AudioSource>();
             _lastBeatIndex = -1;
         }
@@ -40,40 +42,35 @@ namespace Game.View.Overlay
             }
 
             int beatIndex;
-            if (elapsed >= totalCountdown)
-            {
-                beatIndex = 6;
-                _roundCD.SetText("Go!");
-            }
-            else if (elapsed < audio.BeatsToFrame(2))
+            if (elapsed < audio.BeatsToFrame(2))
             {
                 beatIndex = 0;
-                _roundCD.SetText("1");
+                _animator.SetInteger(CountParam, 1);
             }
             else if (elapsed < audio.BeatsToFrame(4))
             {
                 beatIndex = 1;
-                _roundCD.SetText("2");
+                _animator.SetInteger(CountParam, 2);
             }
             else if (elapsed < audio.BeatsToFrame(5))
             {
                 beatIndex = 2;
-                _roundCD.SetText("1");
+                _animator.SetInteger(CountParam, 1);
             }
             else if (elapsed < audio.BeatsToFrame(6))
             {
                 beatIndex = 3;
-                _roundCD.SetText("2");
+                _animator.SetInteger(CountParam, 2);
             }
             else if (elapsed < audio.BeatsToFrame(7))
             {
                 beatIndex = 4;
-                _roundCD.SetText("3");
+                _animator.SetInteger(CountParam, 3);
             }
             else
             {
                 beatIndex = 5;
-                _roundCD.SetText("4");
+                _animator.SetInteger(CountParam, 4);
             }
 
             if (beatIndex != _lastBeatIndex)

@@ -117,6 +117,17 @@ namespace Scenes.Online
                 yield return null;
             if (task.IsFaulted)
             {
+                LobbyVersionMismatchException mismatch = task
+                    .Exception?.Flatten()
+                    .InnerExceptions.OfType<LobbyVersionMismatchException>()
+                    .FirstOrDefault();
+                if (mismatch != null)
+                {
+                    Debug.LogError(
+                        $"[Online] Cannot join lobby: build mismatch. Your build is '{mismatch.Expected}', host is '{mismatch.Actual}'."
+                    );
+                    yield break;
+                }
                 Debug.LogException(task.Exception);
                 yield break;
             }

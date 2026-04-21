@@ -13,18 +13,29 @@ MonoBehaviour:
   m_Name: NytheaConfig
   m_EditorClassIdentifier: 
   Character: 1
+  Enabled: 1
   Prefab: {fileID: 5766376669795590084, guid: 692614c6f0138c5709de58dbca0159e4, type: 3}
   MoveSfx: {fileID: 11400000, guid: 4e16a963506edac26ae5b3acd6883da1, type: 2}
   Skins:
   - MainColor: {r: 0.27058825, g: 0.30980393, b: 0.93725497, a: 1}
     LightColor: {r: 0.7137255, g: 0.8352942, b: 0.95294124, a: 1}
     AccentColor: {r: 0.8078432, g: 0.21960786, b: 0.20392159, a: 1}
+    HypeBarColors:
+    - {r: 0.80784315, g: 0.5403107, b: 0.5331765, a: 1}
+    - {r: 0.80784315, g: 0.3388745, b: 0.32636866, a: 1}
+    - {r: 0.80784315, g: 0.16576523, b: 0.14864315, a: 1}
+    - {r: 0.709, g: 0.016880952, b: 0, a: 1}
     SpriteLibrary: {fileID: 7108339969198208228, guid: 7bce4506c706589b0ba441fd802927e8, type: 3}
     Portrait: {fileID: 2800000, guid: 66bd42930e8db0f4b911bfdc119f8c13, type: 3}
     Splash: {fileID: 2800000, guid: 04a46b432d6a62443800ebef7de33dce, type: 3}
   - MainColor: {r: 0.27058825, g: 0.30980393, b: 0.93725497, a: 1}
     LightColor: {r: 0.7607844, g: 0.8745099, b: 0.9960785, a: 1}
     AccentColor: {r: 0.6901961, g: 0.454902, b: 0.92549026, a: 1}
+    HypeBarColors:
+    - {r: 0.71214, g: 0.56628, b: 0.85800004, a: 1}
+    - {r: 0.6993217, g: 0.4446, b: 0.95, a: 1}
+    - {r: 0.64900005, g: 0.29800004, b: 1, a: 1}
+    - {r: 0.5495, g: 0.09900004, b: 1, a: 1}
     SpriteLibrary: {fileID: 7108339969198208228, guid: f6fdaaf67e68349c7961174219f92281, type: 3}
     Portrait: {fileID: 2800000, guid: 02b2dafe45ba6af4181a6795730a3e14, type: 3}
     Splash: {fileID: 2800000, guid: 515b1a4207a987d4b9ef99b7d025f51e, type: 3}
@@ -39,8 +50,6 @@ MonoBehaviour:
     rawValue: 1089470464
   Health:
     rawValue: 1132068864
-  SuperMax:
-    rawValue: 1120403456
   BurstMax:
     rawValue: 1112014848
   ForwardDashDistance:
@@ -95,7 +104,14 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 5500f7246b7ab4e46bf16bbf8031a43d, type: 2}
     - {fileID: 11400000, guid: 16bd5e4831fe7ea44a55e99b0c2de25d, type: 2}
     - {fileID: 11400000, guid: 4bc7b5e3f82fd5546b2510cbf9f3d05f, type: 2}
-  Combos:
-  - {fileID: 11400000, guid: b997b2bf67ce87ec2ad78220aa1d20ca, type: 2}
+  Gatlings:
+  - From: 5
+    To: 8
+  - From: 8
+    To: 11
+  - From: 13
+    To: 29
+  - From: 11
+    To: 13
   Projectiles:
   - {fileID: 11400000, guid: b45871cdc2550e849ad28a3a712b2d32, type: 2}

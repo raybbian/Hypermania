@@ -139,7 +139,16 @@ namespace Game.View.Mania
 
             for (int i = 0; i < state.Config.NumKeys; i++)
             {
-                for (int j = state.Channels[i].NextActiveIdx; j < state.Channels[i].Notes.Count; j++)
+                // Once the player has latched a press on the active note,
+                // hide it from the view — the hit is pending dispatch at
+                // `noteTick + HitHalfRange`, and the note shouldn't keep
+                // scrolling past the judgment anchor while we wait.
+                int startIdx = state.Channels[i].NextActiveIdx;
+                if (state.Channels[i].HitPending)
+                {
+                    startIdx++;
+                }
+                for (int j = startIdx; j < state.Channels[i].Notes.Count; j++)
                 {
                     if (!RenderNote(frame, i, state.Channels[i].Notes[j], out var noteView))
                     {

@@ -4,6 +4,7 @@ using Design.Animation;
 using Design.Configs;
 using MemoryPack;
 using Netcode.Rollback;
+using UnityEngine;
 using Utils;
 using Utils.SoftFloat;
 
@@ -16,10 +17,31 @@ namespace Game.Sim
         public bool IsMovement;
     }
 
+    /// <summary>
+    /// A snapshot of the generator's <c>_working</c> state captured at the end
+    /// of a beat's hit window (<c>noteTick + HitHalfRange</c>, clamped to
+    /// <c>nextBeat - 1</c>). Used by <see cref="ComboVerifyDebug"/> to verify
+    /// that the real simulation reaches an equivalent fighter state at the
+    /// same frame regardless of where inside the hit window the player
+    /// actually pressed.
+    /// </summary>
+    public struct ComboBeatSnapshot
+    {
+        public Frame CompareFrame;
+        public GameState Predicted;
+    }
+
     public struct GeneratedCombo
     {
         public List<GeneratedComboMove> Moves;
         public Frame EndFrame;
+
+        /// <summary>
+        /// Per-beat snapshots of the generator's <c>_working</c> state. Populated
+        /// only when <see cref="InfoOptions.VerifyComboPrediction"/> is enabled,
+        /// otherwise null.
+        /// </summary>
+        public List<ComboBeatSnapshot> BeatSnapshots;
     }
 
     /// <summary>
@@ -112,7 +134,7 @@ namespace Game.Sim
         /// work without changes.
         /// </summary>
         public static GeneratedCombo Generate(
-            GameState state,
+            in GameState state,
             GameOptions options,
             int attackerIndex,
             Frame[] noteFrames,
@@ -124,7 +146,7 @@ namespace Game.Sim
         }
 
         public GeneratedCombo Run(
-            GameState state,
+            in GameState state,
             GameOptions options,
             int attackerIndex,
             Frame[] noteFrames,
@@ -195,7 +217,16 @@ namespace Game.Sim
             _working.GameMode = GameMode.ManiaStart;
             _working.ModeStart = _working.RealFrame;
 
-            AdvanceWorkingTo(firstBeatFrame);
+            // Stop one frame short of the beat's dispatch frame
+            // (noteTick + HitHalfRange) so that the subsequent
+            // AdvanceOnce(input) in TryCandidate / ApplyInputToWorking
+            // lands the input on the dispatch frame itself — matching
+            // the real game's DoManiaStep, which (post-withhold refactor)
+            // only emits the HitEvent at the last frame of the hit
+            // window. Advancing TO the dispatch frame would consume it
+            // with an empty input and push the sim's effective input
+            // frame one step ahead of the real game each beat.
+            AdvanceWorkingTo(firstBeatFrame + _noteHitHalfRange - 1);
 
             // Override back to Fighting so candidate trials run at full speed
             // instead of through the ManiaStart slow-mo curve.
@@ -204,6 +235,13 @@ namespace Game.Sim
 
             List<GeneratedComboMove> moves = new List<GeneratedComboMove>();
             List<MoveTestResult> candidates = new List<MoveTestResult>();
+
+            // Per-beat GameState snapshots for ComboVerifyDebug — only built
+            // when the debug flag is on, so production runs pay no extra cost.
+            List<ComboBeatSnapshot> beatSnapshots =
+                options.InfoOptions != null && options.InfoOptions.VerifyComboPrediction
+                    ? new List<ComboBeatSnapshot>()
+                    : null;
 
             // Progression constraint: any move after the first must strictly
             // exceed the previous move on knockback OR reach. Movement (dash
@@ -217,14 +255,21 @@ namespace Game.Sim
             for (int i = 0; i < noteFrames.Length; i++)
             {
                 currentBeat = noteFrames[i];
-                AdvanceWorkingTo(currentBeat);
+                // Stop one frame short of the beat's dispatch frame
+                // (currentBeat + HitHalfRange) so candidate and
+                // chosen-move AdvanceOnce(input) calls land the input
+                // on the dispatch frame — matching the real game's
+                // withheld HitEvent fire at RealFrame = currentBeat +
+                // HitHalfRange.
+                AdvanceWorkingTo(currentBeat + _noteHitHalfRange - 1);
 
                 // Next authored note (if any) so we can reject candidates
                 // whose hitstun bleeds into its input window.
                 Frame nextBeat = (i + 1 < noteFrames.Length) ? noteFrames[i + 1] : Frame.Infinity;
 
-                // Snapshot the pristine beat state so each candidate trial can
-                // revert to it before applying its own input.
+                // Snapshot state at the frame before the beat so each
+                // candidate trial can revert and then apply its input
+                // on the beat frame itself.
                 SnapshotWorking();
 
                 candidates.Clear();
@@ -255,6 +300,8 @@ namespace Game.Sim
                             IsMovement = false,
                         }
                     );
+
+                    CaptureBeatSnapshot(beatSnapshots, currentBeat, nextBeat);
 
                     hasPrev = true;
                     prevKb = chosen.KnockbackSqr;
@@ -325,6 +372,8 @@ namespace Game.Sim
                     }
                 );
 
+                CaptureBeatSnapshot(beatSnapshots, currentBeat, nextBeat);
+
                 hasPrev = false;
                 prevKb = sfloat.Zero;
                 prevReach = sfloat.Zero;
@@ -341,8 +390,17 @@ namespace Game.Sim
                 if (lastGap > 0)
                     trailingPad = lastGap;
             }
+            // Extra buffer past the last beat so the finisher's hit lands
+            // while still in GameMode.Mania — otherwise the hit registers
+            // during Fighting and grants super meter from the combo itself.
+            trailingPad += 10;
             Frame endFrame = noteFrames[noteFrames.Length - 1] + trailingPad;
-            return new GeneratedCombo { Moves = moves, EndFrame = endFrame };
+            return new GeneratedCombo
+            {
+                Moves = moves,
+                EndFrame = endFrame,
+                BeatSnapshots = beatSnapshots,
+            };
         }
 
         /// <summary>
@@ -462,7 +520,11 @@ namespace Game.Sim
         {
             RestoreWorking();
             ApplyInputToWorking(movement);
-            AdvanceWorkingTo(nextBeat);
+            // Stop one frame short of nextBeat's dispatch frame so the
+            // lookahead attack's AdvanceOnce(input) in LookaheadAttackHits
+            // lands on nextBeat + HitHalfRange — matching the real game's
+            // withheld HitEvent dispatch for the next note.
+            AdvanceWorkingTo(nextBeat + _noteHitHalfRange - 1);
             CloneInto(ref _lookaheadSnapshot, _working);
 
             foreach (InputFlags atk in AttackInputs)
@@ -761,6 +823,36 @@ namespace Game.Sim
         }
 
         /// <summary>
+        /// Advance <c>_working</c> from <paramref name="currentBeat"/> (where
+        /// the chosen input was just applied) to the last frame of this note's
+        /// hit window (<paramref name="currentBeat"/> + <c>HitHalfRange</c>),
+        /// clamped to <paramref name="nextBeat"/> - 1 so the next iteration's
+        /// <see cref="AdvanceWorkingTo"/> still has forward progress. Deep-clones
+        /// the resulting <c>_working</c> and appends it to
+        /// <paramref name="snapshots"/>. No-op when the caller passed a null
+        /// list (verify flag off).
+        /// </summary>
+        private void CaptureBeatSnapshot(List<ComboBeatSnapshot> snapshots, Frame currentBeat, Frame nextBeat)
+        {
+            if (snapshots == null)
+                return;
+
+            Frame snapFrame = currentBeat + _noteHitHalfRange;
+            if (nextBeat < Frame.Infinity)
+            {
+                Frame cap = nextBeat - 1;
+                if (cap < snapFrame)
+                    snapFrame = cap;
+            }
+
+            AdvanceWorkingTo(snapFrame);
+
+            GameState cloned = null;
+            CloneInto(ref cloned, _working);
+            snapshots.Add(new ComboBeatSnapshot { CompareFrame = _working.RealFrame, Predicted = cloned });
+        }
+
+        /// <summary>
         /// Serialize <paramref name="src"/> and deserialize into
         /// <paramref name="dst"/>. Uses a thread-static ArrayBufferWriter to
         /// avoid per-call allocations.
@@ -774,7 +866,14 @@ namespace Game.Sim
 
         /// <summary>
         /// Advance _working forward with empty inputs until its RealFrame
-        /// reaches <paramref name="targetRealFrame"/>.
+        /// reaches <paramref name="targetRealFrame"/>. GameState.Advance
+        /// increments RealFrame at the top of its call, so the last
+        /// AdvanceOnce here processes frame <paramref name="targetRealFrame"/>
+        /// itself with empty input. Callers that want a subsequent
+        /// AdvanceOnce(input) to land the input on beat frame F should
+        /// pass F - 1 here, so the input frame matches where the real
+        /// game's DoManiaStep dispatches the note's HitInput at
+        /// RealFrame = F.
         /// </summary>
         private void AdvanceWorkingTo(Frame targetRealFrame)
         {

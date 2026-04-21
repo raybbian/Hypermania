@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Design.Configs;
 using Game;
@@ -67,6 +68,7 @@ namespace Scenes.Menus.CharacterSelect
         private int _onlineLocalPlayerIndex = -1;
         private bool _isOnline;
         private bool _committed;
+        private bool _launchDispatched;
         private bool _exiting;
         private bool _singleDeviceMode;
         private int _activeLocalSlot = -1;
@@ -76,6 +78,7 @@ namespace Scenes.Menus.CharacterSelect
         private void OnEnable()
         {
             _committed = false;
+            _launchDispatched = false;
             _exiting = false;
             _state = new CharacterSelectState();
             _isOnline = SessionDirectory.Config == GameConfig.Online;
@@ -105,6 +108,9 @@ namespace Scenes.Menus.CharacterSelect
             if (_matchmakingSubscription != null)
             {
                 _matchmakingSubscription.OnBackRequested -= OnRemoteBackRequested;
+                _matchmakingSubscription.OnCharacterSelectLaunchRequested -= OnRemoteLaunchRequested;
+                _matchmakingSubscription.OnCharacterSelectLaunch -= OnLaunchBroadcast;
+                _matchmakingSubscription.OnPeerLeft -= OnRemotePeerLeft;
                 _matchmakingSubscription = null;
             }
             _remoteController?.Dispose();
@@ -262,10 +268,46 @@ namespace Scenes.Menus.CharacterSelect
             int remoteIndex = 1 - _onlineLocalPlayerIndex;
             CSteamID remoteId = players[remoteIndex];
             _remoteController = new RemoteSelectionController(_netSync, remoteId, _state.Players[remoteIndex]);
+            _remoteController.OnProtocolError += OnRemoteProtocolError;
 
             _matchmakingSubscription = OnlineBaseDirectory.Matchmaking;
             _matchmakingSubscription.OnBackRequested += OnRemoteBackRequested;
+            _matchmakingSubscription.OnCharacterSelectLaunchRequested += OnRemoteLaunchRequested;
+            _matchmakingSubscription.OnCharacterSelectLaunch += OnLaunchBroadcast;
+            _matchmakingSubscription.OnPeerLeft += OnRemotePeerLeft;
             return true;
+        }
+
+        /// <summary>
+        /// Remote peer vanished from the Steam lobby without sending a Back
+        /// message — most commonly because they quit the process outright.
+        /// Bail to the Online lobby locally; we can't round-trip a message
+        /// to someone who's already gone, so unlike <see cref="Back"/> we
+        /// skip the SendBackRequest step. OnlineBase stays loaded so the
+        /// local Steam lobby survives and the player lands back on the
+        /// Online screen still in their lobby.
+        /// </summary>
+        private void OnRemotePeerLeft(CSteamID departed)
+        {
+            if (_committed || _exiting)
+                return;
+            if (departed == SteamUser.GetSteamID())
+                return;
+            _exiting = true;
+            ExitToPreviousScene();
+        }
+
+        /// <summary>
+        /// Remote peer sent a payload we couldn't parse. The lobby version
+        /// gate should prevent this in practice; if we see it anyway, abort
+        /// the session rather than proceed with stale remote state.
+        /// </summary>
+        private void OnRemoteProtocolError()
+        {
+            if (!_isOnline || _committed || _exiting)
+                return;
+            Debug.LogError("[CharacterSelect] Remote protocol error — returning to Online lobby.");
+            Back();
         }
 
         private void BindViews()
@@ -310,9 +352,142 @@ namespace Scenes.Menus.CharacterSelect
 
             if (!_committed && bothReady && bothReadyBefore && anyConfirmEdge)
             {
-                _committed = true;
-                Commit();
+                if (_isOnline)
+                {
+                    TryDispatchOnlineLaunch();
+                }
+                else
+                {
+                    _committed = true;
+                    Commit();
+                }
             }
+        }
+
+        /// <summary>
+        /// Online launch trigger. Any player whose view shows both-ready +
+        /// local confirm press routes through the host: the host is the
+        /// single authority that rolls any Random slots and broadcasts
+        /// the final resolved selections, so both clients commit from an
+        /// identical snapshot and cannot desync. <see cref="_launchDispatched"/>
+        /// guards against re-sending while waiting for the echo.
+        /// </summary>
+        private void TryDispatchOnlineLaunch()
+        {
+            if (_launchDispatched || _matchmakingSubscription == null)
+                return;
+
+            CSteamID lobby = _matchmakingSubscription.CurrentLobby;
+            if (!lobby.IsValid())
+                return;
+
+            _launchDispatched = true;
+
+            bool isHost = SteamMatchmaking.GetLobbyOwner(lobby) == SteamUser.GetSteamID();
+            if (isHost)
+            {
+                string[] args = BuildResolvedLaunchArgs();
+                _matchmakingSubscription.SendCharacterSelectLaunch(args);
+            }
+            else
+            {
+                _matchmakingSubscription.SendCharacterSelectLaunchRequest();
+            }
+        }
+
+        /// <summary>
+        /// Host-only: a non-host asked us to launch. Re-validate against
+        /// our own view at receipt time; if still both-confirmed and not
+        /// yet committed, roll any Random slots and broadcast the
+        /// authoritative launch with the resolved selections.
+        /// </summary>
+        private void OnRemoteLaunchRequested()
+        {
+            if (!_isOnline || _committed || _matchmakingSubscription == null)
+                return;
+            CSteamID lobby = _matchmakingSubscription.CurrentLobby;
+            if (!lobby.IsValid())
+                return;
+            bool isHost = SteamMatchmaking.GetLobbyOwner(lobby) == SteamUser.GetSteamID();
+            if (!isHost)
+                return;
+            if (_state == null || !_state.BothConfirmed)
+                return;
+
+            string[] args = BuildResolvedLaunchArgs();
+            _matchmakingSubscription.SendCharacterSelectLaunch(args);
+        }
+
+        /// <summary>
+        /// Host broadcast the authoritative launch. Apply the resolved
+        /// selections to local state (overwriting any Random slot the
+        /// non-host rolled locally) and commit — both clients hit this in
+        /// response to the same inbound message, so the sim starts from a
+        /// byte-identical <see cref="GameOptions"/> snapshot.
+        /// </summary>
+        private void OnLaunchBroadcast(string[] args)
+        {
+            if (!_isOnline || _committed)
+                return;
+            if (!TryApplyLaunchArgs(args))
+            {
+                Debug.LogError(
+                    $"[CharacterSelect] Malformed CsLaunch args ({args?.Length ?? 0}): [{string.Join(",", args ?? System.Array.Empty<string>())}] — treating as protocol error."
+                );
+                OnRemoteProtocolError();
+                return;
+            }
+            _committed = true;
+            Commit();
+        }
+
+        /// <summary>
+        /// Host-side: resolve any Random slots once on the authoritative
+        /// side and serialize the final per-slot selection into launch
+        /// args. The host then applies these same args on chat echo, so
+        /// the host and non-host commit from identical state. Fields
+        /// carried: character index, skin index, combo mode, mania
+        /// difficulty, beat-cancel window — the set that feeds into
+        /// <see cref="PlayerOptions"/> at commit time.
+        /// </summary>
+        private string[] BuildResolvedLaunchArgs()
+        {
+            ResolveRandomSlotsForCommit();
+            string[] args = new string[10];
+            for (int i = 0; i < 2; i++)
+            {
+                PlayerSelectionState slot = _state.Players[i];
+                int baseIdx = i * 5;
+                args[baseIdx + 0] = slot.CharacterIndex.ToString(CultureInfo.InvariantCulture);
+                args[baseIdx + 1] = slot.SkinIndex.ToString(CultureInfo.InvariantCulture);
+                args[baseIdx + 2] = ((int)slot.ComboMode).ToString(CultureInfo.InvariantCulture);
+                args[baseIdx + 3] = ((int)slot.ManiaDifficulty).ToString(CultureInfo.InvariantCulture);
+                args[baseIdx + 4] = ((int)slot.BeatCancelWindow).ToString(CultureInfo.InvariantCulture);
+            }
+            return args;
+        }
+
+        private bool TryApplyLaunchArgs(string[] args)
+        {
+            if (args == null || args.Length != 10)
+                return false;
+            int[] parsed = new int[10];
+            for (int i = 0; i < 10; i++)
+            {
+                if (!int.TryParse(args[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out parsed[i]))
+                    return false;
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                PlayerSelectionState slot = _state.Players[i];
+                int baseIdx = i * 5;
+                slot.CharacterIndex = parsed[baseIdx + 0];
+                slot.SkinIndex = parsed[baseIdx + 1];
+                slot.ComboMode = (ComboMode)parsed[baseIdx + 2];
+                slot.ManiaDifficulty = (ManiaDifficulty)parsed[baseIdx + 3];
+                slot.BeatCancelWindow = (BeatCancelWindow)parsed[baseIdx + 4];
+            }
+            return true;
         }
 
         /// <summary>
@@ -427,7 +602,7 @@ namespace Scenes.Menus.CharacterSelect
             {
                 Character key = EnumIndexCache<Character>.Keys[i];
                 CharacterConfig entry = config.CharacterConfig(key);
-                if (entry != null)
+                if (entry != null && entry.Enabled)
                     list.Add(entry);
             }
             return list.ToArray();
@@ -503,11 +678,13 @@ namespace Scenes.Menus.CharacterSelect
 
             if (_isOnline)
             {
+                // OnlineBase stays loaded through LiveConnection → Battle →
+                // BattleEnd so the Steam lobby survives the match; that lets
+                // Restart drop both players straight back into the same lobby.
                 SceneLoader
                     .Instance.LoadNewScene()
                     .Load(SceneID.LiveConnection, SceneDatabase.LIVE_CONNECTION)
                     .Unload(SceneID.CharacterSelect)
-                    .Unload(SceneID.OnlineBase)
                     .WithOverlay()
                     .Execute();
             }
@@ -532,7 +709,13 @@ namespace Scenes.Menus.CharacterSelect
             {
                 Global = _globalConfig != null ? _globalConfig : scaffold.Global,
                 InfoOptions =
-                    scaffold.InfoOptions ?? new InfoOptions { ShowFrameData = training, ShowBoxes = training },
+                    scaffold.InfoOptions
+                    ?? new InfoOptions
+                    {
+                        ShowFrameData = training,
+                        ShowBoxes = training,
+                        VerifyComboPrediction = false,
+                    },
                 Players = new PlayerOptions[2],
                 AlwaysRhythmCancel = false,
             };

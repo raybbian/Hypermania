@@ -8,12 +8,12 @@ namespace Netcode.P2P
     /// Wire format for character-select sync over Steam lobby member data.
     /// Controls preset is omitted because input bindings are inherently local.
     ///
-    /// Format: <c>v1|phase|char|skin|combo|maniaDiff|beatWin</c>
+    /// Format: <c>v2|phase|char|skin|combo|maniaDiff|beatWin|optionsRow</c>
     /// All fields are integer enum values encoded as decimal text.
     /// </summary>
     public struct CharacterSelectPayload
     {
-        public const string Version = "v1";
+        public const string Version = "v2";
 
         public SelectPhase Phase;
         public int CharacterIndex;
@@ -21,6 +21,7 @@ namespace Netcode.P2P
         public ComboMode ComboMode;
         public ManiaDifficulty ManiaDifficulty;
         public BeatCancelWindow BeatCancelWindow;
+        public int OptionsRow;
 
         public string Serialize()
         {
@@ -32,7 +33,8 @@ namespace Netcode.P2P
                 SkinIndex.ToString(CultureInfo.InvariantCulture),
                 ((int)ComboMode).ToString(CultureInfo.InvariantCulture),
                 ((int)ManiaDifficulty).ToString(CultureInfo.InvariantCulture),
-                ((int)BeatCancelWindow).ToString(CultureInfo.InvariantCulture)
+                ((int)BeatCancelWindow).ToString(CultureInfo.InvariantCulture),
+                OptionsRow.ToString(CultureInfo.InvariantCulture)
             );
         }
 
@@ -43,7 +45,7 @@ namespace Netcode.P2P
                 return false;
 
             string[] parts = text.Split('|');
-            if (parts.Length != 7)
+            if (parts.Length != 8)
                 return false;
             if (parts[0] != Version)
                 return false;
@@ -60,6 +62,8 @@ namespace Netcode.P2P
                 return false;
             if (!int.TryParse(parts[6], NumberStyles.Integer, CultureInfo.InvariantCulture, out int beatWin))
                 return false;
+            if (!int.TryParse(parts[7], NumberStyles.Integer, CultureInfo.InvariantCulture, out int optionsRow))
+                return false;
 
             payload = new CharacterSelectPayload
             {
@@ -69,6 +73,7 @@ namespace Netcode.P2P
                 ComboMode = (ComboMode)combo,
                 ManiaDifficulty = (ManiaDifficulty)maniaDiff,
                 BeatCancelWindow = (BeatCancelWindow)beatWin,
+                OptionsRow = optionsRow,
             };
             return true;
         }

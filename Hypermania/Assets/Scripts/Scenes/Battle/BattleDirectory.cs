@@ -86,12 +86,11 @@ namespace Scenes.Battle
         void OnGameDisconnected()
         {
             _gameManager.DeInit();
-            SceneLoader
-                .Instance.LoadNewScene()
-                .Unload(SceneID.Battle)
-                .Unload(SceneID.LiveConnection)
-                .WithOverlay()
-                .Execute();
+            // Route through LiveConnectionDirectory so the rollback-session
+            // disconnect and the P2P-level disconnect (which often fire in the
+            // same frame) converge on one scene transition back to the Online
+            // lobby instead of queueing two.
+            LiveConnectionDirectory.ReturnToLobby();
         }
 
         public void OnDisable()

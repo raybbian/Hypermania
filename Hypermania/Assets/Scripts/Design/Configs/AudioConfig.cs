@@ -72,12 +72,14 @@ namespace Design.Configs
         /// frame positions. Loop iteration offsets are computed via continuous math
         /// (<see cref="BeatsToFrame"/>) to avoid cumulative rounding drift.
         /// </summary>
-        public Frame[] SliceFrom(Frame minStart)
+        public Frame[] SliceFrom(Frame minStart, int comboBeatCount = -1)
         {
             if (Notes == null || Notes.Length == 0)
                 return Array.Empty<Frame>();
 
-            Frame endBound = minStart + BeatsToFrame(ComboBeatCount);
+            if (comboBeatCount < 0)
+                comboBeatCount = ComboBeatCount;
+            Frame endBound = minStart + BeatsToFrame(comboBeatCount);
             int songEnd = BeatsToFrame(SongLengthBeats);
             int loopStartFrame = BeatsToFrame(LoopBeat);
             int loopBeats = SongLengthBeats - LoopBeat;

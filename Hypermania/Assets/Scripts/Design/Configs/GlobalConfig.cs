@@ -12,7 +12,12 @@ namespace Design.Configs
         public int DashWindow;
         public int SuperJumpWindow;
         public int InputBufferWindow;
-        public int SuperAttackWindow;
+
+        /// <summary>
+        /// Number of frames into a heavy attack after which, if the heavy
+        /// attack button is still held, the move upgrades to a super.
+        /// </summary>
+        public int SuperDelayWindow;
     }
 
     [Serializable]
@@ -41,6 +46,10 @@ namespace Design.Configs
         public sfloat MaxHype = 100;
         public sfloat HypeMovementFactor = (sfloat)0.3f;
         public sfloat PassiveSuperGain = (sfloat)5f;
+        public sfloat SuperMax = (sfloat)400f;
+        public sfloat SuperCost = (sfloat)100f;
+        public int SuperTier1Beats = 8;
+        public int SuperTier2Beats = 16;
         public sfloat CameraHalfHeight = (sfloat)1.5f;
         public sfloat CameraPadding = (sfloat)0.3f;
         public int RoundEndTicks = 120;
@@ -50,6 +59,7 @@ namespace Design.Configs
         public int ManiaSlowTicks = 60;
         public int ManiaFailStunTicks = 30;
         public sfloat ManiaFailKnockbackMagnitude = (sfloat)1.5f;
+        public int StalingBufferSize = 8;
         public sfloat CameraHalfWidth => CameraHalfHeight * (sfloat)1.7777777f;
 
         [SerializeField]

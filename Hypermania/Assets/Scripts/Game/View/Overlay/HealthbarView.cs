@@ -6,9 +6,14 @@ namespace Game.View.Overlay
 {
     public class HealthBarView : MonoBehaviour
     {
+        public void SetOutlinePlayerIndex(int playerIndex)
+        {
+            EntityView.SetLayerRecursive(gameObject, 6 + playerIndex);
+        }
+
         [Header("UI")]
         [SerializeField]
-        private Transform _disk;
+        private Transform[] _disks;
 
         [SerializeField]
         private RawImage _portrait;
@@ -38,7 +43,7 @@ namespace Game.View.Overlay
 
         public void Init(CharacterConfig config, int skinIndex)
         {
-            _baseScale = _disk.localScale;
+            _baseScale = _disks[0].localScale;
             _portrait.texture = config.Skins[skinIndex].Portrait;
             foreach (var tint in _tint)
                 tint.color = config.Skins[skinIndex].AccentColor;
@@ -80,9 +85,12 @@ namespace Game.View.Overlay
 
         void Update()
         {
-            _disk.Rotate(0f, 0f, _diskSpinSpeed * Time.deltaTime);
-            _disk.localScale =
-                _baseScale + Vector3.one * GetComponent<MusicReactive>().GetMusicValue() * _diskScaleRange;
+            foreach (Transform disk in _disks)
+            {
+                disk.Rotate(0f, 0f, _diskSpinSpeed * Time.deltaTime);
+                disk.localScale =
+                    _baseScale + Vector3.one * GetComponent<MusicReactive>().GetMusicValue() * _diskScaleRange;
+            }
 
             _healthShadowSlider.value = Mathf.MoveTowards(
                 _healthShadowSlider.value,
