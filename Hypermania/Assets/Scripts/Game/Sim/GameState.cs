@@ -849,10 +849,7 @@ namespace Game.Sim
                     // dissipate), so deduct half of SuperCost as a
                     // penalty and clear the super flags so a later frame
                     // of the same move can't still trigger a combo.
-                    if (
-                        outcome.Kind == HitKind.Blocked
-                        && Fighters[owners.Item1].IsSuperAttack
-                    )
+                    if (outcome.Kind == HitKind.Blocked && Fighters[owners.Item1].IsSuperAttack)
                     {
                         Fighters[owners.Item1].Super = Mathsf.Max(
                             Fighters[owners.Item1].Super - options.Global.SuperCost / (sfloat)2,
@@ -972,7 +969,8 @@ namespace Game.Sim
             int occurrences = 0;
             for (int i = 0; i < staleBuf.Length; i++)
             {
-                if (staleBuf[i] == move) occurrences++;
+                if (staleBuf[i] == move)
+                    occurrences++;
             }
 
             sfloat comboMult = DamageScale(Fighters[defender.Owner].ComboedCount);

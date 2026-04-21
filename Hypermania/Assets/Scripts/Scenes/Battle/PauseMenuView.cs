@@ -26,6 +26,7 @@ namespace Scenes.Battle
         {
             _animator.SetBool("Paused", false);
         }
+
         public void Show()
         {
             _animator.SetBool("Paused", true);
