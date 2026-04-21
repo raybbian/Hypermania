@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: NytheaConfig
   m_EditorClassIdentifier: 
   Character: 1
+  Enabled: 1
   Prefab: {fileID: 5766376669795590084, guid: 692614c6f0138c5709de58dbca0159e4, type: 3}
   MoveSfx: {fileID: 11400000, guid: 4e16a963506edac26ae5b3acd6883da1, type: 2}
   Skins:

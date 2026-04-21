@@ -36,6 +36,8 @@ namespace Game.Sim
         public SVector2 Velocity;
         public sfloat Health;
         public int ComboedCount;
+        public CharacterState[] StalingBuffer;
+        public int StalingBufferIndex;
         public InputHistory InputH;
         public int Lives;
         public sfloat Super;
@@ -116,7 +118,8 @@ namespace Game.Sim
             sfloat health,
             SVector2 position,
             FighterFacing facingDirection,
-            int lives
+            int lives,
+            int stalingBufferSize
         )
         {
             FighterState state = new FighterState
@@ -129,6 +132,8 @@ namespace Game.Sim
                 StateEnd = Frame.Infinity,
                 ImmunityHash = 0,
                 ComboedCount = 0,
+                StalingBuffer = new CharacterState[stalingBufferSize],
+                StalingBufferIndex = 0,
                 InputH = new InputHistory(),
                 // TODO: character dependent?
                 Health = health,
@@ -171,6 +176,8 @@ namespace Game.Sim
             StateEnd = Frame.Infinity;
             ImmunityHash = 0;
             ComboedCount = 0;
+            Array.Clear(StalingBuffer, 0, StalingBuffer.Length);
+            StalingBufferIndex = 0;
             LockedHitstun = false;
             InputH.Clear(); // Clear, don't want to read input from a previous round.
             // TODO: character dependent?
@@ -614,10 +621,10 @@ namespace Game.Sim
                 return;
             }
 
-            // if (dashCancelEligible && InputH.IsHeld(ForwardInput) && State == CharacterState.ForwardDash)
-            // {
-            //     SetState(CharacterState.Running, simFrame, Frame.Infinity);
-            // }
+            if (dashCancelEligible && InputH.IsHeld(ForwardInput) && State == CharacterState.ForwardDash)
+            {
+                SetState(CharacterState.Running, simFrame, Frame.Infinity);
+            }
         }
 
         private bool IsGatlingCancelAllowed(CharacterState to, Frame simFrame, CharacterConfig config)

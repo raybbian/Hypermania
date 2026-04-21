@@ -177,7 +177,8 @@ namespace Game.Sim
                     options.Players[i].Character.Health,
                     new SVector2(xPos, sfloat.Zero),
                     facing,
-                    3
+                    3,
+                    options.Global.StalingBufferSize
                 );
                 int beatWindow = (int)options.Players[i].BeatCancelWindow;
                 state.Manias[i] = ManiaState.Create(
@@ -843,6 +844,24 @@ namespace Game.Sim
                         // TODO: show mania screen only after the maximum rollback frames to ensure no visual artifacting
                     }
 
+                    // Blocked super: the attack is spent without ever
+                    // entering the mania (where super would normally
+                    // dissipate), so deduct half of SuperCost as a
+                    // penalty and clear the super flags so a later frame
+                    // of the same move can't still trigger a combo.
+                    if (
+                        outcome.Kind == HitKind.Blocked
+                        && Fighters[owners.Item1].IsSuperAttack
+                    )
+                    {
+                        Fighters[owners.Item1].Super = Mathsf.Max(
+                            Fighters[owners.Item1].Super - options.Global.SuperCost / (sfloat)2,
+                            (sfloat)0
+                        );
+                        Fighters[owners.Item1].IsSuperAttack = false;
+                        Fighters[owners.Item1].SuperComboBeats = 0;
+                    }
+
                     // Add super checking to start a combo so that the combo only starts if the meter is alr at max
                     if (outcome.Kind == HitKind.Hit && GameMode == GameMode.Fighting)
                     {
@@ -946,7 +965,20 @@ namespace Game.Sim
                 return new HitOutcome { Kind = HitKind.Grabbed, Props = attacker.Data };
             }
 
-            sfloat mult = 1 + (sfloat)0.2f * (HypeMeter / options.Global.MaxHype) * (attacker.Owner * -2 + 1);
+            sfloat hypeMult = 1 + (sfloat)0.2f * (HypeMeter / options.Global.MaxHype) * (attacker.Owner * -2 + 1);
+
+            CharacterState move = Fighters[attacker.Owner].State;
+            CharacterState[] staleBuf = Fighters[attacker.Owner].StalingBuffer;
+            int occurrences = 0;
+            for (int i = 0; i < staleBuf.Length; i++)
+            {
+                if (staleBuf[i] == move) occurrences++;
+            }
+
+            sfloat comboMult = DamageScale(Fighters[defender.Owner].ComboedCount);
+            sfloat staleMult = DamageScale(occurrences);
+            sfloat mult = hypeMult * comboMult * staleMult;
+
             HitOutcome outcome = Fighters[defender.Owner]
                 .ApplyHit(
                     SimFrame,
@@ -959,8 +991,23 @@ namespace Game.Sim
             if (outcome.Kind == HitKind.Hit || outcome.Kind == HitKind.Blocked)
             {
                 Fighters[attacker.Owner].AttackConnected = true;
+                ref FighterState atk = ref Fighters[attacker.Owner];
+                atk.StalingBuffer[atk.StalingBufferIndex] = move;
+                atk.StalingBufferIndex = (atk.StalingBufferIndex + 1) % atk.StalingBuffer.Length;
             }
             return outcome;
+        }
+
+        // Geometric decay: 0.9^n, floored at 0.25. Shared by combo and staling scaling.
+        private static sfloat DamageScale(int n)
+        {
+            sfloat m = sfloat.One;
+            int cap = Mathsf.Min(n, 14); // 0.9^14 < 0.25
+            for (int i = 0; i < cap; i++)
+            {
+                m *= (sfloat)0.9f;
+            }
+            return Mathsf.Max((sfloat)0.25f, m);
         }
 
         private HitOutcome HandleCollision(GameOptions options, Physics<BoxProps>.Collision c)

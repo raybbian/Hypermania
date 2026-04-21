@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: ViaConfig
   m_EditorClassIdentifier: 
   Character: 2
+  Enabled: 0
   Prefab: {fileID: 4912791955225701616, guid: e998a7df4f7d4c845a8165445c71c160, type: 3}
   MoveSfx: {fileID: 11400000, guid: 96f13b952f0f28a479dcd8702a73c40a, type: 2}
   Skins:

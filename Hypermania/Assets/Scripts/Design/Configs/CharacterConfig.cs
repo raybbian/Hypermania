@@ -44,6 +44,7 @@ namespace Design.Configs
     public class CharacterConfig : ScriptableObject
     {
         public Character Character;
+        public bool Enabled = true;
         public FighterView Prefab;
         public FighterMoveSfx MoveSfx;
         public SkinConfig[] Skins;

@@ -266,12 +266,26 @@ namespace Scenes.Menus.CharacterSelect
             int remoteIndex = 1 - _onlineLocalPlayerIndex;
             CSteamID remoteId = players[remoteIndex];
             _remoteController = new RemoteSelectionController(_netSync, remoteId, _state.Players[remoteIndex]);
+            _remoteController.OnProtocolError += OnRemoteProtocolError;
 
             _matchmakingSubscription = OnlineBaseDirectory.Matchmaking;
             _matchmakingSubscription.OnBackRequested += OnRemoteBackRequested;
             _matchmakingSubscription.OnCharacterSelectLaunchRequested += OnRemoteLaunchRequested;
             _matchmakingSubscription.OnCharacterSelectLaunch += OnLaunchBroadcast;
             return true;
+        }
+
+        /// <summary>
+        /// Remote peer sent a payload we couldn't parse. The lobby version
+        /// gate should prevent this in practice; if we see it anyway, abort
+        /// the session rather than proceed with stale remote state.
+        /// </summary>
+        private void OnRemoteProtocolError()
+        {
+            if (!_isOnline || _committed || _exiting)
+                return;
+            Debug.LogError("[CharacterSelect] Remote protocol error — returning to Online lobby.");
+            Back();
         }
 
         private void BindViews()
@@ -503,7 +517,7 @@ namespace Scenes.Menus.CharacterSelect
             {
                 Character key = EnumIndexCache<Character>.Keys[i];
                 CharacterConfig entry = config.CharacterConfig(key);
-                if (entry != null)
+                if (entry != null && entry.Enabled)
                     list.Add(entry);
             }
             return list.ToArray();
