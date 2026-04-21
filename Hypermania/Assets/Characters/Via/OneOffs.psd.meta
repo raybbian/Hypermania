@@ -100,6 +100,28 @@ ScriptedImporter:
     spritePosition: {x: 0, y: 0}
   multiSpriteImportData: []
   layeredSpriteImportData:
+  - name: vial
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 850
+      y: 2385
+      width: 190
+      height: 950
+    spriteID: 2a89e28b9bca1aa45bf7bc8c53f2dbe4
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 850, y: 2385}
+    spritePosition: {x: 1984, y: 1321}
   - name: straight whipsmear
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -251,6 +273,16 @@ ScriptedImporter:
   resliceFromLayer: 0
   pSDLayerImportSetting: []
   psdLayers:
+  - name: vial
+    spriteName: vial
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 2a89e28b9bca1aa45bf7bc8c53f2dbe4
+    layerID: 20
+    mosaicPosition: {x: 850, y: 2385}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
   - name: straight whipsmear
     spriteName: straight whipsmear
     isGroup: 0

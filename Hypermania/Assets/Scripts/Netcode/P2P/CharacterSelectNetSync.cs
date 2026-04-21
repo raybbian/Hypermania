@@ -79,6 +79,15 @@ namespace Netcode.P2P
 
         public void Dispose()
         {
+            // Wipe our own "cs" slot so the next visit to CharacterSelect
+            // (if we stay in the lobby and come back) doesn't show our
+            // previous selection to the peer for a frame. Steam auto-evicts
+            // member data when a user leaves the lobby, so disconnect/quit
+            // paths don't need this — only the Back-and-stay case does.
+            if (_client != null && _client.InLobby)
+            {
+                SteamMatchmaking.SetLobbyMemberData(_client.CurrentLobby, CSKey, string.Empty);
+            }
             if (_lobbyDataUpdateCb != null)
             {
                 _lobbyDataUpdateCb.Dispose();

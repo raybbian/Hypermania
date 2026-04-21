@@ -5,13 +5,29 @@ using Game.View.Overlay;
 using Netcode.P2P;
 using Netcode.Rollback;
 using Netcode.Rollback.Sessions;
+using Scenes.Battle;
 using Steamworks;
+using UnityEngine;
 
 namespace Game.Runners
 {
     public class LocalRunner : GameRunner
     {
         protected SyncTestSession<GameState, GameInput> _session;
+        protected bool _paused = false;
+
+        [SerializeField]
+        private PauseMenuView _pauseMenu;
+
+        public void OnEnable()
+        {
+            _pauseMenu.OnResume += Resume;
+        }
+
+        public void OnDisable()
+        {
+            _pauseMenu.OnResume -= Resume;
+        }
 
         public override void Init(
             List<(PlayerHandle playerHandle, PlayerKind playerKind, SteamNetworkingIdentity address)> players,
@@ -56,6 +72,11 @@ namespace Game.Runners
                 return false;
             }
 
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                SetPause(!_paused);
+            }
+
             for (int i = 0; i < _inputBuffers.Length; i++)
             {
                 _inputBuffers[i].Clear();
@@ -68,6 +89,10 @@ namespace Game.Runners
             while (_time > fpsDelta)
             {
                 _time -= fpsDelta;
+                if (_paused)
+                {
+                    continue;
+                }
                 bool finished = GameLoop(fpsDelta);
                 if (finished)
                     return true;
@@ -75,6 +100,21 @@ namespace Game.Runners
 
             return false;
         }
+
+        private void SetPause(bool paused)
+        {
+            _paused = paused;
+            if (paused)
+            {
+                _pauseMenu.Show();
+            }
+            else
+            {
+                _pauseMenu.Hide();
+            }
+        }
+
+        private void Resume() => SetPause(false);
 
         protected bool GameLoop(float deltaTime)
         {

@@ -55,6 +55,7 @@ jobs:
 
       - name: Zip build
         run: |
+          cp Hypermania/steam_appid.txt build/${{ matrix.targetPlatform }}/
           cd build/${{ matrix.targetPlatform }}
           zip -r ../../Hypermania-${{ matrix.targetPlatform }}-${GITHUB_REF_NAME}.zip .
 

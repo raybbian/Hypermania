@@ -1,3 +1,5 @@
+using Game;
+using Game.Sim;
 using Game.View;
 using Game.View.Fighters;
 using UnityEditor;
@@ -136,6 +138,11 @@ namespace Design.Animation.MoveBuilder.Editor
                     );
                 }
             }
+
+            state.Data.ComboEligible = EditorGUILayout.Toggle("Combo Eligible", state.Data.ComboEligible);
+            state.Data.Followup = (CharacterState)EditorGUILayout.EnumPopup("Followup", state.Data.Followup);
+            state.Data.FollowupInput = (InputFlags)
+                EditorGUILayout.EnumFlagsField("Followup Input", state.Data.FollowupInput);
             EditorGUILayout.Space(6);
             EditorGUILayout.LabelField("Frame Data", EditorStyles.boldLabel);
             frame.FrameType = (FrameType)EditorGUILayout.EnumPopup("Frame Type", frame.FrameType);
@@ -144,6 +151,11 @@ namespace Design.Animation.MoveBuilder.Editor
             using (new EditorGUI.DisabledScope(!frame.ShouldApplyVel))
             {
                 frame.ApplyVelocity = SFloatGUI.Field("Apply Velocity", frame.ApplyVelocity);
+            }
+            frame.ShouldTeleport = EditorGUILayout.Toggle("Should Teleport", frame.ShouldTeleport);
+            using (new EditorGUI.DisabledScope(!frame.ShouldTeleport))
+            {
+                frame.TeleportLocation = SFloatGUI.Field("Teleport Location", frame.TeleportLocation);
             }
             frame.GravityEnabled = EditorGUILayout.Toggle("Gravity Enabled", frame.GravityEnabled);
         }
@@ -211,6 +223,16 @@ namespace Design.Animation.MoveBuilder.Editor
             using (new EditorGUI.DisabledScope(p.Kind != HitboxKind.Grabbox))
             {
                 p.GrabPosition = SFloatGUI.Field("Grab Position", p.GrabPosition);
+            }
+
+            using (new EditorGUI.DisabledScope(p.Kind != HitboxKind.Hitbox && p.Kind != HitboxKind.Grabbox))
+            {
+                p.HasTransition = EditorGUILayout.Toggle("Has Transition", p.HasTransition);
+                using (new EditorGUI.DisabledScope(!p.HasTransition))
+                {
+                    p.OnHitTransition = (CharacterState)
+                        EditorGUILayout.EnumPopup("On Hit Transition", p.OnHitTransition);
+                }
             }
 
             if (p.Kind == HitboxKind.Hitbox)

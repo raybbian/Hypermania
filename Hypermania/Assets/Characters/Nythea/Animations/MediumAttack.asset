@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: MediumAttack
   m_EditorClassIdentifier: 
   Clip: {fileID: 7400000, guid: 9856e8797989a4fbf8359d8f13c83937, type: 2}
+  ComboEligible: 1
+  Followup: 36
+  FollowupInput: 64
   Frames:
   - Boxes:
     - CenterLocal:
@@ -33,11 +36,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 1
@@ -68,11 +75,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 1
@@ -103,11 +114,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 1
@@ -138,11 +153,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 1
@@ -173,11 +192,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 1
@@ -208,11 +231,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 1
@@ -243,11 +270,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 1
@@ -278,11 +309,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     - CenterLocal:
@@ -303,11 +338,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 1
@@ -338,11 +377,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     - CenterLocal:
@@ -363,11 +406,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 1
@@ -398,11 +445,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     - CenterLocal:
@@ -423,11 +474,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 1
@@ -458,11 +513,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     - CenterLocal:
@@ -483,13 +542,17 @@ MonoBehaviour:
         BlockstunTicks: 11
         HitstopTicks: 11
         BlockstopTicks: 9
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1057394231
           y:
             rawValue: 1026035168
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     - CenterLocal:
         x:
           rawValue: 1057771372
@@ -508,11 +571,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 2
@@ -543,11 +610,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     - CenterLocal:
@@ -568,13 +639,17 @@ MonoBehaviour:
         BlockstunTicks: 11
         HitstopTicks: 11
         BlockstopTicks: 9
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1057394231
           y:
             rawValue: 1026035168
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     - CenterLocal:
         x:
           rawValue: 1057771372
@@ -593,11 +668,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 2
@@ -628,11 +707,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     - CenterLocal:
@@ -653,13 +736,17 @@ MonoBehaviour:
         BlockstunTicks: 11
         HitstopTicks: 11
         BlockstopTicks: 9
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1057394231
           y:
             rawValue: 1026035168
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     - CenterLocal:
         x:
           rawValue: 1057771372
@@ -678,11 +765,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 2
@@ -713,11 +804,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     - CenterLocal:
@@ -738,13 +833,17 @@ MonoBehaviour:
         BlockstunTicks: 11
         HitstopTicks: 11
         BlockstopTicks: 9
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1057394231
           y:
             rawValue: 1026035168
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
     - CenterLocal:
         x:
           rawValue: 1057771372
@@ -763,11 +862,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 2
@@ -798,11 +901,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 3
@@ -833,11 +940,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 3
@@ -868,11 +979,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 3
@@ -903,11 +1018,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 3
@@ -938,11 +1057,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 3
@@ -973,11 +1096,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 3
@@ -1008,11 +1135,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 3
@@ -1043,11 +1174,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 3
@@ -1078,11 +1213,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 3
@@ -1113,11 +1252,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 3
@@ -1148,11 +1291,15 @@ MonoBehaviour:
         BlockstunTicks: 0
         HitstopTicks: 0
         BlockstopTicks: 0
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
           y:
             rawValue: 0
     FrameType: 3

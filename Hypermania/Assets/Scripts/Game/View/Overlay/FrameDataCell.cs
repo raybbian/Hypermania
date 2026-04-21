@@ -26,6 +26,13 @@ namespace Game.View.Overlay
             SetType(res);
         }
 
+        public void SetType(Frame frame, CharacterState animState, Frame stateStart, CharacterConfig characterConfig)
+        {
+            FrameData data = characterConfig.GetHitboxData(animState).GetFrame(frame - stateStart);
+            FrameType res = data == null ? FrameType.Neutral : data.FrameType;
+            SetType(res);
+        }
+
         public void SetType(FrameType type)
         {
             CurType = type;

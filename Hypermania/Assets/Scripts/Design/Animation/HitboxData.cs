@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game;
+using Game.Sim;
 using MemoryPack;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -49,6 +50,8 @@ namespace Design.Animation
         public KnockdownKind KnockdownKind;
         public SVector2 Knockback;
         public SVector2 GrabPosition;
+        public bool HasTransition;
+        public CharacterState OnHitTransition;
 
         public bool Equals(BoxProps other) =>
             Kind == other.Kind
@@ -60,7 +63,9 @@ namespace Design.Animation
             && KnockdownKind == other.KnockdownKind
             && HitstopTicks == other.HitstopTicks
             && BlockstopTicks == other.BlockstopTicks
-            && GrabPosition == other.GrabPosition;
+            && GrabPosition == other.GrabPosition
+            && HasTransition == other.HasTransition
+            && OnHitTransition == other.OnHitTransition;
 
         public override bool Equals(object obj) => obj is BoxProps other && Equals(other);
 
@@ -69,7 +74,9 @@ namespace Design.Animation
                 HashCode.Combine(Kind, AttackKind, HitstunTicks, Damage, BlockstunTicks, KnockdownKind, Knockback),
                 HitstopTicks,
                 BlockstopTicks,
-                GrabPosition
+                GrabPosition,
+                HasTransition,
+                OnHitTransition
             );
 
         public static bool operator ==(BoxProps a, BoxProps b) => a.Equals(b);
@@ -127,6 +134,8 @@ namespace Design.Animation
         public bool GravityEnabled = true;
         public bool ShouldApplyVel;
         public SVector2 ApplyVelocity;
+        public bool ShouldTeleport;
+        public SVector2 TeleportLocation;
 
         public FrameData Clone()
         {
@@ -136,6 +145,8 @@ namespace Design.Animation
             copy.Floating = Floating;
             copy.ShouldApplyVel = ShouldApplyVel;
             copy.ApplyVelocity = ApplyVelocity;
+            copy.ShouldTeleport = ShouldTeleport;
+            copy.TeleportLocation = TeleportLocation;
             copy.GravityEnabled = GravityEnabled;
             return copy;
         }
@@ -150,6 +161,8 @@ namespace Design.Animation
             FrameType = other.FrameType;
             ShouldApplyVel = other.ShouldApplyVel;
             ApplyVelocity = other.ApplyVelocity;
+            ShouldTeleport = other.ShouldTeleport;
+            TeleportLocation = other.TeleportLocation;
             GravityEnabled = other.GravityEnabled;
         }
 
@@ -168,6 +181,8 @@ namespace Design.Animation
             hc.Add(Floating);
             hc.Add(ShouldApplyVel);
             hc.Add(ApplyVelocity);
+            hc.Add(ShouldTeleport);
+            hc.Add(TeleportLocation);
             hc.Add(GravityEnabled);
             return hc.ToHashCode();
         }
@@ -195,6 +210,8 @@ namespace Design.Animation
         public int TotalTicks => Frames.Count;
         public bool AnimLoops => Clip.isLooping;
         public bool ComboEligible = true;
+        public CharacterState Followup = CharacterState.Idle;
+        public InputFlags FollowupInput = InputFlags.None;
         public List<FrameData> Frames = new List<FrameData>();
 
         [NonSerialized]

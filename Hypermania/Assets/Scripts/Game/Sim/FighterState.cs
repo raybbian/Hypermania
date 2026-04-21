@@ -36,6 +36,8 @@ namespace Game.Sim
         public SVector2 Velocity;
         public sfloat Health;
         public int ComboedCount;
+        public CharacterState[] StalingBuffer;
+        public int StalingBufferIndex;
         public InputHistory InputH;
         public int Lives;
         public sfloat Super;
@@ -43,7 +45,6 @@ namespace Game.Sim
         public int AirDashCount;
         public VictoryKind[] Victories;
         public int NumVictories;
-        public bool GrabConnected;
         public bool AttackConnected;
         public bool IsSuperAttack;
         public int SuperComboBeats;
@@ -76,6 +77,8 @@ namespace Game.Sim
         public SVector2? HitLocation { get; private set; }
         public bool StateChangedThisRealFrame { get; private set; }
         public bool SuperMaxedThisRealFrame { get; private set; }
+        public CharacterState? PostActionState { get; private set; }
+        public Frame? PostActionStateStart { get; private set; }
 
         public bool HitLastRealFrame =>
             HitProps.HasValue
@@ -116,7 +119,8 @@ namespace Game.Sim
             sfloat health,
             SVector2 position,
             FighterFacing facingDirection,
-            int lives
+            int lives,
+            int stalingBufferSize
         )
         {
             FighterState state = new FighterState
@@ -129,6 +133,8 @@ namespace Game.Sim
                 StateEnd = Frame.Infinity,
                 ImmunityHash = 0,
                 ComboedCount = 0,
+                StalingBuffer = new CharacterState[stalingBufferSize],
+                StalingBufferIndex = 0,
                 InputH = new InputHistory(),
                 // TODO: character dependent?
                 Health = health,
@@ -171,6 +177,8 @@ namespace Game.Sim
             StateEnd = Frame.Infinity;
             ImmunityHash = 0;
             ComboedCount = 0;
+            Array.Clear(StalingBuffer, 0, StalingBuffer.Length);
+            StalingBufferIndex = 0;
             LockedHitstun = false;
             InputH.Clear(); // Clear, don't want to read input from a previous round.
             // TODO: character dependent?
@@ -257,6 +265,14 @@ namespace Game.Sim
             HitLocation = null;
             StateChangedThisRealFrame = false;
             SuperMaxedThisRealFrame = false;
+            PostActionState = null;
+            PostActionStateStart = null;
+        }
+
+        public void CapturePostActionState()
+        {
+            PostActionState = State;
+            PostActionStateStart = StateStart;
         }
 
         public void SetState(CharacterState nextState, Frame start, Frame end, bool forceChange = false)
@@ -289,25 +305,6 @@ namespace Game.Sim
 
         public void TickStateMachine(Frame frame, GameOptions options)
         {
-            if (State == CharacterState.Grab && GrabConnected)
-            {
-                bool backThrow = InputH.IsHeld(BackwardInput);
-                if (backThrow)
-                {
-                    FacingDir = FacingDir == FighterFacing.Right ? FighterFacing.Left : FighterFacing.Right;
-                }
-
-                CharacterConfig config = options.Players[Index].Character;
-                SetState(
-                    CharacterState.Throw,
-                    frame,
-                    frame + config.GetHitboxData(CharacterState.Throw).TotalTicks,
-                    true
-                );
-                GrabConnected = false;
-                return;
-            }
-
             // if animation ends, switch back to idle
             if (frame >= StateEnd)
             {
@@ -535,6 +532,35 @@ namespace Game.Sim
 
             int bufferWindow = options.Global.Input.InputBufferWindow;
 
+            // Followup attacks:
+            HitboxData curData = config.GetHitboxData(State);
+            FrameData curFrameData = curData.GetFrame(simFrame - StateStart);
+            if (
+                curData.Followup != CharacterState.Idle
+                && curFrameData.FrameType == FrameType.Recovery
+                && InputH.IsHeld(curData.FollowupInput)
+            )
+            {
+                // TODO: fixme copied code from previous
+                Frame startFrame = simFrame;
+                if (isRhythmCancel)
+                {
+                    // Beat-snap: back-date StateStart by the attack's startup
+                    // so the active frame lands on simFrame itself (= the
+                    // note's dispatch frame, since ManiaState withholds the
+                    // press to the last frame of the hit window).
+                    startFrame -= config.GetHitboxData(curData.Followup).StartupTicks;
+                }
+                AttackConnected = false;
+                SetState(
+                    curData.Followup,
+                    startFrame,
+                    startFrame + config.GetHitboxData(curData.Followup).TotalTicks,
+                    true
+                );
+                return;
+            }
+
             // Hold-to-super: once the heavy attack has been active for
             // SuperDelayWindow ticks, promote to a super if the heavy button
             // is still held at that frame.
@@ -607,17 +633,13 @@ namespace Game.Sim
 
                 AttackConnected = false;
                 SetState(state, startFrame, startFrame + config.GetHitboxData(state).TotalTicks, true);
-                if (state == CharacterState.Grab)
-                {
-                    GrabConnected = false;
-                }
                 return;
             }
 
-            // if (dashCancelEligible && InputH.IsHeld(ForwardInput) && State == CharacterState.ForwardDash)
-            // {
-            //     SetState(CharacterState.Running, simFrame, Frame.Infinity);
-            // }
+            if (dashCancelEligible && InputH.IsHeld(ForwardInput) && State == CharacterState.ForwardDash)
+            {
+                SetState(CharacterState.Running, simFrame, Frame.Infinity);
+            }
         }
 
         private bool IsGatlingCancelAllowed(CharacterState to, Frame simFrame, CharacterConfig config)
@@ -665,6 +687,13 @@ namespace Game.Sim
             {
                 Velocity = curData.ApplyVelocity;
                 Velocity.x *= FacingDir == FighterFacing.Left ? -1 : 1;
+            }
+
+            if (curData.ShouldTeleport)
+            {
+                SVector2 teleport = curData.TeleportLocation;
+                teleport.x *= FacingDir == FighterFacing.Left ? -1 : 1;
+                Position += teleport;
             }
 
             if (curData.GravityEnabled && Position.y > options.Global.GroundY)
@@ -787,6 +816,42 @@ namespace Game.Sim
             }
         }
 
+        public void ProcessHit(Frame frame, BoxProps props, CharacterConfig config)
+        {
+            if (props.HasTransition)
+            {
+                // ProcessHit runs inside DoCollisionStep, AFTER AddBoxes has
+                // already added this frame's boxes for the pre-transition
+                // state. If we used `frame` as StateStart, the next frame
+                // would read the transitioned animation at tick 1 — skipping
+                // tick 0 entirely. Back-date by using frame+1 so tick 0 is
+                // what gets rendered/processed on the following frame.
+                Frame nextStart = frame + 1;
+                if (props.OnHitTransition == CharacterState.Throw)
+                {
+                    bool backThrow = InputH.IsHeld(BackwardInput);
+                    if (backThrow)
+                    {
+                        FacingDir = FacingDir == FighterFacing.Right ? FighterFacing.Left : FighterFacing.Right;
+                    }
+
+                    SetState(
+                        CharacterState.Throw,
+                        nextStart,
+                        nextStart + config.GetHitboxData(CharacterState.Throw).TotalTicks,
+                        true
+                    );
+                    return;
+                }
+                SetState(
+                    props.OnHitTransition,
+                    nextStart,
+                    nextStart + config.GetHitboxData(props.OnHitTransition).TotalTicks,
+                    true
+                );
+            }
+        }
+
         public HitOutcome ApplyHit(
             Frame frame,
             Frame attackSt,
@@ -855,7 +920,7 @@ namespace Game.Sim
             return new HitOutcome { Kind = HitKind.Hit, Props = props };
         }
 
-        public void ApplyGrab(Frame frame, BoxProps props, SVector2 hitboxCenter, ref FighterState attacker)
+        public void ApplyGrab(Frame frame, BoxProps props, SVector2 hitboxCenter, FighterFacing grabberFacingDir)
         {
             if (State != CharacterState.Grabbed)
             {
@@ -865,13 +930,12 @@ namespace Game.Sim
             Velocity = SVector2.zero;
 
             SVector2 grabPos = props.GrabPosition;
-            if (attacker.FacingDir == FighterFacing.Left)
+            if (grabberFacingDir == FighterFacing.Left)
             {
                 grabPos.x *= -1;
             }
 
             Position = hitboxCenter + grabPos;
-            attacker.GrabConnected = true;
         }
 
         public void ApplyClank(Frame frame, GameOptions options)

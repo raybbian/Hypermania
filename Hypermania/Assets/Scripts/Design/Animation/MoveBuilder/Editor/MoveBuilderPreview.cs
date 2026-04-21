@@ -39,8 +39,88 @@ namespace Design.Animation.MoveBuilder.Editor
             {
                 DrawAndEditBox(fighter, m, state, curFrame, i);
             }
+
+            if (curFrame.ShouldApplyVel)
+            {
+                DrawAndEditOriginArrow(
+                    fighter,
+                    m,
+                    state,
+                    curFrame,
+                    (Vector2)curFrame.ApplyVelocity,
+                    new Color(0.2f, 0.6f, 1f),
+                    (frame, newTipL) => frame.ApplyVelocity = (SVector2)newTipL
+                );
+            }
+
+            if (curFrame.ShouldTeleport)
+            {
+                DrawAndEditOriginArrow(
+                    fighter,
+                    m,
+                    state,
+                    curFrame,
+                    (Vector2)curFrame.TeleportLocation,
+                    new Color(1f, 0.85f, 0.2f),
+                    (frame, newTipL) => frame.TeleportLocation = (SVector2)newTipL
+                );
+            }
+
             HandleBoxSelectionClick(fighter, m, curFrame);
             ConsumeScenePicking();
+        }
+
+        private void DrawAndEditOriginArrow(
+            EntityView fighter,
+            MoveBuilderModel m,
+            MoveBuilderAnimationState state,
+            FrameData frame,
+            Vector2 tipL,
+            Color color,
+            System.Action<FrameData, Vector2> writeBack
+        )
+        {
+            Transform root = fighter.transform;
+
+            Vector3 originW = root.TransformPoint(Vector3.zero);
+            Vector3 tipW = root.TransformPoint(new Vector3(tipL.x, tipL.y, 0f));
+
+            var prev = Handles.color;
+            Handles.color = color;
+            Handles.DrawAAPolyLine(2f, originW, tipW);
+            if ((tipW - originW).sqrMagnitude > 1e-8f)
+            {
+                Handles.ArrowHandleCap(
+                    0,
+                    tipW,
+                    Quaternion.LookRotation(Vector3.forward, (tipW - originW).normalized),
+                    HandleUtility.GetHandleSize(tipW) * 0.4f,
+                    EventType.Repaint
+                );
+            }
+
+            EditorGUI.BeginChangeCheck();
+            Vector3 newTipW = Handles.Slider2D(
+                tipW,
+                root.forward,
+                root.right,
+                root.up,
+                HandleUtility.GetHandleSize(tipW) * 0.08f,
+                Handles.DotHandleCap,
+                snap: Vector2.zero
+            );
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                Vector3 newTipL3 = root.InverseTransformPoint(newTipW);
+                Vector2 newTipL = new Vector2(newTipL3.x, newTipL3.y);
+
+                Undo.RecordObject(state.Data, "Edit Frame Vector");
+                writeBack(frame, newTipL);
+                EditorUtility.SetDirty(state.Data);
+            }
+
+            Handles.color = prev;
         }
 
         private static void HandleKeybinds(MoveBuilderModel m, MoveBuilderAnimationState state)

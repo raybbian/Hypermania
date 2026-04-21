@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Design.Animation;
 using Design.Configs;
 using Game.Sim;
@@ -24,6 +25,11 @@ namespace Game.View.Fighters
 
         [SerializeField]
         private Transform _visualCenter;
+
+        [SerializeField]
+        private Transform[] _interestPoints;
+
+        public Transform[] InterestPoints => _interestPoints;
 
         [SerializeField]
         private float _hitJitterMagnitude = 0.04f;
@@ -90,9 +96,13 @@ namespace Game.View.Fighters
         {
             if (state.StateChangedThisRealFrame)
             {
-                foreach (SfxKind sfxKind in _characterConfig.MoveSfx.Sfx[state.State].Kinds)
+                List<SfxKind> sfxKinds = _characterConfig?.MoveSfx?.Sfx[state.State].Kinds;
+                if (sfxKinds != null)
                 {
-                    sfxManager.AddDesired(sfxKind, realFrame);
+                    foreach (SfxKind sfxKind in _characterConfig.MoveSfx.Sfx[state.State].Kinds)
+                    {
+                        sfxManager.AddDesired(sfxKind, realFrame);
+                    }
                 }
             }
 

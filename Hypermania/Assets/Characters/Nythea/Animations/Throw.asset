@@ -14,16 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Clip: {fileID: 7400000, guid: 8b36575ba21ec0243a40645c797b8f03, type: 2}
   ComboEligible: 1
+  Followup: 3
+  FollowupInput: 0
   Frames:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1039539488
+          rawValue: 1035485608
         y:
           rawValue: 1063301456
       SizeLocal:
         x:
-          rawValue: 1072341544
+          rawValue: 1077095576
         y:
           rawValue: 1071360110
       Props:
@@ -45,6 +47,8 @@ MonoBehaviour:
             rawValue: 1059241597
           y:
             rawValue: 3210765252
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -84,6 +88,8 @@ MonoBehaviour:
             rawValue: 3141943040
           y:
             rawValue: 3211955960
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -123,6 +129,8 @@ MonoBehaviour:
             rawValue: 3141943040
           y:
             rawValue: 3211955960
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -162,6 +170,8 @@ MonoBehaviour:
             rawValue: 3141943040
           y:
             rawValue: 3211955960
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -201,6 +211,8 @@ MonoBehaviour:
             rawValue: 3141943040
           y:
             rawValue: 3211955960
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -240,6 +252,8 @@ MonoBehaviour:
             rawValue: 3141943040
           y:
             rawValue: 3211955960
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -279,6 +293,8 @@ MonoBehaviour:
             rawValue: 3141943040
           y:
             rawValue: 3211955960
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -318,6 +334,8 @@ MonoBehaviour:
             rawValue: 3141943040
           y:
             rawValue: 3211955960
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -357,6 +375,8 @@ MonoBehaviour:
             rawValue: 1034566216
           y:
             rawValue: 3205000674
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -396,6 +416,8 @@ MonoBehaviour:
             rawValue: 3141943040
           y:
             rawValue: 3211955960
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -435,6 +457,8 @@ MonoBehaviour:
             rawValue: 3141943040
           y:
             rawValue: 3211955960
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -474,6 +498,8 @@ MonoBehaviour:
             rawValue: 998265984
           y:
             rawValue: 3212538242
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -513,6 +539,8 @@ MonoBehaviour:
             rawValue: 998265984
           y:
             rawValue: 3212538242
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -552,6 +580,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -591,6 +621,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
@@ -630,6 +662,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
@@ -669,6 +703,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
@@ -708,6 +744,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
@@ -747,6 +785,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
@@ -786,6 +826,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
@@ -825,6 +867,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
@@ -864,6 +908,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
@@ -903,6 +949,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1

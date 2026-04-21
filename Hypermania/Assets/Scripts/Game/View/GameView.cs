@@ -178,12 +178,10 @@ namespace Game.View
             List<Vector2> interestPoints = new List<Vector2>();
             for (int i = 0; i < _options.Players.Length; i++)
             {
-                interestPoints.Add((Vector2)state.Fighters[i].Position);
-                // ensure that fighter heads are included
-                interestPoints.Add(
-                    (Vector2)state.Fighters[i].Position
-                        + new Vector2(0, (float)_options.Players[i].Character.CharacterHeight)
-                );
+                foreach (Transform t in _fighters[i].InterestPoints)
+                {
+                    interestPoints.Add(t.position);
+                }
             }
 
             for (int i = 0; i < _options.Players.Length; i++)

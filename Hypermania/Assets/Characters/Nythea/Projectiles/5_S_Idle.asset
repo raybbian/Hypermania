@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: 5_S_Idle
   m_EditorClassIdentifier: 
   Clip: {fileID: 7400000, guid: 4ca20e43c26f0634892cadd6db2a84ec, type: 2}
+  ComboEligible: 1
+  Followup: 3
+  FollowupInput: 0
   Frames:
   - Boxes: []
     FrameType: 0
@@ -24,12 +27,8 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
-    FrameType: 0
-    Floating: 0
-    GravityEnabled: 1
-    ShouldApplyVel: 0
-    ApplyVelocity:
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -44,12 +43,8 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
-    FrameType: 0
-    Floating: 0
-    GravityEnabled: 1
-    ShouldApplyVel: 0
-    ApplyVelocity:
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -64,12 +59,56 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes: []
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -87,24 +126,36 @@ MonoBehaviour:
           rawValue: 1054617936
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -122,24 +173,36 @@ MonoBehaviour:
           rawValue: 1054617936
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -157,24 +220,36 @@ MonoBehaviour:
           rawValue: 1054617936
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -192,24 +267,36 @@ MonoBehaviour:
           rawValue: 1060799814
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -227,24 +314,36 @@ MonoBehaviour:
           rawValue: 1060799814
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -262,24 +361,36 @@ MonoBehaviour:
           rawValue: 1060799814
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -297,24 +408,36 @@ MonoBehaviour:
           rawValue: 1063304085
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -332,24 +455,36 @@ MonoBehaviour:
           rawValue: 1063304085
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -367,24 +502,36 @@ MonoBehaviour:
           rawValue: 1063304085
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -402,24 +549,36 @@ MonoBehaviour:
           rawValue: 1064524113
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -437,24 +596,36 @@ MonoBehaviour:
           rawValue: 1064524113
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -472,24 +643,36 @@ MonoBehaviour:
           rawValue: 1064524113
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -507,24 +690,36 @@ MonoBehaviour:
           rawValue: 1064524113
       Props:
         Kind: 1
-        AttackKind: 2
+        AttackKind: 0
         Damage: 4
         HitstunTicks: 7
         BlockstunTicks: 6
         HitstopTicks: 7
         BlockstopTicks: 6
-        StartsRhythmCombo: 0
         KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:

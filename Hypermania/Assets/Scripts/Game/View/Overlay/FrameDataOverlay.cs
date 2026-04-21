@@ -106,17 +106,21 @@ namespace Game.View.Overlay
             int baseIdx = frame.No % _numColumns;
             for (int i = 0; i < 2; i++)
             {
+                CharacterState displayState = state.Fighters[i].PostActionState ?? state.Fighters[i].State;
+                Frame displayStateStart = state.Fighters[i].PostActionStateStart ?? state.Fighters[i].StateStart;
+
                 if (_displayHitstopFrames && state.HitstopFramesRemaining > 0)
                 {
                     _cells[i, baseIdx].SetType(FrameType.Hitstop);
                 }
-                else if (state.Fighters[i].State == CharacterState.Grabbed)
+                else if (displayState == CharacterState.Grabbed)
                 {
                     _cells[i, baseIdx].SetType(FrameType.Grabbed);
                 }
                 else
                 {
-                    _cells[i, baseIdx].SetType(state.SimFrame, state.Fighters[i], options.Players[i].Character);
+                    _cells[i, baseIdx]
+                        .SetType(state.SimFrame, displayState, displayStateStart, options.Players[i].Character);
                 }
                 _consecText[i, baseIdx].gameObject.SetActive(false);
                 int prevIdx = (baseIdx + _numColumns - 1) % _numColumns;
