@@ -27,7 +27,7 @@ namespace Game.View.Fighters
 
         [SerializeField]
         private float _hitJitterMagnitude = 0.04f;
-        
+
         [SerializeField]
         private float _thinHitKnockbackMagnitude = 0.04f;
 
@@ -106,9 +106,10 @@ namespace Game.View.Fighters
 
             if (state.HitLastRealFrame)
             {
-                VfxKind kind = (float)state.HitProps.Value.Knockback.magnitude < _thinHitKnockbackMagnitude
-                    ? VfxKind.SmallHit
-                    : VfxKind.ThinHit;
+                VfxKind kind =
+                    (float)state.HitProps.Value.Knockback.magnitude < _thinHitKnockbackMagnitude
+                        ? VfxKind.SmallHit
+                        : VfxKind.ThinHit;
                 vfxManager.AddDesired(
                     kind,
                     realFrame,

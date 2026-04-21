@@ -8,9 +8,9 @@ namespace Game.View.Events.Vfx
     {
         [SerializeField]
         private bool _flipXWithDirection;
+
         [SerializeField]
         private bool _rotateWithDirection = true;
-
 
         private VisualEffect _vfx;
 

@@ -11,7 +11,6 @@ namespace Game.View.Overlay
             EntityView.SetLayerRecursive(gameObject, 6 + playerIndex);
         }
 
-
         [Header("UI")]
         [SerializeField]
         private Transform[] _disks;

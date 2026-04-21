@@ -94,6 +94,7 @@ public class OutlineFeature : ScriptableRendererFeature
     protected override void Dispose(bool disposing)
     {
         pass?.Cleanup();
-        if (Instance == this) Instance = null;
+        if (Instance == this)
+            Instance = null;
     }
 }

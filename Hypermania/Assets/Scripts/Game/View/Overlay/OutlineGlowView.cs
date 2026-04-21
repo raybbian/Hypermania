@@ -9,9 +9,14 @@ namespace Game.View.Overlay
         [Serializable]
         public struct ColorSet
         {
-            [ColorUsage(true, true)] public Color Hype;
-            [ColorUsage(true, true)] public Color Mania;
-            [ColorUsage(true, true)] public Color Burst;
+            [ColorUsage(true, true)]
+            public Color Hype;
+
+            [ColorUsage(true, true)]
+            public Color Mania;
+
+            [ColorUsage(true, true)]
+            public Color Burst;
         }
 
         [SerializeField]

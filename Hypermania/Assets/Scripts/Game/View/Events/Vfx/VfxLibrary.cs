@@ -12,7 +12,7 @@ namespace Game.View.Events.Vfx
         NoteHit,
         NoteMiss,
         SmallHit,
-        ThinHit
+        ThinHit,
     }
 
     [Serializable]

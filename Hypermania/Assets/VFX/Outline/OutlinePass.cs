@@ -36,12 +36,16 @@ public class OutlinePass : ScriptableRenderPass
 
     public void Cleanup()
     {
-        if (_perPlayerMaterials == null) return;
+        if (_perPlayerMaterials == null)
+            return;
         foreach (var m in _perPlayerMaterials)
         {
-            if (m == null) continue;
-            if (Application.isPlaying) Object.Destroy(m);
-            else Object.DestroyImmediate(m);
+            if (m == null)
+                continue;
+            if (Application.isPlaying)
+                Object.Destroy(m);
+            else
+                Object.DestroyImmediate(m);
         }
         _perPlayerMaterials = null;
         _materialSource = null;
@@ -49,9 +53,11 @@ public class OutlinePass : ScriptableRenderPass
 
     void EnsureMaterials(int count)
     {
-        if (_perPlayerMaterials != null
+        if (
+            _perPlayerMaterials != null
             && _perPlayerMaterials.Length == count
-            && _materialSource == settings.outlineMaterial)
+            && _materialSource == settings.outlineMaterial
+        )
             return;
 
         Cleanup();
@@ -150,9 +156,7 @@ public class OutlinePass : ScriptableRenderPass
             // Runtime color override (from GameView: hype/mania/burst) takes
             // precedence over the authored color. Scale HDR (drives bloom) and
             // width by glow; at glow=1 the outline matches the authored look.
-            Color baseColor = feature != null
-                ? feature.GetPlayerColor(i, player.outlineColor)
-                : player.outlineColor;
+            Color baseColor = feature != null ? feature.GetPlayerColor(i, player.outlineColor) : player.outlineColor;
             Color scaledColor = baseColor * glow;
             scaledColor.a = baseColor.a;
 
@@ -162,10 +166,7 @@ public class OutlinePass : ScriptableRenderPass
             mat.SetFloat(AlphaThresholdId, player.alphaThreshold);
 
             using (
-                var builder = renderGraph.AddRasterRenderPass<OutlineBlitPassData>(
-                    $"OutlineBlit_{i}",
-                    out var passData
-                )
+                var builder = renderGraph.AddRasterRenderPass<OutlineBlitPassData>($"OutlineBlit_{i}", out var passData)
             )
             {
                 passData.source = silhouette;
