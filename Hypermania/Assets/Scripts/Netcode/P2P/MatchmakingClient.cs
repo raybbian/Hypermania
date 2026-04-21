@@ -361,7 +361,9 @@ namespace Netcode.P2P
                     return;
 
                 case LobbyChatOpcode.CsLaunchReq:
-                    Debug.Log($"[Matchmaking] Received CS_LAUNCH_REQ from={user.m_SteamID}, me={SteamUser.GetSteamID()}");
+                    Debug.Log(
+                        $"[Matchmaking] Received CS_LAUNCH_REQ from={user.m_SteamID}, me={SteamUser.GetSteamID()}"
+                    );
                     OnCharacterSelectLaunchRequested?.Invoke();
                     return;
 
@@ -442,9 +444,7 @@ namespace Netcode.P2P
         {
             List<CSteamID> players = PlayersInLobby();
             string[] args =
-                players != null
-                    ? players.Select(p => p.m_SteamID.ToString()).ToArray()
-                    : Array.Empty<string>();
+                players != null ? players.Select(p => p.m_SteamID.ToString()).ToArray() : Array.Empty<string>();
 
             Debug.Log(
                 $"[Matchmaking] Sending START lobby chat message. lobby={_currentLobby.m_SteamID}, players={string.Join(",", args)}"
