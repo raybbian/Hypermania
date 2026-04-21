@@ -5,6 +5,7 @@ using Game.View.Overlay;
 using Netcode.P2P;
 using Netcode.Rollback;
 using Netcode.Rollback.Sessions;
+using Scenes.Battle;
 using Steamworks;
 using UnityEngine;
 
@@ -13,11 +14,20 @@ namespace Game.Runners
     public class LocalRunner : GameRunner
     {
         protected SyncTestSession<GameState, GameInput> _session;
-        private bool _paused = false;
+        protected bool _paused = false;
 
         [SerializeField]
-        private UnityEngine.GameObject pauseMenuPrefab;
-        private UnityEngine.GameObject _pauseMenuInstance;
+        private PauseMenuView _pauseMenu;
+
+        public void OnEnable()
+        {
+            _pauseMenu.OnResume += Resume;
+        }
+
+        public void OnDisable()
+        {
+            _pauseMenu.OnResume -= Resume;
+        }
 
         public override void Init(
             List<(PlayerHandle playerHandle, PlayerKind playerKind, SteamNetworkingIdentity address)> players,
@@ -62,10 +72,9 @@ namespace Game.Runners
                 return false;
             }
 
-            if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                _paused = !_paused;
-                OnPauseChanged(_paused);
+                SetPause(!_paused);
             }
 
             for (int i = 0; i < _inputBuffers.Length; i++)
@@ -77,14 +86,13 @@ namespace Game.Runners
             float fpsDelta = 1.0f / GameManager.TPS;
             _time += deltaTime;
 
-            if (_paused)
-            {
-                return false;
-            }
-
             while (_time > fpsDelta)
             {
                 _time -= fpsDelta;
+                if (_paused)
+                {
+                    continue;
+                }
                 bool finished = GameLoop(fpsDelta);
                 if (finished)
                     return true;
@@ -93,32 +101,20 @@ namespace Game.Runners
             return false;
         }
 
-        private void OnPauseChanged(bool paused)
+        private void SetPause(bool paused)
         {
+            _paused = paused;
             if (paused)
             {
-                if (_pauseMenuInstance == null)
-                {
-                    _pauseMenuInstance = UnityEngine.Object.Instantiate(pauseMenuPrefab);
-                }
-                _pauseMenuInstance.SetActive(true);
-                UnityEngine.Time.timeScale = 0f;
+                _pauseMenu.Show();
             }
             else
             {
-                if (_pauseMenuInstance != null)
-                {
-                    _pauseMenuInstance.SetActive(false);
-                }
-                UnityEngine.Time.timeScale = 1f;
+                _pauseMenu.Hide();
             }
         }
 
-        public void ResumeGame()
-        {
-            _paused = false;
-            OnPauseChanged(false);
-        }
+        private void Resume() => SetPause(false);
 
         protected bool GameLoop(float deltaTime)
         {
