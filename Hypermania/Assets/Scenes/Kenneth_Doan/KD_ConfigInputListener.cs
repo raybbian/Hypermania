@@ -24,12 +24,11 @@ public class ConfigInputListener : MonoBehaviour
     private Button _primaryInputButton,
         _secondaryInputButton;
     private TextMeshProUGUI _inputTitleText,
-       _primaryInputText,
+        _primaryInputText,
         _secondaryInputText;
 
-   private InputControl _primaryInput,
+    private InputControl _primaryInput,
         _secondaryInput;
-
 
     void Awake()
     {
