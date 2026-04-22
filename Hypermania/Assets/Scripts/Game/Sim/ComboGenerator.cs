@@ -206,6 +206,10 @@ namespace Game.Sim
             _working = null;
             CloneInto(ref _working, state);
             _working.RoundEnd = Frame.Infinity;
+            for (int i = 0; i < _working.Fighters.Length; i++)
+            {
+                _working.Fighters[i].Health = sfloat.PositiveInfinity;
+            }
 
             // Mania alignment preamble: use the game's hitstop (which aligns
             // to the next quarter-note beat boundary) so the simulation's

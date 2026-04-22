@@ -75,9 +75,9 @@ namespace Game.Sim
                 if (Velocity.y < sfloat.Zero)
                     Velocity.y = sfloat.Zero;
 
-                if (config != null && config.ApplyFriction)
+                if (config != null && config.DieOnContact && !config.Lingers)
                 {
-                    Velocity.x /= options.Global.ProjectileGroundFriction;
+                    MarkedForDestroy = true;
                 }
             }
 

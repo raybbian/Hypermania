@@ -16,6 +16,7 @@ MonoBehaviour:
   ComboEligible: 1
   Followup: 3
   FollowupInput: 0
+  IgnoreOwner: 0
   Frames:
   - Boxes:
     - CenterLocal:
@@ -1177,38 +1178,7 @@ MonoBehaviour:
             rawValue: 0
         HasTransition: 0
         OnHitTransition: 0
-    - CenterLocal:
-        x:
-          rawValue: 1058794326
-        y:
-          rawValue: 1032140392
-      SizeLocal:
-        x:
-          rawValue: 1056964608
-        y:
-          rawValue: 1048631216
-      Props:
-        Kind: 1
-        AttackKind: 0
-        Damage: 0
-        HitstunTicks: 12
-        BlockstunTicks: 0
-        HitstopTicks: 0
-        BlockstopTicks: 0
-        KnockdownKind: 0
-        Knockback:
-          x:
-            rawValue: 1065353216
-          y:
-            rawValue: 0
-        GrabPosition:
-          x:
-            rawValue: 0
-          y:
-            rawValue: 0
-        HasTransition: 0
-        OnHitTransition: 0
-    FrameType: 2
+    FrameType: 1
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -1255,37 +1225,6 @@ MonoBehaviour:
             rawValue: 0
         HasTransition: 0
         OnHitTransition: 0
-    - CenterLocal:
-        x:
-          rawValue: 1058843928
-        y:
-          rawValue: 1040529003
-      SizeLocal:
-        x:
-          rawValue: 1062024168
-        y:
-          rawValue: 1049424873
-      Props:
-        Kind: 1
-        AttackKind: 0
-        Damage: 0
-        HitstunTicks: 12
-        BlockstunTicks: 0
-        HitstopTicks: 0
-        BlockstopTicks: 0
-        KnockdownKind: 0
-        Knockback:
-          x:
-            rawValue: 1065353216
-          y:
-            rawValue: 0
-        GrabPosition:
-          x:
-            rawValue: 0
-          y:
-            rawValue: 0
-        HasTransition: 0
-        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
@@ -1333,38 +1272,7 @@ MonoBehaviour:
             rawValue: 0
         HasTransition: 0
         OnHitTransition: 0
-    - CenterLocal:
-        x:
-          rawValue: 1058645516
-        y:
-          rawValue: 1049512854
-      SizeLocal:
-        x:
-          rawValue: 1063413064
-        y:
-          rawValue: 1058551922
-      Props:
-        Kind: 1
-        AttackKind: 0
-        Damage: 0
-        HitstunTicks: 12
-        BlockstunTicks: 0
-        HitstopTicks: 0
-        BlockstopTicks: 0
-        KnockdownKind: 0
-        Knockback:
-          x:
-            rawValue: 1065353216
-          y:
-            rawValue: 0
-        GrabPosition:
-          x:
-            rawValue: 0
-          y:
-            rawValue: 0
-        HasTransition: 0
-        OnHitTransition: 0
-    FrameType: 2
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -1411,38 +1319,7 @@ MonoBehaviour:
             rawValue: 0
         HasTransition: 0
         OnHitTransition: 0
-    - CenterLocal:
-        x:
-          rawValue: 1058893533
-        y:
-          rawValue: 1053580344
-      SizeLocal:
-        x:
-          rawValue: 1066912921
-        y:
-          rawValue: 1062024168
-      Props:
-        Kind: 1
-        AttackKind: 0
-        Damage: 0
-        HitstunTicks: 12
-        BlockstunTicks: 0
-        HitstopTicks: 0
-        BlockstopTicks: 0
-        KnockdownKind: 0
-        Knockback:
-          x:
-            rawValue: 1065353216
-          y:
-            rawValue: 0
-        GrabPosition:
-          x:
-            rawValue: 0
-          y:
-            rawValue: 0
-        HasTransition: 0
-        OnHitTransition: 0
-    FrameType: 2
+    FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0

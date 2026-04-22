@@ -16,6 +16,7 @@ MonoBehaviour:
   ComboEligible: 1
   Followup: 3
   FollowupInput: 0
+  IgnoreOwner: 0
   Frames:
   - Boxes:
     - CenterLocal:
@@ -771,12 +772,12 @@ MonoBehaviour:
         OnHitTransition: 0
     - CenterLocal:
         x:
-          rawValue: 1061954951
+          rawValue: 1062425490
         y:
           rawValue: 1069815442
       SizeLocal:
         x:
-          rawValue: 1067194529
+          rawValue: 1067665068
         y:
           rawValue: 1070966788
       Props:
@@ -1804,9 +1805,9 @@ MonoBehaviour:
         KnockdownKind: 0
         Knockback:
           x:
-            rawValue: 1079554736
+            rawValue: 1082849118
           y:
-            rawValue: 1069653640
+            rawValue: 1073927214
         GrabPosition:
           x:
             rawValue: 0
@@ -1882,9 +1883,9 @@ MonoBehaviour:
         KnockdownKind: 0
         Knockback:
           x:
-            rawValue: 1079554736
+            rawValue: 1082849118
           y:
-            rawValue: 1069653640
+            rawValue: 1073927214
         GrabPosition:
           x:
             rawValue: 0
@@ -1960,9 +1961,9 @@ MonoBehaviour:
         KnockdownKind: 0
         Knockback:
           x:
-            rawValue: 1079554736
+            rawValue: 1082849118
           y:
-            rawValue: 1069653640
+            rawValue: 1073927214
         GrabPosition:
           x:
             rawValue: 0
@@ -2038,9 +2039,9 @@ MonoBehaviour:
         KnockdownKind: 0
         Knockback:
           x:
-            rawValue: 1079554736
+            rawValue: 1082849118
           y:
-            rawValue: 1069653640
+            rawValue: 1073927214
         GrabPosition:
           x:
             rawValue: 0

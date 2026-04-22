@@ -58,6 +58,9 @@ namespace Game.Sim
         /// </summary>
         public bool LockedHitstun;
 
+        public bool RhythmComboFinisherActive;
+        public bool RhythmComboTier2;
+
         public int Index { get; private set; }
         public CharacterState State { get; private set; }
         public Frame StateStart { get; private set; }
@@ -80,6 +83,18 @@ namespace Game.Sim
         public bool SuperMaxedThisRealFrame { get; private set; }
         public CharacterState? PostActionState { get; private set; }
         public Frame? PostActionStateStart { get; private set; }
+
+        /// <summary>
+        /// Attacker-side OnHitTransition enqueued by <see cref="ProcessHit"/>
+        /// on frame F. The actual <see cref="SetState"/> is deferred to the
+        /// start of the next sim frame by <see cref="ApplyPendingHitTransition"/>,
+        /// so frame F's remaining steps still see the pre-transition state and
+        /// the new state (e.g. Throw) first renders on F+1.
+        /// </summary>
+        public CharacterState? PendingHitState { get; private set; }
+        public Frame? PendingHitStateStart { get; private set; }
+        public Frame? PendingHitStateEnd { get; private set; }
+        public bool PendingHitStateForce { get; private set; }
 
         public bool HitLastRealFrame =>
             HitProps.HasValue
@@ -148,6 +163,8 @@ namespace Game.Sim
                 NumVictories = 0,
                 LockedHitstun = false,
                 IsSuperAttack = false,
+                RhythmComboFinisherActive = false,
+                RhythmComboTier2 = false,
             };
             return state;
         }
@@ -181,6 +198,12 @@ namespace Game.Sim
             Array.Clear(StalingBuffer, 0, StalingBuffer.Length);
             StalingBufferIndex = 0;
             LockedHitstun = false;
+            RhythmComboFinisherActive = false;
+            RhythmComboTier2 = false;
+            PendingHitState = null;
+            PendingHitStateStart = null;
+            PendingHitStateEnd = null;
+            PendingHitStateForce = false;
             InputH.Clear(); // Clear, don't want to read input from a previous round.
             // TODO: character dependent?
             IsSuperAttack = false;
@@ -269,6 +292,43 @@ namespace Game.Sim
             SuperMaxedThisRealFrame = false;
             PostActionState = null;
             PostActionStateStart = null;
+        }
+
+        /// <summary>
+        /// Records a collision-driven state transition to apply at the start of
+        /// the next sim frame. Pass <paramref name="start"/> as the frame the
+        /// state should take effect on (typically the hit-frame + 1), so tick 0
+        /// lands on the first frame the new state is visible.
+        /// </summary>
+        public void EnqueueHitTransition(CharacterState state, Frame start, Frame end, bool force = false)
+        {
+            PendingHitState = state;
+            PendingHitStateStart = start;
+            PendingHitStateEnd = end;
+            PendingHitStateForce = force;
+        }
+
+        /// <summary>
+        /// Applies any transition queued by <see cref="EnqueueHitTransition"/>
+        /// during the previous sim frame's collision step. Call at the start of
+        /// a sim frame (after <c>SimFrame</c> increments, before
+        /// <see cref="DoFrameStart"/>) so the new state is visible to every
+        /// subsequent step of the frame.
+        /// </summary>
+        public void ApplyPendingHitTransition()
+        {
+            if (!PendingHitState.HasValue)
+                return;
+            SetState(
+                PendingHitState.Value,
+                PendingHitStateStart.Value,
+                PendingHitStateEnd.Value,
+                PendingHitStateForce
+            );
+            PendingHitState = null;
+            PendingHitStateStart = null;
+            PendingHitStateEnd = null;
+            PendingHitStateForce = false;
         }
 
         public void CapturePostActionState()
@@ -596,6 +656,7 @@ namespace Game.Sim
                 if (IsSuperAttack)
                 {
                     Super = Mathsf.Max(Super - superCost / (sfloat)2, (sfloat)0);
+                    StateEnd += options.Global.SuperRecoveryFrames;
                 }
             }
 
@@ -831,12 +892,10 @@ namespace Game.Sim
         {
             if (props.HasTransition)
             {
-                // ProcessHit runs inside DoCollisionStep, AFTER AddBoxes has
-                // already added this frame's boxes for the pre-transition
-                // state. If we used `frame` as StateStart, the next frame
-                // would read the transitioned animation at tick 1 — skipping
-                // tick 0 entirely. Back-date by using frame+1 so tick 0 is
-                // what gets rendered/processed on the following frame.
+                // The transition is deferred to the start of the next sim
+                // frame by ApplyPendingHitTransition, so StateStart = frame+1
+                // lines up tick 0 with the first frame the new state is
+                // visible.
                 Frame nextStart = frame + 1;
                 if (props.OnHitTransition == CharacterState.Throw)
                 {
@@ -846,7 +905,7 @@ namespace Game.Sim
                         FacingDir = FacingDir == FighterFacing.Right ? FighterFacing.Left : FighterFacing.Right;
                     }
 
-                    SetState(
+                    EnqueueHitTransition(
                         CharacterState.Throw,
                         nextStart,
                         nextStart + config.GetHitboxData(CharacterState.Throw).TotalTicks,
@@ -854,7 +913,7 @@ namespace Game.Sim
                     );
                     return;
                 }
-                SetState(
+                EnqueueHitTransition(
                     props.OnHitTransition,
                     nextStart,
                     nextStart + config.GetHitboxData(props.OnHitTransition).TotalTicks,

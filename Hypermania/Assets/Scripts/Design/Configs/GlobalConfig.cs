@@ -32,7 +32,6 @@ namespace Design.Configs
         public sfloat Gravity = -20;
         public sfloat GroundY = -3;
         public sfloat WallsX = 4;
-        public sfloat ProjectileGroundFriction = (sfloat)1.5f;
         public int ClankTicks = 30;
         public int ForwardDashCancelAfterTicks = 2;
         public int ForwardDashTicks = 5;
@@ -56,11 +55,13 @@ namespace Design.Configs
         public int RoundEndTicks = 120;
         public int SuperDisplayHitstopTicks = 60;
         public int SuperPostDisplayHitstopTicks = 0;
+        public int SuperRecoveryFrames = 0;
         public sfloat FloatingFactor = (sfloat)1.3f;
         public int ManiaSlowTicks = 60;
         public int ManiaFailStunTicks = 30;
         public sfloat ManiaFailKnockbackMagnitude = (sfloat)1.5f;
         public int StalingBufferSize = 8;
+        public sfloat RhythmComboFinisherDamageMult = (sfloat)2f;
         public sfloat CameraHalfWidth => CameraHalfHeight * (sfloat)1.7777777f;
 
         [SerializeField]

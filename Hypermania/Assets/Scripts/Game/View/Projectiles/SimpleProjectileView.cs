@@ -8,10 +8,7 @@ namespace Game.View.Projectiles
 {
     public class SimpleProjectileView : ProjectileView
     {
-        [SerializeField]
-        private ProjectileConfig _config;
-
-        public override void Render(Frame simFrame, in ProjectileState state)
+        public override void Render(Frame simFrame, in ProjectileState state, ProjectileConfig config)
         {
             Vector3 pos = transform.position;
             pos.x = (float)state.Position.x;
@@ -20,7 +17,10 @@ namespace Game.View.Projectiles
 
             transform.localScale = new Vector3(state.FacingDir == FighterFacing.Left ? -1 : 1, 1f, 1f);
 
-            HitboxData data = state.IsDying ? _config.OnDeathHitbox : _config.HitboxData;
+            if (config == null)
+                return;
+
+            HitboxData data = state.IsDying ? config.OnDeathHitbox : config.HitboxData;
             int tick = state.IsDying ? simFrame - state.DeathFrame : simFrame - state.CreationFrame;
 
             if (data == null || data.Clip == null)

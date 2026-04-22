@@ -148,24 +148,21 @@ namespace Game.View
             {
                 if (state.Projectiles[i].Active)
                 {
-                    if (_projectileViews[i] == null)
+                    int owner = state.Projectiles[i].Owner;
+                    var characterConfig = _options.Players[owner].Character;
+                    var projConfigs = characterConfig.Projectiles;
+                    ProjectileConfig projConfig = null;
+                    if (projConfigs != null && state.Projectiles[i].ConfigIndex < projConfigs.Count)
+                        projConfig = projConfigs[state.Projectiles[i].ConfigIndex];
+
+                    if (_projectileViews[i] == null && projConfig != null && projConfig.Prefab != null)
                     {
-                        int owner = state.Projectiles[i].Owner;
-                        var characterConfig = _options.Players[owner].Character;
-                        var projConfigs = characterConfig.Projectiles;
-                        if (projConfigs != null && state.Projectiles[i].ConfigIndex < projConfigs.Count)
-                        {
-                            var prefab = projConfigs[state.Projectiles[i].ConfigIndex].Prefab;
-                            if (prefab != null)
-                            {
-                                _projectileViews[i] = Instantiate(prefab);
-                                _projectileViews[i].transform.SetParent(transform, true);
-                                _projectileViews[i].Init(characterConfig, _options.Players[owner].SkinIndex);
-                                _projectileViews[i].SetOutlinePlayerIndex(owner);
-                            }
-                        }
+                        _projectileViews[i] = Instantiate(projConfig.Prefab);
+                        _projectileViews[i].transform.SetParent(transform, true);
+                        _projectileViews[i].Init(characterConfig, _options.Players[owner].SkinIndex);
+                        _projectileViews[i].SetOutlinePlayerIndex(owner);
                     }
-                    _projectileViews[i]?.Render(state.SimFrame, state.Projectiles[i]);
+                    _projectileViews[i]?.Render(state.SimFrame, state.Projectiles[i], projConfig);
                 }
                 else if (_projectileViews[i] != null)
                 {

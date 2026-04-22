@@ -10,24 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0524cef697f92e4692d0938d402307b, type: 3}
-  m_Name: 2_S_Projectile
+  m_Name: 5_S_Projectile
   m_EditorClassIdentifier: 
-  TriggerState: 16
-  SpawnTick: 12
+  TriggerState: 14
+  SpawnTick: 26
   Prefab: {fileID: 4561816668942785786, guid: dd1e7ed6109718d49904419d78d0c017, type: 3}
-  HitboxData: {fileID: 11400000, guid: 089d2beebb4c65e418604fa74ffc52cf, type: 2}
+  HitboxData: {fileID: 11400000, guid: a676b6068a13d1646b48779253986619, type: 2}
   SpawnOffset:
     x:
-      rawValue: 1056964608
+      rawValue: 1060320051
     y:
-      rawValue: 1058642330
+      rawValue: 1048576000
   Velocity:
     x:
-      rawValue: 1073741824
+      rawValue: 0
     y:
-      rawValue: 1092091904
-  LifetimeTicks: 110
+      rawValue: 0
+  LifetimeTicks: 50
   Unique: 1
-  DieOnContact: 1
-  HasOnDeath: 1
-  OnDeathHitbox: {fileID: 11400000, guid: a676b6068a13d1646b48779253986619, type: 2}
+  DieOnContact: 0
+  Lingers: 1
+  HasOnDeath: 0
+  OnDeathHitbox: {fileID: 0}
