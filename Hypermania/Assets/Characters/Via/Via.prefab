@@ -306,7 +306,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CategoryHash: 0.000000118490746
-  m_labelHash: 7.5838065e-34
+  m_labelHash: 6.3952622e-24
   m_SpriteKey: 0
   m_SpriteHash: 347963189
 --- !u!114 &1389823806467140206
@@ -510,7 +510,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CategoryHash: 1.5671863e-12
-  m_labelHash: 1.0997668e-38
+  m_labelHash: 6.890074e-20
   m_SpriteKey: 0
   m_SpriteHash: 87444397
 --- !u!114 &3834968566541119595
@@ -1335,7 +1335,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CategoryHash: 3.5468788e-34
-  m_labelHash: 2.0515593e-33
+  m_labelHash: 6.890074e-20
   m_SpriteKey: 0
   m_SpriteHash: 481640080
 --- !u!114 &2123877354581770833
@@ -2473,7 +2473,7 @@ SpriteRenderer:
   m_SortingLayerID: -1444139175
   m_SortingLayer: -2
   m_SortingOrder: 7
-  m_Sprite: {fileID: 1171044342652977522, guid: 9f785f954604d304898bb06f209dd380, type: 3}
+  m_Sprite: {fileID: 2713872556780559609, guid: 9f785f954604d304898bb06f209dd380, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2499,7 +2499,7 @@ MonoBehaviour:
   m_RootBone: {fileID: 6926546839887451240}
   m_BoneTransforms:
   - {fileID: 5251145397451982003}
-  - {fileID: 5334963993552429381}
+  - {fileID: 6924952699433655920}
   m_Bounds:
     m_Center: {x: 13.294991, y: 25.320147, z: 0}
     m_Extent: {x: 0.47499037, y: 1.1951504, z: 0}
@@ -2518,7 +2518,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CategoryHash: 3.3913202e-28
-  m_labelHash: 1.306453e-24
+  m_labelHash: 1.0079415e-30
   m_SpriteKey: 0
   m_SpriteHash: 527086165
 --- !u!114 &4145599723476660684
@@ -2686,7 +2686,7 @@ SpriteRenderer:
   m_SortingLayerID: -1444139175
   m_SortingLayer: -2
   m_SortingOrder: 4
-  m_Sprite: {fileID: 4442680002028748527, guid: 9f785f954604d304898bb06f209dd380, type: 3}
+  m_Sprite: {fileID: 6378869766895605274, guid: 9f785f954604d304898bb06f209dd380, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -2730,7 +2730,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CategoryHash: 6.981592e-36
-  m_labelHash: 6.708871e-33
+  m_labelHash: 4.5444538e-18
   m_SpriteKey: 0
   m_SpriteHash: 235843874
 --- !u!114 &7565024034069266832
@@ -3283,7 +3283,7 @@ SpriteRenderer:
   m_SortingLayerID: -1444139175
   m_SortingLayer: -2
   m_SortingOrder: 6
-  m_Sprite: {fileID: 7505472428896694504, guid: 9f785f954604d304898bb06f209dd380, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -3291,7 +3291,7 @@ SpriteRenderer:
   m_Size: {x: 0.11058824, y: 0.022941176}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &1722061190970789820
@@ -3327,7 +3327,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CategoryHash: 2.236153e-26
-  m_labelHash: 2.4031205e-10
+  m_labelHash: 1.1250247
   m_SpriteKey: 0
   m_SpriteHash: 957613423
 --- !u!114 &4942731949187668613
@@ -3740,7 +3740,7 @@ SpriteRenderer:
   m_SortingLayerID: -1444139175
   m_SortingLayer: -2
   m_SortingOrder: 5
-  m_Sprite: {fileID: 2213100105068419702, guid: 9f785f954604d304898bb06f209dd380, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -3748,7 +3748,7 @@ SpriteRenderer:
   m_Size: {x: 0.1182353, y: 0.033529412}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &1652742257275787200
@@ -3784,7 +3784,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CategoryHash: 0.000000014466353
-  m_labelHash: 3.0122158e-36
+  m_labelHash: 1.1250247
   m_SpriteKey: 0
   m_SpriteHash: 777930651
 --- !u!114 &1559963230376280680
@@ -4414,7 +4414,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CategoryHash: 3.4790622e-31
-  m_labelHash: 0.000000017479108
+  m_labelHash: 0.0000000032616474
   m_SpriteKey: 0
   m_SpriteHash: 692027409
 --- !u!114 &3113629937799329616
