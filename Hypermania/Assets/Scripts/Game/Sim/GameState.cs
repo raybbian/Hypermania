@@ -291,15 +291,20 @@ namespace Game.Sim
             for (int i = 0; i < Fighters.Length; i++)
             {
                 FighterState opp = Fighters[i ^ 1];
-                if (!opp.IsSuperAttack) continue;
+                if (!opp.IsSuperAttack)
+                    continue;
 
                 CharacterState s = opp.State;
-                if (s != CharacterState.HeavyAttack
+                if (
+                    s != CharacterState.HeavyAttack
                     && s != CharacterState.HeavyAerial
-                    && s != CharacterState.HeavyCrouching) continue;
+                    && s != CharacterState.HeavyCrouching
+                )
+                    continue;
 
                 HitboxData hd = options.Players[i ^ 1].Character.GetHitboxData(s);
-                if (SimFrame - opp.StateStart >= hd.StartupTicks + hd.ActiveTicks) continue;
+                if (SimFrame - opp.StateStart >= hd.StartupTicks + hd.ActiveTicks)
+                    continue;
 
                 InputFlags prev = Fighters[i].InputH.GetInput(0).Flags;
                 remapInputs[i] = new GameInput(remapInputs[i].Flags & prev);
