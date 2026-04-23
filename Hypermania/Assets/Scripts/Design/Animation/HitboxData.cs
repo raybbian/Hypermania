@@ -136,6 +136,7 @@ namespace Design.Animation
         public SVector2 ApplyVelocity;
         public bool ShouldTeleport;
         public SVector2 TeleportLocation;
+        public SVector2 RootMotionOffset;
 
         public FrameData Clone()
         {
@@ -148,6 +149,7 @@ namespace Design.Animation
             copy.ShouldTeleport = ShouldTeleport;
             copy.TeleportLocation = TeleportLocation;
             copy.GravityEnabled = GravityEnabled;
+            copy.RootMotionOffset = RootMotionOffset;
             return copy;
         }
 
@@ -164,6 +166,7 @@ namespace Design.Animation
             ShouldTeleport = other.ShouldTeleport;
             TeleportLocation = other.TeleportLocation;
             GravityEnabled = other.GravityEnabled;
+            RootMotionOffset = other.RootMotionOffset;
         }
 
         public int GetValueHash()
@@ -184,6 +187,7 @@ namespace Design.Animation
             hc.Add(ShouldTeleport);
             hc.Add(TeleportLocation);
             hc.Add(GravityEnabled);
+            hc.Add(RootMotionOffset);
             return hc.ToHashCode();
         }
 
@@ -212,6 +216,8 @@ namespace Design.Animation
         public bool ComboEligible = true;
         public CharacterState Followup = CharacterState.Idle;
         public InputFlags FollowupInput = InputFlags.None;
+        public bool IgnoreOwner;
+        public bool ApplyRootMotion;
         public List<FrameData> Frames = new List<FrameData>();
 
         [NonSerialized]
@@ -433,6 +439,8 @@ namespace Design.Animation
             var hc = new HashCode();
 
             hc.Add(Clip ? Clip.GetInstanceID() : 0);
+            hc.Add(IgnoreOwner);
+            hc.Add(ApplyRootMotion);
             hc.Add(Frames != null ? Frames.Count : 0);
 
             if (Frames != null)

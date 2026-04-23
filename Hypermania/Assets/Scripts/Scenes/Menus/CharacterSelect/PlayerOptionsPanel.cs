@@ -127,7 +127,7 @@ namespace Scenes.Menus.CharacterSelect
 
         private void RefreshRowValues()
         {
-            SetRowText(OptionsRows.ComboMode, _state.ComboMode == ComboMode.Assisted ? "Assisted" : "Freestyle");
+            SetRowText(OptionsRows.ComboMode, _state.ComboMode == ComboMode.Rhythm ? "Rhythm" : "Freestyle");
             // OptionsRows.Skin is rendered by _skinSelector, not a TMP_Text.
             SetRowText(
                 OptionsRows.ManiaDifficulty,

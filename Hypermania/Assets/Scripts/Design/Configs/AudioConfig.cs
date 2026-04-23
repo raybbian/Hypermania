@@ -66,6 +66,24 @@ namespace Design.Configs
         }
 
         /// <summary>
+        /// True when <paramref name="frame"/> sits on a quarter-note grid
+        /// position relative to <see cref="FirstMusicalBeat"/>. Uses a
+        /// ±1-frame tolerance to absorb <see cref="BeatsToFrame"/>'s
+        /// rounding drift (the round-trip <c>Round(beats) → BeatsToFrame</c>
+        /// can differ from the authored frame by up to one frame at certain
+        /// BPMs like 140).
+        /// </summary>
+        public bool IsOnBeat(Frame frame)
+        {
+            int delta = frame - FirstMusicalBeat;
+            sfloat beatsF = (sfloat)delta * Bpm / (sfloat)60f / (sfloat)GameManager.TPS;
+            int nearest = Mathsf.RoundToInt(beatsF);
+            int nearestFrame = FirstMusicalBeat.No + BeatsToFrame(nearest);
+            int diff = frame.No - nearestFrame;
+            return diff <= 1 && diff >= -1;
+        }
+
+        /// <summary>
         /// Return a slice of the note chart spanning <see cref="ComboBeatCount"/>
         /// beats starting at or after <paramref name="minStart"/>. When the song
         /// loops, notes from the loop section are re-emitted at correct absolute

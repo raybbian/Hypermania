@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0524cef697f92e4692d0938d402307b, type: 3}
+  m_Name: 5_S_Projectile
+  m_EditorClassIdentifier: 
+  TriggerState: 14
+  SpawnTick: 26
+  Prefab: {fileID: 4561816668942785786, guid: dd1e7ed6109718d49904419d78d0c017, type: 3}
+  HitboxData: {fileID: 11400000, guid: a676b6068a13d1646b48779253986619, type: 2}
+  SpawnOffset:
+    x:
+      rawValue: 1071644672
+    y:
+      rawValue: 1048576000
+  Velocity:
+    x:
+      rawValue: 0
+    y:
+      rawValue: 0
+  LifetimeTicks: 50
+  Unique: 1
+  DieOnContact: 0
+  Lingers: 1
+  HasOnDeath: 0
+  OnDeathHitbox: {fileID: 0}

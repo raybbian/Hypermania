@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Clip: {fileID: 7400000, guid: be20d7ea1b456d445b01b36a5f165a58, type: 2}
   ComboEligible: 1
+  Followup: 3
+  FollowupInput: 0
   Frames:
   - Boxes:
     - CenterLocal:
@@ -45,11 +47,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 1
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -84,11 +94,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 1
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -123,11 +141,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 1
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -162,11 +188,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 1
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -201,11 +235,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 1
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -240,11 +282,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 1
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -279,11 +329,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 1
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -318,6 +376,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     - CenterLocal:
         x:
           rawValue: 1065232429
@@ -347,11 +407,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -386,6 +454,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     - CenterLocal:
         x:
           rawValue: 1065232429
@@ -415,11 +485,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -454,6 +532,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     - CenterLocal:
         x:
           rawValue: 1065232429
@@ -483,11 +563,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -522,6 +610,8 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     - CenterLocal:
         x:
           rawValue: 1065232429
@@ -551,11 +641,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 2
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -590,11 +688,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -629,11 +735,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -668,11 +782,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -707,11 +829,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -746,11 +876,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -785,11 +923,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -824,11 +970,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -863,11 +1017,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -882,12 +1044,24 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes: []
     FrameType: 3
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:

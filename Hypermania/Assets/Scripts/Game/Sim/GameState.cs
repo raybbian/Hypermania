@@ -25,7 +25,7 @@ namespace Game.Sim
 
     public enum ComboMode
     {
-        Assisted,
+        Rhythm,
         Freestyle,
     }
 
@@ -378,6 +378,25 @@ namespace Game.Sim
                 Fighters[i].InputH.PushInput(remapInputs[i]);
             }
 
+            // Drain freestyle super every real frame, including during hitstop,
+            // so the buff window doesn't get stretched out by the extra hitstop
+            // frames each hit produces.
+            if (GameMode == GameMode.Fighting)
+            {
+                sfloat freestyleDrainPerFrame = options.Global.SuperCost / (sfloat)options.Global.Audio.BeatsToFrame(8);
+                for (int i = 0; i < Fighters.Length; i++)
+                {
+                    if (Fighters[i].FreestyleActive)
+                    {
+                        Fighters[i].Super = Mathsf.Max(Fighters[i].Super - freestyleDrainPerFrame, (sfloat)0);
+                        if (Fighters[i].Super == (sfloat)0)
+                        {
+                            Fighters[i].FreestyleActive = false;
+                        }
+                    }
+                }
+            }
+
             // if hitstop, only grab inputs and return
             if (HitstopFramesRemaining > 0)
             {
@@ -386,6 +405,16 @@ namespace Game.Sim
             }
 
             SimFrame += 1;
+
+            // Apply any on-hit transitions queued by the previous frame's
+            // DoCollisionStep. Runs before DoFrameStart / TickStateMachine so
+            // the rest of this frame sees the post-transition state (e.g. a
+            // successful throw's attacker is in CharacterState.Throw from
+            // tick 0 of this frame, not the state they hit from).
+            for (int i = 0; i < Fighters.Length; i++)
+            {
+                Fighters[i].ApplyPendingHitTransition();
+            }
 
             bool maniaActive = GameMode == GameMode.Mania || GameMode == GameMode.ManiaStart;
             for (int i = 0; i < Fighters.Length; i++)
@@ -459,6 +488,21 @@ namespace Game.Sim
                     if (tick != projConfig.SpawnTick)
                         continue;
 
+                    if (projConfig.Unique)
+                    {
+                        bool alreadyActive = false;
+                        for (int q = 0; q < Projectiles.Length; q++)
+                        {
+                            if (Projectiles[q].Active && Projectiles[q].Owner == i && Projectiles[q].ConfigIndex == p)
+                            {
+                                alreadyActive = true;
+                                break;
+                            }
+                        }
+                        if (alreadyActive)
+                            continue;
+                    }
+
                     SVector2 spawnOffset = projConfig.SpawnOffset;
                     SVector2 velocity = projConfig.Velocity;
                     if (Fighters[i].FacingDir == FighterFacing.Left)
@@ -482,7 +526,9 @@ namespace Game.Sim
             AdvanceProjectiles(options);
             DoCollisionStep(options);
 
-            if (SimFrame == RoundEnd)
+            bool rhythmComboActive = GameMode == GameMode.Mania || GameMode == GameMode.ManiaStart;
+
+            if (SimFrame >= RoundEnd && !rhythmComboActive)
             {
                 RoundEnd = SimFrame + options.Global.RoundTimeTicks;
                 //TODO: Properly handle edge case where player health is equal. Currently player 1 wins by default.
@@ -496,7 +542,7 @@ namespace Game.Sim
                 }
             }
 
-            if (GameMode == GameMode.Mania || GameMode == GameMode.Fighting)
+            if (GameMode == GameMode.Fighting)
             {
                 for (int i = 0; i < Fighters.Length; i++)
                 {
@@ -573,6 +619,7 @@ namespace Game.Sim
                 int comboBeats = Fighters[attackerIndex].SuperComboBeats;
                 Fighters[attackerIndex].IsSuperAttack = false;
                 Fighters[attackerIndex].SuperComboBeats = 0;
+                Fighters[attackerIndex].RhythmComboTier2 = comboBeats == options.Global.SuperTier2Beats;
                 HitstopFramesRemaining = ComboManager.StartRhythmCombo(
                     RealFrame,
                     ref Manias[attackerIndex],
@@ -650,10 +697,25 @@ namespace Game.Sim
                         case ManiaEventKind.End:
                             GameMode = GameMode.Fighting;
                             ClearLockedHitstun();
+                            Fighters[i].RhythmComboFinisherActive = false;
+                            Fighters[i].RhythmComboTier2 = false;
+                            Fighters[i].ResetNoOpBonus();
                             break;
                         case ManiaEventKind.Input:
                             outInputs[i].Flags |= ev.Note.HitInput;
                             rhythmCancel = true;
+                            if (ev.Note.HitInput == InputFlags.None)
+                            {
+                                // No-op note: player pressed the beat but no
+                                // attacker input was authored. Accrue a share
+                                // of the 0.25 bonus budget for the next real
+                                // attack's damage multiplier.
+                                Fighters[i].RegisterManiaNoOp();
+                            }
+                            if (ev.Note.Id == Manias[i].TotalNoteCount - 1)
+                            {
+                                Fighters[i].RhythmComboFinisherActive = true;
+                            }
                             break;
                         case ManiaEventKind.Hit:
                             // View-only feedback event; no sim effect.
@@ -680,6 +742,9 @@ namespace Game.Sim
                             GameMode = GameMode.Fighting;
                             Manias[i].End();
                             ClearLockedHitstun();
+                            Fighters[i].RhythmComboFinisherActive = false;
+                            Fighters[i].RhythmComboTier2 = false;
+                            Fighters[i].ResetNoOpBonus();
                             break;
                     }
                 }
@@ -724,7 +789,15 @@ namespace Game.Sim
         {
             for (int i = 0; i < Projectiles.Length; i++)
             {
-                Projectiles[i].Advance(SimFrame, options.Global.WallsX);
+                if (!Projectiles[i].Active)
+                    continue;
+
+                var projConfigs = options.Players[Projectiles[i].Owner].Character.Projectiles;
+                ProjectileConfig config = null;
+                if (projConfigs != null && Projectiles[i].ConfigIndex < projConfigs.Count)
+                    config = projConfigs[Projectiles[i].ConfigIndex];
+
+                Projectiles[i].Advance(SimFrame, options, config);
             }
         }
 
@@ -741,6 +814,34 @@ namespace Game.Sim
 
                 Projectiles[i].AddBoxes(SimFrame, projConfigs[Projectiles[i].ConfigIndex], PhysicsCtx.Physics, i);
             }
+        }
+
+        private void MarkDieOnContact(GameOptions options, int projectileIndex)
+        {
+            if (projectileIndex < 0)
+                return;
+            if (!Projectiles[projectileIndex].Active || Projectiles[projectileIndex].IsDying)
+                return;
+            var projConfigs = options.Players[Projectiles[projectileIndex].Owner].Character.Projectiles;
+            if (projConfigs == null || Projectiles[projectileIndex].ConfigIndex >= projConfigs.Count)
+                return;
+            var cfg = projConfigs[Projectiles[projectileIndex].ConfigIndex];
+            if (cfg.DieOnContact && !cfg.Lingers)
+                Projectiles[projectileIndex].MarkedForDestroy = true;
+        }
+
+        private void MarkProjectileDestroyed(GameOptions options, int projectileIndex)
+        {
+            if (projectileIndex < 0 || !Projectiles[projectileIndex].Active)
+                return;
+            var projConfigs = options.Players[Projectiles[projectileIndex].Owner].Character.Projectiles;
+            if (
+                projConfigs != null
+                && Projectiles[projectileIndex].ConfigIndex < projConfigs.Count
+                && projConfigs[Projectiles[projectileIndex].ConfigIndex].Lingers
+            )
+                return;
+            Projectiles[projectileIndex].MarkedForDestroy = true;
         }
 
         private void DoCollisionStep(GameOptions options)
@@ -770,21 +871,42 @@ namespace Game.Sim
             Physics<BoxProps>.Collision? collide = null;
             foreach (var c in PhysicsCtx.Collisions)
             {
+                MarkDieOnContact(options, c.BoxA.ProjectileIndex);
+                MarkDieOnContact(options, c.BoxB.ProjectileIndex);
+
                 (int, int) hitPair = (-1, -1);
                 if (c.BoxA.Data.Kind == HitboxKind.Hitbox && c.BoxB.Data.Kind == HitboxKind.Hurtbox)
                 {
+                    if (c.BoxB.ProjectileIndex >= 0)
+                    {
+                        MarkProjectileDestroyed(options, c.BoxB.ProjectileIndex);
+                        if (c.BoxA.ProjectileIndex >= 0)
+                            MarkProjectileDestroyed(options, c.BoxA.ProjectileIndex);
+                        continue;
+                    }
                     hitPair = (c.BoxA.Owner, c.BoxB.Owner);
                 }
                 else if (c.BoxA.Data.Kind == HitboxKind.Hurtbox && c.BoxB.Data.Kind == HitboxKind.Hitbox)
                 {
+                    if (c.BoxA.ProjectileIndex >= 0)
+                    {
+                        MarkProjectileDestroyed(options, c.BoxA.ProjectileIndex);
+                        if (c.BoxB.ProjectileIndex >= 0)
+                            MarkProjectileDestroyed(options, c.BoxB.ProjectileIndex);
+                        continue;
+                    }
                     hitPair = (c.BoxB.Owner, c.BoxA.Owner);
                 }
                 else if (c.BoxA.Data.Kind == HitboxKind.Grabbox && c.BoxB.Data.Kind == HitboxKind.Hurtbox)
                 {
+                    if (c.BoxB.ProjectileIndex >= 0)
+                        continue;
                     hitPair = (c.BoxA.Owner, c.BoxB.Owner);
                 }
                 else if (c.BoxA.Data.Kind == HitboxKind.Hurtbox && c.BoxB.Data.Kind == HitboxKind.Grabbox)
                 {
+                    if (c.BoxA.ProjectileIndex >= 0)
+                        continue;
                     hitPair = (c.BoxB.Owner, c.BoxA.Owner);
                 }
                 else if (c.BoxA.Data.Kind == HitboxKind.Hitbox && c.BoxB.Data.Kind == HitboxKind.Hitbox)
@@ -796,9 +918,9 @@ namespace Game.Sim
                     {
                         // Destroy any projectile(s) involved — no clank
                         if (aIsProjectile)
-                            Projectiles[c.BoxA.ProjectileIndex].MarkedForDestroy = true;
+                            MarkProjectileDestroyed(options, c.BoxA.ProjectileIndex);
                         if (bIsProjectile)
-                            Projectiles[c.BoxB.ProjectileIndex].MarkedForDestroy = true;
+                            MarkProjectileDestroyed(options, c.BoxB.ProjectileIndex);
                     }
                     else
                     {
@@ -864,13 +986,13 @@ namespace Game.Sim
                     {
                         if (attackerBox.ProjectileIndex >= 0)
                         {
-                            Projectiles[attackerBox.ProjectileIndex].MarkedForDestroy = true;
+                            MarkProjectileDestroyed(options, attackerBox.ProjectileIndex);
                         }
                     }
 
                     //to start a rhythm combo, we must sure that the move was not traded
                     if (
-                        options.Players[owners.Item1].ComboMode == ComboMode.Assisted
+                        options.Players[owners.Item1].ComboMode == ComboMode.Rhythm
                         && !PhysicsCtx.HurtHitCollisions.ContainsKey((owners.Item2, owners.Item1))
                         && GameMode == GameMode.Fighting
                         && outcome.Kind == HitKind.Hit
@@ -893,6 +1015,18 @@ namespace Game.Sim
                         PendingRhythmComboAttacker = owners.Item1;
                         // TODO: show mania screen only after the maximum rollback frames to ensure no visual artifacting
                     }
+                    else if (
+                        options.Players[owners.Item1].ComboMode == ComboMode.Freestyle
+                        && !PhysicsCtx.HurtHitCollisions.ContainsKey((owners.Item2, owners.Item1))
+                        && GameMode == GameMode.Fighting
+                        && outcome.Kind == HitKind.Hit
+                        && Fighters[owners.Item1].IsSuperAttack
+                    )
+                    {
+                        Fighters[owners.Item1].FreestyleActive = true;
+                        Fighters[owners.Item1].IsSuperAttack = false;
+                        Fighters[owners.Item1].SuperComboBeats = 0;
+                    }
 
                     // Blocked super: the attack is spent without ever
                     // entering the mania (where super would normally
@@ -906,8 +1040,14 @@ namespace Game.Sim
                         Fighters[owners.Item1].SuperComboBeats = 0;
                     }
 
-                    // Add super checking to start a combo so that the combo only starts if the meter is alr at max
-                    if (outcome.Kind == HitKind.Hit && GameMode == GameMode.Fighting)
+                    // Add super checking to start a combo so that the combo only starts if the meter is alr at max.
+                    // Skip while FreestyleActive so hits landed during freestyle don't refill the draining meter
+                    // (and so the activating super hit itself doesn't extend the window past the intended drain).
+                    if (
+                        outcome.Kind == HitKind.Hit
+                        && GameMode == GameMode.Fighting
+                        && !Fighters[attackerBox.Owner].FreestyleActive
+                    )
                     {
                         sfloat damage = outcome.Props.Damage;
                         Fighters[attackerBox.Owner].AddSuper(damage, options);
@@ -964,6 +1104,27 @@ namespace Game.Sim
                 throw new InvalidOperationException("Not push");
             }
 
+            bool aIsProj = c.BoxA.ProjectileIndex >= 0;
+            bool bIsProj = c.BoxB.ProjectileIndex >= 0;
+
+            if (aIsProj || bIsProj)
+            {
+                sfloat aFactor = aIsProj ? sfloat.One : sfloat.Zero;
+                sfloat bFactor = bIsProj ? sfloat.One : sfloat.Zero;
+                sfloat total = aFactor + bFactor;
+                sfloat aPush = aFactor / total;
+                sfloat bPush = bFactor / total;
+
+                sfloat aDelta = c.BoxA.Box.Pos.x < c.BoxB.Box.Pos.x ? -c.OverlapX * aPush : c.OverlapX * aPush;
+                sfloat bDelta = c.BoxA.Box.Pos.x < c.BoxB.Box.Pos.x ? c.OverlapX * bPush : -c.OverlapX * bPush;
+
+                if (aIsProj)
+                    Projectiles[c.BoxA.ProjectileIndex].Position.x += aDelta;
+                if (bIsProj)
+                    Projectiles[c.BoxB.ProjectileIndex].Position.x += bDelta;
+                return;
+            }
+
             if (
                 Fighters[c.BoxA.Owner].State == CharacterState.Grabbed
                 || Fighters[c.BoxB.Owner].State == CharacterState.Grabbed
@@ -975,17 +1136,17 @@ namespace Game.Sim
             sfloat aPushFactor = Fighters[c.BoxA.Owner].OnGround(options) ? (sfloat)1f : (sfloat)0.1f;
             sfloat bPushFactor = Fighters[c.BoxB.Owner].OnGround(options) ? (sfloat)1f : (sfloat)0.1f;
 
-            sfloat aPush = aPushFactor / (aPushFactor + bPushFactor);
-            sfloat bPush = bPushFactor / (aPushFactor + bPushFactor);
+            sfloat aPushFighter = aPushFactor / (aPushFactor + bPushFactor);
+            sfloat bPushFighter = bPushFactor / (aPushFactor + bPushFactor);
             if (c.BoxA.Box.Pos.x < c.BoxB.Box.Pos.x)
             {
-                Fighters[c.BoxA.Owner].Position.x -= c.OverlapX * aPush;
-                Fighters[c.BoxB.Owner].Position.x += c.OverlapX * bPush;
+                Fighters[c.BoxA.Owner].Position.x -= c.OverlapX * aPushFighter;
+                Fighters[c.BoxB.Owner].Position.x += c.OverlapX * bPushFighter;
             }
             else
             {
-                Fighters[c.BoxA.Owner].Position.x += c.OverlapX * aPush;
-                Fighters[c.BoxB.Owner].Position.x -= c.OverlapX * bPush;
+                Fighters[c.BoxA.Owner].Position.x += c.OverlapX * aPushFighter;
+                Fighters[c.BoxB.Owner].Position.x -= c.OverlapX * bPushFighter;
             }
         }
 
@@ -1011,27 +1172,53 @@ namespace Game.Sim
                 return new HitOutcome { Kind = HitKind.Grabbed, Props = attacker.Data };
             }
 
+            CharacterState move = Fighters[attacker.Owner].State;
+
             sfloat hypeMult = 1 + (sfloat)0.2f * (HypeMeter / options.Global.MaxHype) * (attacker.Owner * -2 + 1);
 
-            CharacterState move = Fighters[attacker.Owner].State;
-            CharacterState[] staleBuf = Fighters[attacker.Owner].StalingBuffer;
-            int occurrences = 0;
-            for (int i = 0; i < staleBuf.Length; i++)
+            sfloat mult;
+            if (Fighters[attacker.Owner].RhythmComboFinisherActive)
             {
-                if (staleBuf[i] == move)
-                    occurrences++;
+                sfloat finisherMult = options.Global.RhythmComboFinisherDamageMult;
+                if (Fighters[attacker.Owner].RhythmComboTier2)
+                    finisherMult = sfloat.One + (finisherMult - sfloat.One) * (sfloat)2f;
+                mult = hypeMult * finisherMult;
+            }
+            else
+            {
+                CharacterState[] staleBuf = Fighters[attacker.Owner].StalingBuffer;
+                int occurrences = 0;
+                for (int i = 0; i < staleBuf.Length; i++)
+                {
+                    if (staleBuf[i] == move)
+                        occurrences++;
+                }
+
+                sfloat comboMult = DamageScale(Fighters[defender.Owner].ComboedCount);
+                sfloat staleMult = DamageScale(occurrences);
+                mult = hypeMult * comboMult * staleMult;
             }
 
-            sfloat comboMult = DamageScale(Fighters[defender.Owner].ComboedCount);
-            sfloat staleMult = DamageScale(occurrences);
-            sfloat mult = hypeMult * comboMult * staleMult;
+            BoxProps propsForHit = attacker.Data;
+            if (Fighters[attacker.Owner].FreestyleActive)
+            {
+                mult *= options.Global.FreestyleDamageMultiplier;
+                propsForHit.HitstunTicks = (int)(
+                    (sfloat)propsForHit.HitstunTicks * options.Global.FreestyleHitstunMultiplier
+                );
+            }
+
+            // Consume any accumulated rhythm no-op bonus (1.0 → up to 1.25)
+            // so it applies exactly once, to the next attack that lands after
+            // one or more no-op beats in the current mania.
+            mult *= Fighters[attacker.Owner].ConsumeNoOpBonus();
 
             HitOutcome outcome = Fighters[defender.Owner]
                 .ApplyHit(
                     SimFrame,
                     Fighters[attacker.Owner].StateStart,
                     options.Players[defender.Owner].Character,
-                    attacker.Data,
+                    propsForHit,
                     defender.Box.ClosestPointToCenter(attacker.Box),
                     mult
                 );

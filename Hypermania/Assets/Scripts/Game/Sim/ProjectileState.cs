@@ -18,18 +18,36 @@ namespace Game.Sim
         public FighterFacing FacingDir;
         public bool MarkedForDestroy;
         public int ConfigIndex;
+        public bool IsDying;
+        public Frame DeathFrame;
 
         /// <summary>
-        /// Advances this projectile by one tick: checks lifetime/bounds, updates position.
-        /// Sets Active = false if the projectile should despawn.
+        /// Advances this projectile by one tick: applies gravity/friction, checks
+        /// lifetime/bounds/destruction, updates position. When HasOnDeath is set
+        /// and the projectile would despawn (lifetime expired or hit), transitions
+        /// into a dying state that plays out the OnDeathHitbox frames instead of
+        /// immediately deactivating. Sets Active = false once fully done.
         /// </summary>
-        public void Advance(Frame simFrame, sfloat wallsX)
+        public void Advance(Frame simFrame, GameOptions options, ProjectileConfig config)
         {
             if (!Active)
                 return;
 
+            if (IsDying)
+            {
+                int onDeathDuration =
+                    config != null && config.OnDeathHitbox != null ? config.OnDeathHitbox.TotalTicks : 0;
+                if (simFrame - DeathFrame >= onDeathDuration)
+                {
+                    Active = false;
+                }
+                return;
+            }
+
             if (MarkedForDestroy)
             {
+                if (TryBeginDeath(simFrame, config))
+                    return;
                 Active = false;
                 return;
             }
@@ -37,31 +55,77 @@ namespace Game.Sim
             int age = simFrame - CreationFrame;
             if (age >= LifetimeTicks)
             {
+                if (TryBeginDeath(simFrame, config))
+                    return;
                 Active = false;
                 return;
             }
 
+            FrameData curFrame = config?.HitboxData?.GetFrame(age);
+            if (curFrame != null && curFrame.GravityEnabled && Position.y > options.Global.GroundY)
+            {
+                Velocity.y += options.Global.Gravity * 1 / GameManager.TPS;
+            }
+
             Position += Velocity * 1 / GameManager.TPS;
 
-            if (Position.x > wallsX + 2 || Position.x < -wallsX - 2)
+            if (Position.y <= options.Global.GroundY)
+            {
+                Position.y = options.Global.GroundY;
+                if (Velocity.y < sfloat.Zero)
+                    Velocity.y = sfloat.Zero;
+
+                if (config != null && config.DieOnContact && !config.Lingers)
+                {
+                    MarkedForDestroy = true;
+                }
+            }
+
+            if (Position.x > options.Global.WallsX + 2 || Position.x < -options.Global.WallsX - 2)
             {
                 Active = false;
             }
         }
 
+        private bool TryBeginDeath(Frame simFrame, ProjectileConfig config)
+        {
+            if (config == null || !config.HasOnDeath || config.OnDeathHitbox == null)
+                return false;
+
+            IsDying = true;
+            DeathFrame = simFrame;
+            MarkedForDestroy = false;
+            Velocity = SVector2.zero;
+            return true;
+        }
+
         /// <summary>
         /// Adds this projectile's hitboxes to the physics context for collision detection.
+        /// While dying, uses the config's OnDeathHitbox ticked from DeathFrame; otherwise
+        /// uses the normal HitboxData ticked from CreationFrame.
         /// </summary>
         public void AddBoxes(Frame simFrame, ProjectileConfig config, Physics<BoxProps> physics, int projectileIndex)
         {
-            if (!Active)
+            if (!Active || config == null)
                 return;
 
-            if (config?.HitboxData == null)
+            HitboxData data;
+            int tick;
+            if (IsDying)
+            {
+                data = config.OnDeathHitbox;
+                tick = simFrame - DeathFrame;
+            }
+            else
+            {
+                data = config.HitboxData;
+                tick = simFrame - CreationFrame;
+            }
+
+            if (data == null)
                 return;
 
-            int tick = simFrame - CreationFrame;
-            FrameData frameData = config.HitboxData.GetFrame(tick);
+            FrameData frameData = data.GetFrame(tick);
             if (frameData == null)
                 return;
 
@@ -80,7 +144,7 @@ namespace Game.Sim
                     newProps.Knockback.x *= -1;
                 }
 
-                physics.AddBox(Owner, centerWorld, box.SizeLocal, newProps, projectileIndex);
+                physics.AddBox(Owner, centerWorld, box.SizeLocal, newProps, projectileIndex, data.IgnoreOwner);
             }
         }
     }

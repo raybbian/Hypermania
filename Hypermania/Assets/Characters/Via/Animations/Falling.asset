@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Clip: {fileID: 7400000, guid: 4170461d6266c7f419ffaf668531ad4d, type: 2}
   ComboEligible: 1
+  Followup: 3
+  FollowupInput: 0
   Frames:
   - Boxes:
     - CenterLocal:
@@ -45,11 +47,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -84,11 +94,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -123,11 +141,66 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019665592
+        y:
+          rawValue: 1066215444
+      SizeLocal:
+        x:
+          rawValue: 1062666380
+        y:
+          rawValue: 1070002480
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:
@@ -162,11 +235,19 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
       x:
         rawValue: 0
       y:

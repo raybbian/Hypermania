@@ -90,7 +90,7 @@ namespace Game.View.Overlay
             for (int i = 0; i < count; i++)
             {
                 bool inBurst = state.Fighters[i].State == CharacterState.Burst;
-                bool inMania = state.Manias[i].Enabled(state.RealFrame);
+                bool inMania = state.Manias[i].Enabled(state.RealFrame) || state.Fighters[i].FreestyleActive;
 
                 Color targetColor;
                 float glow;

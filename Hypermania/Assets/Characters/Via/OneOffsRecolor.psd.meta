@@ -88,7 +88,7 @@ ScriptedImporter:
       y: 0
       width: 0
       height: 0
-    spriteID: 5ad0ec07fdad156448ebf1f294550ef8
+    spriteID: 2ca9b079e7025984a851a036cfd49a37
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -100,6 +100,138 @@ ScriptedImporter:
     spritePosition: {x: 0, y: 0}
   multiSpriteImportData: []
   layeredSpriteImportData:
+  - name: smoke5
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1159
+      y: 2385
+      width: 981
+      height: 763
+    spriteID: d41948b2d5e8f3642a1a2e848447ca19
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1159, y: 2385}
+    spritePosition: {x: 1554, y: 1932}
+  - name: smoke4
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2229
+      y: 4
+      width: 1142
+      height: 832
+    spriteID: 569563e53dc924d49808da2cd56dd81f
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2229, y: 4}
+    spritePosition: {x: 1432, y: 1930}
+  - name: smoke3
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 2385
+      width: 1147
+      height: 852
+    spriteID: cec48a5a5141939449c4f6d65d4b2890
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 2385}
+    spritePosition: {x: 1453, y: 1922}
+  - name: smoke2
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 4
+      y: 3245
+      width: 1133
+      height: 842
+    spriteID: e5dbc3c1fa0b595448b0e94433bedc5e
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 4, y: 3245}
+    spritePosition: {x: 1440, y: 1874}
+  - name: smoke1
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 1145
+      y: 3245
+      width: 877
+      height: 446
+    spriteID: 4c13aaa973f788b48abcaa9415cefb79
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 1145, y: 3245}
+    spritePosition: {x: 1611, y: 1453}
+  - name: vial
+    originalName: 
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
+    border: {x: 0, y: 0, z: 0, w: 0}
+    customData: 
+    rect:
+      serializedVersion: 2
+      x: 2520
+      y: 2533
+      width: 190
+      height: 950
+    spriteID: d7cac4aa74fa37b46a0cea8336d4089f
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 2520, y: 2533}
+    spritePosition: {x: 1984, y: 1321}
   - name: straight whipsmear
     originalName: 
     pivot: {x: 0.5, y: 0.5}
@@ -112,7 +244,7 @@ ScriptedImporter:
       y: 4
       width: 2217
       height: 1627
-    spriteID: 0df4fdf26c744b04793dffd97578346e
+    spriteID: 6142ce8eaa1d4764cba556228265e215
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -134,7 +266,7 @@ ScriptedImporter:
       y: 1639
       width: 1597
       height: 738
-    spriteID: 85598257de9f6c1478058667e115c9b6
+    spriteID: 12d271161207f2a4ea5a057cfc799a3c
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -152,11 +284,11 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 559
-      y: 2385
+      x: 2229
+      y: 2533
       width: 283
       height: 1264
-    spriteID: 637a18a12203c384a96409047bb52b10
+    spriteID: 83e1d7af92c55e24a8db932782b5a68c
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -164,7 +296,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 559, y: 2385}
+    uvTransform: {x: 2229, y: 2533}
     spritePosition: {x: 2704, y: 439}
   - name: L smear 1
     originalName: 
@@ -174,11 +306,11 @@ ScriptedImporter:
     customData: 
     rect:
       serializedVersion: 2
-      x: 4
-      y: 2385
+      x: 2229
+      y: 844
       width: 547
       height: 1681
-    spriteID: 46b4ef40f2adde54284d65fe96a17f8f
+    spriteID: 53a02fa18ac3afa4aa37cccd2687c963
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -186,7 +318,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 4, y: 2385}
+    uvTransform: {x: 2229, y: 844}
     spritePosition: {x: 2440, y: 439}
   spriteImportData: []
   rigSpriteImportData: []
@@ -235,7 +367,7 @@ ScriptedImporter:
   characterMode: 1
   documentPivot: {x: 0, y: 0}
   documentAlignment: 7
-  importHiddenLayers: 1
+  importHiddenLayers: 0
   layerMappingOption: 2
   generatePhysicsShape: 0
   paperDollMode: 0
@@ -251,12 +383,72 @@ ScriptedImporter:
   resliceFromLayer: 0
   pSDLayerImportSetting: []
   psdLayers:
+  - name: smoke5
+    spriteName: smoke5
+    isGroup: 0
+    parentIndex: -1
+    spriteID: d41948b2d5e8f3642a1a2e848447ca19
+    layerID: 25
+    mosaicPosition: {x: 1159, y: 2385}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: smoke4
+    spriteName: smoke4
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 569563e53dc924d49808da2cd56dd81f
+    layerID: 24
+    mosaicPosition: {x: 2229, y: 4}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: smoke3
+    spriteName: smoke3
+    isGroup: 0
+    parentIndex: -1
+    spriteID: cec48a5a5141939449c4f6d65d4b2890
+    layerID: 23
+    mosaicPosition: {x: 4, y: 2385}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: smoke2
+    spriteName: smoke2
+    isGroup: 0
+    parentIndex: -1
+    spriteID: e5dbc3c1fa0b595448b0e94433bedc5e
+    layerID: 22
+    mosaicPosition: {x: 4, y: 3245}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: smoke1
+    spriteName: smoke1
+    isGroup: 0
+    parentIndex: -1
+    spriteID: 4c13aaa973f788b48abcaa9415cefb79
+    layerID: 21
+    mosaicPosition: {x: 1145, y: 3245}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
+  - name: vial
+    spriteName: vial
+    isGroup: 0
+    parentIndex: -1
+    spriteID: d7cac4aa74fa37b46a0cea8336d4089f
+    layerID: 20
+    mosaicPosition: {x: 2520, y: 2533}
+    flatten: 0
+    isImported: 1
+    isVisible: 1
   - name: straight whipsmear
     spriteName: straight whipsmear
     isGroup: 0
     parentIndex: -1
-    spriteID: 0df4fdf26c744b04793dffd97578346e
-    layerID: 10
+    spriteID: 6142ce8eaa1d4764cba556228265e215
+    layerID: 29
     mosaicPosition: {x: 4, y: 4}
     flatten: 0
     isImported: 1
@@ -265,8 +457,8 @@ ScriptedImporter:
     spriteName: L smear wide
     isGroup: 0
     parentIndex: -1
-    spriteID: 85598257de9f6c1478058667e115c9b6
-    layerID: 15
+    spriteID: 12d271161207f2a4ea5a057cfc799a3c
+    layerID: 28
     mosaicPosition: {x: 4, y: 1639}
     flatten: 0
     isImported: 1
@@ -275,9 +467,9 @@ ScriptedImporter:
     spriteName: L smear 1.5
     isGroup: 0
     parentIndex: -1
-    spriteID: 637a18a12203c384a96409047bb52b10
-    layerID: 8
-    mosaicPosition: {x: 559, y: 2385}
+    spriteID: 83e1d7af92c55e24a8db932782b5a68c
+    layerID: 27
+    mosaicPosition: {x: 2229, y: 2533}
     flatten: 0
     isImported: 1
     isVisible: 1
@@ -285,9 +477,9 @@ ScriptedImporter:
     spriteName: L smear 1
     isGroup: 0
     parentIndex: -1
-    spriteID: 46b4ef40f2adde54284d65fe96a17f8f
-    layerID: 7
-    mosaicPosition: {x: 4, y: 2385}
+    spriteID: 53a02fa18ac3afa4aa37cccd2687c963
+    layerID: 26
+    mosaicPosition: {x: 2229, y: 844}
     flatten: 0
     isImported: 1
     isVisible: 1
