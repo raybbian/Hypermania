@@ -59,6 +59,16 @@ namespace Utils.Build.Editor
                     return;
                 }
 
+                // If our git probe failed (id == Fallback) but the file already holds a
+                // real hash — e.g. a CI runner wrote it before launching the Unity
+                // container, where git may be unavailable — keep the existing value.
+                if (id == BuildInfo.Fallback && !string.IsNullOrEmpty(existing) && existing != BuildInfo.Fallback)
+                {
+                    if (log)
+                        Debug.Log($"[GitVersion] Keeping existing BuildVersion.txt: {existing} ({reason})");
+                    return;
+                }
+
                 File.WriteAllText(absolute, id);
                 AssetDatabase.ImportAsset(RelativePath, ImportAssetOptions.ForceUpdate);
 

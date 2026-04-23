@@ -49,12 +49,20 @@ MonoBehaviour:
   RoundEndTicks: 240
   SuperDisplayHitstopTicks: 40
   SuperPostDisplayHitstopTicks: 10
+  SuperRecoveryFrames: 10
   FloatingFactor:
     rawValue: 1066192077
   ManiaSlowTicks: 45
   ManiaFailStunTicks: 30
   ManiaFailKnockbackMagnitude:
     rawValue: 1069547520
+  StalingBufferSize: 8
+  RhythmComboFinisherDamageMult:
+    rawValue: 1067030938
+  FreestyleDamageMultiplier:
+    rawValue: 1069547520
+  FreestyleHitstunMultiplier:
+    rawValue: 1067450368
   _inputConfig:
     DashWindow: 12
     SuperJumpWindow: 8

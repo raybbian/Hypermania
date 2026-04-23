@@ -55,11 +55,15 @@ namespace Design.Configs
         public int RoundEndTicks = 120;
         public int SuperDisplayHitstopTicks = 60;
         public int SuperPostDisplayHitstopTicks = 0;
+        public int SuperRecoveryFrames = 0;
         public sfloat FloatingFactor = (sfloat)1.3f;
         public int ManiaSlowTicks = 60;
         public int ManiaFailStunTicks = 30;
         public sfloat ManiaFailKnockbackMagnitude = (sfloat)1.5f;
         public int StalingBufferSize = 8;
+        public sfloat RhythmComboFinisherDamageMult = (sfloat)2f;
+        public sfloat FreestyleDamageMultiplier = (sfloat)1.5f;
+        public sfloat FreestyleHitstunMultiplier = (sfloat)1.25f;
         public sfloat CameraHalfWidth => CameraHalfHeight * (sfloat)1.7777777f;
 
         [SerializeField]

@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Game;
+using Game.View;
 using UnityEditor;
+using UnityEngine;
 using Utils.SoftFloat;
 
 namespace Design.Animation.MoveBuilder.Editor
@@ -39,6 +42,7 @@ namespace Design.Animation.MoveBuilder.Editor
     public sealed class MoveBuilderModel
     {
         public int SelectedBoxIndex;
+        public Transform RootMotionSource;
         private HitboxData _lastData;
         private int _savedValueHash;
 
@@ -64,14 +68,45 @@ namespace Design.Animation.MoveBuilder.Editor
 
         #region Modifications
 
-        public void BindDataToClip(MoveBuilderAnimationState state)
+        public void BindDataToClip(MoveBuilderAnimationState state, EntityView fighter)
         {
             RecordUndo(state, "Bind Data to Clip");
 
-            if (state.Data.BindToClip(state.Clip))
+            bool changed = state.Data.BindToClip(state.Clip);
+
+            if (RootMotionSource != null && fighter != null)
+            {
+                BakeRootMotion(state, fighter);
+                changed = true;
+            }
+
+            if (changed)
             {
                 MarkDirty(state);
             }
+        }
+
+        private void BakeRootMotion(MoveBuilderAnimationState state, EntityView fighter)
+        {
+            int total = state.Data.TotalTicks;
+            var world = new Vector3[total];
+            for (int i = 0; i < total; i++)
+            {
+                float time = i / (float)GameManager.TPS;
+                state.Clip.SampleAnimation(fighter.gameObject, time);
+                world[i] = RootMotionSource.position;
+            }
+
+            state.Data.Frames[0].RootMotionOffset = SVector2.zero;
+            for (int i = 1; i < total; i++)
+            {
+                float dx = world[i].x - world[0].x;
+                float dy = world[i].y - world[0].y;
+                state.Data.Frames[i].RootMotionOffset = new SVector2((sfloat)dx, (sfloat)dy);
+            }
+
+            float restoreTime = state.Tick / (float)GameManager.TPS;
+            state.Clip.SampleAnimation(fighter.gameObject, restoreTime);
         }
 
         public FrameData GetCurrentFrame(MoveBuilderAnimationState state)

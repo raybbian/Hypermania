@@ -25,7 +25,7 @@ namespace Game.View.Projectiles
             _spriteLibrary.spriteLibraryAsset = characterConfig.Skins[skinIndex].SpriteLibrary;
         }
 
-        public abstract void Render(Frame simFrame, in ProjectileState state);
+        public abstract void Render(Frame simFrame, in ProjectileState state, ProjectileConfig config);
 
         public virtual void DeInit() { }
     }

@@ -106,21 +106,32 @@ namespace Game.View.Overlay
             int baseIdx = frame.No % _numColumns;
             for (int i = 0; i < 2; i++)
             {
-                CharacterState displayState = state.Fighters[i].PostActionState ?? state.Fighters[i].State;
-                Frame displayStateStart = state.Fighters[i].PostActionStateStart ?? state.Fighters[i].StateStart;
+                if (state.Fighters[i].PostActionState.HasValue)
+                {
+                    CharacterState displayState = state.Fighters[i].PostActionState.Value;
+                    Frame displayStateStart = state.Fighters[i].PostActionStateStart.Value;
 
-                if (_displayHitstopFrames && state.HitstopFramesRemaining > 0)
+                    if (displayState == CharacterState.Grabbed)
+                    {
+                        _cells[i, baseIdx].SetType(FrameType.Grabbed);
+                    }
+                    else
+                    {
+                        _cells[i, baseIdx]
+                            .SetType(state.SimFrame, displayState, displayStateStart, options.Players[i].Character);
+                    }
+                }
+                else if (_displayHitstopFrames && state.HitstopFramesRemaining > 0)
                 {
                     _cells[i, baseIdx].SetType(FrameType.Hitstop);
                 }
-                else if (displayState == CharacterState.Grabbed)
+                else if (state.Fighters[i].State == CharacterState.Grabbed)
                 {
                     _cells[i, baseIdx].SetType(FrameType.Grabbed);
                 }
                 else
                 {
-                    _cells[i, baseIdx]
-                        .SetType(state.SimFrame, displayState, displayStateStart, options.Players[i].Character);
+                    _cells[i, baseIdx].SetType(state.SimFrame, state.Fighters[i], options.Players[i].Character);
                 }
                 _consecText[i, baseIdx].gameObject.SetActive(false);
                 int prevIdx = (baseIdx + _numColumns - 1) % _numColumns;
@@ -130,7 +141,7 @@ namespace Game.View.Overlay
                 else
                 {
                     _consecCount[i, baseIdx] = 1;
-                    if (_cells[i, prevIdx].CurType != FrameType.Neutral)
+                    if (_cells[i, prevIdx].CurType != FrameType.Neutral && _consecCount[i, prevIdx] > 1)
                     {
                         _consecText[i, prevIdx].gameObject.SetActive(true);
                         _consecText[i, prevIdx].SetText(_consecCount[i, prevIdx].ToString());

@@ -528,7 +528,7 @@ MonoBehaviour:
   _curFrameBar: {fileID: 6276789648417293763}
   _cellPrefab: {fileID: 5825735286365130254, guid: 24df1cc81a100f4f7b331278c2b290ea, type: 3}
   _fontPrefab: {fileID: 6176601117413652135, guid: 2bdfbae4f6304d6d2b679799cdda9906, type: 3}
-  _displayHitstopFrames: 1
+  _displayHitstopFrames: 0
   _numColumns: 120
 --- !u!1 &5267077866956378727
 GameObject:

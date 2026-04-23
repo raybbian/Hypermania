@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ViaConfig
   m_EditorClassIdentifier: 
   Character: 2
-  Enabled: 0
+  Enabled: 1
   Prefab: {fileID: 4912791955225701616, guid: e998a7df4f7d4c845a8165445c71c160, type: 3}
   MoveSfx: {fileID: 11400000, guid: 96f13b952f0f28a479dcd8702a73c40a, type: 2}
   Skins:
@@ -37,8 +37,8 @@ MonoBehaviour:
     - {r: 0.9411765, g: 0.32752946, b: 0.56354755, a: 1}
     - {r: 0.766, g: 0.114133984, b: 0.36485168, a: 1}
     SpriteLibrary: {fileID: 7108339969198208228, guid: df01b8c0109101644bb6fa40d3f91d4c, type: 3}
-    Portrait: {fileID: 2800000, guid: 9e588d52a7abc7049b36c2d5fcf9177f, type: 3}
-    Splash: {fileID: 2800000, guid: e8019f20b82205f41bf0fec5eb135362, type: 3}
+    Portrait: {fileID: 2800000, guid: 6b96be9edc3efb442be662e845c8437b, type: 3}
+    Splash: {fileID: 2800000, guid: 2fd2fc7e486bcaf4792e4833509c050b, type: 3}
   AnimationController: {fileID: 22100000, guid: 152e3c4ee00aa684189ad47f4fecc5f2, type: 2}
   CharacterHeight:
     rawValue: 1072064102
@@ -53,9 +53,9 @@ MonoBehaviour:
   BurstMax:
     rawValue: 1112014848
   ForwardDashDistance:
-    rawValue: 1113325568
+    rawValue: 1115815936
   BackDashDistance:
-    rawValue: 1112014848
+    rawValue: 1114636288
   NumAirDashes: 2
   ForwardAirDashDistance:
     rawValue: 1114636288
@@ -106,9 +106,12 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 204e568b025849d489d2d831807a21da, type: 2}
     - {fileID: 11400000, guid: b66ee5a34fcf412439fbb33036e9c63f, type: 2}
     - {fileID: 0}
+    - {fileID: 0}
   Gatlings:
   - From: 5
     To: 8
   - From: 8
     To: 11
-  Projectiles: []
+  Projectiles:
+  - {fileID: 11400000, guid: 0ac431547a91b964d8629bd76100680c, type: 2}
+  - {fileID: 11400000, guid: 9a5b6ba854911a344abba47ddbf15cc3, type: 2}

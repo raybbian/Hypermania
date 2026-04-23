@@ -58,6 +58,29 @@ namespace Game.Sim
         /// </summary>
         public bool LockedHitstun;
 
+        public bool RhythmComboFinisherActive;
+        public bool RhythmComboTier2;
+
+        public bool FreestyleActive;
+
+        /// <summary>
+        /// Multiplier the next damage calculation will apply and then
+        /// consume. Accumulated from rhythm no-op beats during a mania:
+        /// each no-op takes half of <see cref="NoOpBonusRemaining"/> and
+        /// adds it here, so after n consecutive no-ops the value equals
+        /// <c>1 + 0.25 * (1 - 0.5^n)</c> — approaching 1.25. Reset to 1
+        /// on hit consumption, mania end, mania miss, and round reset.
+        /// </summary>
+        public sfloat NoOpBonus;
+
+        /// <summary>
+        /// Remaining budget for future no-op bonus accrual. Starts at
+        /// 0.25 and halves on each no-op so the sum of all future
+        /// contributions stays bounded by 0.25 (closed-form geometric
+        /// series <c>1/2 + 1/4 + ... = 1</c>, scaled by 0.25).
+        /// </summary>
+        public sfloat NoOpBonusRemaining;
+
         public int Index { get; private set; }
         public CharacterState State { get; private set; }
         public Frame StateStart { get; private set; }
@@ -80,6 +103,18 @@ namespace Game.Sim
         public bool SuperMaxedThisRealFrame { get; private set; }
         public CharacterState? PostActionState { get; private set; }
         public Frame? PostActionStateStart { get; private set; }
+
+        /// <summary>
+        /// Attacker-side OnHitTransition enqueued by <see cref="ProcessHit"/>
+        /// on frame F. The actual <see cref="SetState"/> is deferred to the
+        /// start of the next sim frame by <see cref="ApplyPendingHitTransition"/>,
+        /// so frame F's remaining steps still see the pre-transition state and
+        /// the new state (e.g. Throw) first renders on F+1.
+        /// </summary>
+        public CharacterState? PendingHitState { get; private set; }
+        public Frame? PendingHitStateStart { get; private set; }
+        public Frame? PendingHitStateEnd { get; private set; }
+        public bool PendingHitStateForce { get; private set; }
 
         public bool HitLastRealFrame =>
             HitProps.HasValue
@@ -148,6 +183,11 @@ namespace Game.Sim
                 NumVictories = 0,
                 LockedHitstun = false,
                 IsSuperAttack = false,
+                RhythmComboFinisherActive = false,
+                RhythmComboTier2 = false,
+                FreestyleActive = false,
+                NoOpBonus = sfloat.One,
+                NoOpBonusRemaining = (sfloat)0.25f,
             };
             return state;
         }
@@ -181,6 +221,15 @@ namespace Game.Sim
             Array.Clear(StalingBuffer, 0, StalingBuffer.Length);
             StalingBufferIndex = 0;
             LockedHitstun = false;
+            RhythmComboFinisherActive = false;
+            RhythmComboTier2 = false;
+            FreestyleActive = false;
+            NoOpBonus = sfloat.One;
+            NoOpBonusRemaining = (sfloat)0.25f;
+            PendingHitState = null;
+            PendingHitStateStart = null;
+            PendingHitStateEnd = null;
+            PendingHitStateForce = false;
             InputH.Clear(); // Clear, don't want to read input from a previous round.
             // TODO: character dependent?
             IsSuperAttack = false;
@@ -230,7 +279,7 @@ namespace Game.Sim
             {
                 Health = options.Players[Index].Character.Health;
             }
-            if (options.Players[Index].SuperMaxOnActionable && gameMode == GameMode.Fighting)
+            if (options.Players[Index].SuperMaxOnActionable && gameMode == GameMode.Fighting && !FreestyleActive)
             {
                 Super = options.Global.SuperMax;
             }
@@ -241,6 +290,43 @@ namespace Game.Sim
         }
 
         public bool OnGround(GameOptions options) => Position.y > options.Global.GroundY ? false : true;
+
+        /// <summary>
+        /// Register a rhythm no-op press. Transfers half of the remaining
+        /// 0.25 budget into <see cref="NoOpBonus"/>, so the bonus
+        /// approaches but never reaches 1.25 no matter how many no-ops
+        /// accrue in a row.
+        /// </summary>
+        public void RegisterManiaNoOp()
+        {
+            sfloat share = NoOpBonusRemaining * (sfloat)0.5f;
+            NoOpBonus += share;
+            NoOpBonusRemaining -= share;
+        }
+
+        /// <summary>
+        /// Read the current no-op bonus and reset it. Called by the damage
+        /// pipeline so the bonus applies once, to the next attack after
+        /// one or more no-ops.
+        /// </summary>
+        public sfloat ConsumeNoOpBonus()
+        {
+            sfloat bonus = NoOpBonus;
+            NoOpBonus = sfloat.One;
+            NoOpBonusRemaining = (sfloat)0.25f;
+            return bonus;
+        }
+
+        /// <summary>
+        /// Reset no-op bonus to the default (1.0x, full 0.25 budget).
+        /// Used when a mania ends or fails to prevent a stale bonus from
+        /// carrying into a fresh combo.
+        /// </summary>
+        public void ResetNoOpBonus()
+        {
+            NoOpBonus = sfloat.One;
+            NoOpBonusRemaining = (sfloat)0.25f;
+        }
 
         public FighterLocation Location => State.IsGrounded() ? FighterLocation.Grounded : FighterLocation.Airborne;
 
@@ -269,6 +355,38 @@ namespace Game.Sim
             SuperMaxedThisRealFrame = false;
             PostActionState = null;
             PostActionStateStart = null;
+        }
+
+        /// <summary>
+        /// Records a collision-driven state transition to apply at the start of
+        /// the next sim frame. Pass <paramref name="start"/> as the frame the
+        /// state should take effect on (typically the hit-frame + 1), so tick 0
+        /// lands on the first frame the new state is visible.
+        /// </summary>
+        public void EnqueueHitTransition(CharacterState state, Frame start, Frame end, bool force = false)
+        {
+            PendingHitState = state;
+            PendingHitStateStart = start;
+            PendingHitStateEnd = end;
+            PendingHitStateForce = force;
+        }
+
+        /// <summary>
+        /// Applies any transition queued by <see cref="EnqueueHitTransition"/>
+        /// during the previous sim frame's collision step. Call at the start of
+        /// a sim frame (after <c>SimFrame</c> increments, before
+        /// <see cref="DoFrameStart"/>) so the new state is visible to every
+        /// subsequent step of the frame.
+        /// </summary>
+        public void ApplyPendingHitTransition()
+        {
+            if (!PendingHitState.HasValue)
+                return;
+            SetState(PendingHitState.Value, PendingHitStateStart.Value, PendingHitStateEnd.Value, PendingHitStateForce);
+            PendingHitState = null;
+            PendingHitStateStart = null;
+            PendingHitStateEnd = null;
+            PendingHitStateForce = false;
         }
 
         public void CapturePostActionState()
@@ -596,6 +714,7 @@ namespace Game.Sim
                 if (IsSuperAttack)
                 {
                     Super = Mathsf.Max(Super - superCost / (sfloat)2, (sfloat)0);
+                    StateEnd += options.Global.SuperRecoveryFrames;
                 }
             }
 
@@ -645,7 +764,7 @@ namespace Game.Sim
                 return;
             }
 
-            if (dashCancelEligible && InputH.IsHeld(ForwardInput) && State == CharacterState.ForwardDash)
+            if (simFrame + 1 >= StateEnd && InputH.IsHeld(ForwardInput) && State == CharacterState.ForwardDash)
             {
                 SetState(CharacterState.Running, simFrame, Frame.Infinity);
             }
@@ -703,6 +822,19 @@ namespace Game.Sim
                 SVector2 teleport = curData.TeleportLocation;
                 teleport.x *= FacingDir == FighterFacing.Left ? -1 : 1;
                 Position += teleport;
+            }
+
+            HitboxData moveData = options.Players[Index].Character.GetHitboxData(State);
+            if (moveData != null && moveData.ApplyRootMotion)
+            {
+                int rmTick = frame - StateStart;
+                SVector2 prevOffset =
+                    rmTick > 0
+                        ? options.Players[Index].Character.GetFrameData(State, rmTick - 1).RootMotionOffset
+                        : SVector2.zero;
+                SVector2 rmDelta = curData.RootMotionOffset - prevOffset;
+                rmDelta.x *= FacingDir == FighterFacing.Left ? -1 : 1;
+                Position += rmDelta;
             }
 
             if (curData.GravityEnabled && Position.y > options.Global.GroundY)
@@ -803,11 +935,16 @@ namespace Game.Sim
         public void AddBoxes(Frame frame, CharacterConfig config, Physics<BoxProps> physics, int handle)
         {
             int tick = frame - StateStart;
+            HitboxData hitboxData = config.GetHitboxData(State);
             FrameData frameData = config.GetFrameData(State, tick);
 
             foreach (var box in frameData.Boxes)
             {
                 SVector2 centerLocal = box.CenterLocal;
+                if (hitboxData != null && hitboxData.ApplyRootMotion)
+                {
+                    centerLocal -= frameData.RootMotionOffset;
+                }
                 if (FacingDir == FighterFacing.Left)
                 {
                     centerLocal.x *= -1;
@@ -821,7 +958,8 @@ namespace Game.Sim
                     newProps.Knockback.x *= -1;
                 }
 
-                physics.AddBox(handle, centerWorld, sizeLocal, newProps);
+                bool ignoreOwner = hitboxData != null && hitboxData.IgnoreOwner;
+                physics.AddBox(handle, centerWorld, sizeLocal, newProps, -1, ignoreOwner);
             }
         }
 
@@ -829,12 +967,10 @@ namespace Game.Sim
         {
             if (props.HasTransition)
             {
-                // ProcessHit runs inside DoCollisionStep, AFTER AddBoxes has
-                // already added this frame's boxes for the pre-transition
-                // state. If we used `frame` as StateStart, the next frame
-                // would read the transitioned animation at tick 1 — skipping
-                // tick 0 entirely. Back-date by using frame+1 so tick 0 is
-                // what gets rendered/processed on the following frame.
+                // The transition is deferred to the start of the next sim
+                // frame by ApplyPendingHitTransition, so StateStart = frame+1
+                // lines up tick 0 with the first frame the new state is
+                // visible.
                 Frame nextStart = frame + 1;
                 if (props.OnHitTransition == CharacterState.Throw)
                 {
@@ -844,7 +980,7 @@ namespace Game.Sim
                         FacingDir = FacingDir == FighterFacing.Right ? FighterFacing.Left : FighterFacing.Right;
                     }
 
-                    SetState(
+                    EnqueueHitTransition(
                         CharacterState.Throw,
                         nextStart,
                         nextStart + config.GetHitboxData(CharacterState.Throw).TotalTicks,
@@ -852,7 +988,7 @@ namespace Game.Sim
                     );
                     return;
                 }
-                SetState(
+                EnqueueHitTransition(
                     props.OnHitTransition,
                     nextStart,
                     nextStart + config.GetHitboxData(props.OnHitTransition).TotalTicks,

@@ -20,7 +20,7 @@ MonoBehaviour:
   - Boxes: []
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -36,7 +36,7 @@ MonoBehaviour:
   - Boxes: []
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -52,7 +52,7 @@ MonoBehaviour:
   - Boxes: []
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -68,7 +68,7 @@ MonoBehaviour:
   - Boxes: []
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -84,7 +84,7 @@ MonoBehaviour:
   - Boxes: []
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -100,7 +100,7 @@ MonoBehaviour:
   - Boxes: []
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -147,7 +147,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -194,7 +194,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -241,7 +241,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -288,7 +288,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -335,7 +335,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -382,7 +382,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -429,7 +429,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -476,7 +476,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -523,7 +523,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -570,7 +570,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -617,7 +617,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -664,7 +664,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:
@@ -711,7 +711,7 @@ MonoBehaviour:
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
-    GravityEnabled: 1
+    GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
       x:

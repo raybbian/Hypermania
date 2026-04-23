@@ -1,0 +1,1636 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
+  m_Name: VialExplosion
+  m_EditorClassIdentifier: 
+  Clip: {fileID: 7400000, guid: e1257185c5d8a3f488c2e61350bf7362, type: 2}
+  ComboEligible: 1
+  Followup: 3
+  FollowupInput: 0
+  IgnoreOwner: 0
+  Frames:
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1020673792
+        y:
+          rawValue: 1041848007
+      SizeLocal:
+        x:
+          rawValue: 1063198352
+        y:
+          rawValue: 1058995868
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1020673792
+        y:
+          rawValue: 1041848007
+      SizeLocal:
+        x:
+          rawValue: 1063198352
+        y:
+          rawValue: 1058995868
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1020673792
+        y:
+          rawValue: 1041848007
+      SizeLocal:
+        x:
+          rawValue: 1063198352
+        y:
+          rawValue: 1058995868
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1020673792
+        y:
+          rawValue: 1041848007
+      SizeLocal:
+        x:
+          rawValue: 1063198352
+        y:
+          rawValue: 1058995868
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1020673792
+        y:
+          rawValue: 1041848007
+      SizeLocal:
+        x:
+          rawValue: 1063198352
+        y:
+          rawValue: 1058995868
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1020673792
+        y:
+          rawValue: 1041848007
+      SizeLocal:
+        x:
+          rawValue: 1063198352
+        y:
+          rawValue: 1058995868
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1020673792
+        y:
+          rawValue: 1041848007
+      SizeLocal:
+        x:
+          rawValue: 1063198352
+        y:
+          rawValue: 1058995868
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1020673792
+        y:
+          rawValue: 1041848007
+      SizeLocal:
+        x:
+          rawValue: 1063198352
+        y:
+          rawValue: 1058995868
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1020054733
+        y:
+          rawValue: 1041039312
+      SizeLocal:
+        x:
+          rawValue: 1066398612
+        y:
+          rawValue: 1061287176
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1017370378
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019595536
+        y:
+          rawValue: 1041039312
+      SizeLocal:
+        x:
+          rawValue: 1066398612
+        y:
+          rawValue: 1061287176
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1017370378
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019595536
+        y:
+          rawValue: 1041039312
+      SizeLocal:
+        x:
+          rawValue: 1066398612
+        y:
+          rawValue: 1061287176
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1017370378
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019595536
+        y:
+          rawValue: 1041039312
+      SizeLocal:
+        x:
+          rawValue: 1066398612
+        y:
+          rawValue: 1061287176
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1017370378
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019595536
+        y:
+          rawValue: 1041039312
+      SizeLocal:
+        x:
+          rawValue: 1066398612
+        y:
+          rawValue: 1061287176
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1017370378
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019595536
+        y:
+          rawValue: 1041039312
+      SizeLocal:
+        x:
+          rawValue: 1066398612
+        y:
+          rawValue: 1061287176
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1017370378
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019595536
+        y:
+          rawValue: 1041039312
+      SizeLocal:
+        x:
+          rawValue: 1066398612
+        y:
+          rawValue: 1061287176
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1017370378
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1019595536
+        y:
+          rawValue: 1041039312
+      SizeLocal:
+        x:
+          rawValue: 1066398612
+        y:
+          rawValue: 1061287176
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1017370378
+          y:
+            rawValue: 1018336200
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1013386880
+        y:
+          rawValue: 1040365400
+      SizeLocal:
+        x:
+          rawValue: 1068049702
+        y:
+          rawValue: 1064319788
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1017370378
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1013386880
+        y:
+          rawValue: 1040365400
+      SizeLocal:
+        x:
+          rawValue: 1068049702
+        y:
+          rawValue: 1064319788
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1017370378
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1013386880
+        y:
+          rawValue: 1040365400
+      SizeLocal:
+        x:
+          rawValue: 1068049702
+        y:
+          rawValue: 1064319788
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1017370378
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1013386880
+        y:
+          rawValue: 1040365400
+      SizeLocal:
+        x:
+          rawValue: 1068049702
+        y:
+          rawValue: 1064319788
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1017370378
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1013386880
+        y:
+          rawValue: 1040365400
+      SizeLocal:
+        x:
+          rawValue: 1068049702
+        y:
+          rawValue: 1064319788
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1017370378
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1013386880
+        y:
+          rawValue: 1040365400
+      SizeLocal:
+        x:
+          rawValue: 1068049702
+        y:
+          rawValue: 1064319788
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1017370378
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1013386880
+        y:
+          rawValue: 1040365400
+      SizeLocal:
+        x:
+          rawValue: 1068049702
+        y:
+          rawValue: 1064319788
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1017370378
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1013386880
+        y:
+          rawValue: 1040365400
+      SizeLocal:
+        x:
+          rawValue: 1068049702
+        y:
+          rawValue: 1064319788
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1017370378
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1013386880
+        y:
+          rawValue: 1040365400
+      SizeLocal:
+        x:
+          rawValue: 1068049702
+        y:
+          rawValue: 1064319788
+      Props:
+        Kind: 1
+        AttackKind: 0
+        Damage: 5
+        HitstunTicks: 3
+        BlockstunTicks: 2
+        HitstopTicks: 2
+        BlockstopTicks: 1
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1018139808
+          y:
+            rawValue: 1017370378
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        HasTransition: 0
+        OnHitTransition: 0
+        IgnoreOwner: 0
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 2
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0

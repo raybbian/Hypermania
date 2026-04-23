@@ -16,6 +16,7 @@ namespace Game.Sim
         {
             public int Owner;
             public int ProjectileIndex;
+            public bool IgnoreOwner;
             public Box Box;
             public TData Data;
         }
@@ -84,13 +85,21 @@ namespace Game.Sim
             _boxInds = new List<int>(maxHitboxes);
         }
 
-        public int AddBox(int handle, SVector2 boxPos, SVector2 boxSize, in TData data, int projectileIndex = -1)
+        public int AddBox(
+            int handle,
+            SVector2 boxPos,
+            SVector2 boxSize,
+            in TData data,
+            int projectileIndex = -1,
+            bool ignoreOwner = false
+        )
         {
             int ind = _boxPool.Spawn(
                 new BoxEntry
                 {
                     Owner = handle,
                     ProjectileIndex = projectileIndex,
+                    IgnoreOwner = ignoreOwner,
                     Box = new Box { Pos = boxPos, Size = boxSize },
                     Data = data,
                 }
@@ -112,7 +121,7 @@ namespace Game.Sim
                     BoxEntry a = _boxPool[boxAInd];
                     BoxEntry b = _boxPool[boxBInd];
 
-                    if (a.Owner == b.Owner)
+                    if (a.Owner == b.Owner && !a.IgnoreOwner && !b.IgnoreOwner)
                     {
                         continue;
                     }

@@ -147,7 +147,7 @@ namespace Scenes.Menus.CharacterSelect
             switch (row)
             {
                 case OptionsRows.ComboMode:
-                    state.ComboMode = state.ComboMode == ComboMode.Assisted ? ComboMode.Freestyle : ComboMode.Assisted;
+                    state.ComboMode = state.ComboMode == ComboMode.Rhythm ? ComboMode.Freestyle : ComboMode.Rhythm;
                     break;
                 case OptionsRows.Skin:
                     if (ctx.SkinCount > 0)

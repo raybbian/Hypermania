@@ -42,6 +42,12 @@ jobs:
             Hypermania-Library-${{ matrix.targetPlatform }}-
             Hypermania-Library-
 
+      - name: Write BuildVersion.txt
+        run: |
+          mkdir -p Hypermania/Assets/StreamingAssets
+          printf '%s' "${GITHUB_SHA:0:8}" > Hypermania/Assets/StreamingAssets/BuildVersion.txt
+          echo "BuildVersion.txt: $(cat Hypermania/Assets/StreamingAssets/BuildVersion.txt)"
+
       - name: Build project
         uses: game-ci/unity-builder@v4
         env:

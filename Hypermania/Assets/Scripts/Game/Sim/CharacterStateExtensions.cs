@@ -6,7 +6,9 @@ namespace Game.Sim
             state == CharacterState.LightAerial
             || state == CharacterState.MediumAerial
             || state == CharacterState.HeavyAerial
-            || state == CharacterState.SpecialAerial;
+            || state == CharacterState.SpecialAerial
+            || state == CharacterState.SpecialAerialFollowUp
+            || state == CharacterState.HeavyAerialFollowUp;
 
         public static bool IsAerial(this CharacterState state) =>
             state.IsAerialAttack()
