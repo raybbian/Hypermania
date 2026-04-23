@@ -159,7 +159,10 @@ namespace Game.View.Fighters
         }
 
         private static bool IsHitRecipient(CharacterState s) =>
-            s == CharacterState.Hit || s == CharacterState.Knockdown || s == CharacterState.Death;
+            s == CharacterState.Hit
+            || s == CharacterState.Knockdown
+            || s == CharacterState.HeavyKnockdown
+            || s == CharacterState.Death;
 
         public void DeInit()
         {

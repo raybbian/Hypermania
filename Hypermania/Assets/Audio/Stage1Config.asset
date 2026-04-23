@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de3229c5d597546899a91cad77c46b83, type: 3}
   m_Name: Stage1Config
   m_EditorClassIdentifier: 
-  MidiFile: {fileID: 102900000, guid: bfe6e11792f903d49a28eac6e9ec2631, type: 3}
-  MidiTrackName: Map
+  OszFile: {fileID: 102900000, guid: 54002b9bda66e3c4fadc80417c758bdd, type: 3}
   FirstMusicalBeat:
     No: 0
   Bpm:
@@ -22,348 +21,1774 @@ MonoBehaviour:
   CharacterThemes:
     values:
     - {fileID: 8300000, guid: f687ad07757a78285a8781af82a6df1e, type: 3}
-    - {fileID: 8300000, guid: f687ad07757a78285a8781af82a6df1e, type: 3}
+    - {fileID: 8300000, guid: 7f03ff8bc1e1d034795e9fd17b0db362, type: 3}
   LoopBeat: 32
   SongLengthBeats: 264
   ComboBeatCount: 8
-  Notes:
-  - No: 0
-  - No: 11
-  - No: 23
-  - No: 34
-  - No: 57
-  - No: 68
-  - No: 80
-  - No: 103
-  - No: 114
-  - No: 125
-  - No: 137
-  - No: 159
-  - No: 182
-  - No: 194
-  - No: 205
-  - No: 216
-  - No: 239
-  - No: 251
-  - No: 262
-  - No: 285
-  - No: 296
-  - No: 308
-  - No: 319
-  - No: 342
-  - No: 365
-  - No: 376
-  - No: 387
-  - No: 399
-  - No: 422
-  - No: 433
-  - No: 444
-  - No: 467
-  - No: 478
-  - No: 490
-  - No: 501
-  - No: 524
-  - No: 547
-  - No: 558
-  - No: 570
-  - No: 581
-  - No: 604
-  - No: 615
-  - No: 627
-  - No: 649
-  - No: 661
-  - No: 672
-  - No: 684
-  - No: 695
-  - No: 706
-  - No: 718
-  - No: 729
-  - No: 752
-  - No: 775
-  - No: 797
-  - No: 809
-  - No: 820
-  - No: 843
-  - No: 866
-  - No: 889
-  - No: 900
-  - No: 911
-  - No: 934
-  - No: 957
-  - No: 980
-  - No: 991
-  - No: 1003
-  - No: 1025
-  - No: 1048
-  - No: 1071
-  - No: 1082
-  - No: 1094
-  - No: 1116
-  - No: 1139
-  - No: 1162
-  - No: 1173
-  - No: 1185
-  - No: 1208
-  - No: 1230
-  - No: 1253
-  - No: 1265
-  - No: 1276
-  - No: 1299
-  - No: 1322
-  - No: 1344
-  - No: 1356
-  - No: 1367
-  - No: 1390
-  - No: 1413
-  - No: 1435
-  - No: 1447
-  - No: 1458
-  - No: 1481
-  - No: 1504
-  - No: 1527
-  - No: 1549
-  - No: 1572
-  - No: 1595
-  - No: 1618
-  - No: 1640
-  - No: 1652
-  - No: 1675
-  - No: 1697
-  - No: 1720
-  - No: 1743
-  - No: 1766
-  - No: 1789
-  - No: 1811
-  - No: 1823
-  - No: 1834
-  - No: 1857
-  - No: 1880
-  - No: 1903
-  - No: 1925
-  - No: 1948
-  - No: 1971
-  - No: 1994
-  - No: 2005
-  - No: 2016
-  - No: 2039
-  - No: 2062
-  - No: 2085
-  - No: 2108
-  - No: 2130
-  - No: 2153
-  - No: 2176
-  - No: 2187
-  - No: 2199
-  - No: 2222
-  - No: 2244
-  - No: 2267
-  - No: 2290
-  - No: 2313
-  - No: 2335
-  - No: 2358
-  - No: 2370
-  - No: 2381
-  - No: 2392
-  - No: 2404
-  - No: 2427
-  - No: 2438
-  - No: 2449
-  - No: 2472
-  - No: 2484
-  - No: 2495
-  - No: 2506
-  - No: 2529
-  - No: 2552
-  - No: 2563
-  - No: 2575
-  - No: 2586
-  - No: 2609
-  - No: 2620
-  - No: 2632
-  - No: 2654
-  - No: 2666
-  - No: 2677
-  - No: 2689
-  - No: 2711
-  - No: 2734
-  - No: 2747
-  - No: 2758
-  - No: 2770
-  - No: 2793
-  - No: 2804
-  - No: 2815
-  - No: 2838
-  - No: 2849
-  - No: 2861
-  - No: 2872
-  - No: 2895
-  - No: 2918
-  - No: 2929
-  - No: 2941
-  - No: 2952
-  - No: 2975
-  - No: 2986
-  - No: 2998
-  - No: 3008
-  - No: 3030
-  - No: 3053
-  - No: 3076
-  - No: 3099
-  - No: 3121
-  - No: 3144
-  - No: 3156
-  - No: 3167
-  - No: 3178
-  - No: 3190
-  - No: 3213
-  - No: 3235
-  - No: 3258
-  - No: 3281
-  - No: 3304
-  - No: 3327
-  - No: 3349
-  - No: 3361
-  - No: 3372
-  - No: 3395
-  - No: 3418
-  - No: 3440
-  - No: 3452
-  - No: 3463
-  - No: 3486
-  - No: 3509
-  - No: 3532
-  - No: 3543
-  - No: 3554
-  - No: 3577
-  - No: 3600
-  - No: 3623
-  - No: 3634
-  - No: 3646
-  - No: 3668
-  - No: 3691
-  - No: 3714
-  - No: 3737
-  - No: 3759
-  - No: 3782
-  - No: 3805
-  - No: 3828
-  - No: 3851
-  - No: 3873
-  - No: 3896
-  - No: 3919
-  - No: 3942
-  - No: 3965
-  - No: 3987
-  - No: 3999
-  - No: 4010
-  - No: 4033
-  - No: 4056
-  - No: 4078
-  - No: 4090
-  - No: 4101
-  - No: 4124
-  - No: 4147
-  - No: 4170
-  - No: 4181
-  - No: 4192
-  - No: 4215
-  - No: 4238
-  - No: 4261
-  - No: 4283
-  - No: 4306
-  - No: 4329
-  - No: 4352
-  - No: 4375
-  - No: 4397
-  - No: 4420
-  - No: 4443
-  - No: 4454
-  - No: 4466
-  - No: 4489
-  - No: 4511
-  - No: 4534
-  - No: 4557
-  - No: 4580
-  - No: 4591
-  - No: 4602
-  - No: 4625
-  - No: 4648
-  - No: 4659
-  - No: 4671
-  - No: 4694
-  - No: 4716
-  - No: 4739
-  - No: 4762
-  - No: 4773
-  - No: 4785
-  - No: 4808
-  - No: 4830
-  - No: 4842
-  - No: 4853
-  - No: 4876
-  - No: 4899
-  - No: 4921
-  - No: 4944
-  - No: 4967
-  - No: 4990
-  - No: 5013
-  - No: 5024
-  - No: 5035
-  - No: 5058
-  - No: 5081
-  - No: 5104
-  - No: 5127
-  - No: 5138
-  - No: 5149
-  - No: 5172
-  - No: 5195
-  - No: 5218
-  - No: 5240
-  - No: 5263
-  - No: 5286
-  - No: 5297
-  - No: 5309
-  - No: 5320
-  - No: 5343
-  - No: 5354
-  - No: 5366
-  - No: 5389
-  - No: 5400
-  - No: 5411
-  - No: 5423
-  - No: 5445
-  - No: 5468
-  - No: 5480
-  - No: 5491
-  - No: 5502
-  - No: 5525
-  - No: 5537
-  - No: 5548
-  - No: 5571
-  - No: 5582
-  - No: 5594
-  - No: 5605
-  - No: 5628
-  - No: 5651
-  - No: 5662
-  - No: 5673
-  - No: 5685
-  - No: 5707
-  - No: 5719
-  - No: 5730
-  - No: 5753
-  - No: 5764
-  - No: 5776
-  - No: 5787
-  - No: 5810
-  - No: 5834
-  - No: 5846
-  - No: 5857
-  - No: 5868
-  - No: 5891
-  - No: 5903
-  - No: 5914
-  - No: 5925
-  - No: 5948
-  - No: 5971
-  - No: 5994
+  Normal:
+    DifficultyName: EASY
+    Notes:
+    - Tick:
+        No: 113
+      Channel: 0
+    - Tick:
+        No: 158
+      Channel: 0
+    - Tick:
+        No: 204
+      Channel: 1
+    - Tick:
+        No: 249
+      Channel: 1
+    - Tick:
+        No: 295
+      Channel: 2
+    - Tick:
+        No: 341
+      Channel: 2
+    - Tick:
+        No: 386
+      Channel: 3
+    - Tick:
+        No: 432
+      Channel: 3
+    - Tick:
+        No: 477
+      Channel: 0
+    - Tick:
+        No: 523
+      Channel: 1
+    - Tick:
+        No: 568
+      Channel: 2
+    - Tick:
+        No: 614
+      Channel: 3
+    - Tick:
+        No: 660
+      Channel: 0
+    - Tick:
+        No: 705
+      Channel: 2
+    - Tick:
+        No: 751
+      Channel: 1
+    - Tick:
+        No: 796
+      Channel: 3
+    - Tick:
+        No: 842
+      Channel: 0
+    - Tick:
+        No: 887
+      Channel: 0
+    - Tick:
+        No: 933
+      Channel: 0
+    - Tick:
+        No: 979
+      Channel: 0
+    - Tick:
+        No: 1024
+      Channel: 1
+    - Tick:
+        No: 1070
+      Channel: 1
+    - Tick:
+        No: 1115
+      Channel: 1
+    - Tick:
+        No: 1161
+      Channel: 1
+    - Tick:
+        No: 1206
+      Channel: 2
+    - Tick:
+        No: 1252
+      Channel: 2
+    - Tick:
+        No: 1298
+      Channel: 2
+    - Tick:
+        No: 1343
+      Channel: 2
+    - Tick:
+        No: 1389
+      Channel: 3
+    - Tick:
+        No: 1434
+      Channel: 3
+    - Tick:
+        No: 1480
+      Channel: 3
+    - Tick:
+        No: 1525
+      Channel: 3
+    - Tick:
+        No: 1548
+      Channel: 0
+    - Tick:
+        No: 1571
+      Channel: 1
+    - Tick:
+        No: 1594
+      Channel: 0
+    - Tick:
+        No: 1617
+      Channel: 1
+    - Tick:
+        No: 1639
+      Channel: 3
+    - Tick:
+        No: 1662
+      Channel: 2
+    - Tick:
+        No: 1685
+      Channel: 3
+    - Tick:
+        No: 1708
+      Channel: 2
+    - Tick:
+        No: 1753
+      Channel: 0
+    - Tick:
+        No: 1799
+      Channel: 1
+    - Tick:
+        No: 1844
+      Channel: 3
+    - Tick:
+        No: 1890
+      Channel: 2
+    - Tick:
+        No: 1913
+      Channel: 0
+    - Tick:
+        No: 1936
+      Channel: 1
+    - Tick:
+        No: 1958
+      Channel: 2
+    - Tick:
+        No: 1981
+      Channel: 3
+    - Tick:
+        No: 2004
+      Channel: 2
+    - Tick:
+        No: 2027
+      Channel: 1
+    - Tick:
+        No: 2049
+      Channel: 0
+    - Tick:
+        No: 2072
+      Channel: 1
+    - Tick:
+        No: 2095
+      Channel: 2
+    - Tick:
+        No: 2118
+      Channel: 3
+    - Tick:
+        No: 2163
+      Channel: 0
+    - Tick:
+        No: 2209
+      Channel: 1
+    - Tick:
+        No: 2255
+      Channel: 2
+    - Tick:
+        No: 2277
+      Channel: 3
+    - Tick:
+        No: 2323
+      Channel: 3
+    - Tick:
+        No: 2368
+      Channel: 2
+    - Tick:
+        No: 2391
+      Channel: 1
+    - Tick:
+        No: 2414
+      Channel: 0
+    - Tick:
+        No: 2437
+      Channel: 1
+    - Tick:
+        No: 2460
+      Channel: 2
+    - Tick:
+        No: 2482
+      Channel: 3
+    - Tick:
+        No: 2528
+      Channel: 0
+    - Tick:
+        No: 2574
+      Channel: 0
+    - Tick:
+        No: 2619
+      Channel: 3
+    - Tick:
+        No: 2665
+      Channel: 2
+    - Tick:
+        No: 2710
+      Channel: 1
+    - Tick:
+        No: 2756
+      Channel: 1
+    - Tick:
+        No: 2801
+      Channel: 2
+    - Tick:
+        No: 2847
+      Channel: 1
+    - Tick:
+        No: 2892
+      Channel: 2
+    - Tick:
+        No: 2938
+      Channel: 2
+    - Tick:
+        No: 2984
+      Channel: 1
+    - Tick:
+        No: 3029
+      Channel: 0
+    - Tick:
+        No: 3075
+      Channel: 3
+    - Tick:
+        No: 3098
+      Channel: 0
+    - Tick:
+        No: 3120
+      Channel: 1
+    - Tick:
+        No: 3143
+      Channel: 2
+    - Tick:
+        No: 3166
+      Channel: 3
+    - Tick:
+        No: 3189
+      Channel: 3
+    - Tick:
+        No: 3234
+      Channel: 2
+    - Tick:
+        No: 3280
+      Channel: 3
+    - Tick:
+        No: 3303
+      Channel: 2
+    - Tick:
+        No: 3325
+      Channel: 1
+    - Tick:
+        No: 3348
+      Channel: 2
+    - Tick:
+        No: 3371
+      Channel: 0
+    - Tick:
+        No: 3417
+      Channel: 1
+    - Tick:
+        No: 3462
+      Channel: 0
+    - Tick:
+        No: 3485
+      Channel: 1
+    - Tick:
+        No: 3508
+      Channel: 2
+    - Tick:
+        No: 3530
+      Channel: 1
+    - Tick:
+        No: 3553
+      Channel: 0
+    - Tick:
+        No: 3599
+      Channel: 2
+    - Tick:
+        No: 3644
+      Channel: 3
+    - Tick:
+        No: 3667
+      Channel: 2
+    - Tick:
+        No: 3690
+      Channel: 0
+    - Tick:
+        No: 3713
+      Channel: 1
+    - Tick:
+        No: 3735
+      Channel: 0
+    - Tick:
+        No: 3781
+      Channel: 1
+    - Tick:
+        No: 3827
+      Channel: 0
+    - Tick:
+        No: 3849
+      Channel: 1
+    - Tick:
+        No: 3872
+      Channel: 3
+    - Tick:
+        No: 3895
+      Channel: 2
+    - Tick:
+        No: 3918
+      Channel: 1
+    - Tick:
+        No: 3918
+      Channel: 0
+    - Tick:
+        No: 3963
+      Channel: 0
+    - Tick:
+        No: 3963
+      Channel: 1
+    - Tick:
+        No: 4009
+      Channel: 3
+    - Tick:
+        No: 4009
+      Channel: 2
+    - Tick:
+        No: 4055
+      Channel: 3
+    - Tick:
+        No: 4055
+      Channel: 2
+    - Tick:
+        No: 4100
+      Channel: 0
+    - Tick:
+        No: 4100
+      Channel: 2
+    - Tick:
+        No: 4146
+      Channel: 0
+    - Tick:
+        No: 4146
+      Channel: 2
+    - Tick:
+        No: 4191
+      Channel: 1
+    - Tick:
+        No: 4191
+      Channel: 3
+    - Tick:
+        No: 4237
+      Channel: 3
+    - Tick:
+        No: 4237
+      Channel: 1
+    - Tick:
+        No: 4260
+      Channel: 2
+    - Tick:
+        No: 4282
+      Channel: 1
+    - Tick:
+        No: 4282
+      Channel: 0
+    - Tick:
+        No: 4328
+      Channel: 1
+    - Tick:
+        No: 4328
+      Channel: 2
+    - Tick:
+        No: 4373
+      Channel: 3
+    - Tick:
+        No: 4373
+      Channel: 2
+    - Tick:
+        No: 4419
+      Channel: 1
+    - Tick:
+        No: 4419
+      Channel: 2
+    - Tick:
+        No: 4465
+      Channel: 1
+    - Tick:
+        No: 4465
+      Channel: 0
+    - Tick:
+        No: 4510
+      Channel: 0
+    - Tick:
+        No: 4510
+      Channel: 1
+    - Tick:
+        No: 4556
+      Channel: 3
+    - Tick:
+        No: 4556
+      Channel: 2
+    - Tick:
+        No: 4579
+      Channel: 2
+    - Tick:
+        No: 4579
+      Channel: 3
+    - Tick:
+        No: 4601
+      Channel: 3
+    - Tick:
+        No: 4601
+      Channel: 2
+    - Tick:
+        No: 4624
+      Channel: 3
+    - Tick:
+        No: 4647
+      Channel: 2
+    - Tick:
+        No: 4670
+      Channel: 0
+    - Tick:
+        No: 4692
+      Channel: 3
+    - Tick:
+        No: 4715
+      Channel: 0
+    - Tick:
+        No: 4738
+      Channel: 3
+    - Tick:
+        No: 4761
+      Channel: 0
+    - Tick:
+        No: 4784
+      Channel: 3
+    - Tick:
+        No: 4806
+      Channel: 2
+    - Tick:
+        No: 4829
+      Channel: 1
+    - Tick:
+        No: 4852
+      Channel: 2
+    - Tick:
+        No: 4875
+      Channel: 1
+    - Tick:
+        No: 4898
+      Channel: 2
+    - Tick:
+        No: 4920
+      Channel: 1
+    - Tick:
+        No: 4943
+      Channel: 2
+    - Tick:
+        No: 4966
+      Channel: 1
+    - Tick:
+        No: 4989
+      Channel: 2
+    - Tick:
+        No: 5011
+      Channel: 0
+    - Tick:
+        No: 5034
+      Channel: 0
+    - Tick:
+        No: 5057
+      Channel: 0
+    - Tick:
+        No: 5080
+      Channel: 2
+    - Tick:
+        No: 5103
+      Channel: 1
+    - Tick:
+        No: 5125
+      Channel: 1
+    - Tick:
+        No: 5148
+      Channel: 1
+    - Tick:
+        No: 5171
+      Channel: 3
+    - Tick:
+        No: 5194
+      Channel: 2
+    - Tick:
+        No: 5217
+      Channel: 2
+    - Tick:
+        No: 5239
+      Channel: 2
+    - Tick:
+        No: 5262
+      Channel: 0
+    - Tick:
+        No: 5285
+      Channel: 3
+    - Tick:
+        No: 5308
+      Channel: 3
+    - Tick:
+        No: 5330
+      Channel: 3
+    - Tick:
+        No: 5353
+      Channel: 1
+    - Tick:
+        No: 5399
+      Channel: 0
+    - Tick:
+        No: 5444
+      Channel: 0
+    - Tick:
+        No: 5490
+      Channel: 1
+    - Tick:
+        No: 5535
+      Channel: 1
+    - Tick:
+        No: 5581
+      Channel: 2
+    - Tick:
+        No: 5627
+      Channel: 2
+    - Tick:
+        No: 5672
+      Channel: 3
+    - Tick:
+        No: 5718
+      Channel: 3
+    - Tick:
+        No: 5763
+      Channel: 0
+    - Tick:
+        No: 5809
+      Channel: 1
+    - Tick:
+        No: 5855
+      Channel: 2
+    - Tick:
+        No: 5900
+      Channel: 3
+    - Tick:
+        No: 5946
+      Channel: 0
+    - Tick:
+        No: 5991
+      Channel: 3
+    - Tick:
+        No: 6014
+      Channel: 0
+    - Tick:
+        No: 6037
+      Channel: 1
+    - Tick:
+        No: 6060
+      Channel: 2
+    - Tick:
+        No: 6082
+      Channel: 3
+  Hard:
+    DifficultyName: Medium
+    Notes:
+    - Tick:
+        No: 90
+      Channel: 0
+    - Tick:
+        No: 113
+      Channel: 0
+    - Tick:
+        No: 136
+      Channel: 1
+    - Tick:
+        No: 158
+      Channel: 1
+    - Tick:
+        No: 181
+      Channel: 2
+    - Tick:
+        No: 204
+      Channel: 2
+    - Tick:
+        No: 227
+      Channel: 3
+    - Tick:
+        No: 249
+      Channel: 3
+    - Tick:
+        No: 272
+      Channel: 0
+    - Tick:
+        No: 295
+      Channel: 1
+    - Tick:
+        No: 318
+      Channel: 0
+    - Tick:
+        No: 341
+      Channel: 1
+    - Tick:
+        No: 363
+      Channel: 2
+    - Tick:
+        No: 386
+      Channel: 3
+    - Tick:
+        No: 409
+      Channel: 2
+    - Tick:
+        No: 432
+      Channel: 3
+    - Tick:
+        No: 455
+      Channel: 0
+    - Tick:
+        No: 477
+      Channel: 1
+    - Tick:
+        No: 500
+      Channel: 2
+    - Tick:
+        No: 523
+      Channel: 3
+    - Tick:
+        No: 546
+      Channel: 0
+    - Tick:
+        No: 568
+      Channel: 1
+    - Tick:
+        No: 591
+      Channel: 2
+    - Tick:
+        No: 614
+      Channel: 3
+    - Tick:
+        No: 637
+      Channel: 0
+    - Tick:
+        No: 660
+      Channel: 2
+    - Tick:
+        No: 682
+      Channel: 1
+    - Tick:
+        No: 705
+      Channel: 3
+    - Tick:
+        No: 728
+      Channel: 0
+    - Tick:
+        No: 751
+      Channel: 2
+    - Tick:
+        No: 774
+      Channel: 1
+    - Tick:
+        No: 796
+      Channel: 3
+    - Tick:
+        No: 819
+      Channel: 0
+    - Tick:
+        No: 842
+      Channel: 0
+    - Tick:
+        No: 865
+      Channel: 0
+    - Tick:
+        No: 887
+      Channel: 0
+    - Tick:
+        No: 910
+      Channel: 1
+    - Tick:
+        No: 933
+      Channel: 1
+    - Tick:
+        No: 956
+      Channel: 1
+    - Tick:
+        No: 979
+      Channel: 1
+    - Tick:
+        No: 1001
+      Channel: 2
+    - Tick:
+        No: 1024
+      Channel: 2
+    - Tick:
+        No: 1047
+      Channel: 2
+    - Tick:
+        No: 1070
+      Channel: 2
+    - Tick:
+        No: 1092
+      Channel: 3
+    - Tick:
+        No: 1115
+      Channel: 3
+    - Tick:
+        No: 1138
+      Channel: 3
+    - Tick:
+        No: 1161
+      Channel: 3
+    - Tick:
+        No: 1184
+      Channel: 0
+    - Tick:
+        No: 1206
+      Channel: 3
+    - Tick:
+        No: 1206
+      Channel: 2
+    - Tick:
+        No: 1229
+      Channel: 0
+    - Tick:
+        No: 1241
+      Channel: 0
+    - Tick:
+        No: 1252
+      Channel: 2
+    - Tick:
+        No: 1252
+      Channel: 3
+    - Tick:
+        No: 1275
+      Channel: 1
+    - Tick:
+        No: 1298
+      Channel: 2
+    - Tick:
+        No: 1298
+      Channel: 3
+    - Tick:
+        No: 1320
+      Channel: 1
+    - Tick:
+        No: 1332
+      Channel: 1
+    - Tick:
+        No: 1343
+      Channel: 2
+    - Tick:
+        No: 1343
+      Channel: 3
+    - Tick:
+        No: 1366
+      Channel: 2
+    - Tick:
+        No: 1389
+      Channel: 1
+    - Tick:
+        No: 1389
+      Channel: 0
+    - Tick:
+        No: 1412
+      Channel: 2
+    - Tick:
+        No: 1423
+      Channel: 2
+    - Tick:
+        No: 1434
+      Channel: 1
+    - Tick:
+        No: 1434
+      Channel: 0
+    - Tick:
+        No: 1457
+      Channel: 3
+    - Tick:
+        No: 1480
+      Channel: 1
+    - Tick:
+        No: 1480
+      Channel: 0
+    - Tick:
+        No: 1503
+      Channel: 3
+    - Tick:
+        No: 1514
+      Channel: 3
+    - Tick:
+        No: 1525
+      Channel: 0
+    - Tick:
+        No: 1525
+      Channel: 1
+    - Tick:
+        No: 1548
+      Channel: 0
+    - Tick:
+        No: 1560
+      Channel: 1
+    - Tick:
+        No: 1571
+      Channel: 0
+    - Tick:
+        No: 1594
+      Channel: 0
+    - Tick:
+        No: 1605
+      Channel: 1
+    - Tick:
+        No: 1617
+      Channel: 0
+    - Tick:
+        No: 1639
+      Channel: 3
+    - Tick:
+        No: 1651
+      Channel: 2
+    - Tick:
+        No: 1662
+      Channel: 3
+    - Tick:
+        No: 1685
+      Channel: 3
+    - Tick:
+        No: 1696
+      Channel: 2
+    - Tick:
+        No: 1708
+      Channel: 3
+    - Tick:
+        No: 1730
+      Channel: 0
+    - Tick:
+        No: 1753
+      Channel: 0
+    - Tick:
+        No: 1753
+      Channel: 3
+    - Tick:
+        No: 1776
+      Channel: 0
+    - Tick:
+        No: 1799
+      Channel: 1
+    - Tick:
+        No: 1799
+      Channel: 2
+    - Tick:
+        No: 1822
+      Channel: 3
+    - Tick:
+        No: 1844
+      Channel: 3
+    - Tick:
+        No: 1844
+      Channel: 0
+    - Tick:
+        No: 1867
+      Channel: 3
+    - Tick:
+        No: 1890
+      Channel: 1
+    - Tick:
+        No: 1890
+      Channel: 2
+    - Tick:
+        No: 1913
+      Channel: 0
+    - Tick:
+        No: 1936
+      Channel: 1
+    - Tick:
+        No: 1958
+      Channel: 2
+    - Tick:
+        No: 1981
+      Channel: 3
+    - Tick:
+        No: 2004
+      Channel: 2
+    - Tick:
+        No: 2027
+      Channel: 1
+    - Tick:
+        No: 2049
+      Channel: 0
+    - Tick:
+        No: 2072
+      Channel: 1
+    - Tick:
+        No: 2095
+      Channel: 2
+    - Tick:
+        No: 2118
+      Channel: 3
+    - Tick:
+        No: 2118
+      Channel: 0
+    - Tick:
+        No: 2163
+      Channel: 3
+    - Tick:
+        No: 2163
+      Channel: 0
+    - Tick:
+        No: 2209
+      Channel: 1
+    - Tick:
+        No: 2209
+      Channel: 2
+    - Tick:
+        No: 2255
+      Channel: 2
+    - Tick:
+        No: 2255
+      Channel: 1
+    - Tick:
+        No: 2277
+      Channel: 3
+    - Tick:
+        No: 2323
+      Channel: 3
+    - Tick:
+        No: 2368
+      Channel: 3
+    - Tick:
+        No: 2380
+      Channel: 2
+    - Tick:
+        No: 2391
+      Channel: 1
+    - Tick:
+        No: 2403
+      Channel: 0
+    - Tick:
+        No: 2414
+      Channel: 1
+    - Tick:
+        No: 2425
+      Channel: 2
+    - Tick:
+        No: 2437
+      Channel: 3
+    - Tick:
+        No: 2448
+      Channel: 2
+    - Tick:
+        No: 2460
+      Channel: 3
+    - Tick:
+        No: 2460
+      Channel: 0
+    - Tick:
+        No: 2482
+      Channel: 0
+    - Tick:
+        No: 2505
+      Channel: 1
+    - Tick:
+        No: 2528
+      Channel: 1
+    - Tick:
+        No: 2551
+      Channel: 2
+    - Tick:
+        No: 2574
+      Channel: 2
+    - Tick:
+        No: 2596
+      Channel: 3
+    - Tick:
+        No: 2619
+      Channel: 3
+    - Tick:
+        No: 2642
+      Channel: 0
+    - Tick:
+        No: 2665
+      Channel: 1
+    - Tick:
+        No: 2687
+      Channel: 0
+    - Tick:
+        No: 2710
+      Channel: 1
+    - Tick:
+        No: 2733
+      Channel: 2
+    - Tick:
+        No: 2756
+      Channel: 3
+    - Tick:
+        No: 2779
+      Channel: 2
+    - Tick:
+        No: 2801
+      Channel: 3
+    - Tick:
+        No: 2824
+      Channel: 0
+    - Tick:
+        No: 2847
+      Channel: 1
+    - Tick:
+        No: 2870
+      Channel: 2
+    - Tick:
+        No: 2892
+      Channel: 3
+    - Tick:
+        No: 2915
+      Channel: 0
+    - Tick:
+        No: 2938
+      Channel: 1
+    - Tick:
+        No: 2961
+      Channel: 2
+    - Tick:
+        No: 2984
+      Channel: 3
+    - Tick:
+        No: 3006
+      Channel: 0
+    - Tick:
+        No: 3006
+      Channel: 1
+    - Tick:
+        No: 3029
+      Channel: 1
+    - Tick:
+        No: 3029
+      Channel: 0
+    - Tick:
+        No: 3052
+      Channel: 2
+    - Tick:
+        No: 3052
+      Channel: 3
+    - Tick:
+        No: 3075
+      Channel: 3
+    - Tick:
+        No: 3075
+      Channel: 2
+    - Tick:
+        No: 3098
+      Channel: 0
+    - Tick:
+        No: 3109
+      Channel: 0
+    - Tick:
+        No: 3120
+      Channel: 1
+    - Tick:
+        No: 3132
+      Channel: 1
+    - Tick:
+        No: 3143
+      Channel: 2
+    - Tick:
+        No: 3155
+      Channel: 2
+    - Tick:
+        No: 3166
+      Channel: 3
+    - Tick:
+        No: 3177
+      Channel: 3
+    - Tick:
+        No: 3189
+      Channel: 3
+    - Tick:
+        No: 3211
+      Channel: 2
+    - Tick:
+        No: 3234
+      Channel: 3
+    - Tick:
+        No: 3246
+      Channel: 2
+    - Tick:
+        No: 3257
+      Channel: 1
+    - Tick:
+        No: 3268
+      Channel: 2
+    - Tick:
+        No: 3280
+      Channel: 3
+    - Tick:
+        No: 3303
+      Channel: 2
+    - Tick:
+        No: 3325
+      Channel: 1
+    - Tick:
+        No: 3348
+      Channel: 2
+    - Tick:
+        No: 3371
+      Channel: 0
+    - Tick:
+        No: 3394
+      Channel: 0
+    - Tick:
+        No: 3417
+      Channel: 1
+    - Tick:
+        No: 3439
+      Channel: 1
+    - Tick:
+        No: 3462
+      Channel: 0
+    - Tick:
+        No: 3473
+      Channel: 1
+    - Tick:
+        No: 3485
+      Channel: 2
+    - Tick:
+        No: 3496
+      Channel: 1
+    - Tick:
+        No: 3508
+      Channel: 0
+    - Tick:
+        No: 3519
+      Channel: 1
+    - Tick:
+        No: 3530
+      Channel: 2
+    - Tick:
+        No: 3542
+      Channel: 1
+    - Tick:
+        No: 3553
+      Channel: 0
+    - Tick:
+        No: 3576
+      Channel: 0
+    - Tick:
+        No: 3576
+      Channel: 1
+    - Tick:
+        No: 3599
+      Channel: 0
+    - Tick:
+        No: 3622
+      Channel: 0
+    - Tick:
+        No: 3622
+      Channel: 1
+    - Tick:
+        No: 3644
+      Channel: 3
+    - Tick:
+        No: 3667
+      Channel: 3
+    - Tick:
+        No: 3667
+      Channel: 2
+    - Tick:
+        No: 3690
+      Channel: 3
+    - Tick:
+        No: 3713
+      Channel: 3
+    - Tick:
+        No: 3713
+      Channel: 2
+    - Tick:
+        No: 3735
+      Channel: 0
+    - Tick:
+        No: 3758
+      Channel: 0
+    - Tick:
+        No: 3758
+      Channel: 2
+    - Tick:
+        No: 3781
+      Channel: 0
+    - Tick:
+        No: 3804
+      Channel: 0
+    - Tick:
+        No: 3804
+      Channel: 2
+    - Tick:
+        No: 3827
+      Channel: 1
+    - Tick:
+        No: 3849
+      Channel: 3
+    - Tick:
+        No: 3849
+      Channel: 1
+    - Tick:
+        No: 3872
+      Channel: 0
+    - Tick:
+        No: 3884
+      Channel: 1
+    - Tick:
+        No: 3895
+      Channel: 0
+    - Tick:
+        No: 3906
+      Channel: 1
+    - Tick:
+        No: 3918
+      Channel: 0
+    - Tick:
+        No: 3941
+      Channel: 1
+    - Tick:
+        No: 3941
+      Channel: 0
+    - Tick:
+        No: 3952
+      Channel: 2
+    - Tick:
+        No: 3963
+      Channel: 0
+    - Tick:
+        No: 3963
+      Channel: 1
+    - Tick:
+        No: 3975
+      Channel: 2
+    - Tick:
+        No: 3986
+      Channel: 0
+    - Tick:
+        No: 3986
+      Channel: 1
+    - Tick:
+        No: 4009
+      Channel: 3
+    - Tick:
+        No: 4009
+      Channel: 2
+    - Tick:
+        No: 4032
+      Channel: 2
+    - Tick:
+        No: 4032
+      Channel: 3
+    - Tick:
+        No: 4043
+      Channel: 1
+    - Tick:
+        No: 4055
+      Channel: 3
+    - Tick:
+        No: 4055
+      Channel: 2
+    - Tick:
+        No: 4066
+      Channel: 1
+    - Tick:
+        No: 4077
+      Channel: 2
+    - Tick:
+        No: 4077
+      Channel: 3
+    - Tick:
+        No: 4100
+      Channel: 2
+    - Tick:
+        No: 4100
+      Channel: 0
+    - Tick:
+        No: 4123
+      Channel: 2
+    - Tick:
+        No: 4123
+      Channel: 0
+    - Tick:
+        No: 4134
+      Channel: 3
+    - Tick:
+        No: 4146
+      Channel: 0
+    - Tick:
+        No: 4146
+      Channel: 2
+    - Tick:
+        No: 4157
+      Channel: 3
+    - Tick:
+        No: 4168
+      Channel: 2
+    - Tick:
+        No: 4168
+      Channel: 0
+    - Tick:
+        No: 4191
+      Channel: 1
+    - Tick:
+        No: 4191
+      Channel: 3
+    - Tick:
+        No: 4214
+      Channel: 3
+    - Tick:
+        No: 4214
+      Channel: 1
+    - Tick:
+        No: 4225
+      Channel: 0
+    - Tick:
+        No: 4237
+      Channel: 1
+    - Tick:
+        No: 4237
+      Channel: 3
+    - Tick:
+        No: 4260
+      Channel: 0
+    - Tick:
+        No: 4282
+      Channel: 1
+    - Tick:
+        No: 4282
+      Channel: 0
+    - Tick:
+        No: 4305
+      Channel: 0
+    - Tick:
+        No: 4305
+      Channel: 1
+    - Tick:
+        No: 4328
+      Channel: 1
+    - Tick:
+        No: 4328
+      Channel: 2
+    - Tick:
+        No: 4351
+      Channel: 2
+    - Tick:
+        No: 4351
+      Channel: 1
+    - Tick:
+        No: 4373
+      Channel: 3
+    - Tick:
+        No: 4373
+      Channel: 2
+    - Tick:
+        No: 4396
+      Channel: 2
+    - Tick:
+        No: 4396
+      Channel: 3
+    - Tick:
+        No: 4419
+      Channel: 2
+    - Tick:
+        No: 4419
+      Channel: 1
+    - Tick:
+        No: 4442
+      Channel: 1
+    - Tick:
+        No: 4442
+      Channel: 2
+    - Tick:
+        No: 4465
+      Channel: 1
+    - Tick:
+        No: 4465
+      Channel: 0
+    - Tick:
+        No: 4487
+      Channel: 1
+    - Tick:
+        No: 4487
+      Channel: 0
+    - Tick:
+        No: 4510
+      Channel: 0
+    - Tick:
+        No: 4510
+      Channel: 1
+    - Tick:
+        No: 4533
+      Channel: 1
+    - Tick:
+        No: 4533
+      Channel: 2
+    - Tick:
+        No: 4556
+      Channel: 3
+    - Tick:
+        No: 4556
+      Channel: 2
+    - Tick:
+        No: 4579
+      Channel: 2
+    - Tick:
+        No: 4579
+      Channel: 3
+    - Tick:
+        No: 4601
+      Channel: 3
+    - Tick:
+        No: 4601
+      Channel: 2
+    - Tick:
+        No: 4624
+      Channel: 3
+    - Tick:
+        No: 4647
+      Channel: 2
+    - Tick:
+        No: 4670
+      Channel: 0
+    - Tick:
+        No: 4681
+      Channel: 1
+    - Tick:
+        No: 4692
+      Channel: 3
+    - Tick:
+        No: 4715
+      Channel: 0
+    - Tick:
+        No: 4727
+      Channel: 1
+    - Tick:
+        No: 4738
+      Channel: 3
+    - Tick:
+        No: 4761
+      Channel: 0
+    - Tick:
+        No: 4772
+      Channel: 1
+    - Tick:
+        No: 4784
+      Channel: 3
+    - Tick:
+        No: 4806
+      Channel: 2
+    - Tick:
+        No: 4829
+      Channel: 0
+    - Tick:
+        No: 4829
+      Channel: 1
+    - Tick:
+        No: 4852
+      Channel: 1
+    - Tick:
+        No: 4852
+      Channel: 0
+    - Tick:
+        No: 4875
+      Channel: 2
+    - Tick:
+        No: 4875
+      Channel: 3
+    - Tick:
+        No: 4898
+      Channel: 2
+    - Tick:
+        No: 4898
+      Channel: 3
+    - Tick:
+        No: 4920
+      Channel: 1
+    - Tick:
+        No: 4920
+      Channel: 2
+    - Tick:
+        No: 4943
+      Channel: 2
+    - Tick:
+        No: 4943
+      Channel: 1
+    - Tick:
+        No: 4966
+      Channel: 2
+    - Tick:
+        No: 4966
+      Channel: 3
+    - Tick:
+        No: 4989
+      Channel: 0
+    - Tick:
+        No: 4989
+      Channel: 1
+    - Tick:
+        No: 5011
+      Channel: 0
+    - Tick:
+        No: 5023
+      Channel: 1
+    - Tick:
+        No: 5034
+      Channel: 0
+    - Tick:
+        No: 5046
+      Channel: 1
+    - Tick:
+        No: 5057
+      Channel: 0
+    - Tick:
+        No: 5068
+      Channel: 1
+    - Tick:
+        No: 5080
+      Channel: 0
+    - Tick:
+        No: 5091
+      Channel: 1
+    - Tick:
+        No: 5103
+      Channel: 3
+    - Tick:
+        No: 5114
+      Channel: 2
+    - Tick:
+        No: 5125
+      Channel: 3
+    - Tick:
+        No: 5137
+      Channel: 2
+    - Tick:
+        No: 5148
+      Channel: 3
+    - Tick:
+        No: 5160
+      Channel: 2
+    - Tick:
+        No: 5171
+      Channel: 3
+    - Tick:
+        No: 5182
+      Channel: 2
+    - Tick:
+        No: 5194
+      Channel: 1
+    - Tick:
+        No: 5205
+      Channel: 2
+    - Tick:
+        No: 5217
+      Channel: 1
+    - Tick:
+        No: 5228
+      Channel: 2
+    - Tick:
+        No: 5239
+      Channel: 0
+    - Tick:
+        No: 5251
+      Channel: 3
+    - Tick:
+        No: 5262
+      Channel: 0
+    - Tick:
+        No: 5273
+      Channel: 3
+    - Tick:
+        No: 5285
+      Channel: 0
+    - Tick:
+        No: 5308
+      Channel: 3
+    - Tick:
+        No: 5330
+      Channel: 0
+    - Tick:
+        No: 5353
+      Channel: 3
+    - Tick:
+        No: 5376
+      Channel: 0
+    - Tick:
+        No: 5399
+      Channel: 0
+    - Tick:
+        No: 5399
+      Channel: 1
+    - Tick:
+        No: 5422
+      Channel: 1
+    - Tick:
+        No: 5444
+      Channel: 1
+    - Tick:
+        No: 5444
+      Channel: 2
+    - Tick:
+        No: 5467
+      Channel: 2
+    - Tick:
+        No: 5490
+      Channel: 3
+    - Tick:
+        No: 5490
+      Channel: 2
+    - Tick:
+        No: 5513
+      Channel: 3
+    - Tick:
+        No: 5535
+      Channel: 3
+    - Tick:
+        No: 5535
+      Channel: 2
+    - Tick:
+        No: 5558
+      Channel: 0
+    - Tick:
+        No: 5558
+      Channel: 3
+    - Tick:
+        No: 5581
+      Channel: 0
+    - Tick:
+        No: 5581
+      Channel: 3
+    - Tick:
+        No: 5604
+      Channel: 1
+    - Tick:
+        No: 5604
+      Channel: 3
+    - Tick:
+        No: 5627
+      Channel: 3
+    - Tick:
+        No: 5627
+      Channel: 1
+    - Tick:
+        No: 5649
+      Channel: 3
+    - Tick:
+        No: 5649
+      Channel: 2
+    - Tick:
+        No: 5672
+      Channel: 3
+    - Tick:
+        No: 5672
+      Channel: 2
+    - Tick:
+        No: 5695
+      Channel: 3
+    - Tick:
+        No: 5706
+      Channel: 2
+    - Tick:
+        No: 5718
+      Channel: 1
+    - Tick:
+        No: 5729
+      Channel: 0
+    - Tick:
+        No: 5741
+      Channel: 1
+    - Tick:
+        No: 5763
+      Channel: 3
+    - Tick:
+        No: 5763
+      Channel: 2
+    - Tick:
+        No: 5786
+      Channel: 1
+    - Tick:
+        No: 5798
+      Channel: 1
+    - Tick:
+        No: 5809
+      Channel: 2
+    - Tick:
+        No: 5809
+      Channel: 3
+    - Tick:
+        No: 5832
+      Channel: 0
+    - Tick:
+        No: 5855
+      Channel: 2
+    - Tick:
+        No: 5855
+      Channel: 3
+    - Tick:
+        No: 5877
+      Channel: 0
+    - Tick:
+        No: 5889
+      Channel: 0
+    - Tick:
+        No: 5900
+      Channel: 3
+    - Tick:
+        No: 5900
+      Channel: 2
+    - Tick:
+        No: 5923
+      Channel: 2
+    - Tick:
+        No: 5946
+      Channel: 1
+    - Tick:
+        No: 5946
+      Channel: 0
+    - Tick:
+        No: 5968
+      Channel: 2
+    - Tick:
+        No: 5980
+      Channel: 3
+    - Tick:
+        No: 5991
+      Channel: 2
+    - Tick:
+        No: 6003
+      Channel: 1
+    - Tick:
+        No: 6014
+      Channel: 0
+    - Tick:
+        No: 6025
+      Channel: 0
+    - Tick:
+        No: 6037
+      Channel: 1
+    - Tick:
+        No: 6048
+      Channel: 1
+    - Tick:
+        No: 6060
+      Channel: 2
+    - Tick:
+        No: 6071
+      Channel: 2
+    - Tick:
+        No: 6082
+      Channel: 3
+    - Tick:
+        No: 6094
+      Channel: 3

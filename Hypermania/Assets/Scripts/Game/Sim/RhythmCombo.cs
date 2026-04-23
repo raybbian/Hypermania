@@ -1,5 +1,7 @@
 using Design.Configs;
+using Game;
 using Utils;
+using Utils.SoftFloat;
 
 namespace Game.Sim
 {
@@ -35,31 +37,34 @@ namespace Game.Sim
             // from PartialSimFrameCount sub-frame gating under
             // SpeedRatio=0.5, plus the switch statement re-entering on
             // GameMode==Mania the frame after the transition).
-            int fpb = options.Global.Audio.FramesPerBeat;
+            AudioConfig audio = options.Global.Audio;
             int halfRange = state.Config.HitHalfRange;
             Frame earliestStart = realFrame + options.Global.ManiaSlowTicks + halfRange + 3;
 
-            // Next quarter-note boundary at or after earliestStart.
-            int delta = earliestStart - options.Global.Audio.FirstMusicalBeat;
-            int beats =
-                delta >= 0
-                    ? (delta + fpb - 1) / fpb // ceil
-                    : delta / fpb; // C# truncation toward zero == ceil for negatives
-            Frame nextBeat = options.Global.Audio.FirstMusicalBeat + options.Global.Audio.BeatsToFrame(beats);
+            // Next quarter-note boundary at or after earliestStart. Use the
+            // exact fpb ratio rather than the pre-rounded FramesPerBeat — the
+            // integer ceil against a rounded fpb could pick the wrong beat
+            // when fpb's rounding direction disagreed with the true 3600/BPM,
+            // occasionally yielding nextBeat < earliestStart.
+            sfloat framesPerBeatExact = (sfloat)60f / audio.Bpm * (sfloat)GameManager.TPS;
+            int delta = earliestStart - audio.FirstMusicalBeat;
+            int beats = Mathsf.CeilToInt((sfloat)delta / framesPerBeatExact);
+            Frame nextBeat = audio.FirstMusicalBeat + audio.BeatsToFrame(beats);
 
             int hitstop = nextBeat - earliestStart;
 
-            Frame[] noteFrames = options.Global.Audio.SliceFrom(earliestStart, comboBeatCount);
+            ManiaDifficulty difficulty = options.Players[attackerIndex].ManiaDifficulty;
+            BeatmapNote[] notes = audio.SliceFrom(earliestStart, difficulty, comboBeatCount);
 
-            if (noteFrames.Length == 0)
+            if (notes.Length == 0)
             {
                 // Song chart exhausted — no combo to run this trigger.
                 return 0;
             }
 
             // Generate combo dynamically via simulation against the authored
-            // frame slice.
-            GeneratedCombo combo = ComboGenerator.Generate(gameState, options, attackerIndex, noteFrames, hitstop);
+            // (frame, channel) slice.
+            GeneratedCombo combo = ComboGenerator.Generate(gameState, options, attackerIndex, notes, hitstop);
 
             // Queue notes to mania channels. ComboGenerator already emits
             // world-space inputs (e.g. Dash | Left for a left-facing attacker's
@@ -67,10 +72,12 @@ namespace Game.Sim
             // flip them here — the blanket flip based on combo-start facing
             // both inverts the dash direction and mishandles mid-combo
             // cross-ups, where the attacker's facing changes between beats.
+            // Channel comes from the authored beatmap (.osz column), routed by
+            // ComboGenerator onto each emitted move.
             for (int i = 0; i < combo.Moves.Count; i++)
             {
                 state.QueueNote(
-                    i % 4,
+                    combo.Moves[i].Channel,
                     new ManiaNote
                     {
                         Length = 0,

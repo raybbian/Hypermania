@@ -123,6 +123,7 @@ namespace Game.Sim
             && (
                 State == CharacterState.Death
                 || State == CharacterState.Knockdown
+                || State == CharacterState.HeavyKnockdown
                 || State == CharacterState.Hit
                 || State == CharacterState.Grabbed
             );
@@ -449,6 +450,20 @@ namespace Game.Sim
                     return;
                 }
 
+                if (
+                    (State == CharacterState.Knockdown || State == CharacterState.HeavyKnockdown)
+                    && OnGround(options)
+                )
+                {
+                    CharacterConfig config = options.Players[Index].Character;
+                    SetState(
+                        CharacterState.GetUp,
+                        frame,
+                        frame + config.GetHitboxData(CharacterState.GetUp).TotalTicks
+                    );
+                    return;
+                }
+
                 if (OnGround(options))
                 {
                     SetState(CharacterState.Idle, frame, Frame.Infinity);
@@ -635,7 +650,12 @@ namespace Game.Sim
             GameMode gameMode
         )
         {
-            if (State == CharacterState.Hit)
+            if (
+                State == CharacterState.Hit
+                || State == CharacterState.Knockdown
+                || State == CharacterState.HeavyKnockdown
+                || State == CharacterState.GetUp
+            )
             {
                 if (InputH.IsHeld(InputFlags.Burst))
                 {
@@ -915,10 +935,20 @@ namespace Game.Sim
                 return;
             }
 
-            if (State == CharacterState.Knockdown)
+            // Knockdown is entered airborne with StateEnd = Infinity; on the
+            // first grounded frame, latch the downed timer so TickStateMachine
+            // will transition into GetUp when it expires. Guarded on
+            // Frame.Infinity so this doesn't reset the timer every grounded
+            // frame while the fighter is lying down.
+            if (State == CharacterState.Knockdown && StateEnd == Frame.Infinity)
             {
-                // TODO: getup options
-                SetState(CharacterState.Idle, frame, Frame.Infinity);
+                SetState(CharacterState.Knockdown, frame, frame + options.Global.LightKnockdownTicks, true);
+                return;
+            }
+
+            if (State == CharacterState.HeavyKnockdown && StateEnd == Frame.Infinity)
+            {
+                SetState(CharacterState.HeavyKnockdown, frame, frame + options.Global.HeavyKnockdownTicks, true);
                 return;
             }
 
@@ -1051,6 +1081,9 @@ namespace Game.Sim
                     break;
                 case KnockdownKind.Light:
                     SetState(CharacterState.Knockdown, frame, Frame.Infinity, true);
+                    break;
+                case KnockdownKind.Heavy:
+                    SetState(CharacterState.HeavyKnockdown, frame, Frame.Infinity, true);
                     break;
             }
 

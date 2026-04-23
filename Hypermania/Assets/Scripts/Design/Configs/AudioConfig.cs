@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game;
+using Game.Sim;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utils;
@@ -9,12 +10,22 @@ using Utils.SoftFloat;
 
 namespace Design.Configs
 {
+    /// <summary>
+    /// One .osz difficulty's authored notes. Paired in <see cref="AudioConfig"/>
+    /// so each mania-difficulty selection (Normal / Hard) has its own chart.
+    /// </summary>
+    [Serializable]
+    public struct BeatmapDifficulty
+    {
+        public string DifficultyName;
+        public BeatmapNote[] Notes;
+    }
+
     [CreateAssetMenu(menuName = "Hypermania/Audio Config")]
     public class AudioConfig : ScriptableObject
     {
-        [Header("MIDI Source")]
-        public UnityEngine.Object MidiFile;
-        public string MidiTrackName;
+        [Header("Beatmap Source")]
+        public UnityEngine.Object OszFile;
 
         public Frame FirstMusicalBeat = Frame.FirstFrame;
 
@@ -32,11 +43,25 @@ namespace Design.Configs
         public int ComboBeatCount = 8;
 
         /// <summary>
-        /// Authored note positions as absolute sim-frame indices for the
-        /// first playthrough of the song. Generated from MIDI via the
-        /// editor "Generate Notes from MIDI" button.
+        /// Authored notes for <see cref="ManiaDifficulty.Normal"/>.
+        /// Populated from the .osz via "Generate Notes from Beatmap". Sorted
+        /// by <see cref="BeatmapNote.Tick"/> ascending; multiple notes may
+        /// share a frame on different channels.
         /// </summary>
-        public Frame[] Notes = Array.Empty<Frame>();
+        public BeatmapDifficulty Normal = new BeatmapDifficulty { Notes = Array.Empty<BeatmapNote>() };
+
+        /// <summary>
+        /// Authored notes for <see cref="ManiaDifficulty.Hard"/>. Same shape
+        /// as <see cref="Normal"/>; the active set is chosen at combo start
+        /// from <see cref="PlayerOptions.ManiaDifficulty"/>.
+        /// </summary>
+        public BeatmapDifficulty Hard = new BeatmapDifficulty { Notes = Array.Empty<BeatmapNote>() };
+
+        public BeatmapNote[] NotesFor(ManiaDifficulty difficulty)
+        {
+            BeatmapNote[] notes = difficulty == ManiaDifficulty.Hard ? Hard.Notes : Normal.Notes;
+            return notes ?? Array.Empty<BeatmapNote>();
+        }
 
         //Convert BPM to seconds per frame, then seconds to frames
         public int FramesPerBeat => Mathsf.RoundToInt((sfloat)60f / Bpm * GameManager.TPS);
@@ -67,20 +92,20 @@ namespace Design.Configs
 
         /// <summary>
         /// True when <paramref name="frame"/> sits on a quarter-note grid
-        /// position relative to <see cref="FirstMusicalBeat"/>. Uses a
-        /// ±1-frame tolerance to absorb <see cref="BeatsToFrame"/>'s
-        /// rounding drift (the round-trip <c>Round(beats) → BeatsToFrame</c>
-        /// can differ from the authored frame by up to one frame at certain
-        /// BPMs like 140).
+        /// position relative to <see cref="FirstMusicalBeat"/>, within ±2
+        /// frames. Computes drift continuously: one Round to pick the nearest
+        /// integer beat, then measures how far <paramref name="frame"/> is
+        /// from that beat directly in frames — no roundtrip through
+        /// <see cref="BeatsToFrame"/>. Tighter than the old
+        /// <c>Round(beats) → BeatsToFrame</c> path, which stacked an extra
+        /// ±0.5-frame error on top of the already-rounded <c>delta</c>.
         /// </summary>
         public bool IsOnBeat(Frame frame)
         {
-            int delta = frame - FirstMusicalBeat;
-            sfloat beatsF = (sfloat)delta * Bpm / (sfloat)60f / (sfloat)GameManager.TPS;
-            int nearest = Mathsf.RoundToInt(beatsF);
-            int nearestFrame = FirstMusicalBeat.No + BeatsToFrame(nearest);
-            int diff = frame.No - nearestFrame;
-            return diff <= 1 && diff >= -1;
+            sfloat framesPerBeatExact = (sfloat)60f / Bpm * (sfloat)GameManager.TPS;
+            sfloat beatsF = (sfloat)(frame - FirstMusicalBeat) / framesPerBeatExact;
+            sfloat driftFrames = (beatsF - (sfloat)Mathsf.RoundToInt(beatsF)) * framesPerBeatExact;
+            return driftFrames >= (sfloat)(-2f) && driftFrames <= (sfloat)2f;
         }
 
         /// <summary>
@@ -90,10 +115,11 @@ namespace Design.Configs
         /// frame positions. Loop iteration offsets are computed via continuous math
         /// (<see cref="BeatsToFrame"/>) to avoid cumulative rounding drift.
         /// </summary>
-        public Frame[] SliceFrom(Frame minStart, int comboBeatCount = -1)
+        public BeatmapNote[] SliceFrom(Frame minStart, ManiaDifficulty difficulty, int comboBeatCount = -1)
         {
-            if (Notes == null || Notes.Length == 0)
-                return Array.Empty<Frame>();
+            BeatmapNote[] notes = NotesFor(difficulty);
+            if (notes.Length == 0)
+                return Array.Empty<BeatmapNote>();
 
             if (comboBeatCount < 0)
                 comboBeatCount = ComboBeatCount;
@@ -102,24 +128,24 @@ namespace Design.Configs
             int loopStartFrame = BeatsToFrame(LoopBeat);
             int loopBeats = SongLengthBeats - LoopBeat;
 
-            var result = new List<Frame>();
+            var result = new List<BeatmapNote>();
 
-            int first = LowerBound(Notes, minStart);
+            int first = LowerBound(notes, minStart);
 
             // First playthrough: notes in [minStart, min(endBound, songEnd))
-            for (int i = first; i < Notes.Length; i++)
+            for (int i = first; i < notes.Length; i++)
             {
-                if (Notes[i].No >= songEnd || Notes[i] > endBound)
+                if (notes[i].Tick.No >= songEnd || notes[i].Tick > endBound)
                     break;
-                result.Add(Notes[i]);
+                result.Add(notes[i]);
             }
 
             if (endBound.No <= songEnd || loopBeats <= 0)
                 return result.ToArray();
 
             // Loop-section note indices via binary search
-            int loopFirst = LowerBound(Notes, (Frame)loopStartFrame);
-            int loopEnd = LowerBound(Notes, (Frame)songEnd);
+            int loopFirst = LowerBound(notes, (Frame)loopStartFrame);
+            int loopEnd = LowerBound(notes, (Frame)songEnd);
             if (loopFirst >= loopEnd)
                 return result.ToArray();
 
@@ -128,34 +154,39 @@ namespace Design.Configs
 
             for (int n = startIter; ; n++)
             {
-                // Continuous math: rounds once per iteration, no cumulative drift.
-                int iterStart = BeatsToFrame(LoopBeat + n * loopBeats);
+                // Shift this iteration by exactly n·loopBeats beats — one Round,
+                // applied to the already-rounded Tick. Previously this was
+                // `Tick - Round(LoopBeat·Y) + Round((LoopBeat+n·L)·Y)` (three
+                // rounded operands), which drifted by up to 1.5 frames. The
+                // shift-only form is mathematically equivalent and drifts by
+                // at most 1 frame.
+                int loopShift = BeatsToFrame(n * loopBeats);
 
-                int firstAbsolute = Notes[loopFirst].No - loopStartFrame + iterStart;
+                int firstAbsolute = notes[loopFirst].Tick.No + loopShift;
                 if (firstAbsolute > endBound.No)
                     break;
 
                 for (int i = loopFirst; i < loopEnd; i++)
                 {
-                    int absolute = Notes[i].No - loopStartFrame + iterStart;
+                    int absolute = notes[i].Tick.No + loopShift;
                     if (absolute > endBound.No)
                         break;
                     if (absolute >= minStart.No)
-                        result.Add((Frame)absolute);
+                        result.Add(new BeatmapNote { Tick = (Frame)absolute, Channel = notes[i].Channel });
                 }
             }
 
             return result.ToArray();
         }
 
-        private static int LowerBound(Frame[] arr, Frame target)
+        private static int LowerBound(BeatmapNote[] arr, Frame target)
         {
             int lo = 0,
                 hi = arr.Length;
             while (lo < hi)
             {
                 int mid = (lo + hi) / 2;
-                if (arr[mid] < target)
+                if (arr[mid].Tick < target)
                     lo = mid + 1;
                 else
                     hi = mid;

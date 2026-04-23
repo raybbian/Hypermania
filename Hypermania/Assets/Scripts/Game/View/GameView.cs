@@ -221,7 +221,7 @@ namespace Game.View
             {
                 _conductor.t = Mathf.Lerp(
                     _conductor.t,
-                    (float)(state.HypeMeter / options.Global.MaxHype),
+                    (float)(-state.HypeMeter / options.Global.MaxHype),
                     deltaTime * _conductorLerpSpeed
                 );
             }

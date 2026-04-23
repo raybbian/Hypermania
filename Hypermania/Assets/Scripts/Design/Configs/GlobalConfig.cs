@@ -62,11 +62,21 @@ namespace Design.Configs
         public sfloat ManiaFailKnockbackMagnitude = (sfloat)1.5f;
         public int GrabTechWindow = 10;
         public int GrabTechStunTicks = 20;
+        public int LightKnockdownTicks = 30;
+        public int HeavyKnockdownTicks = 60;
         public sfloat GrabTechKnockbackMagnitude = (sfloat)2f;
         public int StalingBufferSize = 8;
         public sfloat RhythmComboFinisherDamageMult = (sfloat)2f;
         public sfloat FreestyleDamageMultiplier = (sfloat)1.5f;
         public sfloat FreestyleHitstunMultiplier = (sfloat)1.25f;
+
+        /// <summary>
+        /// Damage multiplier applied to hits dealt by an attacker whose
+        /// <see cref="Game.Sim.PlayerOptions.ManiaDifficulty"/> is
+        /// <see cref="Game.Sim.ManiaDifficulty.Normal"/> (the easier setting).
+        /// Hard attackers deal full damage (implicit 1.0x).
+        /// </summary>
+        public sfloat NormalDifficultyDamageMultiplier = (sfloat)0.6f;
         public sfloat CameraHalfWidth => CameraHalfHeight * (sfloat)1.7777777f;
 
         [SerializeField]

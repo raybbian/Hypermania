@@ -33,6 +33,9 @@ namespace Netcode.P2P
         public const string LobbyGameKey = "game";
         public const string LobbyGameValue = "Hypermania";
 
+        private const string OnlinePresenceKey = "ol_present";
+        private const string OnlinePresentValue = "1";
+
         public CSteamID CurrentLobby => _currentLobby;
         public bool InLobby => _currentLobby.IsValid();
         public Action<List<CSteamID>> OnStartWithPlayers;
@@ -66,6 +69,17 @@ namespace Netcode.P2P
         public Action<string[]> OnCharacterSelectLaunch;
 
         /// <summary>
+        /// Fires on every lobby member when a non-host forwards a frame's
+        /// input edges to the host (see <see cref="SendCharacterSelectInput"/>).
+        /// Only the host acts on this; non-hosts ignore it. Args are six
+        /// booleans in edge order (left, right, up, down, confirm, back).
+        /// Input-forwarding is how the non-host requests state changes on
+        /// the authoritative CharacterSelect — the host owns the state and
+        /// applies collision logic before broadcasting the result.
+        /// </summary>
+        public Action<bool, bool, bool, bool, bool, bool> OnCharacterSelectInput;
+
+        /// <summary>
         /// Fires on remaining lobby members when another member departs the
         /// current lobby — whether they explicitly left, disconnected
         /// (e.g. quit the process), were kicked, or were banned. The arg is
@@ -76,6 +90,8 @@ namespace Netcode.P2P
         /// silent-departure cases where no chat message is sent.
         /// </summary>
         public Action<CSteamID> OnPeerLeft;
+
+        private string _lastPresenceWrite;
 
         public SteamMatchmakingClient()
         {
@@ -158,6 +174,7 @@ namespace Netcode.P2P
                 }
                 _currentLobby = default;
             }
+            _lastPresenceWrite = null;
             return Task.CompletedTask;
         }
 
@@ -231,6 +248,78 @@ namespace Netcode.P2P
             );
             SendChat(LobbyChatOpcode.CsLaunch, args);
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Non-host forwards a frame's input edges to the host. Encoded as
+        /// six decimal "0"/"1" args in edge order (left, right, up, down,
+        /// confirm, back). Only the host's
+        /// <see cref="OnCharacterSelectInput"/> subscriber should act on the
+        /// resulting event; non-hosts ignore it.
+        /// </summary>
+        public Task SendCharacterSelectInput(bool left, bool right, bool up, bool down, bool confirm, bool back)
+        {
+            if (!_currentLobby.IsValid())
+                return Task.CompletedTask;
+
+            string[] args = new[]
+            {
+                left ? "1" : "0",
+                right ? "1" : "0",
+                up ? "1" : "0",
+                down ? "1" : "0",
+                confirm ? "1" : "0",
+                back ? "1" : "0",
+            };
+            SendChat(LobbyChatOpcode.CsInput, args);
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Advertises whether the local client is actively showing the Online
+        /// lobby screen. Writes to this client's per-member lobby data slot
+        /// (<see cref="OnlinePresenceKey"/>) so peers can poll via
+        /// <see cref="AllMembersInOnlineLobby"/> before relying on the Online
+        /// lobby's chat subscribers being active on the far side. Deduped
+        /// against the last write so idempotent calls from the per-frame
+        /// Update loop don't spam Steam.
+        /// </summary>
+        public void SetSelfInOnlineLobby(bool present)
+        {
+            if (!SteamManager.Initialized || !InLobby)
+                return;
+            string value = present ? OnlinePresentValue : string.Empty;
+            if (value == _lastPresenceWrite)
+                return;
+            _lastPresenceWrite = value;
+            SteamMatchmaking.SetLobbyMemberData(_currentLobby, OnlinePresenceKey, value);
+        }
+
+        /// <summary>
+        /// Host-side gate for starting a match: returns true only when every
+        /// current lobby member has advertised themselves as present in the
+        /// Online lobby scene via <see cref="SetSelfInOnlineLobby"/>. Guards
+        /// against the host sending a START chat message before a peer
+        /// (e.g. returning from BattleEnd) has remounted OnlineDirectory and
+        /// subscribed to it.
+        /// </summary>
+        public bool AllMembersInOnlineLobby()
+        {
+            if (!InLobby)
+                return false;
+            int count = SteamMatchmaking.GetNumLobbyMembers(_currentLobby);
+            if (count <= 0)
+                return false;
+            for (int i = 0; i < count; i++)
+            {
+                CSteamID m = SteamMatchmaking.GetLobbyMemberByIndex(_currentLobby, i);
+                if (!m.IsValid())
+                    return false;
+                string value = SteamMatchmaking.GetLobbyMemberData(_currentLobby, m, OnlinePresenceKey);
+                if (value != OnlinePresentValue)
+                    return false;
+            }
+            return true;
         }
 
         private CSteamID _currentLobby;
@@ -372,6 +461,24 @@ namespace Netcode.P2P
                         $"[Matchmaking] Received CS_LAUNCH from={user.m_SteamID}, me={SteamUser.GetSteamID()}, args=[{string.Join(",", args)}]"
                     );
                     OnCharacterSelectLaunch?.Invoke(args);
+                    return;
+
+                case LobbyChatOpcode.CsInput:
+                    if (args.Length != 6)
+                    {
+                        Debug.LogWarning(
+                            $"[Matchmaking] Dropping CS_INPUT with unexpected arg count {args.Length}: [{string.Join(",", args)}]"
+                        );
+                        return;
+                    }
+                    OnCharacterSelectInput?.Invoke(
+                        args[0] == "1",
+                        args[1] == "1",
+                        args[2] == "1",
+                        args[3] == "1",
+                        args[4] == "1",
+                        args[5] == "1"
+                    );
                     return;
 
                 case LobbyChatOpcode.Start:

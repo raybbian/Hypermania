@@ -43,6 +43,8 @@ namespace Game
         HeavyAerialFollowUp = 35,
         MediumAttackFollowUp = 36,
         SpecialAerialFollowUp = 37,
+        HeavyKnockdown = 38,
+        GetUp = 39,
     }
 
     [Serializable]

@@ -232,7 +232,10 @@ namespace Game.Sim
             // RealFrame advance in lockstep during Countdown (SpeedRatio=1, no hitstop),
             // so aligning RealFrame here keeps every subsequent beat transition on-beat.
             var audio = options.Global.Audio;
-            int framesPerWholeNote = audio.FramesPerBeat * 4;
+            // Round 4·Y once instead of Round(Y)·4 — the latter amplifies the
+            // rounding error of FramesPerBeat to ±2 frames; BeatsToFrame(4)
+            // rounds the product a single time and caps drift at ±0.5.
+            int framesPerWholeNote = audio.BeatsToFrame(4);
             int phase =
                 ((RealFrame.No - audio.FirstMusicalBeat.No) % framesPerWholeNote + framesPerWholeNote)
                 % framesPerWholeNote;
@@ -1018,6 +1021,22 @@ namespace Game.Sim
                         }
                     }
 
+                    // If the fighter that just took this hit is currently
+                    // running their own rhythm combo (as the attacker), tear
+                    // the combo down. Incoming hitstun/knockback from
+                    // ApplyHit already landed; we only need to unwind the
+                    // combo state so inputs stop firing and the opponent
+                    // leaves locked hitstun.
+                    if (outcome.Kind == HitKind.Hit && Manias[owners.Item2].Enabled(RealFrame))
+                    {
+                        Manias[owners.Item2].End();
+                        GameMode = GameMode.Fighting;
+                        ClearLockedHitstun();
+                        Fighters[owners.Item2].RhythmComboFinisherActive = false;
+                        Fighters[owners.Item2].RhythmComboTier2 = false;
+                        Fighters[owners.Item2].ResetNoOpBonus();
+                    }
+
                     //to start a rhythm combo, we must sure that the move was not traded
                     if (
                         options.Players[owners.Item1].ComboMode == ComboMode.Rhythm
@@ -1256,6 +1275,9 @@ namespace Game.Sim
             // so it applies exactly once, to the next attack that lands after
             // one or more no-op beats in the current mania.
             mult *= Fighters[attacker.Owner].ConsumeNoOpBonus();
+
+            if (options.Players[attacker.Owner].ManiaDifficulty == ManiaDifficulty.Normal)
+                mult *= options.Global.NormalDifficultyDamageMultiplier;
 
             HitOutcome outcome = Fighters[defender.Owner]
                 .ApplyHit(

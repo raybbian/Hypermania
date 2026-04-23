@@ -40,6 +40,16 @@ namespace Game.Sim
         public InputFlags Input;
         public Frame BeatFrame;
         public ComboMoveKind Kind;
+
+        /// <summary>
+        /// Mania channel (column) the authored note this move corresponds to
+        /// lives on. Routed by <see cref="RhythmComboManager"/> when the move
+        /// is queued onto <see cref="ManiaState.Channels"/>. For moves that
+        /// don't originate from an authored note (e.g. the inter-beat NoOp
+        /// half of an on-beat pair), the generator copies the source note's
+        /// channel so the queue still has a valid target.
+        /// </summary>
+        public int Channel;
     }
 
     /// <summary>
@@ -228,29 +238,48 @@ namespace Game.Sim
             in GameState state,
             GameOptions options,
             int attackerIndex,
-            Frame[] noteFrames,
+            BeatmapNote[] notes,
             int gameHitstop
         )
         {
             ComboGenerator gen = new ComboGenerator();
-            return gen.Run(state, options, attackerIndex, noteFrames, gameHitstop);
+            return gen.Run(state, options, attackerIndex, notes, gameHitstop);
         }
 
         public GeneratedCombo Run(
             in GameState state,
             GameOptions options,
             int attackerIndex,
-            Frame[] noteFrames,
+            BeatmapNote[] notes,
             int gameHitstop
         )
         {
-            if (noteFrames == null || noteFrames.Length == 0)
+            if (notes == null || notes.Length == 0)
             {
                 return new GeneratedCombo { Moves = new List<GeneratedComboMove>(), EndFrame = state.RealFrame };
             }
 
+            // Simultaneous-note handling: multiple authored notes on the same
+            // frame (different mania columns) collapse to ONE primary note
+            // that runs the full attack/movement pipeline, plus one NoOp per
+            // extra column so the player still sees and presses every note.
+            // Without this split, each duplicate iteration would snapshot the
+            // post-primary-attack state, fail every strict-attack candidate
+            // (attacker mid-animation), fall through to the movement fallback,
+            // and emit non-damaging dashes — which looked like "moves aren't
+            // hitting" because half the notes were movements, not attacks.
+            List<BeatmapNote> primaryNotes = new List<BeatmapNote>(notes.Length);
+            List<BeatmapNote> extraNoOps = new List<BeatmapNote>();
+            for (int i = 0; i < notes.Length; i++)
+            {
+                if (i > 0 && notes[i].Tick == notes[i - 1].Tick)
+                    extraNoOps.Add(notes[i]);
+                else
+                    primaryNotes.Add(notes[i]);
+            }
+
             InitializeFromCaller(options, attackerIndex);
-            SeedWorkingState(state, gameHitstop, noteFrames[0]);
+            SeedWorkingState(state, gameHitstop, primaryNotes[0].Tick);
 
             List<GeneratedComboMove> moves = new List<GeneratedComboMove>();
             List<MoveTestResult> candidates = new List<MoveTestResult>();
@@ -266,11 +295,12 @@ namespace Game.Sim
             sfloat prevKb = sfloat.Zero;
             sfloat prevReach = sfloat.Zero;
 
-            for (int i = 0; i < noteFrames.Length; i++)
+            for (int i = 0; i < primaryNotes.Count; i++)
             {
-                Frame currentBeat = noteFrames[i];
-                Frame nextBeat = (i + 1 < noteFrames.Length) ? noteFrames[i + 1] : Frame.Infinity;
-                bool isLastBeat = i == noteFrames.Length - 1;
+                Frame currentBeat = primaryNotes[i].Tick;
+                int currentChannel = primaryNotes[i].Channel;
+                Frame nextBeat = (i + 1 < primaryNotes.Count) ? primaryNotes[i + 1].Tick : Frame.Infinity;
+                bool isLastBeat = i == primaryNotes.Count - 1;
 
                 AdvanceToDispatchOf(currentBeat);
                 SnapshotWorking();
@@ -285,6 +315,7 @@ namespace Game.Sim
                         prevKb,
                         prevReach,
                         currentBeat,
+                        currentChannel,
                         nextBeat,
                         moves,
                         beatSnapshots,
@@ -301,7 +332,7 @@ namespace Game.Sim
                 // On-beat no-op pair: requires the current note to sit on
                 // a quarter-note grid position, and a beat i+2 to exist so
                 // the relaxed hitstop check has a target window.
-                bool canTryNoOp = i + 2 < noteFrames.Length && _audio.IsOnBeat(currentBeat);
+                bool canTryNoOp = i + 2 < primaryNotes.Count && _audio.IsOnBeat(currentBeat);
                 if (
                     canTryNoOp
                     && TryOnBeatNoOpPair(
@@ -312,8 +343,10 @@ namespace Game.Sim
                         prevKb,
                         prevReach,
                         currentBeat,
+                        currentChannel,
                         nextBeat,
-                        noteFrames[i + 2],
+                        primaryNotes[i + 1].Channel,
+                        primaryNotes[i + 2].Tick,
                         moves,
                         beatSnapshots,
                         out MoveTestResult relaxed
@@ -327,17 +360,38 @@ namespace Game.Sim
                     continue;
                 }
 
-                Frame beatAfterNext = (i + 2 < noteFrames.Length) ? noteFrames[i + 2] : Frame.Infinity;
-                CommitMovementFallback(currentBeat, nextBeat, beatAfterNext, moves, beatSnapshots);
+                Frame beatAfterNext = (i + 2 < primaryNotes.Count) ? primaryNotes[i + 2].Tick : Frame.Infinity;
+                CommitMovementFallback(currentBeat, currentChannel, nextBeat, beatAfterNext, moves, beatSnapshots);
                 hasPrev = false;
                 prevKb = sfloat.Zero;
                 prevReach = sfloat.Zero;
             }
 
+            // Append NoOps for same-frame duplicates, then sort so moves land
+            // in BeatFrame order. RhythmComboManager queues in list order, and
+            // each channel's deque must be Tick-ordered or ManiaState.Tick
+            // will auto-miss earlier notes stuck behind later ones — which
+            // can happen when the on-beat pair logic emits a NoOp on channel X
+            // at a later frame before an appended duplicate NoOp on the same
+            // channel X lands at an earlier frame.
+            for (int k = 0; k < extraNoOps.Count; k++)
+            {
+                moves.Add(
+                    new GeneratedComboMove
+                    {
+                        Input = InputFlags.None,
+                        BeatFrame = extraNoOps[k].Tick,
+                        Kind = ComboMoveKind.NoOp,
+                        Channel = extraNoOps[k].Channel,
+                    }
+                );
+            }
+            moves.Sort((a, b) => a.BeatFrame.No.CompareTo(b.BeatFrame.No));
+
             return new GeneratedCombo
             {
                 Moves = moves,
-                EndFrame = ComputeEndFrame(noteFrames),
+                EndFrame = ComputeEndFrame(primaryNotes),
                 BeatSnapshots = beatSnapshots,
             };
         }
@@ -420,20 +474,20 @@ namespace Game.Sim
             _working.SpeedRatio = (sfloat)1f;
         }
 
-        private static Frame ComputeEndFrame(Frame[] noteFrames)
+        private static Frame ComputeEndFrame(List<BeatmapNote> notes)
         {
             // Trail the last note by the gap of the authored slice, so the
             // window closes at a musically sensible distance past the
             // finisher. Fall back to a fixed pad for single-note slices.
             int trailingPad = DEFAULT_TRAILING_PAD;
-            if (noteFrames.Length >= 2)
+            if (notes.Count >= 2)
             {
-                int lastGap = noteFrames[noteFrames.Length - 1] - noteFrames[noteFrames.Length - 2];
+                int lastGap = notes[notes.Count - 1].Tick - notes[notes.Count - 2].Tick;
                 if (lastGap > 0)
                     trailingPad = lastGap;
             }
             trailingPad += POST_FINISHER_BUFFER;
-            return noteFrames[noteFrames.Length - 1] + trailingPad;
+            return notes[notes.Count - 1].Tick + trailingPad;
         }
 
         // ------------------------------------------------------------------
@@ -455,6 +509,7 @@ namespace Game.Sim
             sfloat prevKb,
             sfloat prevReach,
             Frame currentBeat,
+            int currentChannel,
             Frame nextBeat,
             List<GeneratedComboMove> moves,
             List<ComboBeatSnapshot> beatSnapshots,
@@ -478,7 +533,15 @@ namespace Game.Sim
             }
 
             chosen = candidates[idx];
-            CommitFromBeatSnapshot(chosen.Input, currentBeat, nextBeat, ComboMoveKind.Attack, moves, beatSnapshots);
+            CommitFromBeatSnapshot(
+                chosen.Input,
+                currentBeat,
+                currentChannel,
+                nextBeat,
+                ComboMoveKind.Attack,
+                moves,
+                beatSnapshots
+            );
             return true;
         }
 
@@ -498,7 +561,9 @@ namespace Game.Sim
             sfloat prevKb,
             sfloat prevReach,
             Frame currentBeat,
+            int currentChannel,
             Frame nextBeat,
+            int nextChannel,
             Frame beatAfterNoop,
             List<GeneratedComboMove> moves,
             List<ComboBeatSnapshot> beatSnapshots,
@@ -520,8 +585,16 @@ namespace Game.Sim
             }
 
             chosen = candidates[idx];
-            CommitFromBeatSnapshot(chosen.Input, currentBeat, nextBeat, ComboMoveKind.Attack, moves, beatSnapshots);
-            CommitNoOpBeat(nextBeat, beatAfterNoop, moves, beatSnapshots);
+            CommitFromBeatSnapshot(
+                chosen.Input,
+                currentBeat,
+                currentChannel,
+                nextBeat,
+                ComboMoveKind.Attack,
+                moves,
+                beatSnapshots
+            );
+            CommitNoOpBeat(nextBeat, nextChannel, beatAfterNoop, moves, beatSnapshots);
             return true;
         }
 
@@ -535,6 +608,7 @@ namespace Game.Sim
         /// </summary>
         private void CommitMovementFallback(
             Frame currentBeat,
+            int currentChannel,
             Frame nextBeat,
             Frame beatAfterNext,
             List<GeneratedComboMove> moves,
@@ -572,7 +646,15 @@ namespace Game.Sim
                 chosenMovement = firstTry;
             }
 
-            CommitFromBeatSnapshot(chosenMovement, currentBeat, nextBeat, ComboMoveKind.Movement, moves, beatSnapshots);
+            CommitFromBeatSnapshot(
+                chosenMovement,
+                currentBeat,
+                currentChannel,
+                nextBeat,
+                ComboMoveKind.Movement,
+                moves,
+                beatSnapshots
+            );
         }
 
         // ------------------------------------------------------------------
@@ -587,6 +669,7 @@ namespace Game.Sim
         private void CommitFromBeatSnapshot(
             InputFlags input,
             Frame currentBeat,
+            int currentChannel,
             Frame nextBeat,
             ComboMoveKind kind,
             List<GeneratedComboMove> moves,
@@ -601,6 +684,7 @@ namespace Game.Sim
                     Input = input,
                     BeatFrame = currentBeat,
                     Kind = kind,
+                    Channel = currentChannel,
                 }
             );
             CaptureBeatSnapshot(beatSnapshots, currentBeat, nextBeat);
@@ -615,6 +699,7 @@ namespace Game.Sim
         /// </summary>
         private void CommitNoOpBeat(
             Frame noOpBeat,
+            int noOpChannel,
             Frame beatAfterNoop,
             List<GeneratedComboMove> moves,
             List<ComboBeatSnapshot> beatSnapshots
@@ -628,6 +713,7 @@ namespace Game.Sim
                     Input = InputFlags.None,
                     BeatFrame = noOpBeat,
                     Kind = ComboMoveKind.NoOp,
+                    Channel = noOpChannel,
                 }
             );
             CaptureBeatSnapshot(beatSnapshots, noOpBeat, beatAfterNoop);
