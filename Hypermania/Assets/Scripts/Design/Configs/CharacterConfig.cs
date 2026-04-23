@@ -22,6 +22,13 @@ namespace Design.Configs
     }
 
     [Serializable]
+    public struct ManiaArrowSpritePair
+    {
+        public Sprite Active;
+        public Sprite Inactive;
+    }
+
+    [Serializable]
     public struct SkinConfig
     {
         public Color MainColor;
@@ -31,6 +38,7 @@ namespace Design.Configs
         public SpriteLibraryAsset SpriteLibrary;
         public Texture2D Portrait;
         public Texture2D Splash;
+        public ManiaArrowSpritePair ManiaArrow;
     }
 
     [Serializable]

@@ -2,6 +2,7 @@ using Game.View;
 using Game.View.Fighters;
 using UnityEditor;
 using UnityEditor.EditorTools;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using Utils.SoftFloat;
 
@@ -10,6 +11,26 @@ namespace Design.Animation.MoveBuilder.Editor
     [EditorTool("MoveBuilder Preview", typeof(EntityView))]
     public sealed class MoveBuilderPreview : EditorTool
     {
+        private static MoveBuilderPreview s_ActiveTool;
+        private static readonly MoveBuilderShortcutContext s_Context = new();
+
+        [InitializeOnLoadMethod]
+        private static void RegisterShortcutContext()
+        {
+            ShortcutManager.RegisterContext(s_Context);
+        }
+
+        public override void OnActivated()
+        {
+            s_ActiveTool = this;
+        }
+
+        public override void OnWillBeDeactivated()
+        {
+            if (s_ActiveTool == this)
+                s_ActiveTool = null;
+        }
+
         public override void OnToolGUI(EditorWindow window)
         {
             var fighter = (EntityView)target;
@@ -25,8 +46,6 @@ namespace Design.Animation.MoveBuilder.Editor
                 return;
             }
             var state = animState.Value;
-
-            HandleKeybinds(m, state);
 
             FrameData curFrame = m.GetCurrentFrame(state);
             if (curFrame == null)
@@ -123,112 +142,92 @@ namespace Design.Animation.MoveBuilder.Editor
             Handles.color = prev;
         }
 
-        private static void HandleKeybinds(MoveBuilderModel m, MoveBuilderAnimationState state)
+        private sealed class MoveBuilderShortcutContext : IShortcutContext
         {
-            var e = Event.current;
-            if (e == null || e.type != EventType.KeyDown)
-                return;
-
-            // Don’t steal typing if Unity has a text field focused (rare in SceneView, but safe)
-            if (EditorGUIUtility.editingTextField)
-                return;
-
-            bool actionKey = EditorGUI.actionKey; // Ctrl on Win/Linux, Cmd on macOS
-            bool shift = e.shift;
-
-            bool HasSelection()
-            {
-                var frame = m.GetCurrentFrame(state);
-                return frame != null && m.SelectedBoxIndex >= 0 && m.SelectedBoxIndex < frame.Boxes.Count;
-            }
-
-            // Add Hitbox (A), Add Hurtbox (Shift+A)
-            if (e.keyCode == KeyCode.A && !actionKey)
-            {
-                m.AddBox(state, shift ? HitboxKind.Hurtbox : HitboxKind.Hitbox);
-                GUI.changed = true;
-                e.Use();
-                return;
-            }
-
-            // Add Grabbox (G)
-            if (e.keyCode == KeyCode.G && !actionKey && !shift)
-            {
-                m.AddBox(state, HitboxKind.Grabbox);
-                GUI.changed = true;
-                e.Use();
-                return;
-            }
-
-            // Duplicate Selected (D)
-            if (e.keyCode == KeyCode.D && !actionKey)
-            {
-                if (HasSelection())
-                {
-                    m.DuplicateSelected(state);
-                    GUI.changed = true;
-                }
-                e.Use();
-                return;
-            }
-
-            // Delete Selected (Backspace/Delete)
-            if ((e.keyCode == KeyCode.Backspace || e.keyCode == KeyCode.Delete) && !actionKey)
-            {
-                if (HasSelection())
-                {
-                    m.DeleteSelected(state);
-                    GUI.changed = true;
-                }
-                e.Use();
-                return;
-            }
-
-            // Copy Box Props (C)
-            if (e.keyCode == KeyCode.C && !actionKey && !shift)
-            {
-                if (HasSelection())
-                {
-                    m.CopySelectedBoxProps(state);
-                    GUI.changed = true;
-                }
-                e.Use();
-                return;
-            }
-
-            // Paste Box Props (V)
-            if (e.keyCode == KeyCode.V && !actionKey && !shift)
-            {
-                if (HasSelection() && m.HasCopiedBoxProps)
-                {
-                    m.PasteBoxPropsToSelected(state);
-                    GUI.changed = true;
-                }
-                e.Use();
-                return;
-            }
-
-            // Copy Frame (Shift + C)
-            if (e.keyCode == KeyCode.C && !actionKey && shift)
-            {
-                m.CopyCurrentFrameData(state);
-                GUI.changed = true;
-                e.Use();
-                return;
-            }
-
-            // Paste Frame (Shift + V)
-            if (e.keyCode == KeyCode.V && !actionKey && shift)
-            {
-                if (m.HasCopiedFrame)
-                {
-                    m.PasteFrameDataToCurrentFrame(state);
-                    GUI.changed = true;
-                }
-                e.Use();
-                return;
-            }
+            public bool active =>
+                s_ActiveTool != null && ToolManager.activeToolType == typeof(MoveBuilderPreview);
         }
+
+        private static void Dispatch(
+            System.Action<MoveBuilderModel, MoveBuilderAnimationState> op,
+            bool requireSelection = false
+        )
+        {
+            if (s_ActiveTool == null)
+                return;
+            var fighter = s_ActiveTool.target as EntityView;
+            if (fighter == null)
+                return;
+
+            var animState = MoveBuilderAnimationState.GetAnimState();
+            if (!animState.HasValue)
+                return;
+            var state = animState.Value;
+
+            var m = MoveBuilderModelStore.Get(fighter);
+            var frame = m.GetCurrentFrame(state);
+            if (frame == null)
+                return;
+
+            if (requireSelection && (m.SelectedBoxIndex < 0 || m.SelectedBoxIndex >= frame.Boxes.Count))
+                return;
+
+            op(m, state);
+            SceneView.RepaintAll();
+        }
+
+        [Shortcut("MoveBuilder/Add Hitbox", typeof(MoveBuilderShortcutContext), KeyCode.A)]
+        private static void Shortcut_AddHitbox(ShortcutArguments _) =>
+            Dispatch((m, s) => m.AddBox(s, HitboxKind.Hitbox));
+
+        [Shortcut("MoveBuilder/Add Hurtbox", typeof(MoveBuilderShortcutContext), KeyCode.A, ShortcutModifiers.Shift)]
+        private static void Shortcut_AddHurtbox(ShortcutArguments _) =>
+            Dispatch((m, s) => m.AddBox(s, HitboxKind.Hurtbox));
+
+        [Shortcut("MoveBuilder/Add Grabbox", typeof(MoveBuilderShortcutContext), KeyCode.G)]
+        private static void Shortcut_AddGrabbox(ShortcutArguments _) =>
+            Dispatch((m, s) => m.AddBox(s, HitboxKind.Grabbox));
+
+        [Shortcut("MoveBuilder/Duplicate Selected", typeof(MoveBuilderShortcutContext), KeyCode.D)]
+        private static void Shortcut_Duplicate(ShortcutArguments _) =>
+            Dispatch((m, s) => m.DuplicateSelected(s), requireSelection: true);
+
+        [Shortcut("MoveBuilder/Delete Selected (Del)", typeof(MoveBuilderShortcutContext), KeyCode.Delete)]
+        private static void Shortcut_DeleteDel(ShortcutArguments _) =>
+            Dispatch((m, s) => m.DeleteSelected(s), requireSelection: true);
+
+        [Shortcut("MoveBuilder/Delete Selected (Backspace)", typeof(MoveBuilderShortcutContext), KeyCode.Backspace)]
+        private static void Shortcut_DeleteBackspace(ShortcutArguments _) =>
+            Dispatch((m, s) => m.DeleteSelected(s), requireSelection: true);
+
+        [Shortcut("MoveBuilder/Copy Box Props", typeof(MoveBuilderShortcutContext), KeyCode.C)]
+        private static void Shortcut_CopyBoxProps(ShortcutArguments _) =>
+            Dispatch((m, s) => m.CopySelectedBoxProps(s), requireSelection: true);
+
+        [Shortcut("MoveBuilder/Paste Box Props", typeof(MoveBuilderShortcutContext), KeyCode.V)]
+        private static void Shortcut_PasteBoxProps(ShortcutArguments _) =>
+            Dispatch(
+                (m, s) =>
+                {
+                    if (m.HasCopiedBoxProps)
+                        m.PasteBoxPropsToSelected(s);
+                },
+                requireSelection: true
+            );
+
+        [Shortcut("MoveBuilder/Copy Frame", typeof(MoveBuilderShortcutContext), KeyCode.C, ShortcutModifiers.Shift)]
+        private static void Shortcut_CopyFrame(ShortcutArguments _) =>
+            Dispatch((m, s) => m.CopyCurrentFrameData(s));
+
+        [Shortcut("MoveBuilder/Paste Frame", typeof(MoveBuilderShortcutContext), KeyCode.V, ShortcutModifiers.Shift)]
+        private static void Shortcut_PasteFrame(ShortcutArguments _) =>
+            Dispatch(
+                (m, s) =>
+                {
+                    if (m.HasCopiedFrame)
+                        m.PasteFrameDataToCurrentFrame(s);
+                }
+            );
 
         private static void ConsumeScenePicking()
         {

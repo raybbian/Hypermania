@@ -46,8 +46,9 @@ namespace Game.View.Mania
 
         private AudioConfig _audioConfig;
         private List<RectTransform> _beatLinePool;
+        private ManiaArrowSpritePair _arrowSprites;
 
-        public void Init(AudioConfig audioConfig)
+        public void Init(AudioConfig audioConfig, in SkinConfig skin)
         {
             _audioConfig = audioConfig;
             _activeNotes = new Dictionary<int, ManiaNoteView>();
@@ -78,7 +79,33 @@ namespace Game.View.Mania
                 _beatLinePool.Add(lineRect);
             }
 
+            ApplyArrowSkin(skin);
+
             gameObject.SetActive(false);
+        }
+
+        // Source sprite is authored facing up; rotate the anchor/note to point
+        // Down/Up/Left/Right for channels 0/1/2/3 respectively.
+        private static float GetChannelZRotation(int channel) =>
+            channel switch
+            {
+                0 => 180f,
+                1 => 0f,
+                2 => 90f,
+                _ => -90f,
+            };
+
+        private void ApplyArrowSkin(in SkinConfig skin)
+        {
+            _arrowSprites = skin.ManiaArrow;
+            int count = Mathf.Min(Config.Anchors.Length, 4);
+            for (int i = 0; i < count; i++)
+            {
+                Config.Anchors[i].localRotation = Quaternion.Euler(0f, 0f, GetChannelZRotation(i));
+                Config.Anchors[i]
+                    .gameObject.GetComponent<ManiaSpriteSwitcher>()
+                    .ApplySprites(skin.ManiaArrow.Inactive, skin.ManiaArrow.Active);
+            }
         }
 
         public void DeInit()
@@ -226,7 +253,9 @@ namespace Game.View.Mania
             if (!_activeNotes.ContainsKey(note.Id))
             {
                 GameObject noteObj = Instantiate(Config.Notes[channel], transform, false);
+                noteObj.transform.localRotation = Quaternion.Euler(0f, 0f, GetChannelZRotation(channel));
                 noteView = noteObj.GetComponent<ManiaNoteView>();
+                noteView.ApplySprites(_arrowSprites.Inactive, _arrowSprites.Active);
             }
             else
             {

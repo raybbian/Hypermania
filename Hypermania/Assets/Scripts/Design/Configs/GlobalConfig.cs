@@ -60,6 +60,9 @@ namespace Design.Configs
         public int ManiaSlowTicks = 60;
         public int ManiaFailStunTicks = 30;
         public sfloat ManiaFailKnockbackMagnitude = (sfloat)1.5f;
+        public int GrabTechWindow = 10;
+        public int GrabTechStunTicks = 20;
+        public sfloat GrabTechKnockbackMagnitude = (sfloat)2f;
         public int StalingBufferSize = 8;
         public sfloat RhythmComboFinisherDamageMult = (sfloat)2f;
         public sfloat FreestyleDamageMultiplier = (sfloat)1.5f;

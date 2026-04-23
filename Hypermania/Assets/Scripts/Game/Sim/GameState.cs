@@ -311,6 +311,32 @@ namespace Game.Sim
             }
         }
 
+        private void HandleGrabTechs(GameOptions options)
+        {
+            int bufferWindow = options.Global.Input.InputBufferWindow;
+            int techWindow = options.Global.GrabTechWindow;
+
+            for (int i = 0; i < Fighters.Length; i++)
+            {
+                if (Fighters[i].State != CharacterState.Grabbed)
+                    continue;
+                if (!Fighters[i].CurrentGrabTechable)
+                    continue;
+                if (SimFrame - Fighters[i].StateStart > techWindow)
+                    continue;
+                if (!Fighters[i].InputH.PressedRecently(InputFlags.Grab, bufferWindow))
+                    continue;
+
+                int j = i ^ 1;
+
+                SVector2 grabbeePush = Fighters[i].Position.x <= Fighters[j].Position.x ? SVector2.left : SVector2.right;
+                SVector2 grabberPush = -grabbeePush;
+
+                Fighters[i].ApplyGrabTech(SimFrame, options, grabbeePush);
+                Fighters[j].ApplyGrabTech(SimFrame, options, grabberPush);
+            }
+        }
+
         public void Advance(GameOptions options, (GameInput input, InputStatus status)[] inputs)
         {
             if (inputs.Length != options.Players.Length || options.Players.Length != Fighters.Length)
@@ -455,6 +481,8 @@ namespace Game.Sim
             {
                 Fighters[i].ApplyActiveState(SimFrame, options, options.Players[i].Character, rhythmCancel, GameMode);
             }
+
+            HandleGrabTechs(options);
 
             for (int i = 0; i < Fighters.Length; i++)
             {
@@ -1166,6 +1194,11 @@ namespace Game.Sim
 
             if (attacker.Data.Kind == HitboxKind.Grabbox)
             {
+                if (Fighters[attacker.Owner].Location != Fighters[defender.Owner].Location)
+                {
+                    return new HitOutcome { Kind = HitKind.None };
+                }
+
                 Fighters[defender.Owner]
                     .ApplyGrab(SimFrame, attacker.Data, attacker.Box.Pos, Fighters[attacker.Owner].FacingDir);
                 Fighters[attacker.Owner].ProcessHit(SimFrame, attacker.Data, options.Players[attacker.Owner].Character);

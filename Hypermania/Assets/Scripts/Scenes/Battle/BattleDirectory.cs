@@ -85,6 +85,15 @@ namespace Scenes.Battle
 
         void OnGameDisconnected()
         {
+            // If the local sim already reached End, the peer's disconnect is
+            // just them having raced ahead through OnGameFinished and torn
+            // down their session. Route to BattleEnd like a clean finish so
+            // the slower client doesn't get yanked back to the Online lobby.
+            if (_gameManager.Runner.MatchDecided)
+            {
+                OnGameFinished();
+                return;
+            }
             _gameManager.DeInit();
             // Route through LiveConnectionDirectory so the rollback-session
             // disconnect and the P2P-level disconnect (which often fire in the

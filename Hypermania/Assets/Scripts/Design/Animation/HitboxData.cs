@@ -50,6 +50,7 @@ namespace Design.Animation
         public KnockdownKind KnockdownKind;
         public SVector2 Knockback;
         public SVector2 GrabPosition;
+        public bool Techable;
         public bool HasTransition;
         public bool Unblockable;
         public CharacterState OnHitTransition;
@@ -65,6 +66,7 @@ namespace Design.Animation
             && HitstopTicks == other.HitstopTicks
             && BlockstopTicks == other.BlockstopTicks
             && GrabPosition == other.GrabPosition
+            && Techable == other.Techable
             && HasTransition == other.HasTransition
             && Unblockable == other.Unblockable
             && OnHitTransition == other.OnHitTransition;
@@ -77,6 +79,7 @@ namespace Design.Animation
                 HitstopTicks,
                 BlockstopTicks,
                 GrabPosition,
+                Techable,
                 HasTransition,
                 Unblockable,
                 OnHitTransition

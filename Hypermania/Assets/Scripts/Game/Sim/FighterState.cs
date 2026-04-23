@@ -99,6 +99,7 @@ namespace Game.Sim
         public BoxProps? HitProps { get; private set; }
         public SVector2? HitLocation { get; private set; }
         public SVector2? ClankLocation { get; private set; }
+        public bool CurrentGrabTechable { get; private set; }
         public bool StateChangedThisRealFrame { get; private set; }
         public bool SuperMaxedThisRealFrame { get; private set; }
         public CharacterState? PostActionState { get; private set; }
@@ -1074,6 +1075,7 @@ namespace Game.Sim
             }
             SetState(CharacterState.Grabbed, frame, Frame.Infinity);
             Velocity = SVector2.zero;
+            CurrentGrabTechable = props.Techable;
 
             SVector2 grabPos = props.GrabPosition;
             if (grabberFacingDir == FighterFacing.Left)
@@ -1082,6 +1084,22 @@ namespace Game.Sim
             }
 
             Position = hitboxCenter + grabPos;
+        }
+
+        public void ApplyGrabTech(Frame frame, GameOptions options, SVector2 pushDirection)
+        {
+            SetState(CharacterState.Hit, frame, frame + options.Global.GrabTechStunTicks, true);
+            Velocity = pushDirection * options.Global.GrabTechKnockbackMagnitude;
+            CurrentGrabTechable = false;
+            CancelPendingHitTransition();
+        }
+
+        public void CancelPendingHitTransition()
+        {
+            PendingHitState = null;
+            PendingHitStateStart = null;
+            PendingHitStateEnd = null;
+            PendingHitStateForce = false;
         }
 
         public void ApplyClank(Frame frame, GameOptions options, SVector2 location)

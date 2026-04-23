@@ -232,6 +232,7 @@ namespace Design.Animation.MoveBuilder.Editor
             using (new EditorGUI.DisabledScope(p.Kind != HitboxKind.Grabbox))
             {
                 p.GrabPosition = SFloatGUI.Field("Grab Position", p.GrabPosition);
+                p.Techable = EditorGUILayout.Toggle("Techable", p.Techable);
             }
 
             using (new EditorGUI.DisabledScope(p.Kind != HitboxKind.Hitbox && p.Kind != HitboxKind.Grabbox))
