@@ -105,7 +105,7 @@ namespace Design.Configs
             sfloat framesPerBeatExact = (sfloat)60f / Bpm * (sfloat)GameManager.TPS;
             sfloat beatsF = (sfloat)(frame - FirstMusicalBeat) / framesPerBeatExact;
             sfloat driftFrames = (beatsF - (sfloat)Mathsf.RoundToInt(beatsF)) * framesPerBeatExact;
-            return driftFrames >= (sfloat)(-2f) && driftFrames <= (sfloat)2f;
+            return driftFrames >= -(sfloat)(2f) && driftFrames <= (sfloat)2f;
         }
 
         /// <summary>
