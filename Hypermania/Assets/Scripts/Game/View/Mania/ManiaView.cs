@@ -17,7 +17,7 @@ namespace Game.View.Mania
     {
         public float ScrollSpeed;
         public Transform[] Anchors;
-        public GameObject[] Notes;
+        public GameObject Note;
         public RectTransform BeatLineContainer;
 
         public void Validate()
@@ -30,9 +30,9 @@ namespace Game.View.Mania
             {
                 throw new InvalidOperationException("Must set note anchors");
             }
-            if (Notes == null || Notes.Length == 0)
+            if (Note == null)
             {
-                throw new InvalidOperationException("Must set note prefabs");
+                throw new InvalidOperationException("Must set note prefab");
             }
         }
     }
@@ -252,7 +252,7 @@ namespace Game.View.Mania
 
             if (!_activeNotes.ContainsKey(note.Id))
             {
-                GameObject noteObj = Instantiate(Config.Notes[channel], transform, false);
+                GameObject noteObj = Instantiate(Config.Note, transform, false);
                 noteObj.transform.localRotation = Quaternion.Euler(0f, 0f, GetChannelZRotation(channel));
                 noteView = noteObj.GetComponent<ManiaNoteView>();
                 noteView.ApplySprites(_arrowSprites.Inactive, _arrowSprites.Active);

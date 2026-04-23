@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 6827977680985341710}
   - component: {fileID: 5468672741909906833}
   - component: {fileID: 7501767949343631595}
+  - component: {fileID: 2341393226878778315}
   m_Layer: 5
   m_Name: ManiaView
   m_TagString: Untagged
@@ -97,11 +98,7 @@ MonoBehaviour:
     - {fileID: 2161625957565218280}
     - {fileID: 2962205921948255559}
     - {fileID: 783228396018316731}
-    Notes:
-    - {fileID: 2695417746142566024, guid: 2a99394db2f1b0083a7c5433f8f8d7d9, type: 3}
-    - {fileID: 8688098423924273461, guid: 51eee259c0ace2d32b76f07064a7080f, type: 3}
-    - {fileID: 8688098423924273461, guid: fabce5694683e237db4bb5becf2d3340, type: 3}
-    - {fileID: 8688098423924273461, guid: 5fd0d02a0489c15c5876a4d7a3c7d7df, type: 3}
+    Note: {fileID: 2695417746142566024, guid: 2a99394db2f1b0083a7c5433f8f8d7d9, type: 3}
     BeatLineContainer: {fileID: 2007971109189179296}
 --- !u!222 &5468672741909906833
 CanvasRenderer:
@@ -125,6 +122,36 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Padding: {x: 0, y: 0, z: 0, w: 0}
   m_Softness: {x: 0, y: 0}
+--- !u!114 &2341393226878778315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4472447982919466526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.44705883}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1001 &4147790256072663424
 PrefabInstance:
   m_ObjectHideFlags: 0
