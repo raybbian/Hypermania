@@ -51,6 +51,7 @@ namespace Design.Animation
         public SVector2 Knockback;
         public SVector2 GrabPosition;
         public bool HasTransition;
+        public bool Unblockable;
         public CharacterState OnHitTransition;
 
         public bool Equals(BoxProps other) =>
@@ -65,6 +66,7 @@ namespace Design.Animation
             && BlockstopTicks == other.BlockstopTicks
             && GrabPosition == other.GrabPosition
             && HasTransition == other.HasTransition
+            && Unblockable == other.Unblockable
             && OnHitTransition == other.OnHitTransition;
 
         public override bool Equals(object obj) => obj is BoxProps other && Equals(other);
@@ -76,6 +78,7 @@ namespace Design.Animation
                 BlockstopTicks,
                 GrabPosition,
                 HasTransition,
+                Unblockable,
                 OnHitTransition
             );
 

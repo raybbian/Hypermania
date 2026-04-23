@@ -1024,7 +1024,8 @@ namespace Game.Sim
             bool blockSuccess = holdingBack && ((holdingDown && crouchBlock) || (!holdingDown && standBlock));
 
             if (
-                blockSuccess
+                !props.Unblockable
+                && blockSuccess
                 && (Actionable || State == CharacterState.BlockCrouch || State == CharacterState.BlockStand)
             )
             {
