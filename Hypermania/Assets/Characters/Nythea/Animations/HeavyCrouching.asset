@@ -49,7 +49,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -101,7 +105,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -153,7 +161,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -205,7 +217,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -257,7 +273,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -309,7 +329,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -361,7 +385,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -413,7 +441,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -465,7 +497,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -517,7 +553,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -569,7 +609,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -621,7 +665,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -673,7 +721,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -725,7 +777,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -741,8 +797,8 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 0
         Damage: 15
-        HitstunTicks: 24
-        BlockstunTicks: 18
+        HitstunTicks: 22
+        BlockstunTicks: 16
         HitstopTicks: 12
         BlockstopTicks: 9
         KnockdownKind: 0
@@ -756,7 +812,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -787,7 +847,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -839,7 +903,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -855,8 +923,8 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 0
         Damage: 15
-        HitstunTicks: 24
-        BlockstunTicks: 18
+        HitstunTicks: 22
+        BlockstunTicks: 16
         HitstopTicks: 12
         BlockstopTicks: 9
         KnockdownKind: 0
@@ -870,7 +938,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -901,7 +973,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -953,7 +1029,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -969,8 +1049,8 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 0
         Damage: 15
-        HitstunTicks: 24
-        BlockstunTicks: 18
+        HitstunTicks: 22
+        BlockstunTicks: 16
         HitstopTicks: 12
         BlockstopTicks: 9
         KnockdownKind: 0
@@ -984,7 +1064,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1015,7 +1099,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -1067,7 +1155,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1083,8 +1175,8 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 0
         Damage: 15
-        HitstunTicks: 24
-        BlockstunTicks: 18
+        HitstunTicks: 22
+        BlockstunTicks: 16
         HitstopTicks: 12
         BlockstopTicks: 9
         KnockdownKind: 0
@@ -1098,7 +1190,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1129,7 +1225,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -1181,7 +1281,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1197,8 +1301,8 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 0
         Damage: 15
-        HitstunTicks: 24
-        BlockstunTicks: 18
+        HitstunTicks: 22
+        BlockstunTicks: 16
         HitstopTicks: 12
         BlockstopTicks: 9
         KnockdownKind: 0
@@ -1212,7 +1316,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1243,7 +1351,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -1295,7 +1407,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1347,7 +1463,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1399,7 +1519,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1451,7 +1575,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1503,7 +1631,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1555,7 +1687,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1607,7 +1743,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1659,7 +1799,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1711,7 +1855,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1763,7 +1911,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1815,7 +1967,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1867,7 +2023,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1919,7 +2079,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1971,7 +2135,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2023,7 +2191,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2075,7 +2247,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2127,7 +2303,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2179,7 +2359,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2231,7 +2415,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2283,7 +2471,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2335,7 +2527,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2387,7 +2583,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2439,7 +2639,11 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
+        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
