@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -58,10 +58,10 @@ VisualEffect:
       m_Array: []
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 0.11823951, y: 0.028390888, z: 0.5471698, w: 0}
+      - m_Value: {x: 0.2637948, y: 0.15325737, z: 0.7924528, w: 0}
         m_Name: Outline Color
         m_Overridden: 1
-      - m_Value: {x: 2, y: 0.23584902, z: 0.23584902, w: 0}
+      - m_Value: {x: 0.2408377, y: 2, z: 0.5525958, w: 0}
         m_Name: Base Color
         m_Overridden: 1
     m_Uint:
@@ -134,3 +134,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _flipXWithDirection: 0
+  _rotateWithDirection: 1
