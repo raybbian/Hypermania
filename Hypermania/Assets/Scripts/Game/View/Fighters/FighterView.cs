@@ -34,6 +34,9 @@ namespace Game.View.Fighters
         [SerializeField]
         private float _thinHitKnockbackMagnitude = 0.04f;
 
+        [SerializeField]
+        private FighterShadow _shadow;
+
         private int _jitterFramesRemaining;
 
         public virtual void Init(CharacterConfig characterConfig, int skinIndex)
@@ -97,6 +100,9 @@ namespace Game.View.Fighters
                 desired.z = transform.position.z;
                 transform.position = desired - animWorld;
             }
+
+            if (_shadow != null)
+                _shadow.Render();
         }
 
         public virtual void RollbackRender(

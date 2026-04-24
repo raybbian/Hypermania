@@ -5,6 +5,7 @@ using System.Linq;
 using Design.Configs;
 using Game;
 using Game.Sim;
+using Game.View.Background;
 using Netcode.P2P;
 using Scenes.Menus.CharacterSelect.Controls;
 using Scenes.Menus.InputSelect;
@@ -73,6 +74,7 @@ namespace Scenes.Menus.CharacterSelect
         private bool _committed;
         private bool _launchDispatched;
         private bool _exiting;
+        private Stage _resolvedStage;
         private bool _singleDeviceMode;
         private int _activeLocalSlot = -1;
 
@@ -470,18 +472,20 @@ namespace Scenes.Menus.CharacterSelect
 
         /// <summary>
         /// Host-side: resolve any Random slots and same-skin collisions
-        /// once on the authoritative side, then serialize the final
-        /// per-slot selection into launch args. The host then applies
-        /// these same args on chat echo, so the host and non-host commit
-        /// from identical state. Fields carried: character index, skin
-        /// index, combo mode, mania difficulty, beat-cancel window — the
-        /// set that feeds into <see cref="PlayerOptions"/> at commit time.
+        /// once on the authoritative side, roll the match's stage, then
+        /// serialize the final per-slot selection into launch args. The
+        /// host then applies these same args on chat echo, so the host
+        /// and non-host commit from identical state. Fields carried:
+        /// character index, skin index, combo mode, mania difficulty,
+        /// super input mode (per slot), followed by a single trailing
+        /// <see cref="Stage"/> shared across both players.
         /// </summary>
         private string[] BuildResolvedLaunchArgs()
         {
             ResolveRandomSlotsForCommit();
             ResolveSkinCollisionForCommit();
-            string[] args = new string[10];
+            Stage stage = PickRandomStage();
+            string[] args = new string[11];
             for (int i = 0; i < 2; i++)
             {
                 PlayerSelectionState slot = _state.Players[i];
@@ -492,7 +496,14 @@ namespace Scenes.Menus.CharacterSelect
                 args[baseIdx + 3] = ((int)slot.ManiaDifficulty).ToString(CultureInfo.InvariantCulture);
                 args[baseIdx + 4] = ((int)slot.SuperInputMode).ToString(CultureInfo.InvariantCulture);
             }
+            args[10] = ((int)stage).ToString(CultureInfo.InvariantCulture);
             return args;
+        }
+
+        private static Stage PickRandomStage()
+        {
+            var keys = EnumIndexCache<Stage>.Keys;
+            return keys[UnityEngine.Random.Range(0, keys.Length)];
         }
 
         /// <summary>
@@ -533,10 +544,10 @@ namespace Scenes.Menus.CharacterSelect
 
         private bool TryApplyLaunchArgs(string[] args)
         {
-            if (args == null || args.Length != 10)
+            if (args == null || args.Length != 11)
                 return false;
-            int[] parsed = new int[10];
-            for (int i = 0; i < 10; i++)
+            int[] parsed = new int[11];
+            for (int i = 0; i < 11; i++)
             {
                 if (!int.TryParse(args[i], NumberStyles.Integer, CultureInfo.InvariantCulture, out parsed[i]))
                     return false;
@@ -551,6 +562,7 @@ namespace Scenes.Menus.CharacterSelect
                 slot.ManiaDifficulty = (ManiaDifficulty)parsed[baseIdx + 3];
                 slot.SuperInputMode = (SuperInputMode)parsed[baseIdx + 4];
             }
+            _resolvedStage = (Stage)parsed[10];
             return true;
         }
 
@@ -827,6 +839,11 @@ namespace Scenes.Menus.CharacterSelect
         private void Commit()
         {
             ResolveRandomSlotsForCommit();
+            // Online paths set _resolvedStage via TryApplyLaunchArgs before
+            // Commit() runs, so the stage stays identical on both peers.
+            // Local/training has no launch broadcast — roll here.
+            if (!_isOnline)
+                _resolvedStage = PickRandomStage();
             GameOptions options = BuildGameOptions();
             SessionDirectory.Options = options;
 
@@ -872,6 +889,7 @@ namespace Scenes.Menus.CharacterSelect
                     },
                 Players = new PlayerOptions[2],
                 AlwaysRhythmCancel = false,
+                Stage = _resolvedStage,
             };
 
             for (int i = 0; i < 2; i++)

@@ -138,7 +138,7 @@ namespace Design.Configs
             else
             {
                 // Non-looping states (e.g. attacks extended by SuperRecoveryFrames) hold the last frame.
-                tick = Mathf.Clamp(tick, 0, data.TotalTicks - 1);
+                tick = Mathsf.Clamp(tick, 0, data.TotalTicks - 1);
             }
             return data.Frames[tick];
         }

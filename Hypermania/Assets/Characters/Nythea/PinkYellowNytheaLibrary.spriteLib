@@ -53,7 +53,7 @@ MonoBehaviour:
       m_Hash: 987129599
       m_Sprite: {fileID: 8785678057543234539, guid: 14222601f6de24887b62d652b9754d37, type: 3}
       m_FromMain: 1
-      m_SpriteOverride: {fileID: -4018121481698673023, guid: df526e5a7f40f4e4d97917447aff050c, type: 3}
+      m_SpriteOverride: {fileID: -272912434682637450, guid: df526e5a7f40f4e4d97917447aff050c, type: 3}
     - m_Name: R_jacket_lower_90_180
       m_Hash: 271152363
       m_Sprite: {fileID: 8937166269111749979, guid: 14222601f6de24887b62d652b9754d37, type: 3}
@@ -666,14 +666,14 @@ MonoBehaviour:
       m_Hash: 1038699363
       m_Sprite: {fileID: 2391041328712842563, guid: 14222601f6de24887b62d652b9754d37, type: 3}
       m_FromMain: 1
-      m_SpriteOverride: {fileID: 2391041328712842563, guid: 14222601f6de24887b62d652b9754d37, type: 3}
+      m_SpriteOverride: {fileID: 6467285170855513343, guid: df526e5a7f40f4e4d97917447aff050c, type: 3}
     - m_Name: L_jacket_lower_90_180
       m_Hash: 134376119
       m_Sprite: {fileID: 5639452703627393966, guid: 14222601f6de24887b62d652b9754d37, type: 3}
       m_FromMain: 1
       m_SpriteOverride: {fileID: 5868505050219197361, guid: df526e5a7f40f4e4d97917447aff050c, type: 3}
     m_FromMain: 1
-    m_EntryOverrideCount: 1
+    m_EntryOverrideCount: 2
   - m_Name: L_arm_lower
     m_Hash: 94830386
     m_CategoryList: []
@@ -1008,5 +1008,5 @@ MonoBehaviour:
     m_FromMain: 1
     m_EntryOverrideCount: 1
   m_PrimaryLibraryGUID: 7bce4506c706589b0ba441fd802927e8
-  m_ModificationHash: 639126235495627104
+  m_ModificationHash: 639126240449579182
   m_Version: 1

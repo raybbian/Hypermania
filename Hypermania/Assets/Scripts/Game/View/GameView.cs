@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Design.Configs;
 using Game.Sim;
+using Game.View.Background;
 using Game.View.Events;
 using Game.View.Events.Vfx;
 using Game.View.Fighters;
@@ -50,6 +51,7 @@ namespace Game.View
             public KOScreenView KOScreenView;
             public BoxVisualizer BoxVisualizer;
             public OutlineGlowView OutlineGlowView;
+            public StageBackgroundLoader BackgroundLoader;
         }
 
         public FighterView[] Fighters => _fighters;
@@ -129,6 +131,9 @@ namespace Game.View
             _conductor.Init(options);
             _conductor.SetFrame(Frame.FirstFrame);
             _rollbackStart = Frame.NullFrame;
+
+            if (_params.BackgroundLoader != null)
+                _params.BackgroundLoader.Init(options.Stage);
         }
 
         public void Render(float deltaTime, in GameState state, GameOptions options, InfoOverlayDetails overlayDetails)

@@ -17,9 +17,9 @@ MonoBehaviour:
   Prefab: {fileID: 5766376669795590084, guid: 692614c6f0138c5709de58dbca0159e4, type: 3}
   MoveSfx: {fileID: 11400000, guid: 4e16a963506edac26ae5b3acd6883da1, type: 2}
   Skins:
-  - MainColor: {r: 0.30588236, g: 0.33333334, b: 0.9960785, a: 1}
-    LightColor: {r: 0.6006353, g: 0.61636317, b: 0.99607843, a: 1}
-    AccentColor: {r: 0.8078432, g: 0.21960786, b: 0.20392159, a: 1}
+  - MainColor: {r: 0.70980394, g: 0.015686275, b: 0, a: 1}
+    LightColor: {r: 0.8078432, g: 0.3372549, b: 0.3254902, a: 1}
+    AccentColor: {r: 0.3019608, g: 0.3372549, b: 0.9960785, a: 1}
     HypeBarColors:
     - {r: 0.80784315, g: 0.5403107, b: 0.5331765, a: 1}
     - {r: 0.80784315, g: 0.3388745, b: 0.32636866, a: 1}
@@ -34,9 +34,9 @@ MonoBehaviour:
     ManiaOuterArrow:
       Active: {fileID: -2641461401451428804, guid: 8341a8a6eea3a074e9976d4e295f7271, type: 3}
       Inactive: {fileID: 742394407609332487, guid: 114e039b3256085488b6e962cb57ebe2, type: 3}
-  - MainColor: {r: 0.2784314, g: 0.3254902, b: 0.9960785, a: 1}
-    LightColor: {r: 0.6424706, g: 0.8626415, b: 0.99607843, a: 1}
-    AccentColor: {r: 0.6901961, g: 0.454902, b: 0.92549026, a: 1}
+  - MainColor: {r: 0.54901963, g: 0.098039225, b: 1, a: 1}
+    LightColor: {r: 0.6935859, g: 0.5238824, b: 0.85882354, a: 1}
+    AccentColor: {r: 0.18431373, g: 0.13333334, b: 0.427451, a: 1}
     HypeBarColors:
     - {r: 0.71214, g: 0.56628, b: 0.85800004, a: 1}
     - {r: 0.6993217, g: 0.4446, b: 0.95, a: 1}
@@ -60,14 +60,14 @@ MonoBehaviour:
     - {r: 0.589, g: 0.11249899, b: 0.360474, a: 1}
     - {r: 0.43921572, g: 0.054901965, b: 0.25490198, a: 1}
     SpriteLibrary: {fileID: 7108339969198208228, guid: c1f4577aa690030458daaab2a8144c60, type: 3}
-    Portrait: {fileID: 2800000, guid: 02b2dafe45ba6af4181a6795730a3e14, type: 3}
-    Splash: {fileID: 2800000, guid: 515b1a4207a987d4b9ef99b7d025f51e, type: 3}
+    Portrait: {fileID: 2800000, guid: 84f57b056c92ce546b799e7eb799603d, type: 3}
+    Splash: {fileID: 2800000, guid: a2130c1b55a445148a779eb93d979194, type: 3}
     ManiaInnerArrow:
-      Active: {fileID: -6629343155083197429, guid: 3538955c4bd69bd4188a0004a3b26c0a, type: 3}
-      Inactive: {fileID: 8457640894194228491, guid: bc248f9345af6174897779bb8884f81c, type: 3}
+      Active: {fileID: -2641461401451428804, guid: 15fa66e8682f31f489273cea59f6a2fa, type: 3}
+      Inactive: {fileID: 742394407609332487, guid: 15b2032dcae869247b6b0e9898820dac, type: 3}
     ManiaOuterArrow:
-      Active: {fileID: -1647495070530756300, guid: ee02fd80fca1199468c9249eebc95035, type: 3}
-      Inactive: {fileID: -455746072436578536, guid: 67e8484bd9ee5eb478e7b9c1a00f31e5, type: 3}
+      Active: {fileID: 8617828211107082129, guid: c0af1d09897f4b94fbc416bee6b6f69b, type: 3}
+      Inactive: {fileID: -8883600614224032692, guid: a6ea9e3f25acdd646b641f4220659ea6, type: 3}
   AnimationController: {fileID: 22100000, guid: b2247d1bd644d04a3a78e3aa68904cb8, type: 2}
   CharacterHeight:
     rawValue: 1071225242

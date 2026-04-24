@@ -757,13 +757,13 @@ MonoBehaviour:
   - {fileID: 26771177}
   - {fileID: 1636262198}
   _randomSkin:
-    MainColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 1}
-    LightColor: {r: 0.27450982, g: 0.27450982, b: 0.27450982, a: 1}
-    AccentColor: {r: 0.078431375, g: 0.078431375, b: 0.078431375, a: 1}
+    MainColor: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 1}
+    LightColor: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
+    AccentColor: {r: 0.2924528, g: 0.2924528, b: 0.2924528, a: 1}
     HypeBarColors: []
     SpriteLibrary: {fileID: 0}
-    Portrait: {fileID: 2800000, guid: ea7b3b7a3d8ca8743bfea19b79aec0ca, type: 3}
-    Splash: {fileID: 2800000, guid: ea7b3b7a3d8ca8743bfea19b79aec0ca, type: 3}
+    Portrait: {fileID: 2800000, guid: dce2458a3dc10a04e9dab6cf7741c785, type: 3}
+    Splash: {fileID: 2800000, guid: 484e7605352fcd64fbdc6e84a83fe516, type: 3}
     ManiaInnerArrow:
       Active: {fileID: 0}
       Inactive: {fileID: 0}

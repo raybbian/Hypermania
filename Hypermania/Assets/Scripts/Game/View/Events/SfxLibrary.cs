@@ -22,6 +22,7 @@ namespace Game.View.Events
         Burst,
         Super2Ready,
         OppSuper2Ready,
+        Whip,
     }
 
     [Serializable]

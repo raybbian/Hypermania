@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Linq;
 using Design.Animation;
 using Design.Configs;
+using Game.View.Background;
 using Game.View.Overlay;
 using MemoryPack;
 using Netcode.Rollback;
@@ -96,6 +97,7 @@ namespace Game.Sim
         public LocalPlayerOptions[] LocalPlayers;
         public InfoOptions InfoOptions;
         public bool AlwaysRhythmCancel;
+        public Stage Stage;
     }
 
     [MemoryPackable]
