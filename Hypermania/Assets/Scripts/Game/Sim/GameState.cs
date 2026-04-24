@@ -178,7 +178,8 @@ namespace Game.Sim
                     new SVector2(xPos, sfloat.Zero),
                     facing,
                     3,
-                    options.Global.StalingBufferSize
+                    options.Global.StalingBufferSize,
+                    options.Players[i].Character.BurstMax
                 );
                 int beatWindow = (int)options.Players[i].BeatCancelWindow;
                 state.Manias[i] = ManiaState.Create(

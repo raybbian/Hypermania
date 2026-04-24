@@ -159,7 +159,8 @@ namespace Game.Sim
             SVector2 position,
             FighterFacing facingDirection,
             int lives,
-            int stalingBufferSize
+            int stalingBufferSize,
+            sfloat startingBurst
         )
         {
             FighterState state = new FighterState
@@ -179,7 +180,7 @@ namespace Game.Sim
                 Health = health,
                 FacingDir = facingDirection,
                 Lives = lives,
-                Burst = 0,
+                Burst = startingBurst,
                 Super = 0,
                 AirDashCount = 0,
                 Victories = new VictoryKind[lives],
@@ -237,7 +238,6 @@ namespace Game.Sim
             InputH.Clear(); // Clear, don't want to read input from a previous round.
             // TODO: character dependent?
             IsSuperAttack = false;
-            Burst = 0;
             Super = 0;
             AirDashCount = 0;
             Health = config.Health;
@@ -1107,7 +1107,7 @@ namespace Game.Sim
                 ComboedCount++;
                 CurrentGrabTechable = props.Techable;
             }
-            SetState(CharacterState.Grabbed, frame, Frame.Infinity);
+            SetState(CharacterState.Grabbed, frame, frame + 2);
             Velocity = SVector2.zero;
 
             SVector2 grabPos = props.GrabPosition;

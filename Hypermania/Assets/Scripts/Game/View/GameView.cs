@@ -206,7 +206,7 @@ namespace Game.View
                 int focusPlayer = -1;
                 if (elapsed >= 0 && elapsed < audio.BeatsToFrame(2))
                     focusPlayer = 0;
-                else if (elapsed < audio.BeatsToFrame(4))
+                else if (elapsed >= 0 && elapsed < audio.BeatsToFrame(4))
                     focusPlayer = 1;
 
                 if (focusPlayer >= 0)
