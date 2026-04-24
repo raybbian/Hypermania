@@ -729,14 +729,14 @@ MonoBehaviour:
         OnHitTransition: 0
     - CenterLocal:
         x:
-          rawValue: 1069353760
+          rawValue: 1070481230
         y:
-          rawValue: 1059923038
+          rawValue: 1059959407
       SizeLocal:
         x:
-          rawValue: 1073588968
+          rawValue: 1074792866
         y:
-          rawValue: 1069919494
+          rawValue: 1069883125
       Props:
         Kind: 1
         AttackKind: 0
@@ -820,14 +820,14 @@ MonoBehaviour:
         OnHitTransition: 0
     - CenterLocal:
         x:
-          rawValue: 1069353760
+          rawValue: 1070481230
         y:
-          rawValue: 1059923038
+          rawValue: 1059959407
       SizeLocal:
         x:
-          rawValue: 1073588968
+          rawValue: 1074792866
         y:
-          rawValue: 1069919494
+          rawValue: 1069883125
       Props:
         Kind: 1
         AttackKind: 0
@@ -911,14 +911,14 @@ MonoBehaviour:
         OnHitTransition: 0
     - CenterLocal:
         x:
-          rawValue: 1069353760
+          rawValue: 1070481230
         y:
-          rawValue: 1059923038
+          rawValue: 1059959407
       SizeLocal:
         x:
-          rawValue: 1073588968
+          rawValue: 1074792866
         y:
-          rawValue: 1069919494
+          rawValue: 1069883125
       Props:
         Kind: 1
         AttackKind: 0
@@ -1000,7 +1000,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 3
+    FrameType: 2
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -1056,7 +1056,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 3
+    FrameType: 2
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
