@@ -1592,12 +1592,12 @@ MonoBehaviour:
         x:
           rawValue: 1060488723
         y:
-          rawValue: 1074909914
+          rawValue: 1074758572
       SizeLocal:
         x:
           rawValue: 1060596606
         y:
-          rawValue: 1073312141
+          rawValue: 1071841951
       Props:
         Kind: 0
         AttackKind: 0
@@ -1646,14 +1646,14 @@ MonoBehaviour:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1061185622
+          rawValue: 1060488723
         y:
-          rawValue: 1074759982
+          rawValue: 1074758572
       SizeLocal:
         x:
-          rawValue: 1062738554
+          rawValue: 1060596606
         y:
-          rawValue: 1071542706
+          rawValue: 1071841951
       Props:
         Kind: 0
         AttackKind: 0
@@ -1702,14 +1702,14 @@ MonoBehaviour:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1061435006
+          rawValue: 1060488723
         y:
-          rawValue: 1074167692
+          rawValue: 1074758572
       SizeLocal:
         x:
-          rawValue: 1062738554
+          rawValue: 1060596606
         y:
-          rawValue: 1071542706
+          rawValue: 1071841951
       Props:
         Kind: 0
         AttackKind: 0
@@ -1752,20 +1752,20 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1065209319
+        rawValue: 1064605339
       y:
-        rawValue: 1065457027
+        rawValue: 1066555934
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1061809084
+          rawValue: 1061007614
         y:
-          rawValue: 1074323558
+          rawValue: 1074218062
       SizeLocal:
         x:
-          rawValue: 1062738554
+          rawValue: 1060596606
         y:
-          rawValue: 1071542706
+          rawValue: 1071841951
       Props:
         Kind: 0
         AttackKind: 0
@@ -1808,20 +1808,20 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1065209319
+        rawValue: 1064605339
       y:
-        rawValue: 1065457027
+        rawValue: 1066555934
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1063741823
+          rawValue: 1061007614
         y:
-          rawValue: 1073284287
+          rawValue: 1074218062
       SizeLocal:
         x:
-          rawValue: 1066976165
+          rawValue: 1060596606
         y:
-          rawValue: 1069422930
+          rawValue: 1071841951
       Props:
         Kind: 0
         AttackKind: 0
@@ -1864,20 +1864,20 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1066211918
+        rawValue: 1064605339
       y:
-        rawValue: 1062990563
+        rawValue: 1066555934
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1063741823
+          rawValue: 1061007614
         y:
-          rawValue: 1073284287
+          rawValue: 1074218062
       SizeLocal:
         x:
-          rawValue: 1066976165
+          rawValue: 1060596606
         y:
-          rawValue: 1069422930
+          rawValue: 1071841951
       Props:
         Kind: 0
         AttackKind: 0
@@ -1920,20 +1920,20 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1066211918
+        rawValue: 1064605339
       y:
-        rawValue: 1062990563
+        rawValue: 1066555934
   - Boxes:
     - CenterLocal:
         x:
           rawValue: 1064240593
         y:
-          rawValue: 1072380263
+          rawValue: 1073396423
       SizeLocal:
         x:
           rawValue: 1066352701
         y:
-          rawValue: 1067240806
+          rawValue: 1069273126
       Props:
         Kind: 0
         AttackKind: 0
@@ -1984,12 +1984,12 @@ MonoBehaviour:
         x:
           rawValue: 1064240593
         y:
-          rawValue: 1072380263
+          rawValue: 1073396423
       SizeLocal:
         x:
           rawValue: 1066352701
         y:
-          rawValue: 1067240806
+          rawValue: 1069273126
       Props:
         Kind: 0
         AttackKind: 0
@@ -2038,14 +2038,70 @@ MonoBehaviour:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064365285
+          rawValue: 1064240593
         y:
-          rawValue: 1070135794
+          rawValue: 1073396423
       SizeLocal:
         x:
           rawValue: 1066352701
         y:
-          rawValue: 1067240806
+          rawValue: 1069273126
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1065462268
+      y:
+        rawValue: 1065755869
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1064024388
+        y:
+          rawValue: 1071851858
+      SizeLocal:
+        x:
+          rawValue: 1066136496
+        y:
+          rawValue: 1067097004
       Props:
         Kind: 0
         AttackKind: 0
@@ -2094,14 +2150,14 @@ MonoBehaviour:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064240592
+          rawValue: 1064024388
         y:
-          rawValue: 1069668196
+          rawValue: 1071851858
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1066136496
         y:
-          rawValue: 1067053764
+          rawValue: 1067097004
       Props:
         Kind: 0
         AttackKind: 0
@@ -2150,14 +2206,14 @@ MonoBehaviour:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064614672
+          rawValue: 1064024388
         y:
-          rawValue: 1065740374
+          rawValue: 1071851858
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1066136496
         y:
-          rawValue: 1069797003
+          rawValue: 1067097004
       Props:
         Kind: 0
         AttackKind: 0
@@ -2200,76 +2256,20 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1066108190
+        rawValue: 1065660375
       y:
-        rawValue: 1055152667
+        rawValue: 1061553177
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064614672
+          rawValue: 1064388406
         y:
-          rawValue: 1065740374
+          rawValue: 1069705488
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1065877050
         y:
-          rawValue: 1069797003
-      Props:
-        Kind: 0
-        AttackKind: 0
-        Damage: 0
-        HitstunTicks: 0
-        BlockstunTicks: 0
-        HitstopTicks: 0
-        BlockstopTicks: 0
-        KnockdownKind: 0
-        Knockback:
-          x:
-            rawValue: 1065353216
-          y:
-            rawValue: 0
-        GrabPosition:
-          x:
-            rawValue: 0
-          y:
-            rawValue: 0
-        GrabsGrounded: 0
-        GrabsAirborne: 0
-        Techable: 0
-        HasTransition: 0
-        Unblockable: 0
-        OnHitTransition: 0
-    FrameType: 3
-    Floating: 0
-    GravityEnabled: 0
-    ShouldApplyVel: 0
-    ApplyVelocity:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-    ShouldTeleport: 0
-    TeleportLocation:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-    RootMotionOffset:
-      x:
-        rawValue: 1066108190
-      y:
-        rawValue: 1055152667
-  - Boxes:
-    - CenterLocal:
-        x:
-          rawValue: 1064864056
-        y:
-          rawValue: 1061950326
-      SizeLocal:
-        x:
-          rawValue: 1066352700
-        y:
-          rawValue: 1070233428
+          rawValue: 1066774160
       Props:
         Kind: 0
         AttackKind: 0
@@ -2318,14 +2318,14 @@ MonoBehaviour:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1064388406
         y:
-          rawValue: 1060828091
+          rawValue: 1069705488
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1065877050
         y:
-          rawValue: 1069111193
+          rawValue: 1066774160
       Props:
         Kind: 0
         AttackKind: 0
@@ -2368,20 +2368,244 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1066158522
+        rawValue: 1066116579
       y:
-        rawValue: 1000593162
+        rawValue: 1002740646
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1064388406
         y:
-          rawValue: 1059830550
+          rawValue: 1069705488
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1065877050
         y:
-          rawValue: 1068113652
+          rawValue: 1066774160
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066116579
+      y:
+        rawValue: 1002740646
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1064734330
+        y:
+          rawValue: 1065705709
+      SizeLocal:
+        x:
+          rawValue: 1066309458
+        y:
+          rawValue: 1069411850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066116579
+      y:
+        rawValue: 1002740646
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1064734330
+        y:
+          rawValue: 1065705709
+      SizeLocal:
+        x:
+          rawValue: 1066309458
+        y:
+          rawValue: 1069411850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066116579
+      y:
+        rawValue: 1002740646
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1064734330
+        y:
+          rawValue: 1065705709
+      SizeLocal:
+        x:
+          rawValue: 1066309458
+        y:
+          rawValue: 1069411850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066116579
+      y:
+        rawValue: 1002740646
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1061430461
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1069713563
       Props:
         Kind: 0
         AttackKind: 0
@@ -2430,14 +2654,14 @@ MonoBehaviour:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1065973453
         y:
-          rawValue: 1059830550
+          rawValue: 1061430461
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1063892916
         y:
-          rawValue: 1068113652
+          rawValue: 1069713563
       Props:
         Kind: 0
         AttackKind: 0
@@ -2486,14 +2710,14 @@ MonoBehaviour:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1065973453
         y:
-          rawValue: 1059830550
+          rawValue: 1061430461
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1063892916
         y:
-          rawValue: 1068113652
+          rawValue: 1069713563
       Props:
         Kind: 0
         AttackKind: 0
@@ -2542,14 +2766,14 @@ MonoBehaviour:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1065973453
         y:
-          rawValue: 1059830550
+          rawValue: 1061430461
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1063892916
         y:
-          rawValue: 1068113652
+          rawValue: 1069713563
       Props:
         Kind: 0
         AttackKind: 0
@@ -2598,14 +2822,14 @@ MonoBehaviour:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1065973453
         y:
-          rawValue: 1059830550
+          rawValue: 1061430461
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1063892916
         y:
-          rawValue: 1068113652
+          rawValue: 1069713563
       Props:
         Kind: 0
         AttackKind: 0
@@ -2654,14 +2878,14 @@ MonoBehaviour:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1065973453
         y:
-          rawValue: 1059830550
+          rawValue: 1061430461
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1063892916
         y:
-          rawValue: 1068113652
+          rawValue: 1069713563
       Props:
         Kind: 0
         AttackKind: 0
@@ -2710,14 +2934,14 @@ MonoBehaviour:
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1065973453
         y:
-          rawValue: 1059830550
+          rawValue: 1059614346
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1063892916
         y:
-          rawValue: 1068113652
+          rawValue: 1067897448
       Props:
         Kind: 0
         AttackKind: 0
@@ -2760,20 +2984,20 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1066561176
+        rawValue: 1066460512
       y:
-        rawValue: 3150224294
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1065973453
         y:
-          rawValue: 1061264517
+          rawValue: 1059614346
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1063892916
         y:
-          rawValue: 1069547619
+          rawValue: 1067897448
       Props:
         Kind: 0
         AttackKind: 0
@@ -2816,20 +3040,20 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1066267574
+        rawValue: 1066460512
       y:
-        rawValue: 3129152111
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1065973453
         y:
-          rawValue: 1062324406
+          rawValue: 1059614346
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1063892916
         y:
-          rawValue: 1070607508
+          rawValue: 1067897448
       Props:
         Kind: 0
         AttackKind: 0
@@ -2872,20 +3096,20 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1065411936
+        rawValue: 1066460512
       y:
-        rawValue: 981668463
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1065973453
         y:
-          rawValue: 1062324406
+          rawValue: 1059614346
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1063892916
         y:
-          rawValue: 1070607508
+          rawValue: 1067897448
       Props:
         Kind: 0
         AttackKind: 0
@@ -2928,20 +3152,20 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1065411936
+        rawValue: 1066460512
       y:
-        rawValue: 981668463
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1065973453
         y:
-          rawValue: 1062324406
+          rawValue: 1059614346
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1063892916
         y:
-          rawValue: 1070607508
+          rawValue: 1067897448
       Props:
         Kind: 0
         AttackKind: 0
@@ -2984,20 +3208,20 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1065411936
+        rawValue: 1066460512
       y:
-        rawValue: 981668463
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1065973453
         y:
-          rawValue: 1062324406
+          rawValue: 1059614346
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1063892916
         y:
-          rawValue: 1070607508
+          rawValue: 1067897448
       Props:
         Kind: 0
         AttackKind: 0
@@ -3040,20 +3264,20 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1065411936
+        rawValue: 1066460512
       y:
-        rawValue: 981668463
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
-          rawValue: 1064864056
+          rawValue: 1065973453
         y:
-          rawValue: 1062324406
+          rawValue: 1059614346
       SizeLocal:
         x:
-          rawValue: 1066352700
+          rawValue: 1063892916
         y:
-          rawValue: 1070607508
+          rawValue: 1067897448
       Props:
         Kind: 0
         AttackKind: 0
@@ -3096,6 +3320,1630 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 1065411936
+        rawValue: 1066460512
       y:
-        rawValue: 981668463
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1059614346
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1067897448
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1059614346
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1067897448
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1059614346
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1067897448
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1059614346
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1067897448
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1059614346
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1067897448
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1059614346
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1067897448
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1059614346
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1067897448
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1059614346
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1067897448
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1059614346
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1067897448
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1059614346
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1067897448
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1059614346
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1067897448
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1059614346
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1067897448
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1060954812
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1069237914
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1060954812
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1069237914
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1060954812
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1069237914
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1060954812
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1069237914
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1060954812
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1069237914
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1060954812
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1069237914
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1060954812
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1069237914
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1061819629
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1070102731
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1061819629
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1070102731
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1061819629
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1070102731
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1061819629
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1070102731
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1061819629
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1070102731
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1061819629
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1070102731
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1061819629
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1070102731
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1061819629
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1070102731
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1061819629
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1070102731
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1065973453
+        y:
+          rawValue: 1061819629
+      SizeLocal:
+        x:
+          rawValue: 1063892916
+        y:
+          rawValue: 1070102731
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        Unblockable: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 1066460512
+      y:
+        rawValue: 0
