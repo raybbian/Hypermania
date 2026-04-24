@@ -116,13 +116,14 @@ namespace Game.Sim
         public Frame? PendingHitStateStart { get; private set; }
         public Frame? PendingHitStateEnd { get; private set; }
         public bool PendingHitStateForce { get; private set; }
+        public KnockdownKind PendingKnockdown { get; private set; }
 
         public bool HitLastRealFrame =>
             HitProps.HasValue
             && HitLocation.HasValue
             && (
                 State == CharacterState.Death
-                || State == CharacterState.Knockdown
+                || State == CharacterState.SoftKnockdown
                 || State == CharacterState.HeavyKnockdown
                 || State == CharacterState.Hit
                 || State == CharacterState.Grabbed
@@ -190,6 +191,7 @@ namespace Game.Sim
                 FreestyleActive = false,
                 NoOpBonus = sfloat.One,
                 NoOpBonusRemaining = (sfloat)0.25f,
+                PendingKnockdown = KnockdownKind.None,
             };
             return state;
         }
@@ -240,6 +242,7 @@ namespace Game.Sim
             AirDashCount = 0;
             Health = config.Health;
             FacingDir = facingDirection;
+            PendingKnockdown =  KnockdownKind.None;
         }
 
         public void DoFrameStart(GameOptions options, bool maniaActive)
@@ -450,17 +453,9 @@ namespace Game.Sim
                     return;
                 }
 
-                if (
-                    (State == CharacterState.Knockdown || State == CharacterState.HeavyKnockdown)
-                    && OnGround(options)
-                )
+                if (State == CharacterState.HeavyKnockdown)
                 {
-                    CharacterConfig config = options.Players[Index].Character;
-                    SetState(
-                        CharacterState.GetUp,
-                        frame,
-                        frame + config.GetHitboxData(CharacterState.GetUp).TotalTicks
-                    );
+                    SetState(CharacterState.GetUp, frame, frame + options.Players[Index].Character.GetHitboxData(CharacterState.GetUp).TotalTicks);
                     return;
                 }
 
@@ -652,7 +647,7 @@ namespace Game.Sim
         {
             if (
                 State == CharacterState.Hit
-                || State == CharacterState.Knockdown
+                || State == CharacterState.SoftKnockdown
                 || State == CharacterState.HeavyKnockdown
                 || State == CharacterState.GetUp
             )
@@ -935,20 +930,17 @@ namespace Game.Sim
                 return;
             }
 
-            // Knockdown is entered airborne with StateEnd = Infinity; on the
-            // first grounded frame, latch the downed timer so TickStateMachine
-            // will transition into GetUp when it expires. Guarded on
-            // Frame.Infinity so this doesn't reset the timer every grounded
-            // frame while the fighter is lying down.
-            if (State == CharacterState.Knockdown && StateEnd == Frame.Infinity)
+            if (State == CharacterState.HeavyKnockdown && PendingKnockdown == KnockdownKind.Light)
             {
+                PendingKnockdown = KnockdownKind.None;
                 Velocity = SVector2.zero;
-                SetState(CharacterState.Knockdown, frame, frame + options.Global.LightKnockdownTicks, true);
+                SetState(CharacterState.SoftKnockdown, frame, frame + config.GetHitboxData(CharacterState.SoftKnockdown).TotalTicks, true);
                 return;
             }
 
-            if (State == CharacterState.HeavyKnockdown && StateEnd == Frame.Infinity)
+            if (State == CharacterState.HeavyKnockdown && PendingKnockdown == KnockdownKind.Heavy)
             {
+                PendingKnockdown = KnockdownKind.None;
                 Velocity = SVector2.zero;
                 // Preserve StateStart so the HeavyKnockdown animation continues
                 // from where it was when the fighter lands — only latch the
@@ -1085,9 +1077,11 @@ namespace Game.Sim
                     SetState(CharacterState.Hit, frame, frame + props.HitstunTicks, true);
                     break;
                 case KnockdownKind.Light:
-                    SetState(CharacterState.Knockdown, frame, Frame.Infinity, true);
+                    PendingKnockdown = KnockdownKind.Light;
+                    SetState(CharacterState.HeavyKnockdown, frame, Frame.Infinity, true);
                     break;
                 case KnockdownKind.Heavy:
+                    PendingKnockdown = KnockdownKind.Heavy;
                     SetState(CharacterState.HeavyKnockdown, frame, Frame.Infinity, true);
                     break;
             }
