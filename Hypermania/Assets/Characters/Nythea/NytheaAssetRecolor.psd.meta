@@ -11430,7 +11430,7 @@ ScriptedImporter:
     - {x: 24, y: 25}
     - {x: 25, y: 26}
     tessellationDetail: 0
-    uvTransform: {x: -261, y: -99}
+    uvTransform: {x: 1205, y: 2638}
     spritePosition: {x: 1466, y: 2737}
   - name: right_bangs_90
     originalName: 
@@ -11901,7 +11901,7 @@ ScriptedImporter:
     - {x: 37, y: 38}
     - {x: 38, y: 39}
     tessellationDetail: 0
-    uvTransform: {x: 2547, y: -2571}
+    uvTransform: {x: 3861, y: 4}
     spritePosition: {x: 1314, y: 2575}
   - name: face_base_90
     originalName: 
@@ -12262,7 +12262,7 @@ ScriptedImporter:
     - {x: 27, y: 28}
     - {x: 28, y: 29}
     tessellationDetail: 0
-    uvTransform: {x: -382, y: 2476}
+    uvTransform: {x: 930, y: 5029}
     spritePosition: {x: 1312, y: 2553}
   - name: left_bangs_90
     originalName: 
@@ -12656,7 +12656,7 @@ ScriptedImporter:
     - {x: 30, y: 31}
     - {x: 31, y: 32}
     tessellationDetail: 0
-    uvTransform: {x: -339, y: 1028}
+    uvTransform: {x: 1189, y: 3591}
     spritePosition: {x: 1528, y: 2563}
   - name: front_bangs_0_45
     originalName: 
@@ -12995,7 +12995,7 @@ ScriptedImporter:
     - {x: 25, y: 26}
     - {x: 26, y: 27}
     tessellationDetail: 0
-    uvTransform: {x: -244, y: 1385}
+    uvTransform: {x: 1186, y: 4112}
     spritePosition: {x: 1430, y: 2727}
   - name: right_bangs_0_45
     originalName: 
@@ -13345,7 +13345,7 @@ ScriptedImporter:
     - {x: 26, y: 27}
     - {x: 27, y: 28}
     tessellationDetail: 0
-    uvTransform: {x: 2615, y: -2216}
+    uvTransform: {x: 3861, y: 378}
     spritePosition: {x: 1246, y: 2594}
   - name: left_bangs_0_45
     originalName: 
@@ -13706,7 +13706,7 @@ ScriptedImporter:
     - {x: 27, y: 28}
     - {x: 28, y: 29}
     tessellationDetail: 0
-    uvTransform: {x: -768, y: 2793}
+    uvTransform: {x: 725, y: 5401}
     spritePosition: {x: 1493, y: 2608}
   - name: eyebrows_stressed_0_45
     originalName: 
@@ -15452,7 +15452,7 @@ ScriptedImporter:
     - {x: 23, y: 24}
     - {x: 24, y: 25}
     tessellationDetail: 0
-    uvTransform: {x: 387, y: 5383}
+    uvTransform: {x: 1743, y: 8065}
     spritePosition: {x: 1356, y: 2682}
   - name: L_eye_closed_0_45
     originalName: 
@@ -15976,7 +15976,7 @@ ScriptedImporter:
     - {x: 23, y: 24}
     - {x: 24, y: 25}
     tessellationDetail: 0
-    uvTransform: {x: -30, y: 5401}
+    uvTransform: {x: 1516, y: 8089}
     spritePosition: {x: 1546, y: 2688}
   - name: mouth_smile_open_0_45
     originalName: 
@@ -18267,7 +18267,7 @@ ScriptedImporter:
     - {x: 28, y: 29}
     - {x: 29, y: 30}
     tessellationDetail: 0
-    uvTransform: {x: -96, y: 1936}
+    uvTransform: {x: 1186, y: 4348}
     spritePosition: {x: 1282, y: 2412}
   - name: L_front_strand
     originalName: 
@@ -18628,7 +18628,7 @@ ScriptedImporter:
     - {x: 27, y: 28}
     - {x: 28, y: 29}
     tessellationDetail: 0
-    uvTransform: {x: -809, y: 3981}
+    uvTransform: {x: 725, y: 6403}
     spritePosition: {x: 1534, y: 2422}
   - name: R_horn
     originalName: 
@@ -19744,7 +19744,7 @@ ScriptedImporter:
     - {x: 31, y: 32}
     - {x: 32, y: 33}
     tessellationDetail: 0
-    uvTransform: {x: 276, y: 4908}
+    uvTransform: {x: 1358, y: 7410}
     spritePosition: {x: 1082, y: 2502}
   - name: L_pigtail
     originalName: 
@@ -20127,7 +20127,7 @@ ScriptedImporter:
     - {x: 29, y: 30}
     - {x: 30, y: 31}
     tessellationDetail: 0
-    uvTransform: {x: 56, y: 3589}
+    uvTransform: {x: 1607, y: 6114}
     spritePosition: {x: 1551, y: 2525}
   - name: torso_lean_down
     originalName: 
@@ -32256,7 +32256,7 @@ ScriptedImporter:
     - {x: 33, y: 34}
     - {x: 34, y: 35}
     tessellationDetail: 0
-    uvTransform: {x: 133, y: -177}
+    uvTransform: {x: 1358, y: 2230}
     spritePosition: {x: 1225, y: 2407}
   spriteImportData: []
   rigSpriteImportData: []
