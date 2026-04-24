@@ -1236,6 +1236,10 @@ namespace Game.Sim
                 {
                     return new HitOutcome { Kind = HitKind.None };
                 }
+                if (Fighters[defender.Owner].State.IsKnockdown())
+                {
+                    return new HitOutcome { Kind = HitKind.None };
+                }
 
                 Fighters[defender.Owner]
                     .ApplyGrab(SimFrame, attacker.Data, attacker.Box.Pos, Fighters[attacker.Owner].FacingDir);

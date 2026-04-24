@@ -408,6 +408,7 @@ namespace Game.Sim
                 StateStart = start;
                 StateEnd = end;
                 StateChangedThisRealFrame = true;
+                IsSuperAttack = false;
             }
         }
 
@@ -1119,10 +1120,6 @@ namespace Game.Sim
         public void ApplyGrab(Frame frame, BoxProps props, SVector2 hitboxCenter, FighterFacing grabberFacingDir)
         {
             // only consider the first grab tech property
-            if (State.IsKnockdown())
-            {
-                return;
-            }
             if (State != CharacterState.Grabbed)
             {
                 ComboedCount++;
