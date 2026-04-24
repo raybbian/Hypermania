@@ -644,7 +644,7 @@ namespace Game.Sim
             // Apply any velocities set during movement or through knockback.
             for (int i = 0; i < Fighters.Length; i++)
             {
-                Fighters[i].UpdatePosition(SimFrame, options, Fighters[i ^ 1].Position);
+                Fighters[i].UpdatePosition(SimFrame, options, ref Fighters[i ^ 1].Position);
             }
 
             // Update hype if they are holding forward

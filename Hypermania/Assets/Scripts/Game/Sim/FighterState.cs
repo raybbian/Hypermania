@@ -100,6 +100,7 @@ namespace Game.Sim
         public SVector2? HitLocation { get; private set; }
         public SVector2? ClankLocation { get; private set; }
         public bool CurrentGrabTechable { get; private set; }
+        public bool GrabTechedThisRealFrame { get; private set; }
         public bool StateChangedThisRealFrame { get; private set; }
         public bool SuperTier1MaxedThisRealFrame { get; private set; }
         public bool SuperTier2MaxedThisRealFrame { get; private set; }
@@ -357,6 +358,7 @@ namespace Game.Sim
             HitProps = null;
             HitLocation = null;
             ClankLocation = null;
+            GrabTechedThisRealFrame = false;
             StateChangedThisRealFrame = false;
             SuperTier1MaxedThisRealFrame = false;
             SuperTier2MaxedThisRealFrame = false;
@@ -852,7 +854,7 @@ namespace Game.Sim
             return ticksIntoState >= recoveryEnd - cancelWindow;
         }
 
-        public void UpdatePosition(Frame frame, GameOptions options, SVector2 otherFighterPos)
+        public void UpdatePosition(Frame frame, GameOptions options, ref SVector2 otherFighterPos)
         {
             // Apply gravity if not grounded and not in airdash
             FrameData curData = options.Players[Index].Character.GetFrameData(State, frame - StateStart);
@@ -943,18 +945,34 @@ namespace Game.Sim
                 otherFighterPos.x - 2 * (options.Global.CameraHalfWidth - options.Global.CameraPadding);
             sfloat maxBounds = Mathsf.Min(options.Global.WallsX, cameraMaxBounds);
             sfloat minBounds = Mathsf.Max(-options.Global.WallsX, cameraMinBounds);
+            bool stunned = State.IsStunned();
+
             if (Position.x >= maxBounds)
             {
+                if (stunned && Velocity.x > sfloat.Zero && Position.x > options.Global.WallsX)
+                {
+                    sfloat excess = Position.x - options.Global.WallsX;
+                    otherFighterPos.x -= excess;
+                }
+                else if (Velocity.x > sfloat.Zero)
+                {
+                    Velocity.x = sfloat.Zero;
+                }
                 Position.x = maxBounds;
-                if (Velocity.x > 0)
-                    Velocity.x = 0;
             }
 
             if (Position.x <= minBounds)
             {
+                if (stunned && Velocity.x < sfloat.Zero && Position.x < -options.Global.WallsX)
+                {
+                    sfloat excess = -options.Global.WallsX - Position.x;
+                    otherFighterPos.x += excess;
+                }
+                else if (Velocity.x < sfloat.Zero)
+                {
+                    Velocity.x = sfloat.Zero;
+                }
                 Position.x = minBounds;
-                if (Velocity.x < 0)
-                    Velocity.x = 0;
             }
         }
 
@@ -1180,6 +1198,7 @@ namespace Game.Sim
             SetState(CharacterState.Hit, frame, frame + options.Global.GrabTechStunTicks, true);
             Velocity = pushDirection * options.Global.GrabTechKnockbackMagnitude;
             CurrentGrabTechable = false;
+            GrabTechedThisRealFrame = true;
             CancelPendingHitTransition();
         }
 

@@ -26,6 +26,8 @@ namespace Game.View.Fighters
         [SerializeField]
         private Transform _visualCenter;
 
+        public Vector3 VisualCenter => _visualCenter.position;
+
         [SerializeField]
         private float _hitJitterMagnitude = 0.04f;
 

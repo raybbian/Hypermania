@@ -304,6 +304,11 @@ namespace Game.View
                         hash: i
                     );
                 }
+                if (i == 0 && state.Fighters[i].GrabTechedThisRealFrame)
+                {
+                    Vector2 center = (_fighters[0].VisualCenter + _fighters[1].VisualCenter) * 0.5f;
+                    _params.VfxManager.AddDesired(VfxKind.Tech, state.RealFrame, position: center);
+                }
                 if (state.Fighters[i].HitLastRealFrame)
                 {
                     _params.SfxManager.AddDesired(SfxKind.MediumPunch, state.RealFrame, hash: i);
