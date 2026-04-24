@@ -44,11 +44,8 @@ namespace Game.Sim
             // and the defender can land before the first note fires.
             AudioConfig audio = options.Global.Audio;
             int halfRange = state.Config.HitHalfRange;
-            Frame earliestStart = realFrame
-                + options.Global.ManiaSlowTicks
-                + options.Global.ManiaStartPaddingTicks
-                + halfRange
-                + 3;
+            Frame earliestStart =
+                realFrame + options.Global.ManiaSlowTicks + options.Global.ManiaStartPaddingTicks + halfRange + 3;
 
             // Next quarter-note boundary at or after earliestStart. Use the
             // exact fpb ratio rather than the pre-rounded FramesPerBeat — the

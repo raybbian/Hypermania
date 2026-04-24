@@ -242,7 +242,7 @@ namespace Game.Sim
             AirDashCount = 0;
             Health = config.Health;
             FacingDir = facingDirection;
-            PendingKnockdown =  KnockdownKind.None;
+            PendingKnockdown = KnockdownKind.None;
         }
 
         public void DoFrameStart(GameOptions options, bool maniaActive)
@@ -455,7 +455,11 @@ namespace Game.Sim
 
                 if (State == CharacterState.HeavyKnockdown)
                 {
-                    SetState(CharacterState.GetUp, frame, frame + options.Players[Index].Character.GetHitboxData(CharacterState.GetUp).TotalTicks);
+                    SetState(
+                        CharacterState.GetUp,
+                        frame,
+                        frame + options.Players[Index].Character.GetHitboxData(CharacterState.GetUp).TotalTicks
+                    );
                     return;
                 }
 
@@ -934,7 +938,12 @@ namespace Game.Sim
             {
                 PendingKnockdown = KnockdownKind.None;
                 Velocity = SVector2.zero;
-                SetState(CharacterState.SoftKnockdown, frame, frame + config.GetHitboxData(CharacterState.SoftKnockdown).TotalTicks, true);
+                SetState(
+                    CharacterState.SoftKnockdown,
+                    frame,
+                    frame + config.GetHitboxData(CharacterState.SoftKnockdown).TotalTicks,
+                    true
+                );
                 return;
             }
 
@@ -1107,7 +1116,9 @@ namespace Game.Sim
                 ComboedCount++;
                 CurrentGrabTechable = props.Techable;
             }
-            SetState(CharacterState.Grabbed, frame, frame + 2);
+
+            SetState(CharacterState.Grabbed, frame, frame + 2, true);
+
             Velocity = SVector2.zero;
 
             SVector2 grabPos = props.GrabPosition;

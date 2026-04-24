@@ -474,8 +474,7 @@ namespace Scenes.Menus.CharacterSelect
                 return;
             }
 
-            bool onControlsRow =
-                self.Phase == SelectPhase.Options && self.OptionsRow == OptionsRows.ControlsPreset;
+            bool onControlsRow = self.Phase == SelectPhase.Options && self.OptionsRow == OptionsRows.ControlsPreset;
             bool onlyHorizEdge =
                 (edges.Left || edges.Right) && !(edges.Up || edges.Down || edges.Confirm || edges.Back);
             if (onControlsRow && onlyHorizEdge)
@@ -490,7 +489,12 @@ namespace Scenes.Menus.CharacterSelect
             }
 
             _matchmakingSubscription?.SendCharacterSelectInput(
-                edges.Left, edges.Right, edges.Up, edges.Down, edges.Confirm, edges.Back
+                edges.Left,
+                edges.Right,
+                edges.Up,
+                edges.Down,
+                edges.Confirm,
+                edges.Back
             );
         }
 

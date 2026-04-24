@@ -97,10 +97,11 @@ namespace Game.View
                 _fighters[i].Init(config, options.Players[i].SkinIndex);
                 _fighters[i].SetOutlinePlayerIndex(i);
 
-                _playerParams[i].ManiaView.Init(
-                    options.Global.Audio,
-                    options.Players[i].Character.Skins[options.Players[i].SkinIndex]
-                );
+                _playerParams[i]
+                    .ManiaView.Init(
+                        options.Global.Audio,
+                        options.Players[i].Character.Skins[options.Players[i].SkinIndex]
+                    );
                 _playerParams[i].HealthBarView.Init(config, options.Players[i].SkinIndex);
                 _playerParams[i].HealthBarView.SetOutlinePlayerIndex(i);
                 _playerParams[i].HealthBarView.SetMaxHealth((float)config.Health);
@@ -211,7 +212,8 @@ namespace Game.View
 
                 if (focusPlayer >= 0)
                 {
-                    countdownFocus = (Vector2)state.Fighters[focusPlayer].Position
+                    countdownFocus =
+                        (Vector2)state.Fighters[focusPlayer].Position
                         + new Vector2(0, (float)_options.Players[focusPlayer].Character.CharacterHeight);
                 }
             }

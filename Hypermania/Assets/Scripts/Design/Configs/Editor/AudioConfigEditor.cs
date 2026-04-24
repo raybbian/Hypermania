@@ -127,7 +127,8 @@ namespace Design.Configs.Editor
                 return;
             }
 
-            BeatmapNote[] normalNotes, hardNotes;
+            BeatmapNote[] normalNotes,
+                hardNotes;
             try
             {
                 normalNotes = OszParser.ParseToNotes(data, config.Normal.DifficultyName);
@@ -145,11 +146,7 @@ namespace Design.Configs.Editor
                 DifficultyName = config.Normal.DifficultyName,
                 Notes = normalNotes,
             };
-            config.Hard = new BeatmapDifficulty
-            {
-                DifficultyName = config.Hard.DifficultyName,
-                Notes = hardNotes,
-            };
+            config.Hard = new BeatmapDifficulty { DifficultyName = config.Hard.DifficultyName, Notes = hardNotes };
             EditorUtility.SetDirty(config);
 
             Debug.Log(

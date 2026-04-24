@@ -11,8 +11,11 @@ namespace Game.View.Overlay
         [SerializeField]
         private IntroCharacterPanel[] _characterPanels;
 
-        [SerializeField] private AudioClip _sfx;
-        [SerializeField] private int _sfxStartTicks = 40;
+        [SerializeField]
+        private AudioClip _sfx;
+
+        [SerializeField]
+        private int _sfxStartTicks = 40;
 
         private Animator _animator;
         private AudioSource _audioSource;
@@ -31,10 +34,7 @@ namespace Game.View.Overlay
             for (int i = 0; i < count; i++)
             {
                 if (_characterPanels[i] != null)
-                    _characterPanels[i].SetCharacter(
-                        options.Players[i].Character,
-                        options.Players[i].SkinIndex
-                    );
+                    _characterPanels[i].SetCharacter(options.Players[i].Character, options.Players[i].SkinIndex);
             }
         }
 

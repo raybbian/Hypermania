@@ -105,7 +105,8 @@ namespace Game.View.Mania
             {
                 ManiaArrowSpritePair pair = i < 2 ? _innerArrow : _outerArrow;
                 Config.Anchors[i].localRotation = Quaternion.Euler(0f, 0f, GetChannelZRotation(i));
-                Config.Anchors[i]
+                Config
+                    .Anchors[i]
                     .gameObject.GetComponent<ManiaSpriteSwitcher>()
                     .ApplySprites(pair.Inactive, pair.Active);
             }

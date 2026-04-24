@@ -40,11 +40,7 @@ namespace Game.View.Overlay
                 if (skin.Splash != null)
                 {
                     Texture2D tex = skin.Splash;
-                    _runtimeSplash = Sprite.Create(
-                        tex,
-                        new Rect(0, 0, tex.width, tex.height),
-                        new Vector2(0.5f, 0.5f)
-                    );
+                    _runtimeSplash = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f));
                     _splash.sprite = _runtimeSplash;
                 }
                 else

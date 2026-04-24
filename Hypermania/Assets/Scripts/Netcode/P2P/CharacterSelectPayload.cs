@@ -54,7 +54,9 @@ namespace Netcode.P2P
                 return false;
             if (!int.TryParse(parts[offset + 5], NumberStyles.Integer, CultureInfo.InvariantCulture, out int beatWin))
                 return false;
-            if (!int.TryParse(parts[offset + 6], NumberStyles.Integer, CultureInfo.InvariantCulture, out int optionsRow))
+            if (
+                !int.TryParse(parts[offset + 6], NumberStyles.Integer, CultureInfo.InvariantCulture, out int optionsRow)
+            )
                 return false;
 
             payload = new CharacterSelectPayload
@@ -111,7 +113,13 @@ namespace Netcode.P2P
 
             if (!CharacterSelectPayload.TryParseFields(parts, 1, out CharacterSelectPayload slot0))
                 return false;
-            if (!CharacterSelectPayload.TryParseFields(parts, 1 + CharacterSelectPayload.FieldCount, out CharacterSelectPayload slot1))
+            if (
+                !CharacterSelectPayload.TryParseFields(
+                    parts,
+                    1 + CharacterSelectPayload.FieldCount,
+                    out CharacterSelectPayload slot1
+                )
+            )
                 return false;
 
             payload = new CharacterSelectBroadcastPayload { Slot0 = slot0, Slot1 = slot1 };

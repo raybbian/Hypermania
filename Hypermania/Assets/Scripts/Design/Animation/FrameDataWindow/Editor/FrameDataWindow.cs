@@ -33,10 +33,7 @@ namespace Design.Animation.FrameDataWindow.Editor
             {
                 if (_centeredBoldStyle == null)
                 {
-                    _centeredBoldStyle = new GUIStyle(EditorStyles.boldLabel)
-                    {
-                        alignment = TextAnchor.MiddleCenter,
-                    };
+                    _centeredBoldStyle = new GUIStyle(EditorStyles.boldLabel) { alignment = TextAnchor.MiddleCenter };
                 }
                 return _centeredBoldStyle;
             }
@@ -100,20 +97,7 @@ namespace Design.Animation.FrameDataWindow.Editor
             "Unbl",
         };
 
-        private static readonly float[] ProjectileWidths =
-        {
-            180f,
-            55f,
-            65f,
-            55f,
-            55f,
-            50f,
-            40f,
-            55f,
-            65f,
-            50f,
-            40f,
-        };
+        private static readonly float[] ProjectileWidths = { 180f, 55f, 65f, 55f, 55f, 50f, 40f, 55f, 65f, 50f, 40f };
 
         [MenuItem("Hypermania/Frame Data Viewer")]
         public static void ShowWindow()
@@ -125,12 +109,8 @@ namespace Design.Animation.FrameDataWindow.Editor
         private void OnGUI()
         {
             EditorGUILayout.Space();
-            _config = (CharacterConfig)EditorGUILayout.ObjectField(
-                "Character Config",
-                _config,
-                typeof(CharacterConfig),
-                false
-            );
+            _config = (CharacterConfig)
+                EditorGUILayout.ObjectField("Character Config", _config, typeof(CharacterConfig), false);
 
             if (_config == null)
             {
@@ -183,7 +163,17 @@ namespace Design.Animation.FrameDataWindow.Editor
                     GUI.contentColor = new Color(1f, 1f, 1f, 0.45f);
                 try
                 {
-                    DrawMoveHeaderRow(rowIndex, widths, state, data, gatlings, startup, active, recovery, validationReason);
+                    DrawMoveHeaderRow(
+                        rowIndex,
+                        widths,
+                        state,
+                        data,
+                        gatlings,
+                        startup,
+                        active,
+                        recovery,
+                        validationReason
+                    );
                     rowIndex++;
 
                     for (int b = 0; b < uniqueBoxes.Count; b++)
@@ -348,7 +338,12 @@ namespace Design.Animation.FrameDataWindow.Editor
         }
 
         // Projectile header row: visible = Trigger State / Spawn / Lifetime (or on-death marker). Rest blacked.
-        private static void DrawProjectileHeaderRow(int rowIndex, float[] widths, ProjectileConfig p, string onDeathLabel)
+        private static void DrawProjectileHeaderRow(
+            int rowIndex,
+            float[] widths,
+            ProjectileConfig p,
+            string onDeathLabel
+        )
         {
             Rect row = ReserveRow(RowHeight);
             DrawRowBackground(row, MoveHeaderBg);

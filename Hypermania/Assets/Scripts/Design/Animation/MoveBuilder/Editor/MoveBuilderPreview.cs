@@ -144,8 +144,7 @@ namespace Design.Animation.MoveBuilder.Editor
 
         private sealed class MoveBuilderShortcutContext : IShortcutContext
         {
-            public bool active =>
-                s_ActiveTool != null && ToolManager.activeToolType == typeof(MoveBuilderPreview);
+            public bool active => s_ActiveTool != null && ToolManager.activeToolType == typeof(MoveBuilderPreview);
         }
 
         private static void Dispatch(
@@ -216,8 +215,7 @@ namespace Design.Animation.MoveBuilder.Editor
             );
 
         [Shortcut("MoveBuilder/Copy Frame", typeof(MoveBuilderShortcutContext), KeyCode.C, ShortcutModifiers.Shift)]
-        private static void Shortcut_CopyFrame(ShortcutArguments _) =>
-            Dispatch((m, s) => m.CopyCurrentFrameData(s));
+        private static void Shortcut_CopyFrame(ShortcutArguments _) => Dispatch((m, s) => m.CopyCurrentFrameData(s));
 
         [Shortcut("MoveBuilder/Paste Frame", typeof(MoveBuilderShortcutContext), KeyCode.V, ShortcutModifiers.Shift)]
         private static void Shortcut_PasteFrame(ShortcutArguments _) =>

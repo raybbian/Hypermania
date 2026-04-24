@@ -333,7 +333,8 @@ namespace Game.Sim
 
                 int j = i ^ 1;
 
-                SVector2 grabbeePush = Fighters[i].Position.x <= Fighters[j].Position.x ? SVector2.left : SVector2.right;
+                SVector2 grabbeePush =
+                    Fighters[i].Position.x <= Fighters[j].Position.x ? SVector2.left : SVector2.right;
                 SVector2 grabberPush = -grabbeePush;
 
                 Fighters[i].ApplyGrabTech(SimFrame, options, grabbeePush);
@@ -1238,7 +1239,9 @@ namespace Game.Sim
                 if (Fighters[attacker.Owner].FacingDir != grabberFacingBefore)
                 {
                     Fighters[defender.Owner].FacingDir =
-                        Fighters[defender.Owner].FacingDir == FighterFacing.Right ? FighterFacing.Left : FighterFacing.Right;
+                        Fighters[defender.Owner].FacingDir == FighterFacing.Right
+                            ? FighterFacing.Left
+                            : FighterFacing.Right;
                 }
 
                 return new HitOutcome { Kind = HitKind.Grabbed, Props = attacker.Data };
