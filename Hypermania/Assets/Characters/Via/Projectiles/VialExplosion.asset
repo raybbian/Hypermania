@@ -934,7 +934,7 @@ MonoBehaviour:
         BlockstunTicks: 9
         HitstopTicks: 2
         BlockstopTicks: 1
-        KnockdownKind: 0
+        KnockdownKind: 1
         Knockback:
           x:
             rawValue: 1017370378
@@ -990,7 +990,7 @@ MonoBehaviour:
         BlockstunTicks: 9
         HitstopTicks: 2
         BlockstopTicks: 1
-        KnockdownKind: 0
+        KnockdownKind: 1
         Knockback:
           x:
             rawValue: 1017370378
@@ -1046,7 +1046,7 @@ MonoBehaviour:
         BlockstunTicks: 9
         HitstopTicks: 2
         BlockstopTicks: 1
-        KnockdownKind: 0
+        KnockdownKind: 1
         Knockback:
           x:
             rawValue: 1017370378
@@ -1102,7 +1102,7 @@ MonoBehaviour:
         BlockstunTicks: 9
         HitstopTicks: 2
         BlockstopTicks: 1
-        KnockdownKind: 0
+        KnockdownKind: 1
         Knockback:
           x:
             rawValue: 1017370378
@@ -1158,7 +1158,7 @@ MonoBehaviour:
         BlockstunTicks: 9
         HitstopTicks: 2
         BlockstopTicks: 1
-        KnockdownKind: 0
+        KnockdownKind: 1
         Knockback:
           x:
             rawValue: 1017370378
@@ -1214,7 +1214,7 @@ MonoBehaviour:
         BlockstunTicks: 9
         HitstopTicks: 2
         BlockstopTicks: 1
-        KnockdownKind: 0
+        KnockdownKind: 1
         Knockback:
           x:
             rawValue: 1017370378
@@ -1270,7 +1270,7 @@ MonoBehaviour:
         BlockstunTicks: 9
         HitstopTicks: 2
         BlockstopTicks: 1
-        KnockdownKind: 0
+        KnockdownKind: 1
         Knockback:
           x:
             rawValue: 1017370378
@@ -1326,7 +1326,7 @@ MonoBehaviour:
         BlockstunTicks: 9
         HitstopTicks: 2
         BlockstopTicks: 1
-        KnockdownKind: 0
+        KnockdownKind: 1
         Knockback:
           x:
             rawValue: 1017370378
