@@ -18,6 +18,7 @@ namespace Game.View.Events
         Sweep,
         SuperReady,
         SuperStart,
+        Burst,
     }
 
     [Serializable]

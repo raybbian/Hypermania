@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2455ca73b10e5b040b36e3c2176d11f1
+guid: 4ffd6898b3ab79347b70eff808b1116e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 934328616920416484
-    second: FadedViaNormalArrowUD_0
+      213: -4241681084022678718
+    second: Splash3_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: FadedViaNormalArrowUD_0
+      name: Splash3_0
       rect:
         serializedVersion: 2
-        x: 236
-        y: 130
-        width: 690
-        height: 947
+        x: 0
+        y: 0
+        width: 1843
+        height: 1914
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 4e006034de667fc00800000000000000
-      internalID: 934328616920416484
+      spriteID: 24b955807858225c0800000000000000
+      internalID: -4241681084022678718
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 6de1ee40e515a7d4d8fb2a0e37a028dd
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      FadedViaNormalArrowUD_0: 934328616920416484
+      Splash3_0: -4241681084022678718
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

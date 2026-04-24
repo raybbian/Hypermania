@@ -17,8 +17,8 @@ MonoBehaviour:
   Prefab: {fileID: 5766376669795590084, guid: 692614c6f0138c5709de58dbca0159e4, type: 3}
   MoveSfx: {fileID: 11400000, guid: 4e16a963506edac26ae5b3acd6883da1, type: 2}
   Skins:
-  - MainColor: {r: 0.27058825, g: 0.30980393, b: 0.93725497, a: 1}
-    LightColor: {r: 0.7137255, g: 0.8352942, b: 0.95294124, a: 1}
+  - MainColor: {r: 0.30588236, g: 0.33333334, b: 0.9960785, a: 1}
+    LightColor: {r: 0.6006353, g: 0.61636317, b: 0.99607843, a: 1}
     AccentColor: {r: 0.8078432, g: 0.21960786, b: 0.20392159, a: 1}
     HypeBarColors:
     - {r: 0.80784315, g: 0.5403107, b: 0.5331765, a: 1}
@@ -34,8 +34,8 @@ MonoBehaviour:
     ManiaOuterArrow:
       Active: {fileID: -2641461401451428804, guid: 8341a8a6eea3a074e9976d4e295f7271, type: 3}
       Inactive: {fileID: 742394407609332487, guid: 114e039b3256085488b6e962cb57ebe2, type: 3}
-  - MainColor: {r: 0.27058825, g: 0.30980393, b: 0.93725497, a: 1}
-    LightColor: {r: 0.7607844, g: 0.8745099, b: 0.9960785, a: 1}
+  - MainColor: {r: 0.2784314, g: 0.3254902, b: 0.9960785, a: 1}
+    LightColor: {r: 0.6424706, g: 0.8626415, b: 0.99607843, a: 1}
     AccentColor: {r: 0.6901961, g: 0.454902, b: 0.92549026, a: 1}
     HypeBarColors:
     - {r: 0.71214, g: 0.56628, b: 0.85800004, a: 1}

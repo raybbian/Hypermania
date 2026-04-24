@@ -160,6 +160,7 @@ namespace Game.View.Fighters
             if (state.StateChangedThisRealFrame && state.State == CharacterState.Burst)
             {
                 vfxManager.AddDesired(VfxKind.Burst, realFrame, position: _visualCenter.position);
+                sfxManager.AddDesired(SfxKind.Burst, realFrame);
             }
         }
 

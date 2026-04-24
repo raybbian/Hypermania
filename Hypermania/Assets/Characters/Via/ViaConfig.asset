@@ -51,6 +51,23 @@ MonoBehaviour:
     ManiaOuterArrow:
       Active: {fileID: 8404671947550861843, guid: 1149d4900c3244748bc7c41e92d20f38, type: 3}
       Inactive: {fileID: -2241081479375049109, guid: c5016bf878da48e46be7e82121baa1cd, type: 3}
+  - MainColor: {r: 0.16862746, g: 0.5176471, b: 0.54901963, a: 1}
+    LightColor: {r: 0.6117647, g: 0.8745099, b: 0.8705883, a: 1}
+    AccentColor: {r: 0.0627451, g: 0.4784314, b: 0.60784316, a: 1}
+    HypeBarColors:
+    - {r: 0.6117647, g: 0.8745099, b: 0.8705883, a: 1}
+    - {r: 0.48713398, g: 0.83699995, b: 0.83177805, a: 1}
+    - {r: 0.2847, g: 0.73, b: 0.7249966, a: 1}
+    - {r: 0.16862746, g: 0.5176471, b: 0.54901963, a: 1}
+    SpriteLibrary: {fileID: 7108339969198208228, guid: 4959e5e06e1d0674db564822609ef766, type: 3}
+    Portrait: {fileID: 2800000, guid: 20802c87dfbbdd749a4f88068f48e66e, type: 3}
+    Splash: {fileID: 2800000, guid: 4ffd6898b3ab79347b70eff808b1116e, type: 3}
+    ManiaInnerArrow:
+      Active: {fileID: 5072652356856799893, guid: f1dfad61a70d80c4b847e221616c3729, type: 3}
+      Inactive: {fileID: -3865794280420569641, guid: 7b8c95eb773500248a0261d9d3c88005, type: 3}
+    ManiaOuterArrow:
+      Active: {fileID: -1351088020085032094, guid: 592ad1ef829d8354ba1dd66d754aa7da, type: 3}
+      Inactive: {fileID: -2354632436734503508, guid: 4db84022e178c1b4f80bc7d7d0a945aa, type: 3}
   AnimationController: {fileID: 22100000, guid: 152e3c4ee00aa684189ad47f4fecc5f2, type: 2}
   CharacterHeight:
     rawValue: 1072064102

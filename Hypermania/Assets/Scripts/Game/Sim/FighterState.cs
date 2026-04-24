@@ -650,7 +650,7 @@ namespace Game.Sim
             GameMode gameMode
         )
         {
-            if (InputH.IsHeld(InputFlags.Burst) && State != CharacterState.Burst && Burst >= config.BurstMax)
+            if (InputH.IsHeld(InputFlags.Burst) && State != CharacterState.Burst && Burst >= config.BurstMax && Health > sfloat.Zero)
             {
                 Burst = 0;
                 SetState(
