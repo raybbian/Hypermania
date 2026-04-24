@@ -1043,6 +1043,14 @@ namespace Game.Sim
             sfloat damageMult
         )
         {
+            if (
+                State == CharacterState.SoftKnockdown
+                || State == CharacterState.HeavyKnockdown
+                || State == CharacterState.GetUp
+            )
+            {
+                return new HitOutcome { Kind = HitKind.None };
+            }
             int immunityVal = HashCode.Combine(props, attackSt);
             if (ImmunityHash == immunityVal)
             {

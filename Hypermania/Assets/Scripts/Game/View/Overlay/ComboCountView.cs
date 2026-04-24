@@ -16,7 +16,7 @@ namespace Game.View.Overlay
 
         public void SetComboCount(int Combo)
         {
-            gameObject.SetActive(Combo >= 1);
+            gameObject.SetActive(Combo >= 2);
             _comboText.SetText(Combo.ToString());
         }
     }
