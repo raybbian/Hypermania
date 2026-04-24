@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
   m_Name: SoftKnockdown
   m_EditorClassIdentifier: 
-  Clip: {fileID: 7400000, guid: 538ede659f08ac843bb213e1fe4d4358, type: 2}
+  Clip: {fileID: 7400000, guid: f65cd7e3f41301e4e911c14126462d1c, type: 2}
   ComboEligible: 1
   Followup: 3
   FollowupInput: 0
@@ -58,7 +58,7 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3157639840
       y:
         rawValue: 0
   - Boxes: []
@@ -79,7 +79,7 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3172034672
       y:
         rawValue: 0
   - Boxes: []
@@ -100,7 +100,7 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3178586176
       y:
         rawValue: 0
   - Boxes: []
@@ -121,7 +121,7 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3180423284
       y:
         rawValue: 0
   - Boxes: []
@@ -142,9 +142,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3188553398
       y:
-        rawValue: 0
+        rawValue: 1010214586
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -163,9 +163,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3196490886
       y:
-        rawValue: 0
+        rawValue: 1023571735
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -184,9 +184,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3198744002
       y:
-        rawValue: 0
+        rawValue: 1026564293
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -205,9 +205,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3203389430
       y:
-        rawValue: 0
+        rawValue: 1026564293
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -226,9 +226,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3208232451
       y:
-        rawValue: 0
+        rawValue: 1026564293
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -247,9 +247,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3210555163
       y:
-        rawValue: 0
+        rawValue: 1026564293
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -268,9 +268,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3210916921
       y:
-        rawValue: 0
+        rawValue: 1024551027
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -289,9 +289,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3211712791
       y:
-        rawValue: 0
+        rawValue: 1016833508
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -310,9 +310,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212508661
       y:
-        rawValue: 0
+        rawValue: 992204586
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -331,9 +331,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -352,9 +352,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -373,9 +373,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -394,9 +394,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -415,9 +415,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -436,9 +436,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -457,9 +457,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -478,9 +478,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -499,9 +499,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -520,9 +520,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -541,9 +541,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -562,9 +562,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -583,9 +583,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -604,9 +604,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -625,9 +625,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -646,9 +646,9 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
+        rawValue: 3148076810
   - Boxes: []
     FrameType: 8
     Floating: 0
@@ -667,90 +667,6 @@ MonoBehaviour:
         rawValue: 0
     RootMotionOffset:
       x:
-        rawValue: 0
+        rawValue: 3212853642
       y:
-        rawValue: 0
-  - Boxes: []
-    FrameType: 8
-    Floating: 0
-    GravityEnabled: 1
-    ShouldApplyVel: 0
-    ApplyVelocity:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-    ShouldTeleport: 0
-    TeleportLocation:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-    RootMotionOffset:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-  - Boxes: []
-    FrameType: 8
-    Floating: 0
-    GravityEnabled: 1
-    ShouldApplyVel: 0
-    ApplyVelocity:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-    ShouldTeleport: 0
-    TeleportLocation:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-    RootMotionOffset:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-  - Boxes: []
-    FrameType: 8
-    Floating: 0
-    GravityEnabled: 1
-    ShouldApplyVel: 0
-    ApplyVelocity:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-    ShouldTeleport: 0
-    TeleportLocation:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-    RootMotionOffset:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-  - Boxes: []
-    FrameType: 8
-    Floating: 0
-    GravityEnabled: 1
-    ShouldApplyVel: 0
-    ApplyVelocity:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-    ShouldTeleport: 0
-    TeleportLocation:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
-    RootMotionOffset:
-      x:
-        rawValue: 0
-      y:
-        rawValue: 0
+        rawValue: 3148076810
