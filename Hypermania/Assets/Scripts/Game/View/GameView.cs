@@ -289,7 +289,11 @@ namespace Game.View
                     .ManiaView.RollbackRender(state.RealFrame, state.Manias[i], _params.VfxManager, _params.SfxManager);
                 if (state.Fighters[i].SuperMaxedThisRealFrame)
                 {
-                    _params.SfxManager.AddDesired(SfxKind.SuperReady, state.RealFrame, hash: i);
+                    _params.SfxManager.AddDesired(
+                        i == 0 ? SfxKind.SuperReady : SfxKind.OppSuperReady,
+                        state.RealFrame,
+                        hash: i
+                    );
                 }
                 if (state.Fighters[i].HitLastRealFrame)
                 {

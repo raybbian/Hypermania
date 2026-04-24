@@ -29,7 +29,7 @@ MonoBehaviour:
     rawValue: 1073741824
   SuperJumpMultiplier:
     rawValue: 1067450368
-  RoundTimeTicks: 10800
+  RoundTimeTicks: 7200
   PreGameDelayTicks: 120
   MaxHype:
     rawValue: 1120403456
@@ -50,7 +50,7 @@ MonoBehaviour:
   RoundEndTicks: 240
   SuperDisplayHitstopTicks: 40
   SuperPostDisplayHitstopTicks: 10
-  SuperRecoveryFrames: 10
+  SuperRecoveryFrames: 25
   FloatingFactor:
     rawValue: 1066192077
   ManiaSlowTicks: 45
