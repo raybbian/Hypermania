@@ -728,10 +728,10 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 0
         Damage: 10
-        HitstunTicks: 20
-        BlockstunTicks: 16
+        HitstunTicks: 23
+        BlockstunTicks: 13
         HitstopTicks: 10
-        BlockstopTicks: 0
+        BlockstopTicks: 4
         KnockdownKind: 0
         Knockback:
           x:
@@ -817,10 +817,10 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 0
         Damage: 10
-        HitstunTicks: 20
-        BlockstunTicks: 16
+        HitstunTicks: 23
+        BlockstunTicks: 13
         HitstopTicks: 10
-        BlockstopTicks: 0
+        BlockstopTicks: 4
         KnockdownKind: 0
         Knockback:
           x:
@@ -906,10 +906,10 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 0
         Damage: 10
-        HitstunTicks: 20
-        BlockstunTicks: 16
+        HitstunTicks: 23
+        BlockstunTicks: 13
         HitstopTicks: 10
-        BlockstopTicks: 0
+        BlockstopTicks: 4
         KnockdownKind: 0
         Knockback:
           x:

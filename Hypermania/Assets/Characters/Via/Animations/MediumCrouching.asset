@@ -53,7 +53,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -109,7 +108,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -165,7 +163,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -221,7 +218,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -277,7 +273,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -333,7 +328,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -389,7 +383,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -445,7 +438,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -501,7 +493,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -557,7 +548,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -573,7 +563,7 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 2
         Damage: 8
-        HitstunTicks: 20
+        HitstunTicks: 23
         BlockstunTicks: 13
         HitstopTicks: 7
         BlockstopTicks: 4
@@ -592,7 +582,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -648,7 +637,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -664,7 +652,7 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 2
         Damage: 8
-        HitstunTicks: 20
+        HitstunTicks: 23
         BlockstunTicks: 13
         HitstopTicks: 7
         BlockstopTicks: 4
@@ -683,7 +671,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -739,7 +726,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -755,7 +741,7 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 2
         Damage: 8
-        HitstunTicks: 20
+        HitstunTicks: 23
         BlockstunTicks: 13
         HitstopTicks: 7
         BlockstopTicks: 4
@@ -774,7 +760,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -830,7 +815,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -846,7 +830,7 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 2
         Damage: 8
-        HitstunTicks: 20
+        HitstunTicks: 23
         BlockstunTicks: 13
         HitstopTicks: 7
         BlockstopTicks: 4
@@ -865,7 +849,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -921,7 +904,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -937,7 +919,7 @@ MonoBehaviour:
         Kind: 1
         AttackKind: 2
         Damage: 8
-        HitstunTicks: 20
+        HitstunTicks: 23
         BlockstunTicks: 13
         HitstopTicks: 7
         BlockstopTicks: 4
@@ -956,7 +938,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -1012,7 +993,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1068,7 +1048,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1124,7 +1103,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1180,7 +1158,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1236,7 +1213,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1292,7 +1268,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1348,7 +1323,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1404,7 +1378,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1460,7 +1433,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1516,7 +1488,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1572,7 +1543,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -1628,7 +1598,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
