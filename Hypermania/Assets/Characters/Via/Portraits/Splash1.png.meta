@@ -103,10 +103,10 @@ TextureImporter:
       name: Splash1_0
       rect:
         serializedVersion: 2
-        x: 72
-        y: 45
-        width: 1791
-        height: 1862
+        x: 0
+        y: 0
+        width: 1843
+        height: 1914
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: f07a66e0b5b203243a0237363af4f372
     internalID: 0
     vertices: []
     indices: 

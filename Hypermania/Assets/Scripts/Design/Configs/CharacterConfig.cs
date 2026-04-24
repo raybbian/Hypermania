@@ -38,7 +38,8 @@ namespace Design.Configs
         public SpriteLibraryAsset SpriteLibrary;
         public Texture2D Portrait;
         public Texture2D Splash;
-        public ManiaArrowSpritePair ManiaArrow;
+        public ManiaArrowSpritePair ManiaInnerArrow;
+        public ManiaArrowSpritePair ManiaOuterArrow;
     }
 
     [Serializable]

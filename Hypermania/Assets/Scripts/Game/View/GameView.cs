@@ -45,6 +45,7 @@ namespace Game.View
             public VfxManager VfxManager;
             public FrameDataOverlay FrameDataOverlay;
             public RoundCountdownView RoundCountdownView;
+            public IntroView IntroView;
             public HypeBarView HypeBarView;
             public KOScreenView KOScreenView;
             public BoxVisualizer BoxVisualizer;
@@ -120,6 +121,9 @@ namespace Game.View
                 options.Players[0].Character.Skins[options.Players[0].SkinIndex],
                 options.Players[1].Character.Skins[options.Players[1].SkinIndex]
             );
+            if (_params.IntroView != null)
+                _params.IntroView.Init(options);
+
             _conductor.Init(options);
             _conductor.SetFrame(Frame.FirstFrame);
             _rollbackStart = Frame.NullFrame;
@@ -194,7 +198,24 @@ namespace Game.View
                 _playerParams[i].VictoryMarkView.SetVictories(state.Fighters[i].Victories, (i == 0 ? -1 : 1));
             }
 
-            _params.CameraControl.UpdateCamera(interestPoints, state.GameMode);
+            Vector2? countdownFocus = null;
+            if (state.GameMode == GameMode.Countdown)
+            {
+                int elapsed = state.SimFrame.No - state.RoundStart.No;
+                var audio = _options.Global.Audio;
+                int focusPlayer = -1;
+                if (elapsed >= 0 && elapsed < audio.BeatsToFrame(2))
+                    focusPlayer = 0;
+                else if (elapsed < audio.BeatsToFrame(4))
+                    focusPlayer = 1;
+
+                if (focusPlayer >= 0)
+                {
+                    countdownFocus = (Vector2)state.Fighters[focusPlayer].Position
+                        + new Vector2(0, (float)_options.Players[focusPlayer].Character.CharacterHeight);
+                }
+            }
+            _params.CameraControl.UpdateCamera(interestPoints, state.GameMode, countdownFocus);
             _params.FighterIndicatorManager.Track(state.Fighters);
 
             for (int i = 0; i < _options.Players.Length; i++)
@@ -205,6 +226,7 @@ namespace Game.View
             }
 
             _params.InfoOverlayView.Render(overlayDetails);
+            _params.IntroView.DisplayIntro(state.SimFrame, options);
             _params.RoundCountdownView.DisplayRoundCD(state.SimFrame, state.RoundStart, options);
             _params.RoundTimerView.DisplayRoundTimer(state.SimFrame, state.RoundEnd, state.GameMode, options);
             _params.KOScreenView.Render(state);

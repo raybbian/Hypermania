@@ -157,7 +157,7 @@ namespace Game.Sim
             {
                 RealFrame = Frame.FirstFrame,
                 SimFrame = Frame.FirstFrame,
-                RoundStart = Frame.FirstFrame,
+                RoundStart = new Frame(options.Global.PreGameDelayTicks),
                 RoundEnd = new Frame(options.Global.RoundTimeTicks),
                 Fighters = new FighterState[options.Players.Length],
                 Manias = new ManiaState[options.Players.Length],
@@ -1231,7 +1231,15 @@ namespace Game.Sim
 
                 Fighters[defender.Owner]
                     .ApplyGrab(SimFrame, attacker.Data, attacker.Box.Pos, Fighters[attacker.Owner].FacingDir);
+
+                FighterFacing grabberFacingBefore = Fighters[attacker.Owner].FacingDir;
                 Fighters[attacker.Owner].ProcessHit(SimFrame, attacker.Data, options.Players[attacker.Owner].Character);
+                if (Fighters[attacker.Owner].FacingDir != grabberFacingBefore)
+                {
+                    Fighters[defender.Owner].FacingDir =
+                        Fighters[defender.Owner].FacingDir == FighterFacing.Right ? FighterFacing.Left : FighterFacing.Right;
+                }
+
                 return new HitOutcome { Kind = HitKind.Grabbed, Props = attacker.Data };
             }
 
@@ -1278,6 +1286,13 @@ namespace Game.Sim
 
             if (options.Players[attacker.Owner].ManiaDifficulty == ManiaDifficulty.Normal)
                 mult *= options.Global.NormalDifficultyDamageMultiplier;
+
+            if (Manias[attacker.Owner].Enabled(RealFrame))
+            {
+                propsForHit.KnockdownKind = Fighters[attacker.Owner].RhythmComboFinisherActive
+                    ? KnockdownKind.Heavy
+                    : KnockdownKind.None;
+            }
 
             HitOutcome outcome = Fighters[defender.Owner]
                 .ApplyHit(

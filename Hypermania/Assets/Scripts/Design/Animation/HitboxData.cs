@@ -126,6 +126,7 @@ namespace Design.Animation
         Blockstun,
         Hitstop,
         Grabbed,
+        Knockdown,
     }
 
     public enum FrameAttribute

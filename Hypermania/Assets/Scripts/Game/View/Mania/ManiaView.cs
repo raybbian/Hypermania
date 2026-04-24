@@ -46,7 +46,8 @@ namespace Game.View.Mania
 
         private AudioConfig _audioConfig;
         private List<RectTransform> _beatLinePool;
-        private ManiaArrowSpritePair _arrowSprites;
+        private ManiaArrowSpritePair _innerArrow;
+        private ManiaArrowSpritePair _outerArrow;
 
         public void Init(AudioConfig audioConfig, in SkinConfig skin)
         {
@@ -97,14 +98,16 @@ namespace Game.View.Mania
 
         private void ApplyArrowSkin(in SkinConfig skin)
         {
-            _arrowSprites = skin.ManiaArrow;
+            _innerArrow = skin.ManiaInnerArrow;
+            _outerArrow = skin.ManiaOuterArrow;
             int count = Mathf.Min(Config.Anchors.Length, 4);
             for (int i = 0; i < count; i++)
             {
+                ManiaArrowSpritePair pair = i < 2 ? _innerArrow : _outerArrow;
                 Config.Anchors[i].localRotation = Quaternion.Euler(0f, 0f, GetChannelZRotation(i));
                 Config.Anchors[i]
                     .gameObject.GetComponent<ManiaSpriteSwitcher>()
-                    .ApplySprites(skin.ManiaArrow.Inactive, skin.ManiaArrow.Active);
+                    .ApplySprites(pair.Inactive, pair.Active);
             }
         }
 
@@ -255,7 +258,8 @@ namespace Game.View.Mania
                 GameObject noteObj = Instantiate(Config.Note, transform, false);
                 noteObj.transform.localRotation = Quaternion.Euler(0f, 0f, GetChannelZRotation(channel));
                 noteView = noteObj.GetComponent<ManiaNoteView>();
-                noteView.ApplySprites(_arrowSprites.Inactive, _arrowSprites.Active);
+                ManiaArrowSpritePair pair = channel < 2 ? _innerArrow : _outerArrow;
+                noteView.ApplySprites(pair.Inactive, pair.Active);
             }
             else
             {

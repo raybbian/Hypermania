@@ -20,7 +20,7 @@ MonoBehaviour:
   ApplyRootMotion: 0
   Frames:
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -41,7 +41,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -62,7 +62,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -83,7 +83,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -125,7 +125,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -146,7 +146,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -167,7 +167,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -188,7 +188,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -209,7 +209,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -230,7 +230,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -251,7 +251,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -272,7 +272,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -293,7 +293,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -314,7 +314,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -335,7 +335,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -356,7 +356,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -377,7 +377,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -398,7 +398,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -419,7 +419,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0
@@ -440,7 +440,7 @@ MonoBehaviour:
       y:
         rawValue: 0
   - Boxes: []
-    FrameType: 0
+    FrameType: 8
     Floating: 0
     GravityEnabled: 1
     ShouldApplyVel: 0

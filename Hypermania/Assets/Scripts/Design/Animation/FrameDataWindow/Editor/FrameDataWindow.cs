@@ -21,13 +21,34 @@ namespace Design.Animation.FrameDataWindow.Editor
 
         private static readonly Color RowBgOdd = new Color(1f, 1f, 1f, 0.04f);
         private static readonly Color HeaderBg = new Color(0f, 0f, 0f, 0.25f);
+        private static readonly Color MoveHeaderBg = new Color(0.25f, 0.5f, 0.9f, 0.15f);
         private static readonly Color BorderColor = new Color(0f, 0f, 0f, 0.5f);
+        private static readonly Color BlackedCell = new Color(0f, 0f, 0f, 0.6f);
+        private static readonly Color ValidationWarnColor = new Color(1f, 0.35f, 0.35f, 1f);
+
+        private static GUIStyle _centeredBoldStyle;
+        private static GUIStyle CenteredBoldStyle
+        {
+            get
+            {
+                if (_centeredBoldStyle == null)
+                {
+                    _centeredBoldStyle = new GUIStyle(EditorStyles.boldLabel)
+                    {
+                        alignment = TextAnchor.MiddleCenter,
+                    };
+                }
+                return _centeredBoldStyle;
+            }
+        }
 
         private static readonly string[] MoveHeaders =
         {
+            "Valid",
             "State",
             "Attack",
             "Kind",
+            "Frame",
             "Dmg",
             "Startup",
             "Active",
@@ -45,9 +66,11 @@ namespace Design.Animation.FrameDataWindow.Editor
         // Last entry is flex — grows to fill remaining row width.
         private static readonly float[] MoveWidths =
         {
+            45f, // Valid
             160f, // State
             55f, // Attack
             55f, // Kind
+            50f, // Frame
             40f, // Dmg
             55f, // Startup
             50f, // Active
@@ -69,11 +92,10 @@ namespace Design.Animation.FrameDataWindow.Editor
             "Lifetime",
             "Attack",
             "Kind",
+            "Frame",
             "Dmg",
             "Hitstun",
             "Blockstun",
-            "On Hit",
-            "On Block",
             "KD",
             "Unbl",
         };
@@ -85,9 +107,8 @@ namespace Design.Animation.FrameDataWindow.Editor
             65f,
             55f,
             55f,
+            50f,
             40f,
-            55f,
-            65f,
             55f,
             65f,
             50f,
@@ -146,89 +167,149 @@ namespace Design.Animation.FrameDataWindow.Editor
                 HitboxData data = config.Hitboxes != null ? config.Hitboxes[state] : null;
                 if (data == null)
                     continue;
-                if (!data.HasHitbox())
-                    continue;
 
+                bool isValid = TryComputeSAR(data, out int startup, out int active, out int recovery);
                 List<BoxProps> uniqueBoxes = CollectUniqueHitboxes(data);
-                if (uniqueBoxes.Count == 0)
+                if (!isValid && uniqueBoxes.Count == 0)
                     continue;
 
-                int refIdx = FindLatestUniqueBoxIndex(uniqueBoxes, data);
+                int refIdx = uniqueBoxes.Count > 0 ? FindLatestUniqueBoxIndex(uniqueBoxes, data) : -1;
                 int refFirstFrame = refIdx >= 0 ? FindFirstFrameOfLastContiguousRun(data, uniqueBoxes[refIdx]) : -1;
-
                 string gatlings = GatlingsFor(config, state);
+                string validationReason = ValidateRule(data);
 
-                for (int b = 0; b < uniqueBoxes.Count; b++)
+                Color prevContent = GUI.contentColor;
+                if (!isValid)
+                    GUI.contentColor = new Color(1f, 1f, 1f, 0.45f);
+                try
                 {
-                    BoxProps props = uniqueBoxes[b];
-                    bool isFirst = b == 0;
-                    bool isReference = b == refIdx;
-                    string onHitStr = "";
-                    string onBlockStr = "";
-                    if (isReference && refFirstFrame >= 0)
-                    {
-                        onHitStr = FormatOnHit(props, data.TotalTicks - refFirstFrame);
-                        onBlockStr = FormatAdvantage(props.BlockstunTicks - (data.TotalTicks - refFirstFrame));
-                    }
-
-                    DrawMoveRow(
-                        rowIndex: rowIndex,
-                        widths: widths,
-                        state: state,
-                        data: data,
-                        props: props,
-                        isFirstRowOfMove: isFirst,
-                        onHitStr: onHitStr,
-                        onBlockStr: onBlockStr,
-                        gatlings: isFirst ? gatlings : ""
-                    );
+                    DrawMoveHeaderRow(rowIndex, widths, state, data, gatlings, startup, active, recovery, validationReason);
                     rowIndex++;
+
+                    for (int b = 0; b < uniqueBoxes.Count; b++)
+                    {
+                        BoxProps props = uniqueBoxes[b];
+                        bool isReference = b == refIdx;
+                        string onHitStr = "";
+                        string onBlockStr = "";
+                        if (isReference && refFirstFrame >= 0)
+                        {
+                            onHitStr = FormatOnHit(props, data.TotalTicks - refFirstFrame);
+                            onBlockStr = FormatAdvantage(props.BlockstunTicks - (data.TotalTicks - refFirstFrame));
+                        }
+
+                        int firstFrame = FindFirstFrameOf(data, props);
+                        DrawMoveHitboxRow(rowIndex, widths, props, firstFrame, isReference, onHitStr, onBlockStr);
+                        rowIndex++;
+                    }
+                }
+                finally
+                {
+                    GUI.contentColor = prevContent;
                 }
             }
         }
 
-        private static void DrawMoveRow(
+        // Move header row: visible = Valid, State, Startup/Active/Recovery, Gatlings. Rest blacked.
+        private static void DrawMoveHeaderRow(
             int rowIndex,
             float[] widths,
             CharacterState state,
             HitboxData data,
-            BoxProps props,
-            bool isFirstRowOfMove,
-            string onHitStr,
-            string onBlockStr,
-            string gatlings
+            string gatlings,
+            int startup,
+            int active,
+            int recovery,
+            string validationReason
         )
         {
             Rect row = ReserveRow(RowHeight);
-            DrawRowDecorations(row, rowIndex, widths, isHeader: false);
+            DrawRowBackground(row, MoveHeaderBg);
+            DrawRowBorders(row, widths);
 
             int c = 0;
-            if (isFirstRowOfMove)
+            DrawValidationCell(row, widths, c++, validationReason);
+
+            if (GUI.Button(CellRect(row, widths, c), state.ToString(), EditorStyles.boldLabel))
             {
-                if (GUI.Button(CellRect(row, widths, c), state.ToString(), EditorStyles.label))
-                {
-                    EditorGUIUtility.PingObject(data);
-                    Selection.activeObject = data;
-                }
+                EditorGUIUtility.PingObject(data);
+                Selection.activeObject = data;
             }
             c++;
 
+            BlackOut(row, widths, c++); // Attack
+            BlackOut(row, widths, c++); // Kind
+            BlackOut(row, widths, c++); // Frame
+            BlackOut(row, widths, c++); // Dmg
+
+            GUI.Label(CellRect(row, widths, c++), startup.ToString());
+            GUI.Label(CellRect(row, widths, c++), active > 0 ? active.ToString() : "—");
+            GUI.Label(CellRect(row, widths, c++), recovery > 0 ? recovery.ToString() : "—");
+
+            BlackOut(row, widths, c++); // Hitstun
+            BlackOut(row, widths, c++); // Blockstun
+            BlackOut(row, widths, c++); // OnHit
+            BlackOut(row, widths, c++); // OnBlock
+            BlackOut(row, widths, c++); // KD
+            BlackOut(row, widths, c++); // Unbl
+            BlackOut(row, widths, c++); // Tech
+
+            GUI.Label(CellRect(row, widths, c++), gatlings);
+        }
+
+        // Hitbox row: visible = per-box fields. Move-level fields (state, frame counts, gatlings) blacked.
+        private static void DrawMoveHitboxRow(
+            int rowIndex,
+            float[] widths,
+            BoxProps props,
+            int firstFrame,
+            bool isReference,
+            string onHitStr,
+            string onBlockStr
+        )
+        {
+            Rect row = ReserveRow(RowHeight);
+            if ((rowIndex & 1) == 1)
+                DrawRowBackground(row, RowBgOdd);
+            DrawRowBorders(row, widths);
+
+            int c = 0;
+            BlackOut(row, widths, c++); // Valid
+            BlackOut(row, widths, c++); // State
+
             GUI.Label(CellRect(row, widths, c++), AttackKindLabel(props));
             GUI.Label(CellRect(row, widths, c++), KindLabel(props.Kind));
+            GUI.Label(CellRect(row, widths, c++), firstFrame >= 0 ? firstFrame.ToString() : "—");
             GUI.Label(CellRect(row, widths, c++), props.Damage.ToString());
 
-            GUI.Label(CellRect(row, widths, c++), isFirstRowOfMove ? data.StartupTicks.ToString() : "");
-            GUI.Label(CellRect(row, widths, c++), isFirstRowOfMove ? data.ActiveTicks.ToString() : "");
-            GUI.Label(CellRect(row, widths, c++), isFirstRowOfMove ? data.RecoveryTicks.ToString() : "");
+            BlackOut(row, widths, c++); // Startup
+            BlackOut(row, widths, c++); // Active
+            BlackOut(row, widths, c++); // Recovery
 
             GUI.Label(CellRect(row, widths, c++), props.HitstunTicks.ToString());
             GUI.Label(CellRect(row, widths, c++), props.BlockstunTicks.ToString());
-            GUI.Label(CellRect(row, widths, c++), onHitStr);
-            GUI.Label(CellRect(row, widths, c++), onBlockStr);
+
+            bool isGrab = props.Kind == HitboxKind.Grabbox;
+            if (isReference && !isGrab)
+            {
+                GUI.Label(CellRect(row, widths, c++), onHitStr);
+                GUI.Label(CellRect(row, widths, c++), onBlockStr);
+            }
+            else
+            {
+                BlackOut(row, widths, c++); // OnHit
+                BlackOut(row, widths, c++); // OnBlock
+            }
+
             GUI.Label(CellRect(row, widths, c++), KnockdownLabel(props.KnockdownKind));
             GUI.Label(CellRect(row, widths, c++), props.Unblockable ? "Y" : "");
-            GUI.Label(CellRect(row, widths, c++), props.Kind == HitboxKind.Grabbox ? (props.Techable ? "Y" : "N") : "");
-            GUI.Label(CellRect(row, widths, c++), gatlings);
+
+            if (isGrab)
+                GUI.Label(CellRect(row, widths, c++), props.Techable ? "Y" : "N");
+            else
+                BlackOut(row, widths, c++);
+
+            BlackOut(row, widths, c++); // Gatlings
         }
 
         // ─────────── Projectiles ───────────
@@ -253,136 +334,116 @@ namespace Design.Animation.FrameDataWindow.Editor
                 if (p == null)
                     continue;
 
-                rowIndex += DrawProjectileBlock(p, widths, rowIndex, p.HitboxData, isOnDeath: false);
+                DrawProjectileHeaderRow(rowIndex, widths, p, onDeathLabel: null);
+                rowIndex++;
+                rowIndex += DrawProjectileHitboxRows(rowIndex, widths, p.HitboxData);
 
-                if (p.HasOnDeath && p.OnDeathHitbox != null)
+                if (p.HasOnDeath)
                 {
-                    rowIndex += DrawProjectileBlock(p, widths, rowIndex, p.OnDeathHitbox, isOnDeath: true);
+                    DrawProjectileHeaderRow(rowIndex, widths, p, onDeathLabel: "    ↳ on-death");
+                    rowIndex++;
+                    rowIndex += DrawProjectileHitboxRows(rowIndex, widths, p.OnDeathHitbox);
                 }
             }
         }
 
-        private static int DrawProjectileBlock(
-            ProjectileConfig p,
-            float[] widths,
-            int startingRowIndex,
-            HitboxData hitbox,
-            bool isOnDeath
-        )
+        // Projectile header row: visible = Trigger State / Spawn / Lifetime (or on-death marker). Rest blacked.
+        private static void DrawProjectileHeaderRow(int rowIndex, float[] widths, ProjectileConfig p, string onDeathLabel)
+        {
+            Rect row = ReserveRow(RowHeight);
+            DrawRowBackground(row, MoveHeaderBg);
+            DrawRowBorders(row, widths);
+
+            int c = 0;
+            if (onDeathLabel != null)
+            {
+                GUI.Label(CellRect(row, widths, c), onDeathLabel, EditorStyles.boldLabel);
+                c++;
+                BlackOut(row, widths, c++); // Spawn
+                BlackOut(row, widths, c++); // Lifetime
+            }
+            else
+            {
+                if (GUI.Button(CellRect(row, widths, c), p.TriggerState.ToString(), EditorStyles.boldLabel))
+                {
+                    EditorGUIUtility.PingObject(p);
+                    Selection.activeObject = p;
+                }
+                c++;
+                GUI.Label(CellRect(row, widths, c++), p.SpawnTick.ToString());
+                GUI.Label(CellRect(row, widths, c++), p.LifetimeTicks.ToString());
+            }
+
+            BlackOut(row, widths, c++); // Attack
+            BlackOut(row, widths, c++); // Kind
+            BlackOut(row, widths, c++); // Frame
+            BlackOut(row, widths, c++); // Dmg
+            BlackOut(row, widths, c++); // Hitstun
+            BlackOut(row, widths, c++); // Blockstun
+            BlackOut(row, widths, c++); // KD
+            BlackOut(row, widths, c++); // Unbl
+        }
+
+        private static int DrawProjectileHitboxRows(int startingRowIndex, float[] widths, HitboxData hitbox)
         {
             if (hitbox == null)
             {
-                DrawProjectileRow(
-                    startingRowIndex,
-                    widths,
-                    p,
-                    isHeaderOfBlock: true,
-                    label: isOnDeath ? "    ↳ on-death" : null,
-                    missingHitbox: true,
-                    props: default,
-                    onHitStr: "",
-                    onBlockStr: ""
-                );
+                DrawProjectileMissingHitboxRow(startingRowIndex, widths);
                 return 1;
             }
 
             List<BoxProps> boxes = CollectUniqueHitboxes(hitbox);
             if (boxes.Count == 0)
             {
-                DrawProjectileRow(
-                    startingRowIndex,
-                    widths,
-                    p,
-                    isHeaderOfBlock: true,
-                    label: isOnDeath ? "    ↳ on-death" : null,
-                    missingHitbox: true,
-                    props: default,
-                    onHitStr: "",
-                    onBlockStr: ""
-                );
+                DrawProjectileMissingHitboxRow(startingRowIndex, widths);
                 return 1;
             }
 
-            int refIdx = FindLatestUniqueBoxIndex(boxes, hitbox);
-            int refFirstFrame = refIdx >= 0 ? FindFirstFrameOfLastContiguousRun(hitbox, boxes[refIdx]) : -1;
-
             for (int b = 0; b < boxes.Count; b++)
             {
-                BoxProps props = boxes[b];
-                bool isReference = b == refIdx;
-                string onHitStr = "";
-                string onBlockStr = "";
-                if (isReference && refFirstFrame >= 0)
-                {
-                    onHitStr = FormatOnHit(props, hitbox.TotalTicks - refFirstFrame);
-                    onBlockStr = FormatAdvantage(props.BlockstunTicks - (hitbox.TotalTicks - refFirstFrame));
-                }
-
-                DrawProjectileRow(
-                    startingRowIndex + b,
-                    widths,
-                    p,
-                    isHeaderOfBlock: b == 0,
-                    label: isOnDeath ? (b == 0 ? "    ↳ on-death" : "") : null,
-                    missingHitbox: false,
-                    props: props,
-                    onHitStr: onHitStr,
-                    onBlockStr: onBlockStr
-                );
+                int firstFrame = FindFirstFrameOf(hitbox, boxes[b]);
+                DrawProjectileHitboxRow(startingRowIndex + b, widths, boxes[b], firstFrame);
             }
             return boxes.Count;
         }
 
-        private static void DrawProjectileRow(
-            int rowIndex,
-            float[] widths,
-            ProjectileConfig p,
-            bool isHeaderOfBlock,
-            string label,
-            bool missingHitbox,
-            BoxProps props,
-            string onHitStr,
-            string onBlockStr
-        )
+        private static void DrawProjectileHitboxRow(int rowIndex, float[] widths, BoxProps props, int firstFrame)
         {
             Rect row = ReserveRow(RowHeight);
-            DrawRowDecorations(row, rowIndex, widths, isHeader: false);
+            if ((rowIndex & 1) == 1)
+                DrawRowBackground(row, RowBgOdd);
+            DrawRowBorders(row, widths);
 
             int c = 0;
-            if (label != null)
-            {
-                GUI.Label(CellRect(row, widths, c), label);
-            }
-            else if (isHeaderOfBlock)
-            {
-                if (GUI.Button(CellRect(row, widths, c), p.TriggerState.ToString(), EditorStyles.label))
-                {
-                    EditorGUIUtility.PingObject(p);
-                    Selection.activeObject = p;
-                }
-            }
-            c++;
-
-            GUI.Label(CellRect(row, widths, c++), isHeaderOfBlock && label == null ? p.SpawnTick.ToString() : "");
-            GUI.Label(CellRect(row, widths, c++), isHeaderOfBlock && label == null ? p.LifetimeTicks.ToString() : "");
-
-            if (missingHitbox)
-            {
-                GUI.Label(CellRect(row, widths, c++), "(no hitbox)");
-                for (; c < widths.Length; c++)
-                    GUI.Label(CellRect(row, widths, c), "");
-                return;
-            }
+            BlackOut(row, widths, c++); // Trigger State
+            BlackOut(row, widths, c++); // Spawn
+            BlackOut(row, widths, c++); // Lifetime
 
             GUI.Label(CellRect(row, widths, c++), AttackKindLabel(props));
             GUI.Label(CellRect(row, widths, c++), KindLabel(props.Kind));
+            GUI.Label(CellRect(row, widths, c++), firstFrame >= 0 ? firstFrame.ToString() : "—");
             GUI.Label(CellRect(row, widths, c++), props.Damage.ToString());
             GUI.Label(CellRect(row, widths, c++), props.HitstunTicks.ToString());
             GUI.Label(CellRect(row, widths, c++), props.BlockstunTicks.ToString());
-            GUI.Label(CellRect(row, widths, c++), onHitStr);
-            GUI.Label(CellRect(row, widths, c++), onBlockStr);
+
             GUI.Label(CellRect(row, widths, c++), KnockdownLabel(props.KnockdownKind));
             GUI.Label(CellRect(row, widths, c++), props.Unblockable ? "Y" : "");
+        }
+
+        private static void DrawProjectileMissingHitboxRow(int rowIndex, float[] widths)
+        {
+            Rect row = ReserveRow(RowHeight);
+            if ((rowIndex & 1) == 1)
+                DrawRowBackground(row, RowBgOdd);
+            DrawRowBorders(row, widths);
+
+            int c = 0;
+            BlackOut(row, widths, c++); // Trigger State
+            BlackOut(row, widths, c++); // Spawn
+            BlackOut(row, widths, c++); // Lifetime
+            GUI.Label(CellRect(row, widths, c++), "(no hitbox)");
+            for (; c < widths.Length; c++)
+                BlackOut(row, widths, c);
         }
 
         // ─────────── Table rendering helpers ───────────
@@ -402,7 +463,12 @@ namespace Design.Animation.FrameDataWindow.Editor
         private static void DrawHeaderRow(string[] headers, float[] widths)
         {
             Rect row = ReserveRow(HeaderHeight);
-            DrawRowDecorations(row, 0, widths, isHeader: true);
+            DrawRowBackground(row, HeaderBg);
+            if (Event.current.type == EventType.Repaint)
+            {
+                EditorGUI.DrawRect(new Rect(row.x, row.y, TotalWidth(widths), 1f), BorderColor);
+            }
+            DrawRowBorders(row, widths);
             for (int i = 0; i < headers.Length; i++)
             {
                 GUI.Label(CellRect(row, widths, i), headers[i], EditorStyles.boldLabel);
@@ -414,41 +480,40 @@ namespace Design.Animation.FrameDataWindow.Editor
             return GUILayoutUtility.GetRect(0f, height, GUILayout.ExpandWidth(true));
         }
 
-        private static void DrawRowDecorations(Rect row, int rowIndex, float[] widths, bool isHeader)
+        private static void DrawRowBackground(Rect row, Color color)
+        {
+            if (Event.current.type != EventType.Repaint)
+                return;
+            EditorGUI.DrawRect(row, color);
+        }
+
+        private static void DrawRowBorders(Rect row, float[] widths)
         {
             if (Event.current.type != EventType.Repaint)
                 return;
 
-            if (isHeader)
-            {
-                EditorGUI.DrawRect(row, HeaderBg);
-            }
-            else if ((rowIndex & 1) == 1)
-            {
-                EditorGUI.DrawRect(row, RowBgOdd);
-            }
+            float totalWidth = TotalWidth(widths);
 
-            // Top border for header, bottom border for every row.
-            if (isHeader)
-            {
-                EditorGUI.DrawRect(new Rect(row.x, row.y, row.width, 1f), BorderColor);
-            }
-            EditorGUI.DrawRect(new Rect(row.x, row.yMax - 1f, row.width, 1f), BorderColor);
-
-            // Left and right outer borders.
+            // Bottom and outer left/right borders.
+            EditorGUI.DrawRect(new Rect(row.x, row.yMax - 1f, totalWidth, 1f), BorderColor);
             EditorGUI.DrawRect(new Rect(row.x, row.y, 1f, row.height), BorderColor);
-            float totalWidth = 0f;
-            for (int i = 0; i < widths.Length; i++)
-                totalWidth += widths[i];
             EditorGUI.DrawRect(new Rect(row.x + totalWidth - 1f, row.y, 1f, row.height), BorderColor);
 
-            // Column dividers between cells.
+            // Column dividers.
             float x = row.x;
             for (int i = 0; i < widths.Length - 1; i++)
             {
                 x += widths[i];
                 EditorGUI.DrawRect(new Rect(x, row.y, 1f, row.height), BorderColor);
             }
+        }
+
+        private static float TotalWidth(float[] widths)
+        {
+            float sum = 0f;
+            for (int i = 0; i < widths.Length; i++)
+                sum += widths[i];
+            return sum;
         }
 
         private static Rect CellRect(Rect row, float[] widths, int cellIndex)
@@ -459,7 +524,111 @@ namespace Design.Animation.FrameDataWindow.Editor
             return new Rect(x + CellPadX, row.y, widths[cellIndex] - CellPadX * 2f, row.height);
         }
 
+        // Renders the validation indicator. Empty cell if valid, red "!" with tooltip if not.
+        // Text color is forced full-opacity so the warning stays visible even when the surrounding
+        // row is grayed out (contentColor has been faded by the caller).
+        private static void DrawValidationCell(Rect row, float[] widths, int cellIndex, string reason)
+        {
+            if (reason == null)
+                return;
+            Color prev = GUI.contentColor;
+            GUI.contentColor = ValidationWarnColor;
+            GUI.Label(CellRect(row, widths, cellIndex), new GUIContent("!", reason), CenteredBoldStyle);
+            GUI.contentColor = prev;
+        }
+
+        // Fills the interior of a cell with a dark overlay to signal "not applicable on this row".
+        private static void BlackOut(Rect row, float[] widths, int cellIndex)
+        {
+            if (Event.current.type != EventType.Repaint)
+                return;
+            float x = row.x;
+            for (int i = 0; i < cellIndex; i++)
+                x += widths[i];
+            EditorGUI.DrawRect(new Rect(x + 1f, row.y + 1f, widths[cellIndex] - 1f, row.height - 2f), BlackedCell);
+        }
+
         // ─────────── Frame-data analysis ───────────
+
+        // Returns null if the frame tags obey:
+        //   - Startup = exactly the frames before the first hitbox
+        //   - Active  = exactly [firstHit..lastHit] (smallest window containing every hitbox)
+        //   - Recovery = exactly the frames after the last hitbox
+        // Otherwise returns a short human-readable reason (used as cell tooltip).
+        private static string ValidateRule(HitboxData data)
+        {
+            if (data == null || data.Frames == null || data.Frames.Count == 0)
+                return "no frames";
+
+            int firstHit = -1;
+            int lastHit = -1;
+            for (int i = 0; i < data.Frames.Count; i++)
+            {
+                FrameData frame = data.Frames[i];
+                if (frame != null && frame.HasHitbox(out _))
+                {
+                    if (firstHit < 0)
+                        firstHit = i;
+                    lastHit = i;
+                }
+            }
+            if (firstHit < 0)
+                return "no hitbox frames";
+
+            for (int i = 0; i < data.Frames.Count; i++)
+            {
+                FrameData frame = data.Frames[i];
+                if (frame == null)
+                    return $"frame {i} missing";
+                FrameType expected;
+                if (i < firstHit)
+                    expected = FrameType.Startup;
+                else if (i <= lastHit)
+                    expected = FrameType.Active;
+                else
+                    expected = FrameType.Recovery;
+                if (frame.FrameType != expected)
+                    return $"frame {i}: expected {expected}, got {frame.FrameType}";
+            }
+            return null;
+        }
+
+        // Counts Startup/Active/Recovery-tagged frames. Mirrors HitboxData.IsValidAttack but
+        // doesn't require a hitbox — we want to render moves that have the SAR sequence tagged
+        // even if they happen to have no hitbox frames.
+        // Returns true when the full Startup→Active→Recovery sequence is present with non-zero counts.
+        private static bool TryComputeSAR(HitboxData data, out int startup, out int active, out int recovery)
+        {
+            startup = 0;
+            active = 0;
+            recovery = 0;
+            if (data == null || data.Frames == null || data.Frames.Count == 0)
+                return false;
+
+            FrameType[] order = { FrameType.Startup, FrameType.Active, FrameType.Recovery };
+            int[] counts = new int[3];
+            int phase = 0;
+            foreach (FrameData frame in data.Frames)
+            {
+                if (frame == null)
+                    continue;
+                if (frame.FrameType != order[phase])
+                {
+                    if (phase + 1 >= order.Length)
+                        return false;
+                    if (frame.FrameType != order[phase + 1])
+                        return false;
+                    phase++;
+                }
+                counts[phase]++;
+            }
+
+            startup = counts[0];
+            active = counts[1];
+            recovery = counts[2];
+            // Startup can legitimately be 0 (move begins on an Active frame).
+            return active > 0 && recovery > 0;
+        }
 
         private static List<BoxProps> CollectUniqueHitboxes(HitboxData data)
         {
@@ -482,6 +651,27 @@ namespace Design.Animation.FrameDataWindow.Editor
                 }
             }
             return result;
+        }
+
+        private static int FindFirstFrameOf(HitboxData data, BoxProps target)
+        {
+            if (data == null || data.Frames == null)
+                return -1;
+            for (int f = 0; f < data.Frames.Count; f++)
+            {
+                FrameData frame = data.Frames[f];
+                if (frame == null || frame.Boxes == null)
+                    continue;
+                for (int b = 0; b < frame.Boxes.Count; b++)
+                {
+                    BoxProps props = frame.Boxes[b].Props;
+                    if (props.Kind == HitboxKind.Hurtbox)
+                        continue;
+                    if (props.Equals(target))
+                        return f;
+                }
+            }
+            return -1;
         }
 
         // Unique hitbox whose latest-occurring frame is the largest — the "last timing-wise" hit.

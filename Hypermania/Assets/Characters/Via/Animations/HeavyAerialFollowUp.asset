@@ -125,7 +125,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 1
@@ -251,7 +251,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 1
@@ -377,7 +377,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -503,7 +503,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -594,7 +594,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -685,7 +685,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -776,7 +776,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -867,7 +867,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -958,7 +958,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -1049,7 +1049,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -1140,7 +1140,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -1231,7 +1231,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -1322,7 +1322,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -1413,7 +1413,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -1504,7 +1504,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -1595,7 +1595,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -1686,7 +1686,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -1777,7 +1777,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -1868,7 +1868,7 @@ MonoBehaviour:
         HasTransition: 0
         Unblockable: 0
         OnHitTransition: 0
-    FrameType: 1
+    FrameType: 2
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
@@ -1945,9 +1945,9 @@ MonoBehaviour:
         KnockdownKind: 2
         Knockback:
           x:
-            rawValue: 1077553923
+            rawValue: 1087139808
           y:
-            rawValue: 3218999390
+            rawValue: 3219883952
         GrabPosition:
           x:
             rawValue: 0
@@ -2036,9 +2036,9 @@ MonoBehaviour:
         KnockdownKind: 2
         Knockback:
           x:
-            rawValue: 1077553923
+            rawValue: 1087139808
           y:
-            rawValue: 3218999390
+            rawValue: 3219883952
         GrabPosition:
           x:
             rawValue: 0
@@ -2127,9 +2127,9 @@ MonoBehaviour:
         KnockdownKind: 2
         Knockback:
           x:
-            rawValue: 1077553923
+            rawValue: 1087139808
           y:
-            rawValue: 3218999390
+            rawValue: 3219883952
         GrabPosition:
           x:
             rawValue: 0

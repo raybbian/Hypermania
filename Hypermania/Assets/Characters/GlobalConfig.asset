@@ -30,6 +30,7 @@ MonoBehaviour:
   SuperJumpMultiplier:
     rawValue: 1067450368
   RoundTimeTicks: 10800
+  PreGameDelayTicks: 120
   MaxHype:
     rawValue: 1120403456
   HypeMovementFactor:
@@ -53,13 +54,14 @@ MonoBehaviour:
   FloatingFactor:
     rawValue: 1066192077
   ManiaSlowTicks: 45
-  ManiaFailStunTicks: 30
+  ManiaStartPaddingTicks: 15
+  ManiaFailStunTicks: 25
   ManiaFailKnockbackMagnitude:
     rawValue: 1069547520
   GrabTechWindow: 10
   GrabTechStunTicks: 20
-  LightKnockdownTicks: 30
-  HeavyKnockdownTicks: 60
+  LightKnockdownTicks: 25
+  HeavyKnockdownTicks: 35
   GrabTechKnockbackMagnitude:
     rawValue: 1073741824
   StalingBufferSize: 8

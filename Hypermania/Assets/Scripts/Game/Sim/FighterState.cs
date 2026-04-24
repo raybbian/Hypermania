@@ -950,7 +950,10 @@ namespace Game.Sim
             if (State == CharacterState.HeavyKnockdown && StateEnd == Frame.Infinity)
             {
                 Velocity = SVector2.zero;
-                SetState(CharacterState.HeavyKnockdown, frame, frame + options.Global.HeavyKnockdownTicks, true);
+                // Preserve StateStart so the HeavyKnockdown animation continues
+                // from where it was when the fighter lands — only latch the
+                // downed-timer end frame.
+                StateEnd = frame + options.Global.HeavyKnockdownTicks;
                 return;
             }
 
@@ -1104,13 +1107,14 @@ namespace Game.Sim
 
         public void ApplyGrab(Frame frame, BoxProps props, SVector2 hitboxCenter, FighterFacing grabberFacingDir)
         {
+            // only consider the first grab tech property
             if (State != CharacterState.Grabbed)
             {
                 ComboedCount++;
+                CurrentGrabTechable = props.Techable;
             }
             SetState(CharacterState.Grabbed, frame, Frame.Infinity);
             Velocity = SVector2.zero;
-            CurrentGrabTechable = props.Techable;
 
             SVector2 grabPos = props.GrabPosition;
             if (grabberFacingDir == FighterFacing.Left)

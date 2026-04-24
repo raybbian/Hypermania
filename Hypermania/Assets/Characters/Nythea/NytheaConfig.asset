@@ -28,9 +28,12 @@ MonoBehaviour:
     SpriteLibrary: {fileID: 7108339969198208228, guid: 7bce4506c706589b0ba441fd802927e8, type: 3}
     Portrait: {fileID: 2800000, guid: 66bd42930e8db0f4b911bfdc119f8c13, type: 3}
     Splash: {fileID: 2800000, guid: 04a46b432d6a62443800ebef7de33dce, type: 3}
-    ManiaArrow:
-      Active: {fileID: -1647495070530756300, guid: ee02fd80fca1199468c9249eebc95035, type: 3}
-      Inactive: {fileID: -455746072436578536, guid: 67e8484bd9ee5eb478e7b9c1a00f31e5, type: 3}
+    ManiaInnerArrow:
+      Active: {fileID: 8617828211107082129, guid: e22c1b97d9f9dbd448294319e3e1e615, type: 3}
+      Inactive: {fileID: -8883600614224032692, guid: 32966ac437a3048489624a64e04e2614, type: 3}
+    ManiaOuterArrow:
+      Active: {fileID: -2641461401451428804, guid: 8341a8a6eea3a074e9976d4e295f7271, type: 3}
+      Inactive: {fileID: 742394407609332487, guid: 114e039b3256085488b6e962cb57ebe2, type: 3}
   - MainColor: {r: 0.27058825, g: 0.30980393, b: 0.93725497, a: 1}
     LightColor: {r: 0.7607844, g: 0.8745099, b: 0.9960785, a: 1}
     AccentColor: {r: 0.6901961, g: 0.454902, b: 0.92549026, a: 1}
@@ -42,9 +45,12 @@ MonoBehaviour:
     SpriteLibrary: {fileID: 7108339969198208228, guid: f6fdaaf67e68349c7961174219f92281, type: 3}
     Portrait: {fileID: 2800000, guid: 02b2dafe45ba6af4181a6795730a3e14, type: 3}
     Splash: {fileID: 2800000, guid: 515b1a4207a987d4b9ef99b7d025f51e, type: 3}
-    ManiaArrow:
-      Active: {fileID: -2641461401451428804, guid: 8341a8a6eea3a074e9976d4e295f7271, type: 3}
-      Inactive: {fileID: 742394407609332487, guid: 114e039b3256085488b6e962cb57ebe2, type: 3}
+    ManiaInnerArrow:
+      Active: {fileID: -6629343155083197429, guid: 3538955c4bd69bd4188a0004a3b26c0a, type: 3}
+      Inactive: {fileID: 8457640894194228491, guid: bc248f9345af6174897779bb8884f81c, type: 3}
+    ManiaOuterArrow:
+      Active: {fileID: -1647495070530756300, guid: ee02fd80fca1199468c9249eebc95035, type: 3}
+      Inactive: {fileID: -455746072436578536, guid: 67e8484bd9ee5eb478e7b9c1a00f31e5, type: 3}
   AnimationController: {fileID: 22100000, guid: b2247d1bd644d04a3a78e3aa68904cb8, type: 2}
   CharacterHeight:
     rawValue: 1071225242
@@ -79,7 +85,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 219390c45eefcde0dba74ec923eb3419, type: 2}
     - {fileID: 11400000, guid: 77993e6206ae5d42280c665e746df5b1, type: 2}
     - {fileID: 11400000, guid: 6935d7dcf4841d9cf948ff0efee3d2cb, type: 2}
-    - {fileID: 11400000, guid: fba29297a217f0b3293fe4dd64a90655, type: 2}
+    - {fileID: 11400000, guid: 28bd80ec9caf73343968421133ee0c7d, type: 2}
     - {fileID: 11400000, guid: 0fdef0c6d04a9f2f594bed51a1cbfde4, type: 2}
     - {fileID: 11400000, guid: 48513f93e714938feada1914de251d00, type: 2}
     - {fileID: 11400000, guid: 5447394c70299f385baef6478190f24b, type: 2}
@@ -113,7 +119,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: a4a09fb1d790b6041b2b8ae4eb7d0f33, type: 2}
     - {fileID: 11400000, guid: bdf1bc94e8de9a34bb6aa50ae488cce9, type: 2}
     - {fileID: 11400000, guid: fef47fb6a49229b47bf508f50d7136b8, type: 2}
-    - {fileID: 11400000, guid: fba29297a217f0b3293fe4dd64a90655, type: 2}
+    - {fileID: 11400000, guid: 8d42bd13e68a79f42ae4f8f26eaed901, type: 2}
     - {fileID: 11400000, guid: 4840cb431b0e8834288160696e35ce2f, type: 2}
   Gatlings:
   - From: 5
