@@ -1824,7 +1824,7 @@
     "m_ObjectId": "11417bc21f8245fe92637aabcba114f9",
     "m_Title": "Halftone Sampling",
     "m_Position": {
-        "x": -1051.2000732421875,
+        "x": -1051.200439453125,
         "y": -256.79998779296877
     }
 }
@@ -3061,7 +3061,7 @@
     "m_ObjectId": "3934159f94d7468f833305e61fc3cb40",
     "m_Title": "Noise Generation",
     "m_Position": {
-        "x": -2132.7998046875,
+        "x": -2132.800048828125,
         "y": -440.800048828125
     }
 }
@@ -3416,7 +3416,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "4505fb73715b458686e3283221bbb8da",
     "m_Id": 0,
-    "m_DisplayName": "RimSize",
+    "m_DisplayName": "Dark Rim Size",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -4114,9 +4114,6 @@
     "m_ObjectId": "5de584a084644b9bbba36f560f25b42b",
     "m_Name": "Rim Settings",
     "m_ChildObjectList": [
-        {
-            "m_Id": "e873cdf16ae940019bb68b999a2fafaa"
-        },
         {
             "m_Id": "578d1bb64a404219aaf06c4c2c088ac5"
         },
@@ -5127,7 +5124,7 @@
     "m_Title": "Global Alpha Dissolve",
     "m_Position": {
         "x": 386.400146484375,
-        "y": 727.199951171875
+        "y": 727.1998901367188
     }
 }
 
@@ -6109,7 +6106,7 @@
     "m_Title": "Final Color Composite",
     "m_Position": {
         "x": 542.400146484375,
-        "y": -42.39990234375
+        "y": -42.39994812011719
     }
 }
 
@@ -6229,6 +6226,9 @@
     "m_ObjectId": "94b76108007f4a7299346bc82007d644",
     "m_Name": "Dark Zone Settings",
     "m_ChildObjectList": [
+        {
+            "m_Id": "e873cdf16ae940019bb68b999a2fafaa"
+        },
         {
             "m_Id": "647c32d869f145ae802068b32237aa67"
         }
@@ -8162,10 +8162,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -535.2000122070313,
-            "y": -900.7999877929688,
-            "width": 152.00003051757813,
-            "height": 33.5999755859375
+            "x": -611.2000122070313,
+            "y": -875.2000122070313,
+            "width": 152.80001831054688,
+            "height": 33.60003662109375
         }
     },
     "m_Slots": [
@@ -8293,8 +8293,8 @@
     "m_ObjectId": "db37a60a674f4ce2afb5b8e88cdd51cd",
     "m_Title": "Dark Zone Rim",
     "m_Position": {
-        "x": -553.5999755859375,
-        "y": -767.2000122070313
+        "x": -553.6000366210938,
+        "y": -767.2000732421875
     }
 }
 
@@ -8518,7 +8518,7 @@
     "m_ObjectId": "e28e968fffaa43ecb8f569106592c4ac",
     "m_Title": "Dark Zone",
     "m_Position": {
-        "x": -560.800048828125,
+        "x": -636.800048828125,
         "y": -1200.0001220703125
     }
 }
@@ -8758,10 +8758,10 @@
     "m_Guid": {
         "m_GuidSerialized": "cd908bd7-10c5-4558-9746-3f5eb4b82e9d"
     },
-    "m_Name": "Rim Size",
+    "m_Name": "Dark Rim Size",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Rim Size",
-    "m_DefaultReferenceName": "_Rim_Size",
+    "m_RefNameGeneratedByDisplayName": "Dark Rim Size",
+    "m_DefaultReferenceName": "_Dark_Rim_Size",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
