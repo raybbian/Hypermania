@@ -19,16 +19,13 @@ namespace Scenes.Menus.CharacterSelect
         public BeatCancelWindow BeatCancelWindow = BeatCancelWindow.Medium;
 
         /// <summary>
-        /// Controls preset index into <c>CharacterSelectDirectory._controlsPresets</c>.
-        /// Local-only; never included in <see cref="CharacterSelectPayload"/>.
+        /// Name of the disk-backed <c>ControlsProfile</c> the player most
+        /// recently landed on in the controls menu. Empty when the menu was
+        /// never opened — <see cref="GameRunner"/> then falls back to
+        /// <see cref="Design.Configs.ControlsConfig.DefaultBindings"/>. Local-only.
         /// </summary>
-        public int ControlsIndex;
+        public string ControlsProfileName;
 
-        /// <summary>
-        /// Currently-highlighted row inside <see cref="PlayerOptionsPanel"/>.
-        /// Synced to remote peers so the remote panel can mirror the peer's
-        /// highlight position.
-        /// </summary>
         public int OptionsRow;
 
         public CharacterSelectPayload ToPayload()
@@ -45,11 +42,6 @@ namespace Scenes.Menus.CharacterSelect
             };
         }
 
-        /// <summary>
-        /// Copies every synced field from <paramref name="payload"/>.
-        /// <see cref="ControlsIndex"/> is intentionally not touched — it is
-        /// local-only on every client and never part of the wire format.
-        /// </summary>
         public void ApplyPayload(in CharacterSelectPayload payload)
         {
             Phase = payload.Phase;
@@ -74,30 +66,5 @@ namespace Scenes.Menus.CharacterSelect
 
         public bool BothConfirmed =>
             Players[0].Phase == SelectPhase.Confirmed && Players[1].Phase == SelectPhase.Confirmed;
-
-        /// <summary>
-        /// Applies a host broadcast to both slots. Each slot's
-        /// <see cref="PlayerSelectionState.ControlsIndex"/> is preserved
-        /// because the broadcast never carries it — controls bindings are
-        /// inherently local.
-        /// </summary>
-        public void ApplyBroadcast(in CharacterSelectBroadcastPayload payload)
-        {
-            Players[0].ApplyPayload(payload.Slot0);
-            Players[1].ApplyPayload(payload.Slot1);
-        }
-
-        /// <summary>
-        /// Produces a broadcast payload from both slots. Host calls this each
-        /// tick after applying input edges and before publishing to lobby data.
-        /// </summary>
-        public CharacterSelectBroadcastPayload ToBroadcast()
-        {
-            return new CharacterSelectBroadcastPayload
-            {
-                Slot0 = Players[0].ToPayload(),
-                Slot1 = Players[1].ToPayload(),
-            };
-        }
     }
 }

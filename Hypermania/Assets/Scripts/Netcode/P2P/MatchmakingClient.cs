@@ -69,17 +69,6 @@ namespace Netcode.P2P
         public Action<string[]> OnCharacterSelectLaunch;
 
         /// <summary>
-        /// Fires on every lobby member when a non-host forwards a frame's
-        /// input edges to the host (see <see cref="SendCharacterSelectInput"/>).
-        /// Only the host acts on this; non-hosts ignore it. Args are six
-        /// booleans in edge order (left, right, up, down, confirm, back).
-        /// Input-forwarding is how the non-host requests state changes on
-        /// the authoritative CharacterSelect — the host owns the state and
-        /// applies collision logic before broadcasting the result.
-        /// </summary>
-        public Action<bool, bool, bool, bool, bool, bool> OnCharacterSelectInput;
-
-        /// <summary>
         /// Fires on remaining lobby members when another member departs the
         /// current lobby — whether they explicitly left, disconnected
         /// (e.g. quit the process), were kicked, or were banned. The arg is
@@ -247,31 +236,6 @@ namespace Netcode.P2P
                 $"[Matchmaking] SendCharacterSelectLaunch(): lobby={_currentLobby.m_SteamID}, args=[{string.Join(",", args ?? Array.Empty<string>())}]"
             );
             SendChat(LobbyChatOpcode.CsLaunch, args);
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        /// Non-host forwards a frame's input edges to the host. Encoded as
-        /// six decimal "0"/"1" args in edge order (left, right, up, down,
-        /// confirm, back). Only the host's
-        /// <see cref="OnCharacterSelectInput"/> subscriber should act on the
-        /// resulting event; non-hosts ignore it.
-        /// </summary>
-        public Task SendCharacterSelectInput(bool left, bool right, bool up, bool down, bool confirm, bool back)
-        {
-            if (!_currentLobby.IsValid())
-                return Task.CompletedTask;
-
-            string[] args = new[]
-            {
-                left ? "1" : "0",
-                right ? "1" : "0",
-                up ? "1" : "0",
-                down ? "1" : "0",
-                confirm ? "1" : "0",
-                back ? "1" : "0",
-            };
-            SendChat(LobbyChatOpcode.CsInput, args);
             return Task.CompletedTask;
         }
 
@@ -461,24 +425,6 @@ namespace Netcode.P2P
                         $"[Matchmaking] Received CS_LAUNCH from={user.m_SteamID}, me={SteamUser.GetSteamID()}, args=[{string.Join(",", args)}]"
                     );
                     OnCharacterSelectLaunch?.Invoke(args);
-                    return;
-
-                case LobbyChatOpcode.CsInput:
-                    if (args.Length != 6)
-                    {
-                        Debug.LogWarning(
-                            $"[Matchmaking] Dropping CS_INPUT with unexpected arg count {args.Length}: [{string.Join(",", args)}]"
-                        );
-                        return;
-                    }
-                    OnCharacterSelectInput?.Invoke(
-                        args[0] == "1",
-                        args[1] == "1",
-                        args[2] == "1",
-                        args[3] == "1",
-                        args[4] == "1",
-                        args[5] == "1"
-                    );
                     return;
 
                 case LobbyChatOpcode.Start:

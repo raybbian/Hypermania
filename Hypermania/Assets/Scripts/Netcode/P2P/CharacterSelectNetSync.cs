@@ -5,26 +5,24 @@ using UnityEngine;
 namespace Netcode.P2P
 {
     /// <summary>
-    /// Steam lobby-data sync for the CharacterSelect screen. The host (lobby
-    /// owner) writes the full selection state for both slots under
-    /// <see cref="LobbyStateKey"/>; all clients receive <see cref="OnLobbyStateUpdate"/>
-    /// when the payload changes. Only the lobby owner can write lobby data via
-    /// <c>SteamMatchmaking.SetLobbyData</c>, so authority is enforced at the
-    /// transport layer — non-hosts cannot spoof state.
+    /// Steam lobby member-data sync for the CharacterSelect screen. Writes the
+    /// local player's selection slice under the member-data key
+    /// <see cref="CSKey"/> and raises <see cref="OnMemberUpdate"/> when any
+    /// other lobby member's slice changes.
     /// </summary>
     public sealed class CharacterSelectNetSync : IDisposable
     {
-        public const string LobbyStateKey = "cs_state";
+        public const string CSKey = "cs";
 
         private readonly SteamMatchmakingClient _client;
         private Callback<LobbyDataUpdate_t> _lobbyDataUpdateCb;
         private string _lastBroadcast;
 
         /// <summary>
-        /// Fires when the host's <see cref="LobbyStateKey"/> payload changes.
-        /// Arg is the raw payload string. Fires on the host as well as clients.
+        /// Fires on inbound member-data updates for members other than the
+        /// local user. Arguments: (memberSteamId, rawPayload).
         /// </summary>
-        public event Action<string> OnLobbyStateUpdate;
+        public event Action<CSteamID, string> OnMemberUpdate;
 
         public CharacterSelectNetSync(SteamMatchmakingClient client)
         {
@@ -33,31 +31,30 @@ namespace Netcode.P2P
         }
 
         /// <summary>
-        /// Host-only. Writes <paramref name="payload"/> to lobby data, deduped
+        /// Writes <paramref name="payload"/> to our lobby member data, deduping
         /// against the last broadcast so Steam isn't spammed with identical
-        /// writes each frame. No-op for non-hosts (Steam will reject the write
-        /// silently, so callers should still gate on their own host flag).
+        /// writes each frame.
         /// </summary>
-        public void BroadcastHostState(string payload)
+        public void Broadcast(string payload)
         {
             if (!_client.InLobby)
                 return;
             if (payload == _lastBroadcast)
                 return;
             _lastBroadcast = payload;
-            SteamMatchmaking.SetLobbyData(_client.CurrentLobby, LobbyStateKey, payload);
+            SteamMatchmaking.SetLobbyMemberData(_client.CurrentLobby, CSKey, payload);
         }
 
         /// <summary>
-        /// Returns the host's currently-published state payload, or the empty
-        /// string if nothing is set. Used on enter to seed local state with
-        /// whatever the host had already broadcast before we subscribed.
+        /// Returns the current member data for <paramref name="member"/>, or
+        /// the empty string if nothing is set. Useful on enter to seed remote
+        /// state with whatever the peer has already broadcast.
         /// </summary>
-        public string PeekHostState()
+        public string Peek(CSteamID member)
         {
             if (!_client.InLobby)
                 return string.Empty;
-            return SteamMatchmaking.GetLobbyData(_client.CurrentLobby, LobbyStateKey) ?? string.Empty;
+            return SteamMatchmaking.GetLobbyMemberData(_client.CurrentLobby, member, CSKey) ?? string.Empty;
         }
 
         private void OnLobbyDataUpdate(LobbyDataUpdate_t data)
@@ -65,39 +62,38 @@ namespace Netcode.P2P
             if (!_client.InLobby || data.m_ulSteamIDLobby != _client.CurrentLobby.m_SteamID)
                 return;
 
-            // Lobby-wide data updates report member == lobby. Per-member data
-            // updates (unused in the new flow) have member != lobby; ignore.
-            if (data.m_ulSteamIDMember != data.m_ulSteamIDLobby)
+            // Lobby-wide data updates report member == lobby; skip those.
+            if (data.m_ulSteamIDMember == data.m_ulSteamIDLobby)
                 return;
 
-            string payload = SteamMatchmaking.GetLobbyData(_client.CurrentLobby, LobbyStateKey);
+            CSteamID member = new CSteamID(data.m_ulSteamIDMember);
+            if (member == SteamUser.GetSteamID())
+                return;
+
+            string payload = SteamMatchmaking.GetLobbyMemberData(_client.CurrentLobby, member, CSKey);
             if (string.IsNullOrEmpty(payload))
                 return;
 
-            OnLobbyStateUpdate?.Invoke(payload);
+            OnMemberUpdate?.Invoke(member, payload);
         }
 
         public void Dispose()
         {
-            // Host blanks the state key on back-and-stay so a re-entry doesn't
-            // flash stale state at the peer for a frame. Steam auto-clears
-            // lobby data when the owner leaves the lobby, so disconnect/quit
+            // Wipe our own "cs" slot so the next visit to CharacterSelect
+            // (if we stay in the lobby and come back) doesn't show our
+            // previous selection to the peer for a frame. Steam auto-evicts
+            // member data when a user leaves the lobby, so disconnect/quit
             // paths don't need this — only the Back-and-stay case does.
-            // Non-hosts cannot write lobby data, so the blank is a no-op for
-            // them (SetLobbyData returns false silently).
             if (_client != null && _client.InLobby)
             {
-                if (SteamMatchmaking.GetLobbyOwner(_client.CurrentLobby) == SteamUser.GetSteamID())
-                {
-                    SteamMatchmaking.SetLobbyData(_client.CurrentLobby, LobbyStateKey, string.Empty);
-                }
+                SteamMatchmaking.SetLobbyMemberData(_client.CurrentLobby, CSKey, string.Empty);
             }
             if (_lobbyDataUpdateCb != null)
             {
                 _lobbyDataUpdateCb.Dispose();
                 _lobbyDataUpdateCb = null;
             }
-            OnLobbyStateUpdate = null;
+            OnMemberUpdate = null;
         }
     }
 }

@@ -6,10 +6,9 @@ using UnityEngine;
 namespace Scenes.Menus.CharacterSelect
 {
     /// <summary>
-    /// Renders the five-row options panel for a single player. The directory
-    /// binds the panel with the shared <see cref="PlayerSelectionState"/>,
-    /// the character roster, and the controls presets; the panel watches the
-    /// state every frame and redraws row values + row visibility on its own.
+    /// Renders the five-row options panel for a single player. Watches the
+    /// shared <see cref="PlayerSelectionState"/> every frame and redraws row
+    /// values + row visibility on its own.
     /// </summary>
     public class PlayerOptionsPanel : MonoBehaviour
     {
@@ -41,7 +40,6 @@ namespace Scenes.Menus.CharacterSelect
 
         private PlayerSelectionState _state;
         private CharacterConfig[] _roster;
-        private ControlsConfig[] _controlsPresets;
         private bool _isLocal;
 
         // Lazily resolved once per row on the first visibility pass. Rows
@@ -53,13 +51,11 @@ namespace Scenes.Menus.CharacterSelect
             PlayerSelectionState state,
             PlayerSelectionState otherState,
             CharacterConfig[] roster,
-            ControlsConfig[] controlsPresets,
             bool isLocal
         )
         {
             _state = state;
             _roster = roster;
-            _controlsPresets = controlsPresets;
             _isLocal = isLocal;
 
             if (_skinSelector != null)
@@ -134,7 +130,7 @@ namespace Scenes.Menus.CharacterSelect
                 _state.ManiaDifficulty == ManiaDifficulty.Normal ? "Normal" : "Hard"
             );
             SetRowText(OptionsRows.BeatCancel, FormatBeatCancel(_state.BeatCancelWindow));
-            SetRowText(OptionsRows.ControlsPreset, FormatControls(_state.ControlsIndex));
+            SetRowText(OptionsRows.ControlsPreset, FormatControls());
         }
 
         private void SetRowText(int row, string value)
@@ -163,17 +159,13 @@ namespace Scenes.Menus.CharacterSelect
             }
         }
 
-        private string FormatControls(int idx)
+        // Controls are local and never synced; the remote panel always shows
+        // the placeholder regardless of our active profile.
+        private string FormatControls()
         {
-            // Controls are inherently local and never synced, so the remote
-            // panel always shows the placeholder rather than our own preset.
             if (!_isLocal)
                 return "-";
-            if (_controlsPresets == null || _controlsPresets.Length == 0)
-                return "-";
-            int clamped = Mathf.Clamp(idx, 0, _controlsPresets.Length - 1);
-            ControlsConfig config = _controlsPresets[clamped];
-            return config != null ? config.name : $"Preset {clamped + 1}";
+            return string.IsNullOrEmpty(_state.ControlsProfileName) ? "-" : _state.ControlsProfileName;
         }
 
         /// <summary>

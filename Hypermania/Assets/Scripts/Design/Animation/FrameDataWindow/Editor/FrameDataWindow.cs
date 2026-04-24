@@ -371,7 +371,6 @@ namespace Design.Animation.FrameDataWindow.Editor
             BlackOut(row, widths, c++); // Hitstun
             BlackOut(row, widths, c++); // Blockstun
             BlackOut(row, widths, c++); // KD
-            BlackOut(row, widths, c++); // Unbl
         }
 
         private static int DrawProjectileHitboxRows(int startingRowIndex, float[] widths, HitboxData hitbox)

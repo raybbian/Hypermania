@@ -58,7 +58,7 @@ namespace Game.Runners
             {
                 _inputBuffers[i] = new InputBuffer(
                     _options.LocalPlayers[i]?.InputDevice,
-                    _options.LocalPlayers[i]?.Controls?.ControlScheme ?? ControlsConfig.DefaultBindings
+                    _options.LocalPlayers[i]?.ControlScheme ?? ControlsConfig.DefaultBindings
                 );
             }
             _curState = GameState.Create(_options);

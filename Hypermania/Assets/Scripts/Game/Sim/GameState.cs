@@ -9,6 +9,7 @@ using Netcode.Rollback;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Utils;
+using Utils.EnumArray;
 using Utils.SoftFloat;
 
 namespace Game.Sim
@@ -59,7 +60,13 @@ namespace Game.Sim
     public class LocalPlayerOptions
     {
         public InputDevice InputDevice;
-        public ControlsConfig Controls;
+
+        /// <summary>
+        /// Per-player bindings from the disk-backed ControlsProfile selected
+        /// in the character-select controls menu. Null falls back to
+        /// <see cref="ControlsConfig.DefaultBindings"/>.
+        /// </summary>
+        public EnumArray<InputFlags, Binding> ControlScheme;
     }
 
     [Serializable]
@@ -484,7 +491,7 @@ namespace Game.Sim
             // If a player applies inputs to start a state at the start of the frame, we should apply those immediately
             for (int i = 0; i < Fighters.Length; i++)
             {
-                Fighters[i].ApplyActiveState(SimFrame, options, options.Players[i].Character, rhythmCancel, GameMode);
+                Fighters[i].ApplyActiveState(SimFrame, options, options.Players[i].Character, rhythmCancel, GameMode, Manias[i].Enabled(RealFrame));
             }
 
             HandleGrabTechs(options);
@@ -564,14 +571,39 @@ namespace Game.Sim
             if (SimFrame >= RoundEnd && !rhythmComboActive)
             {
                 RoundEnd = SimFrame + options.Global.RoundTimeTicks;
-                //TODO: Properly handle edge case where player health is equal. Currently player 1 wins by default.
                 if (Fighters[0].Health < Fighters[1].Health)
                 {
                     Fighters[0].Health = 0;
                 }
-                else
+                else if (Fighters[0].Health > Fighters[1].Health)
                 {
                     Fighters[1].Health = 0;
+                }
+                else if (GameMode == GameMode.Fighting)
+                {
+                    // Tie at time-up: neither fighter earns a victory. Both
+                    // lose a life and both NumVictories advance with an Empty
+                    // slot so the two mark arrays stay aligned round-for-round.
+                    for (int i = 0; i < Fighters.Length; i++)
+                    {
+                        if (options.Players[i].Immortal)
+                        {
+                            continue;
+                        }
+                        Fighters[i].Health = sfloat.Zero;
+                        Fighters[i].Lives--;
+                        Fighters[i].Victories[Fighters[i].NumVictories] = VictoryKind.Empty;
+                        Fighters[i].NumVictories++;
+                        Fighters[i].SetState(CharacterState.Death, SimFrame, Frame.Infinity);
+                    }
+                    GameMode = GameMode.RoundEnd;
+                    ModeStart = RealFrame;
+                    for (int j = 0; j < Manias.Length; j++)
+                    {
+                        Manias[j].End();
+                    }
+                    ClearLockedHitstun();
+                    return;
                 }
             }
 
@@ -1303,9 +1335,7 @@ namespace Game.Sim
 
             if (Manias[attacker.Owner].Enabled(RealFrame))
             {
-                propsForHit.KnockdownKind = Fighters[attacker.Owner].RhythmComboFinisherActive
-                    ? KnockdownKind.Heavy
-                    : KnockdownKind.None;
+                propsForHit.KnockdownKind = KnockdownKind.None;
             }
 
             HitOutcome outcome = Fighters[defender.Owner]

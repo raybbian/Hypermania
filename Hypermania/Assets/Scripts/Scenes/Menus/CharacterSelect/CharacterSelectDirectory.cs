@@ -5,6 +5,7 @@ using Design.Configs;
 using Game;
 using Game.Sim;
 using Netcode.P2P;
+using Scenes.Menus.CharacterSelect.Controls;
 using Scenes.Menus.InputSelect;
 using Scenes.Menus.MainMenu;
 using Scenes.Online;
@@ -27,8 +28,9 @@ namespace Scenes.Menus.CharacterSelect
         [SerializeField]
         private GlobalConfig _globalConfig;
 
+        [Tooltip("Per-slot controls config menus. Opened on L/R over the ControlsPreset row; null entries (remote slot in online, absent slot in single-device) simply never open.")]
         [SerializeField]
-        private ControlsConfig[] _controlsPresets;
+        private ConfigMenu[] _controlsMenus = new ConfigMenu[2];
 
         [SerializeField]
         [Tooltip(
@@ -67,21 +69,11 @@ namespace Scenes.Menus.CharacterSelect
         private InputDevice _onlineLocalDevice;
         private int _onlineLocalPlayerIndex = -1;
         private bool _isOnline;
-        private bool _isHost;
         private bool _committed;
         private bool _launchDispatched;
         private bool _exiting;
         private bool _singleDeviceMode;
         private int _activeLocalSlot = -1;
-
-        /// <summary>
-        /// Host-only queue of input edges forwarded from the non-host via
-        /// <see cref="SteamMatchmakingClient.OnCharacterSelectInput"/>.
-        /// Drained serially at the top of each <see cref="TickHost"/> so the
-        /// host's collision-resolution sees a fully-consistent view of both
-        /// slots when applying each edge.
-        /// </summary>
-        private readonly Queue<EdgeSet> _pendingRemoteEdges = new Queue<EdgeSet>();
 
         private SteamMatchmakingClient _matchmakingSubscription;
 
@@ -90,7 +82,6 @@ namespace Scenes.Menus.CharacterSelect
             _committed = false;
             _launchDispatched = false;
             _exiting = false;
-            _isHost = false;
             _state = new CharacterSelectState();
             _isOnline = SessionDirectory.Config == GameConfig.Online;
             _roster = BuildRoster(_globalConfig);
@@ -119,8 +110,8 @@ namespace Scenes.Menus.CharacterSelect
             if (_matchmakingSubscription != null)
             {
                 _matchmakingSubscription.OnBackRequested -= OnRemoteBackRequested;
+                _matchmakingSubscription.OnCharacterSelectLaunchRequested -= OnRemoteLaunchRequested;
                 _matchmakingSubscription.OnCharacterSelectLaunch -= OnLaunchBroadcast;
-                _matchmakingSubscription.OnCharacterSelectInput -= OnRemoteInputReceived;
                 _matchmakingSubscription.OnPeerLeft -= OnRemotePeerLeft;
                 _matchmakingSubscription = null;
             }
@@ -132,7 +123,6 @@ namespace Scenes.Menus.CharacterSelect
             {
                 _localControllers[i] = null;
             }
-            _pendingRemoteEdges.Clear();
         }
 
         private void SetupLocal()
@@ -276,24 +266,17 @@ namespace Scenes.Menus.CharacterSelect
 
             _localControllers[_onlineLocalPlayerIndex] = new LocalSelectionController(_onlineLocalDevice);
 
-            _isHost = SteamMatchmaking.GetLobbyOwner(OnlineBaseDirectory.Matchmaking.CurrentLobby) == localId;
-
             _netSync = new CharacterSelectNetSync(OnlineBaseDirectory.Matchmaking);
-
-            // Every client subscribes to the host's state broadcast (the host
-            // receives its own echo too — ApplyBroadcast is idempotent against
-            // the host's already-current state so there's no visible effect).
-            _remoteController = new RemoteSelectionController(_netSync, _state);
+            int remoteIndex = 1 - _onlineLocalPlayerIndex;
+            CSteamID remoteId = players[remoteIndex];
+            _remoteController = new RemoteSelectionController(_netSync, remoteId, _state.Players[remoteIndex]);
             _remoteController.OnProtocolError += OnRemoteProtocolError;
 
             _matchmakingSubscription = OnlineBaseDirectory.Matchmaking;
             _matchmakingSubscription.OnBackRequested += OnRemoteBackRequested;
+            _matchmakingSubscription.OnCharacterSelectLaunchRequested += OnRemoteLaunchRequested;
             _matchmakingSubscription.OnCharacterSelectLaunch += OnLaunchBroadcast;
             _matchmakingSubscription.OnPeerLeft += OnRemotePeerLeft;
-            if (_isHost)
-            {
-                _matchmakingSubscription.OnCharacterSelectInput += OnRemoteInputReceived;
-            }
             return true;
         }
 
@@ -337,7 +320,7 @@ namespace Scenes.Menus.CharacterSelect
                 if (panel == null)
                     continue;
                 bool isLocal = _isOnline ? (i == _onlineLocalPlayerIndex) : true;
-                panel.Bind(_state.Players[i], _state.Players[1 - i], _roster, _controlsPresets, _randomSkin, isLocal);
+                panel.Bind(_state.Players[i], _state.Players[1 - i], _roster, _randomSkin, isLocal);
             }
 
             for (int i = 0; i < _playerCursors.Length; i++)
@@ -354,169 +337,48 @@ namespace Scenes.Menus.CharacterSelect
             if (_state == null)
                 return;
 
-            if (_isOnline)
+            SyncControlsProfileFromMenus();
+
+            bool bothReadyBefore = _state.BothConfirmed;
+            bool anyConfirmEdge = TickLocalControllers();
+
+            if (_isOnline && _netSync != null && _onlineLocalPlayerIndex >= 0)
             {
-                if (_isHost)
-                    TickHost();
-                else
-                    TickNonHost();
-            }
-            else
-            {
-                TickLocal();
+                string payload = _state.Players[_onlineLocalPlayerIndex].ToPayload().Serialize();
+                _netSync.Broadcast(payload);
             }
 
             if (_pressStartPrompt != null)
             {
                 _pressStartPrompt.SetVisible(_state.BothConfirmed && !_committed);
             }
-        }
-
-        /// <summary>
-        /// Local/training/single-device flow. Both slots' edges are polled
-        /// and applied in-process; no network traffic.
-        /// </summary>
-        private void TickLocal()
-        {
-            bool bothReadyBefore = _state.BothConfirmed;
-            bool anyConfirmEdge = TickLocalControllers();
-            if (!_committed && _state.BothConfirmed && bothReadyBefore && anyConfirmEdge)
-            {
-                _committed = true;
-                Commit();
-            }
-        }
-
-        /// <summary>
-        /// Host-authoritative online flow. Drains forwarded edges from the
-        /// non-host, applies them to the non-host's slot with collision
-        /// context against the host's live slot, then applies the host's own
-        /// input, then broadcasts the resolved state. Serial application is
-        /// what kills the "both land on the same skin" race: every
-        /// <see cref="ApplyEdgesToSlot"/> call sees the other slot's
-        /// up-to-date <c>(CharacterIndex, SkinIndex)</c>, so the existing
-        /// <c>IsTaken</c> / <c>FirstFreeSkin</c> bump is always correct.
-        /// </summary>
-        private void TickHost()
-        {
-            bool bothReadyBefore = _state.BothConfirmed;
-            bool anyConfirmEdge = false;
-
-            int hostIdx = _onlineLocalPlayerIndex;
-            int nonHostIdx = 1 - hostIdx;
-            LocalSelectionController hostCtrl = _localControllers[hostIdx];
-
-            while (_pendingRemoteEdges.Count > 0)
-            {
-                EdgeSet remoteEdges = _pendingRemoteEdges.Dequeue();
-                if (hostCtrl == null)
-                    continue;
-                if (remoteEdges.Confirm)
-                    anyConfirmEdge = true;
-                // Non-host back-in-Character is dispatched as lobby-wide BACK,
-                // not through CsInput, so the back bit here only affects
-                // Options/Confirmed — LocalSelectionController.Apply already
-                // handles those correctly.
-                ApplyEdgesToSlot(hostCtrl, nonHostIdx, remoteEdges);
-            }
-
-            if (hostCtrl != null)
-            {
-                EdgeSet localEdges = hostCtrl.PollEdges();
-
-                if (localEdges.Back && _state.Players[hostIdx].Phase == SelectPhase.Character)
-                {
-                    Back();
-                    return;
-                }
-
-                if (localEdges.Confirm)
-                    anyConfirmEdge = true;
-                ApplyEdgesToSlot(hostCtrl, hostIdx, localEdges);
-            }
 
             if (!_committed && _state.BothConfirmed && bothReadyBefore && anyConfirmEdge)
             {
-                TryDispatchOnlineLaunch();
-            }
-
-            if (_netSync != null)
-            {
-                _netSync.BroadcastHostState(_state.ToBroadcast().Serialize());
-            }
-        }
-
-        /// <summary>
-        /// Non-host online flow. Polls own input and forwards it to the host
-        /// via <see cref="SteamMatchmakingClient.SendCharacterSelectInput"/>;
-        /// does not mutate synced fields locally. Two exceptions:
-        /// (1) back-from-Character calls <see cref="Back"/> directly so the
-        /// lobby-wide BACK opcode exits both peers, and
-        /// (2) left/right on the ControlsPreset row mutates the local
-        /// <see cref="PlayerSelectionState.ControlsIndex"/>, which is never
-        /// synced to begin with.
-        /// </summary>
-        private void TickNonHost()
-        {
-            LocalSelectionController ctrl = _localControllers[_onlineLocalPlayerIndex];
-            if (ctrl == null)
-                return;
-
-            EdgeSet edges = ctrl.PollEdges();
-            if (!edges.Left && !edges.Right && !edges.Up && !edges.Down && !edges.Confirm && !edges.Back)
-                return;
-
-            PlayerSelectionState self = _state.Players[_onlineLocalPlayerIndex];
-
-            if (edges.Back && self.Phase == SelectPhase.Character)
-            {
-                Back();
-                return;
-            }
-
-            bool onControlsRow = self.Phase == SelectPhase.Options && self.OptionsRow == OptionsRows.ControlsPreset;
-            bool onlyHorizEdge =
-                (edges.Left || edges.Right) && !(edges.Up || edges.Down || edges.Confirm || edges.Back);
-            if (onControlsRow && onlyHorizEdge)
-            {
-                int count = _controlsPresets != null ? _controlsPresets.Length : 0;
-                if (count > 0)
+                if (_isOnline)
                 {
-                    int delta = edges.Left ? -1 : 1;
-                    self.ControlsIndex = ((self.ControlsIndex + delta) % count + count) % count;
+                    TryDispatchOnlineLaunch();
                 }
-                return;
+                else
+                {
+                    _committed = true;
+                    Commit();
+                }
             }
-
-            _matchmakingSubscription?.SendCharacterSelectInput(
-                edges.Left,
-                edges.Right,
-                edges.Up,
-                edges.Down,
-                edges.Confirm,
-                edges.Back
-            );
-        }
-
-        private void OnRemoteInputReceived(bool left, bool right, bool up, bool down, bool confirm, bool back)
-        {
-            if (!_isHost || _committed || _exiting)
-                return;
-            _pendingRemoteEdges.Enqueue(new EdgeSet(left, right, up, down, confirm, back));
         }
 
         /// <summary>
-        /// Host-only launch dispatch. Reached from <see cref="TickHost"/>
-        /// when both slots are Confirmed and a confirm edge lands (from
-        /// either local input or a forwarded <c>CsInput</c>). Rolls any
-        /// Random slots and broadcasts the resolved selections so every
-        /// client commits from an identical snapshot.
+        /// Online launch trigger. Any player whose view shows both-ready +
+        /// local confirm press routes through the host: the host is the
+        /// single authority that rolls any Random slots, resolves any
+        /// same-skin collisions, and broadcasts the final resolved
+        /// selections, so both clients commit from an identical snapshot.
         /// <see cref="_launchDispatched"/> guards against re-sending while
-        /// waiting for the chat echo.
+        /// waiting for the echo.
         /// </summary>
         private void TryDispatchOnlineLaunch()
         {
-            if (_launchDispatched || _matchmakingSubscription == null || !_isHost)
+            if (_launchDispatched || _matchmakingSubscription == null)
                 return;
 
             CSteamID lobby = _matchmakingSubscription.CurrentLobby;
@@ -525,16 +387,49 @@ namespace Scenes.Menus.CharacterSelect
 
             _launchDispatched = true;
 
+            bool isHost = SteamMatchmaking.GetLobbyOwner(lobby) == SteamUser.GetSteamID();
+            if (isHost)
+            {
+                string[] args = BuildResolvedLaunchArgs();
+                _matchmakingSubscription.SendCharacterSelectLaunch(args);
+            }
+            else
+            {
+                _matchmakingSubscription.SendCharacterSelectLaunchRequest();
+            }
+        }
+
+        /// <summary>
+        /// Host-only: a non-host asked us to launch. Re-validate against
+        /// our own view at receipt time; if still both-confirmed and not
+        /// yet committed, roll any Random slots, resolve skin collisions,
+        /// and broadcast the authoritative launch with the resolved
+        /// selections.
+        /// </summary>
+        private void OnRemoteLaunchRequested()
+        {
+            if (!_isOnline || _committed || _matchmakingSubscription == null)
+                return;
+            CSteamID lobby = _matchmakingSubscription.CurrentLobby;
+            if (!lobby.IsValid())
+                return;
+            bool isHost = SteamMatchmaking.GetLobbyOwner(lobby) == SteamUser.GetSteamID();
+            if (!isHost)
+                return;
+            if (_state == null || !_state.BothConfirmed)
+                return;
+
             string[] args = BuildResolvedLaunchArgs();
             _matchmakingSubscription.SendCharacterSelectLaunch(args);
         }
 
         /// <summary>
         /// Host broadcast the authoritative launch. Apply the resolved
-        /// selections to local state (overwriting any Random slot the
-        /// non-host rolled locally) and commit — both clients hit this in
-        /// response to the same inbound message, so the sim starts from a
-        /// byte-identical <see cref="GameOptions"/> snapshot.
+        /// selections to local state (overwriting any Random slot or
+        /// same-skin collision the host resolved) and commit — both
+        /// clients hit this in response to the same inbound message, so
+        /// the sim starts from a byte-identical <see cref="GameOptions"/>
+        /// snapshot.
         /// </summary>
         private void OnLaunchBroadcast(string[] args)
         {
@@ -553,17 +448,18 @@ namespace Scenes.Menus.CharacterSelect
         }
 
         /// <summary>
-        /// Host-side: resolve any Random slots once on the authoritative
-        /// side and serialize the final per-slot selection into launch
-        /// args. The host then applies these same args on chat echo, so
-        /// the host and non-host commit from identical state. Fields
-        /// carried: character index, skin index, combo mode, mania
-        /// difficulty, beat-cancel window — the set that feeds into
-        /// <see cref="PlayerOptions"/> at commit time.
+        /// Host-side: resolve any Random slots and same-skin collisions
+        /// once on the authoritative side, then serialize the final
+        /// per-slot selection into launch args. The host then applies
+        /// these same args on chat echo, so the host and non-host commit
+        /// from identical state. Fields carried: character index, skin
+        /// index, combo mode, mania difficulty, beat-cancel window — the
+        /// set that feeds into <see cref="PlayerOptions"/> at commit time.
         /// </summary>
         private string[] BuildResolvedLaunchArgs()
         {
             ResolveRandomSlotsForCommit();
+            ResolveSkinCollisionForCommit();
             string[] args = new string[10];
             for (int i = 0; i < 2; i++)
             {
@@ -576,6 +472,42 @@ namespace Scenes.Menus.CharacterSelect
                 args[baseIdx + 4] = ((int)slot.BeatCancelWindow).ToString(CultureInfo.InvariantCulture);
             }
             return args;
+        }
+
+        /// <summary>
+        /// Host-only commit-time fix: peer-to-peer sync allows both slots to
+        /// race onto the same <c>(CharacterIndex, SkinIndex)</c> pair (the
+        /// in-UI <c>IsTaken</c> bump-off is best-effort and only sees the
+        /// locally-cached remote state). When the host detects that both
+        /// slots landed on the same skin of the same character, it rerolls
+        /// the non-host slot to a different random skin of that character.
+        /// Same-character-different-skin is left alone. Callers must have
+        /// already resolved Random slots so <c>SkinIndex</c> is concrete.
+        /// Only callable on the host: <see cref="_onlineLocalPlayerIndex"/>
+        /// is the host's slot index in this path.
+        /// </summary>
+        private void ResolveSkinCollisionForCommit()
+        {
+            int hostIdx = _onlineLocalPlayerIndex;
+            if (hostIdx < 0)
+                return;
+            int nonHostIdx = 1 - hostIdx;
+            PlayerSelectionState host = _state.Players[hostIdx];
+            PlayerSelectionState nonHost = _state.Players[nonHostIdx];
+
+            if (host.CharacterIndex != nonHost.CharacterIndex)
+                return;
+            if (host.SkinIndex != nonHost.SkinIndex)
+                return;
+
+            int skinCount = SkinCountForChar(host.CharacterIndex);
+            if (skinCount <= 1)
+                return;
+
+            int pick = UnityEngine.Random.Range(0, skinCount - 1);
+            if (pick >= host.SkinIndex)
+                pick++;
+            nonHost.SkinIndex = pick;
         }
 
         private bool TryApplyLaunchArgs(string[] args)
@@ -618,6 +550,9 @@ namespace Scenes.Menus.CharacterSelect
                 if (ctrl == null)
                     continue;
 
+                if (IsDeviceOwnedByAnyMenu(_slotDevices[i]))
+                    continue;
+
                 EdgeSet edges = ctrl.PollEdges();
                 int targetSlot = ResolveTargetSlot(i);
                 SelectPhase targetPhase = _state.Players[targetSlot].Phase;
@@ -643,6 +578,9 @@ namespace Scenes.Menus.CharacterSelect
                 if (edges.Confirm)
                     anyConfirm = true;
 
+                if (TryOpenControlsMenu(targetSlot, _slotDevices[i], edges))
+                    continue;
+
                 ApplyEdgesToSlot(ctrl, targetSlot, edges);
             }
             return anyConfirm;
@@ -662,6 +600,55 @@ namespace Scenes.Menus.CharacterSelect
                 : _activeLocalSlot;
         }
 
+        // Cursor-on-dummy / menu-never-opened leaves ActiveProfileName null;
+        // we skip those so a prior pick isn't wiped when the user scrolls
+        // past the dummy.
+        private void SyncControlsProfileFromMenus()
+        {
+            if (_controlsMenus == null)
+                return;
+            int limit = Mathf.Min(_controlsMenus.Length, _state.Players.Length);
+            for (int i = 0; i < limit; i++)
+            {
+                ConfigMenu menu = _controlsMenus[i];
+                if (menu == null)
+                    continue;
+                string name = menu.ActiveProfileName;
+                if (!string.IsNullOrEmpty(name))
+                    _state.Players[i].ControlsProfileName = name;
+            }
+        }
+
+        private bool IsDeviceOwnedByAnyMenu(InputDevice device)
+        {
+            if (device == null || _controlsMenus == null)
+                return false;
+            for (int i = 0; i < _controlsMenus.Length; i++)
+            {
+                if (_controlsMenus[i] != null && _controlsMenus[i].OwnsDevice(device))
+                    return true;
+            }
+            return false;
+        }
+
+        private bool TryOpenControlsMenu(int targetSlot, InputDevice device, in EdgeSet edges)
+        {
+            if (!(edges.Left || edges.Right))
+                return false;
+            if (device == null)
+                return false;
+            if (_controlsMenus == null || targetSlot < 0 || targetSlot >= _controlsMenus.Length)
+                return false;
+            ConfigMenu menu = _controlsMenus[targetSlot];
+            if (menu == null || menu.IsOpen)
+                return false;
+            PlayerSelectionState slot = _state.Players[targetSlot];
+            if (slot.Phase != SelectPhase.Options || slot.OptionsRow != OptionsRows.ControlsPreset)
+                return false;
+            menu.Open(device, slot.ControlsProfileName);
+            return true;
+        }
+
         private void ApplyEdgesToSlot(LocalSelectionController ctrl, int slotIndex, in EdgeSet edges)
         {
             PlayerSelectionState slot = _state.Players[slotIndex];
@@ -676,7 +663,6 @@ namespace Scenes.Menus.CharacterSelect
             int otherCharacterIdx = otherSlot.Phase == SelectPhase.Character ? -1 : otherSlot.CharacterIndex;
             SelectionContext ctx = new SelectionContext(
                 characterCount: _roster != null ? _roster.Length : 0,
-                controlsPresetCount: _controlsPresets != null ? _controlsPresets.Length : 0,
                 skinCount: skinCount,
                 isRowInteractable: row =>
                     OptionsRows.IsInteractable(slot, isLocal, row, _roster != null ? _roster.Length : int.MaxValue),
@@ -863,7 +849,7 @@ namespace Scenes.Menus.CharacterSelect
                     new LocalPlayerOptions
                     {
                         InputDevice = _onlineLocalDevice,
-                        Controls = SafeControls(_state.Players[idx].ControlsIndex),
+                        ControlScheme = BuildControlScheme(_state.Players[idx]),
                     },
                 };
             }
@@ -874,18 +860,21 @@ namespace Scenes.Menus.CharacterSelect
                 result[i] = new LocalPlayerOptions
                 {
                     InputDevice = _slotDevices[i],
-                    Controls = SafeControls(_state.Players[i].ControlsIndex),
+                    ControlScheme = BuildControlScheme(_state.Players[i]),
                 };
             }
             return result;
         }
 
-        private ControlsConfig SafeControls(int index)
+        // Reload from disk at commit time rather than caching the menu's
+        // in-memory copy — a profile deleted mid-session falls through to
+        // the GameRunner's default bindings.
+        private EnumArray<InputFlags, Binding> BuildControlScheme(PlayerSelectionState slot)
         {
-            if (_controlsPresets == null || _controlsPresets.Length == 0)
+            if (string.IsNullOrEmpty(slot.ControlsProfileName))
                 return null;
-            int clamped = Mathf.Clamp(index, 0, _controlsPresets.Length - 1);
-            return _controlsPresets[clamped];
+            ControlsProfile profile = ControlsProfileStore.LoadByName(slot.ControlsProfileName);
+            return profile?.Bindings;
         }
 
         private static int ClampSkinIndex(CharacterConfig config, int skinIndex)

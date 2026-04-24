@@ -9,7 +9,6 @@ namespace Netcode.P2P
         CsLaunchReq,
         CsLaunch,
         Start,
-        CsInput,
     }
 
     /// <summary>

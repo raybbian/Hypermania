@@ -551,7 +551,11 @@ namespace Game.Sim
 
                 if (DashInputs(BackwardInput, ref this))
                 {
-                    SetState(CharacterState.BackDash, frame, frame + options.Global.BackDashTicks);
+                    SetState(
+                        CharacterState.BackDash,
+                        frame,
+                        frame + options.Global.BackDashTicks + config.BackDashRecoveryTicks
+                    );
                     return;
                 }
             }
@@ -647,10 +651,11 @@ namespace Game.Sim
             GameOptions options,
             CharacterConfig config,
             bool isRhythmCancel,
-            GameMode gameMode
+            GameMode gameMode,
+            bool isManiaAttacker
         )
         {
-            if (InputH.IsHeld(InputFlags.Burst) && State != CharacterState.Burst && Burst >= config.BurstMax && Health > sfloat.Zero)
+            if (InputH.IsHeld(InputFlags.Burst) && State != CharacterState.Burst && Burst >= config.BurstMax && Health > sfloat.Zero && !isManiaAttacker)
             {
                 Burst = 0;
                 SetState(
@@ -875,7 +880,14 @@ namespace Game.Sim
                     Velocity.y = 0;
                     break;
                 case CharacterState.BackDash:
-                    Velocity.x = BackwardVector.x * (config.BackDashDistance / options.Global.BackDashTicks);
+                    if (frame >= StateEnd - config.BackDashRecoveryTicks)
+                    {
+                        Velocity.x = 0;
+                    }
+                    else
+                    {
+                        Velocity.x = BackwardVector.x * (config.BackDashDistance / options.Global.BackDashTicks);
+                    }
                     Velocity.y = 0;
                     break;
                 case CharacterState.ForwardDash:
