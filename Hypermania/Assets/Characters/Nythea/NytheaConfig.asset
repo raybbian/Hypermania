@@ -68,6 +68,7 @@ MonoBehaviour:
     rawValue: 1116471296
   BackDashDistance:
     rawValue: 1114636288
+  BackDashRecoveryTicks: 5
   NumAirDashes: 2
   ForwardAirDashDistance:
     rawValue: 1115815936

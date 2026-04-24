@@ -17,7 +17,11 @@ namespace Scenes.Menus.CharacterSelect.Controls
         [SerializeField]
         private GameObject _newDummyBadge;
 
-        public void SetDisplay(string label, bool isNewDummy, bool focused)
+        [Tooltip("Optional — shown when this profile is currently being edited by the other player's menu.")]
+        [SerializeField]
+        private GameObject _takenByOtherIndicator;
+
+        public void SetDisplay(string label, bool isNewDummy, bool focused, bool takenByOther)
         {
             if (_label != null)
                 _label.text = label;
@@ -25,6 +29,8 @@ namespace Scenes.Menus.CharacterSelect.Controls
                 _focusIndicator.SetActive(focused);
             if (_newDummyBadge != null)
                 _newDummyBadge.SetActive(isNewDummy);
+            if (_takenByOtherIndicator != null)
+                _takenByOtherIndicator.SetActive(takenByOther);
         }
     }
 }

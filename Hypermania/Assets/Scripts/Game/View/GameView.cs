@@ -100,6 +100,7 @@ namespace Game.View
                 _playerParams[i]
                     .ManiaView.Init(
                         options.Global.Audio,
+                        options.Global.PreGameDelayTicks,
                         options.Players[i].Character.Skins[options.Players[i].SkinIndex]
                     );
                 _playerParams[i].HealthBarView.Init(config, options.Players[i].SkinIndex);
@@ -287,10 +288,18 @@ namespace Game.View
                 _fighters[i].RollbackRender(state.RealFrame, state.Fighters[i], _params.VfxManager, _params.SfxManager);
                 _playerParams[i]
                     .ManiaView.RollbackRender(state.RealFrame, state.Manias[i], _params.VfxManager, _params.SfxManager);
-                if (state.Fighters[i].SuperMaxedThisRealFrame)
+                if (state.Fighters[i].SuperTier1MaxedThisRealFrame)
                 {
                     _params.SfxManager.AddDesired(
                         i == 0 ? SfxKind.SuperReady : SfxKind.OppSuperReady,
+                        state.RealFrame,
+                        hash: i
+                    );
+                }
+                if (state.Fighters[i].SuperTier2MaxedThisRealFrame)
+                {
+                    _params.SfxManager.AddDesired(
+                        i == 0 ? SfxKind.Super2Ready : SfxKind.OppSuper2Ready,
                         state.RealFrame,
                         hash: i
                     );

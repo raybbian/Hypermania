@@ -129,7 +129,7 @@ namespace Scenes.Menus.CharacterSelect
                 OptionsRows.ManiaDifficulty,
                 _state.ManiaDifficulty == ManiaDifficulty.Normal ? "Normal" : "Hard"
             );
-            SetRowText(OptionsRows.BeatCancel, FormatBeatCancel(_state.BeatCancelWindow));
+            SetRowText(OptionsRows.SuperInput, FormatSuperInputMode(_state.SuperInputMode));
             SetRowText(OptionsRows.ControlsPreset, FormatControls());
         }
 
@@ -146,18 +146,8 @@ namespace Scenes.Menus.CharacterSelect
             }
         }
 
-        private static string FormatBeatCancel(BeatCancelWindow window)
-        {
-            switch (window)
-            {
-                case BeatCancelWindow.Medium:
-                    return "Medium (5)";
-                case BeatCancelWindow.Hard:
-                    return "Hard (3)";
-                default:
-                    return window.ToString();
-            }
-        }
+        private static string FormatSuperInputMode(SuperInputMode mode) =>
+            mode == SuperInputMode.Hold ? "Hold" : "Double Tap";
 
         // Controls are local and never synced; the remote panel always shows
         // the placeholder regardless of our active profile.

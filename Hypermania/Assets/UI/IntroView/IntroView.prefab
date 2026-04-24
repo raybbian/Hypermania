@@ -86,8 +86,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterPanels:
-  - {fileID: 1204521041475045652}
   - {fileID: 1605943465460613360}
+  - {fileID: 1204521041475045652}
   _sfx: {fileID: 8300000, guid: 1c369041017a90a49abc2c937fcbb417, type: 3}
   _sfxStartTicks: 40
 --- !u!114 &4218516459511776021

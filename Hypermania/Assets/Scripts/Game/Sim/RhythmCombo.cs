@@ -53,14 +53,20 @@ namespace Game.Sim
             // when fpb's rounding direction disagreed with the true 3600/BPM,
             // occasionally yielding nextBeat < earliestStart.
             sfloat framesPerBeatExact = (sfloat)60f / audio.Bpm * (sfloat)GameManager.TPS;
-            int delta = earliestStart - audio.FirstMusicalBeat;
+            Frame firstBeat = audio.FirstBeatFrame(options.Global.PreGameDelayTicks);
+            int delta = earliestStart - firstBeat;
             int beats = Mathsf.CeilToInt((sfloat)delta / framesPerBeatExact);
-            Frame nextBeat = audio.FirstMusicalBeat + audio.BeatsToFrame(beats);
+            Frame nextBeat = firstBeat + audio.BeatsToFrame(beats);
 
             int hitstop = nextBeat - earliestStart;
 
             ManiaDifficulty difficulty = options.Players[attackerIndex].ManiaDifficulty;
-            BeatmapNote[] notes = audio.SliceFrom(earliestStart, difficulty, comboBeatCount);
+            BeatmapNote[] notes = audio.SliceFrom(
+                earliestStart,
+                difficulty,
+                options.Global.PreGameDelayTicks,
+                comboBeatCount
+            );
 
             if (notes.Length == 0)
             {

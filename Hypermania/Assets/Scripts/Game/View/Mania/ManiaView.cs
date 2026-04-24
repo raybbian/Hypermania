@@ -45,13 +45,15 @@ namespace Game.View.Mania
         private Dictionary<int, ManiaNoteView> _activeNotes;
 
         private AudioConfig _audioConfig;
+        private int _audioStartFrame;
         private List<RectTransform> _beatLinePool;
         private ManiaArrowSpritePair _innerArrow;
         private ManiaArrowSpritePair _outerArrow;
 
-        public void Init(AudioConfig audioConfig, in SkinConfig skin)
+        public void Init(AudioConfig audioConfig, int audioStartFrame, in SkinConfig skin)
         {
             _audioConfig = audioConfig;
+            _audioStartFrame = audioStartFrame;
             _activeNotes = new Dictionary<int, ManiaNoteView>();
             _beatLinePool = new List<RectTransform>();
 
@@ -208,7 +210,7 @@ namespace Game.View.Mania
                 return;
 
             int framesPerBeat = _audioConfig.FramesPerBeat;
-            int firstBeat = _audioConfig.FirstMusicalBeat.No;
+            int firstBeat = _audioConfig.FirstBeatFrame(_audioStartFrame).No;
             float anchorY = Config.Anchors[0].localPosition.y;
             float halfHeight = GetComponent<RectTransform>().rect.height / 2;
 

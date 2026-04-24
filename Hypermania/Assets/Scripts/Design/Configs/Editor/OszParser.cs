@@ -47,12 +47,25 @@ namespace Design.Configs.Editor
             return names.ToArray();
         }
 
+        // osu!mania 4K columns go left→right as 0,1,2,3. Hypermania's channels
+        // are Down=0, Up=1, Left=2, Right=3, so a DFJK chart maps L→R to
+        // [Left, Down, Up, Right] = [2, 0, 1, 3].
+        private static readonly int[] ManiaColumnToHypermaniaChannel = { 2, 0, 1, 3 };
+
         /// <summary>
         /// Parse a single difficulty's HitObjects into (frame, channel) pairs.
         /// channel is computed from the standard osu!mania mapping
         /// <c>floor(x * columnCount / 512)</c> using CircleSize as the column
-        /// count. Hold notes (type bit 7) are emitted as a single tap at the
-        /// start time. Notes are returned sorted by frame ascending.
+        /// count, then remapped through <see cref="ManiaColumnToHypermaniaChannel"/>
+        /// for 4-key charts so the left→right osu layout lines up with
+        /// Hypermania's Down/Up/Left/Right channels. Hold notes (type bit 7)
+        /// are emitted as a single tap at the start time. Notes are returned
+        /// sorted by frame ascending.
+        ///
+        /// Tick values are in audio-clip frame space (time=0 is the audio
+        /// clip's start). Callers that need sim-frame positions must shift by
+        /// the Conductor's audio-start offset (<c>GlobalConfig.PreGameDelayTicks</c>)
+        /// at the usage site.
         /// </summary>
         public static BeatmapNote[] ParseToNotes(byte[] oszData, string difficultyName, int fps = 60)
         {
@@ -124,11 +137,13 @@ namespace Design.Configs.Editor
                 if (!int.TryParse(parts[2], out int timeMs))
                     continue;
 
-                int channel = (x * columnCount) / 512;
-                if (channel < 0)
-                    channel = 0;
-                else if (channel >= columnCount)
-                    channel = columnCount - 1;
+                int column = (x * columnCount) / 512;
+                if (column < 0)
+                    column = 0;
+                else if (column >= columnCount)
+                    column = columnCount - 1;
+
+                int channel = columnCount == 4 ? ManiaColumnToHypermaniaChannel[column] : column;
 
                 int frame = (int)Mathsf.Round((sfloat)timeMs * (sfloat)fps / (sfloat)1000.0);
 

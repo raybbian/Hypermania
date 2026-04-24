@@ -20,6 +20,8 @@ namespace Game.View.Events
         SuperStart,
         OppSuperReady,
         Burst,
+        Super2Ready,
+        OppSuper2Ready,
     }
 
     [Serializable]

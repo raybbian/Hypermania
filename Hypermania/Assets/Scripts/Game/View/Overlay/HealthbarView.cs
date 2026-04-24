@@ -40,10 +40,12 @@ namespace Game.View.Overlay
         private int _prevComboCount;
         private float _prevHealth;
         private Vector3 _baseScale;
+        private MusicReactive _musicReactive;
 
         public void Init(CharacterConfig config, int skinIndex)
         {
             _baseScale = _disks[0].localScale;
+            _musicReactive = GetComponent<MusicReactive>();
             _portrait.texture = config.Skins[skinIndex].Portrait;
             foreach (var tint in _tint)
                 tint.color = config.Skins[skinIndex].AccentColor;
@@ -85,11 +87,11 @@ namespace Game.View.Overlay
 
         void Update()
         {
+            float musicValue = _musicReactive != null ? _musicReactive.GetMusicValue() : 0f;
             foreach (Transform disk in _disks)
             {
                 disk.Rotate(0f, 0f, _diskSpinSpeed * Time.deltaTime);
-                disk.localScale =
-                    _baseScale + Vector3.one * GetComponent<MusicReactive>().GetMusicValue() * _diskScaleRange;
+                disk.localScale = _baseScale + Vector3.one * musicValue * _diskScaleRange;
             }
 
             _healthShadowSlider.value = Mathf.MoveTowards(

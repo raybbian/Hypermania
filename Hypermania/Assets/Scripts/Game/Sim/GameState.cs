@@ -36,10 +36,10 @@ namespace Game.Sim
         Hard,
     }
 
-    public enum BeatCancelWindow
+    public enum SuperInputMode
     {
-        Medium = 5,
-        Hard = 3,
+        Hold,
+        DoubleTap,
     }
 
     [Serializable]
@@ -53,7 +53,7 @@ namespace Game.Sim
         public int SkinIndex;
         public ComboMode ComboMode;
         public ManiaDifficulty ManiaDifficulty;
-        public BeatCancelWindow BeatCancelWindow = BeatCancelWindow.Medium;
+        public SuperInputMode SuperInputMode = SuperInputMode.Hold;
     }
 
     [Serializable]
@@ -188,13 +188,12 @@ namespace Game.Sim
                     options.Global.StalingBufferSize,
                     options.Players[i].Character.BurstMax
                 );
-                int beatWindow = (int)options.Players[i].BeatCancelWindow;
                 state.Manias[i] = ManiaState.Create(
                     new ManiaConfig
                     {
                         NumKeys = 4,
-                        HitHalfRange = beatWindow,
-                        MissHalfRange = beatWindow + 3,
+                        HitHalfRange = 5,
+                        MissHalfRange = 8,
                     }
                 );
             }
@@ -244,9 +243,9 @@ namespace Game.Sim
             // rounding error of FramesPerBeat to ±2 frames; BeatsToFrame(4)
             // rounds the product a single time and caps drift at ±0.5.
             int framesPerWholeNote = audio.BeatsToFrame(4);
+            int firstBeat = audio.FirstBeatFrame(options.Global.PreGameDelayTicks).No;
             int phase =
-                ((RealFrame.No - audio.FirstMusicalBeat.No) % framesPerWholeNote + framesPerWholeNote)
-                % framesPerWholeNote;
+                ((RealFrame.No - firstBeat) % framesPerWholeNote + framesPerWholeNote) % framesPerWholeNote;
             int delay = (framesPerWholeNote - phase) % framesPerWholeNote;
             RoundStart = SimFrame + delay;
             SpeedRatio = 1;

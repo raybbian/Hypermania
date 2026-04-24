@@ -332,7 +332,9 @@ namespace Game.Sim
                 // On-beat no-op pair: requires the current note to sit on
                 // a quarter-note grid position, and a beat i+2 to exist so
                 // the relaxed hitstop check has a target window.
-                bool canTryNoOp = i + 2 < primaryNotes.Count && _audio.IsOnBeat(currentBeat);
+                bool canTryNoOp =
+                    i + 2 < primaryNotes.Count
+                    && _audio.IsOnBeat(currentBeat, _options.Global.PreGameDelayTicks);
                 if (
                     canTryNoOp
                     && TryOnBeatNoOpPair(
@@ -404,7 +406,7 @@ namespace Game.Sim
         {
             _attackerIndex = attackerIndex;
             _attackerConfig = options.Players[attackerIndex].Character;
-            _noteHitHalfRange = (int)options.Players[attackerIndex].BeatCancelWindow;
+            _noteHitHalfRange = 5;
             _audio = options.Global.Audio;
 
             // Clone Players so we can suppress the attacker's ComboMode on
@@ -428,7 +430,7 @@ namespace Game.Sim
                 SkinIndex = atk.SkinIndex,
                 ComboMode = ComboMode.Freestyle,
                 ManiaDifficulty = atk.ManiaDifficulty,
-                BeatCancelWindow = atk.BeatCancelWindow,
+                SuperInputMode = atk.SuperInputMode,
             };
 
             _options = new GameOptions

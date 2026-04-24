@@ -27,6 +27,14 @@ namespace Design.Configs
         [Header("Beatmap Source")]
         public UnityEngine.Object OszFile;
 
+        /// <summary>
+        /// Frame within audio-clip frame space (time=0 is the audio clip's
+        /// first sample) at which the first downbeat sits. Consumers must
+        /// shift by the audio start delay (<c>GlobalConfig.PreGameDelayTicks</c>)
+        /// to convert to absolute sim-frame space — see
+        /// <see cref="FirstBeatFrame"/> and the overloads of
+        /// <see cref="IsOnBeat"/>.
+        /// </summary>
         public Frame FirstMusicalBeat = Frame.FirstFrame;
 
         [FormerlySerializedAs("BPM")]
@@ -91,19 +99,34 @@ namespace Design.Configs
         }
 
         /// <summary>
-        /// True when <paramref name="frame"/> sits on a quarter-note grid
-        /// position relative to <see cref="FirstMusicalBeat"/>, within ±2
-        /// frames. Computes drift continuously: one Round to pick the nearest
-        /// integer beat, then measures how far <paramref name="frame"/> is
-        /// from that beat directly in frames — no roundtrip through
-        /// <see cref="BeatsToFrame"/>. Tighter than the old
-        /// <c>Round(beats) → BeatsToFrame</c> path, which stacked an extra
-        /// ±0.5-frame error on top of the already-rounded <c>delta</c>.
+        /// Absolute sim-frame at which the first musical beat lands, given
+        /// <paramref name="audioStartFrame"/> (= <c>GlobalConfig.PreGameDelayTicks</c>).
+        /// <see cref="FirstMusicalBeat"/> is stored in audio-clip frame space;
+        /// this helper performs the one-line shift so call sites don't have
+        /// to spell it out each time.
         /// </summary>
-        public bool IsOnBeat(Frame frame)
+        public Frame FirstBeatFrame(int audioStartFrame)
+        {
+            return FirstMusicalBeat + audioStartFrame;
+        }
+
+        /// <summary>
+        /// True when <paramref name="frame"/> (absolute sim-frame) sits on a
+        /// quarter-note grid position relative to the first musical beat,
+        /// within ±2 frames. <paramref name="audioStartFrame"/> (=
+        /// <c>GlobalConfig.PreGameDelayTicks</c>) shifts
+        /// <see cref="FirstMusicalBeat"/> into absolute sim-frame space
+        /// before the grid is measured. Computes drift continuously: one
+        /// Round to pick the nearest integer beat, then measures how far
+        /// <paramref name="frame"/> is from that beat directly in frames —
+        /// no roundtrip through <see cref="BeatsToFrame"/>. Tighter than the
+        /// old <c>Round(beats) → BeatsToFrame</c> path, which stacked an
+        /// extra ±0.5-frame error on top of the already-rounded <c>delta</c>.
+        /// </summary>
+        public bool IsOnBeat(Frame frame, int audioStartFrame)
         {
             sfloat framesPerBeatExact = (sfloat)60f / Bpm * (sfloat)GameManager.TPS;
-            sfloat beatsF = (sfloat)(frame - FirstMusicalBeat) / framesPerBeatExact;
+            sfloat beatsF = (sfloat)(frame - FirstBeatFrame(audioStartFrame)) / framesPerBeatExact;
             sfloat driftFrames = (beatsF - (sfloat)Mathsf.RoundToInt(beatsF)) * framesPerBeatExact;
             return driftFrames >= -(sfloat)(2f) && driftFrames <= (sfloat)2f;
         }
@@ -114,8 +137,20 @@ namespace Design.Configs
         /// loops, notes from the loop section are re-emitted at correct absolute
         /// frame positions. Loop iteration offsets are computed via continuous math
         /// (<see cref="BeatsToFrame"/>) to avoid cumulative rounding drift.
+        ///
+        /// Stored note Ticks are in audio-clip frame space (time=0 is the
+        /// audio clip's start). <paramref name="audioStartFrame"/> (=
+        /// <c>GlobalConfig.PreGameDelayTicks</c>) is the sim frame at which
+        /// the Conductor starts the audio clip; <paramref name="minStart"/>
+        /// and returned Ticks are both in absolute sim-frame space, so this
+        /// method converts at entry/exit.
         /// </summary>
-        public BeatmapNote[] SliceFrom(Frame minStart, ManiaDifficulty difficulty, int comboBeatCount = -1)
+        public BeatmapNote[] SliceFrom(
+            Frame minStart,
+            ManiaDifficulty difficulty,
+            int audioStartFrame,
+            int comboBeatCount = -1
+        )
         {
             BeatmapNote[] notes = NotesFor(difficulty);
             if (notes.Length == 0)
@@ -123,24 +158,25 @@ namespace Design.Configs
 
             if (comboBeatCount < 0)
                 comboBeatCount = ComboBeatCount;
-            Frame endBound = minStart + BeatsToFrame(comboBeatCount);
+            Frame audioMinStart = minStart - audioStartFrame;
+            Frame audioEndBound = audioMinStart + BeatsToFrame(comboBeatCount);
             int songEnd = BeatsToFrame(SongLengthBeats);
             int loopStartFrame = BeatsToFrame(LoopBeat);
             int loopBeats = SongLengthBeats - LoopBeat;
 
             var result = new List<BeatmapNote>();
 
-            int first = LowerBound(notes, minStart);
+            int first = LowerBound(notes, audioMinStart);
 
-            // First playthrough: notes in [minStart, min(endBound, songEnd))
+            // First playthrough: notes in [audioMinStart, min(audioEndBound, songEnd))
             for (int i = first; i < notes.Length; i++)
             {
-                if (notes[i].Tick.No >= songEnd || notes[i].Tick > endBound)
+                if (notes[i].Tick.No >= songEnd || notes[i].Tick > audioEndBound)
                     break;
-                result.Add(notes[i]);
+                result.Add(new BeatmapNote { Tick = notes[i].Tick + audioStartFrame, Channel = notes[i].Channel });
             }
 
-            if (endBound.No <= songEnd || loopBeats <= 0)
+            if (audioEndBound.No <= songEnd || loopBeats <= 0)
                 return result.ToArray();
 
             // Loop-section note indices via binary search
@@ -150,7 +186,8 @@ namespace Design.Configs
                 return result.ToArray();
 
             int approxLoopLen = songEnd - loopStartFrame;
-            int startIter = minStart.No >= songEnd ? Math.Max(1, (minStart.No - songEnd) / approxLoopLen) : 1;
+            int startIter =
+                audioMinStart.No >= songEnd ? Math.Max(1, (audioMinStart.No - songEnd) / approxLoopLen) : 1;
 
             for (int n = startIter; ; n++)
             {
@@ -163,16 +200,18 @@ namespace Design.Configs
                 int loopShift = BeatsToFrame(n * loopBeats);
 
                 int firstAbsolute = notes[loopFirst].Tick.No + loopShift;
-                if (firstAbsolute > endBound.No)
+                if (firstAbsolute > audioEndBound.No)
                     break;
 
                 for (int i = loopFirst; i < loopEnd; i++)
                 {
                     int absolute = notes[i].Tick.No + loopShift;
-                    if (absolute > endBound.No)
+                    if (absolute > audioEndBound.No)
                         break;
-                    if (absolute >= minStart.No)
-                        result.Add(new BeatmapNote { Tick = (Frame)absolute, Channel = notes[i].Channel });
+                    if (absolute >= audioMinStart.No)
+                        result.Add(
+                            new BeatmapNote { Tick = (Frame)(absolute + audioStartFrame), Channel = notes[i].Channel }
+                        );
                 }
             }
 

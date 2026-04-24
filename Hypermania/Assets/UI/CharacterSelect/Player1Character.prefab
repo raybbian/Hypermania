@@ -452,8 +452,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 25
-    m_Right: 25
+    m_Left: 15
+    m_Right: 15
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 1
@@ -1377,9 +1377,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4144310097614193714, guid: b1b1ce9bda3d30c47ba155177f34fef3, type: 3}
       propertyPath: m_text
-      value: 'Beat Cancel:
-
-'
+      value: 'Super Input:'
       objectReference: {fileID: 0}
     - target: {fileID: 5094727833106197832, guid: b1b1ce9bda3d30c47ba155177f34fef3, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1403,13 +1401,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5105148773466810684, guid: b1b1ce9bda3d30c47ba155177f34fef3, type: 3}
       propertyPath: m_text
-      value: 'Medium (4)
-
-'
+      value: Double Tap
       objectReference: {fileID: 0}
     - target: {fileID: 8366782801792937272, guid: b1b1ce9bda3d30c47ba155177f34fef3, type: 3}
       propertyPath: m_Name
-      value: BeatCancel
+      value: SuperInput
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -76,6 +77,7 @@ namespace Scenes.Menus.CharacterSelect
         private int _activeLocalSlot = -1;
 
         private SteamMatchmakingClient _matchmakingSubscription;
+        private ControlsMenuSession _controlsMenuSession;
 
         private void OnEnable()
         {
@@ -85,6 +87,7 @@ namespace Scenes.Menus.CharacterSelect
             _state = new CharacterSelectState();
             _isOnline = SessionDirectory.Config == GameConfig.Online;
             _roster = BuildRoster(_globalConfig);
+            _controlsMenuSession = new ControlsMenuSession(IsProfileClaimedByOtherSlotState);
 
             if (_grid != null)
                 _grid.Initialize(_roster, _randomSkin);
@@ -123,6 +126,15 @@ namespace Scenes.Menus.CharacterSelect
             {
                 _localControllers[i] = null;
             }
+            if (_controlsMenus != null)
+            {
+                for (int i = 0; i < _controlsMenus.Length; i++)
+                {
+                    if (_controlsMenus[i] != null)
+                        _controlsMenus[i].SetSession(null);
+                }
+            }
+            _controlsMenuSession = null;
         }
 
         private void SetupLocal()
@@ -330,6 +342,15 @@ namespace Scenes.Menus.CharacterSelect
                     continue;
                 cursor.Bind(_state.Players[i], _grid);
             }
+
+            if (_controlsMenus != null)
+            {
+                for (int i = 0; i < _controlsMenus.Length; i++)
+                {
+                    if (_controlsMenus[i] != null)
+                        _controlsMenus[i].SetSession(_controlsMenuSession);
+                }
+            }
         }
 
         private void Update()
@@ -469,7 +490,7 @@ namespace Scenes.Menus.CharacterSelect
                 args[baseIdx + 1] = slot.SkinIndex.ToString(CultureInfo.InvariantCulture);
                 args[baseIdx + 2] = ((int)slot.ComboMode).ToString(CultureInfo.InvariantCulture);
                 args[baseIdx + 3] = ((int)slot.ManiaDifficulty).ToString(CultureInfo.InvariantCulture);
-                args[baseIdx + 4] = ((int)slot.BeatCancelWindow).ToString(CultureInfo.InvariantCulture);
+                args[baseIdx + 4] = ((int)slot.SuperInputMode).ToString(CultureInfo.InvariantCulture);
             }
             return args;
         }
@@ -528,7 +549,7 @@ namespace Scenes.Menus.CharacterSelect
                 slot.SkinIndex = parsed[baseIdx + 1];
                 slot.ComboMode = (ComboMode)parsed[baseIdx + 2];
                 slot.ManiaDifficulty = (ManiaDifficulty)parsed[baseIdx + 3];
-                slot.BeatCancelWindow = (BeatCancelWindow)parsed[baseIdx + 4];
+                slot.SuperInputMode = (SuperInputMode)parsed[baseIdx + 4];
             }
             return true;
         }
@@ -602,21 +623,57 @@ namespace Scenes.Menus.CharacterSelect
 
         // Cursor-on-dummy / menu-never-opened leaves ActiveProfileName null;
         // we skip those so a prior pick isn't wiped when the user scrolls
-        // past the dummy.
+        // past the dummy. When a state write actually lands, fire the
+        // session's Changed event so the *other* menu's external-claim
+        // check sees the latest value on the same frame.
         private void SyncControlsProfileFromMenus()
         {
             if (_controlsMenus == null)
                 return;
             int limit = Mathf.Min(_controlsMenus.Length, _state.Players.Length);
+            bool changed = false;
             for (int i = 0; i < limit; i++)
             {
                 ConfigMenu menu = _controlsMenus[i];
                 if (menu == null)
                     continue;
                 string name = menu.ActiveProfileName;
-                if (!string.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name))
+                    continue;
+                if (!string.Equals(_state.Players[i].ControlsProfileName, name, StringComparison.Ordinal))
+                {
                     _state.Players[i].ControlsProfileName = name;
+                    changed = true;
+                }
             }
+            if (changed)
+                _controlsMenuSession?.NotifyChanged();
+        }
+
+        // The "taken" lock extends beyond open-menu cursors: a profile the
+        // other player has committed to their Controls row (via their last
+        // menu pick) stays locked even after their menu closes.
+        private bool IsProfileClaimedByOtherSlotState(ConfigMenu asker, string name)
+        {
+            if (string.IsNullOrEmpty(name) || _state == null || _controlsMenus == null)
+                return false;
+            int askerSlot = -1;
+            for (int i = 0; i < _controlsMenus.Length; i++)
+            {
+                if (_controlsMenus[i] == asker)
+                {
+                    askerSlot = i;
+                    break;
+                }
+            }
+            for (int i = 0; i < _state.Players.Length; i++)
+            {
+                if (i == askerSlot)
+                    continue;
+                if (string.Equals(_state.Players[i].ControlsProfileName, name, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            return false;
         }
 
         private bool IsDeviceOwnedByAnyMenu(InputDevice device)
@@ -831,7 +888,7 @@ namespace Scenes.Menus.CharacterSelect
                     SkinIndex = ClampSkinIndex(character, slot.SkinIndex),
                     ComboMode = slot.ComboMode,
                     ManiaDifficulty = slot.ManiaDifficulty,
-                    BeatCancelWindow = slot.BeatCancelWindow,
+                    SuperInputMode = slot.SuperInputMode,
                 };
             }
 

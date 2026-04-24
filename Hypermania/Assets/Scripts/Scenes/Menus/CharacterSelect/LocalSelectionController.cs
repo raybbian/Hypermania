@@ -164,21 +164,20 @@ namespace Scenes.Menus.CharacterSelect
                     state.ManiaDifficulty =
                         state.ManiaDifficulty == ManiaDifficulty.Normal ? ManiaDifficulty.Hard : ManiaDifficulty.Normal;
                     break;
-                case OptionsRows.BeatCancel:
-                    state.BeatCancelWindow = CycleBeatCancel(state.BeatCancelWindow, delta);
+                case OptionsRows.SuperInput:
+                    state.SuperInputMode = CycleSuperInputMode(state.SuperInputMode, delta);
                     break;
                 // ControlsPreset row is handled by CharacterSelectDirectory —
                 // L/R there opens the controls config menu, never cycled here.
             }
         }
 
-        private static BeatCancelWindow CycleBeatCancel(BeatCancelWindow current, int delta)
+        private static SuperInputMode CycleSuperInputMode(SuperInputMode current, int delta)
         {
-            // Order by intended difficulty progression: Easy → Medium → Hard.
-            BeatCancelWindow[] order = { BeatCancelWindow.Medium, BeatCancelWindow.Hard };
+            SuperInputMode[] order = { SuperInputMode.Hold, SuperInputMode.DoubleTap };
             int idx = Array.IndexOf(order, current);
             if (idx < 0)
-                idx = 1;
+                idx = 0;
             int next = ((idx + delta) % order.Length + order.Length) % order.Length;
             return order[next];
         }
@@ -380,7 +379,7 @@ namespace Scenes.Menus.CharacterSelect
         public const int ComboMode = 0;
         public const int Skin = 1;
         public const int ManiaDifficulty = 2;
-        public const int BeatCancel = 3;
+        public const int SuperInput = 3;
         public const int ControlsPreset = 4;
         public const int Count = 5;
 
@@ -396,8 +395,8 @@ namespace Scenes.Menus.CharacterSelect
         /// <summary>
         /// Whether the row is selectable / editable. Non-interactable rows
         /// remain visible but grayed out; nav skips them and L/R is a no-op.
-        /// ManiaDifficulty and BeatCancel are non-interactable when ComboMode
-        /// is <see cref="Game.Sim.ComboMode.Freestyle"/>. ControlsPreset is
+        /// ManiaDifficulty is non-interactable when ComboMode is
+        /// <see cref="Game.Sim.ComboMode.Freestyle"/>. ControlsPreset is
         /// non-interactable on the remote player's mirrored panel since the
         /// value is never synced.
         /// </summary>
@@ -412,7 +411,7 @@ namespace Scenes.Menus.CharacterSelect
                 return false;
             if (row == ControlsPreset && !isLocal)
                 return false;
-            if (state.ComboMode == Game.Sim.ComboMode.Freestyle && (row == ManiaDifficulty || row == BeatCancel))
+            if (state.ComboMode == Game.Sim.ComboMode.Freestyle && row == ManiaDifficulty)
                 return false;
             // Skin row is meaningless while the slot is on the Random tile —
             // the concrete skin isn't picked until commit.

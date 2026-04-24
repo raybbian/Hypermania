@@ -8,19 +8,19 @@ namespace Netcode.P2P
     /// Wire format for character-select sync over Steam lobby member data.
     /// Controls preset is omitted because input bindings are inherently local.
     ///
-    /// Format: <c>v2|phase|char|skin|combo|maniaDiff|beatWin|optionsRow</c>
+    /// Format: <c>v3|phase|char|skin|combo|maniaDiff|superInput|optionsRow</c>
     /// All fields are integer enum values encoded as decimal text.
     /// </summary>
     public struct CharacterSelectPayload
     {
-        public const string Version = "v2";
+        public const string Version = "v3";
 
         public SelectPhase Phase;
         public int CharacterIndex;
         public int SkinIndex;
         public ComboMode ComboMode;
         public ManiaDifficulty ManiaDifficulty;
-        public BeatCancelWindow BeatCancelWindow;
+        public SuperInputMode SuperInputMode;
         public int OptionsRow;
 
         public string Serialize()
@@ -33,7 +33,7 @@ namespace Netcode.P2P
                 SkinIndex.ToString(CultureInfo.InvariantCulture),
                 ((int)ComboMode).ToString(CultureInfo.InvariantCulture),
                 ((int)ManiaDifficulty).ToString(CultureInfo.InvariantCulture),
-                ((int)BeatCancelWindow).ToString(CultureInfo.InvariantCulture),
+                ((int)SuperInputMode).ToString(CultureInfo.InvariantCulture),
                 OptionsRow.ToString(CultureInfo.InvariantCulture)
             );
         }
@@ -60,7 +60,7 @@ namespace Netcode.P2P
                 return false;
             if (!int.TryParse(parts[5], NumberStyles.Integer, CultureInfo.InvariantCulture, out int maniaDiff))
                 return false;
-            if (!int.TryParse(parts[6], NumberStyles.Integer, CultureInfo.InvariantCulture, out int beatWin))
+            if (!int.TryParse(parts[6], NumberStyles.Integer, CultureInfo.InvariantCulture, out int superInput))
                 return false;
             if (!int.TryParse(parts[7], NumberStyles.Integer, CultureInfo.InvariantCulture, out int optionsRow))
                 return false;
@@ -72,7 +72,7 @@ namespace Netcode.P2P
                 SkinIndex = skin,
                 ComboMode = (ComboMode)combo,
                 ManiaDifficulty = (ManiaDifficulty)maniaDiff,
-                BeatCancelWindow = (BeatCancelWindow)beatWin,
+                SuperInputMode = (SuperInputMode)superInput,
                 OptionsRow = optionsRow,
             };
             return true;

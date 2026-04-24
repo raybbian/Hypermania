@@ -101,7 +101,8 @@ namespace Game.Sim
         public SVector2? ClankLocation { get; private set; }
         public bool CurrentGrabTechable { get; private set; }
         public bool StateChangedThisRealFrame { get; private set; }
-        public bool SuperMaxedThisRealFrame { get; private set; }
+        public bool SuperTier1MaxedThisRealFrame { get; private set; }
+        public bool SuperTier2MaxedThisRealFrame { get; private set; }
         public CharacterState? PostActionState { get; private set; }
         public Frame? PostActionStateStart { get; private set; }
 
@@ -357,7 +358,8 @@ namespace Game.Sim
             HitLocation = null;
             ClankLocation = null;
             StateChangedThisRealFrame = false;
-            SuperMaxedThisRealFrame = false;
+            SuperTier1MaxedThisRealFrame = false;
+            SuperTier2MaxedThisRealFrame = false;
             PostActionState = null;
             PostActionStateStart = null;
         }
@@ -404,6 +406,10 @@ namespace Game.Sim
         {
             if (State != nextState || forceChange)
             {
+                if (State.IsStunned() && !nextState.IsStunned())
+                {
+                    ImmunityHash = 0;
+                }
                 State = nextState;
                 StateStart = start;
                 StateEnd = end;
@@ -707,20 +713,38 @@ namespace Game.Sim
                 return;
             }
 
-            // Hold-to-super: once the heavy attack has been active for
-            // SuperDelayWindow ticks, promote to a super if the heavy button
-            // is still held at that frame.
+            // Heavy-attack → super promotion. Two trigger shapes, chosen per
+            // player via SuperInputMode:
+            //   Hold:      on frame SuperDelayWindow, heavy must still be held
+            //              and must not have been released at any point inside
+            //              the window.
+            //   DoubleTap: any time inside the window, a release-then-re-press
+            //              of heavy promotes immediately on the re-press frame.
             int superDelayWindow = options.Global.Input.SuperDelayWindow;
             bool isHeavyAttackState =
                 State == CharacterState.HeavyAttack
                 || State == CharacterState.HeavyAerial
                 || State == CharacterState.HeavyCrouching;
+            int framesInto = simFrame - StateStart;
+            SuperInputMode superInputMode = options.Players[Index].SuperInputMode;
+
+            bool triggerHold =
+                superInputMode == SuperInputMode.Hold
+                && framesInto == superDelayWindow
+                && InputH.IsHeld(InputFlags.HeavyAttack)
+                && !InputH.ReleasedRecently(InputFlags.HeavyAttack, withinFrames: superDelayWindow + 1);
+
+            bool triggerDoubleTap =
+                superInputMode == SuperInputMode.DoubleTap
+                && framesInto > 0
+                && framesInto <= superDelayWindow
+                && InputH.PressedRecently(InputFlags.HeavyAttack, withinFrames: framesInto + 1);
+
             if (
                 isHeavyAttackState
                 && !IsSuperAttack
-                && InputH.IsHeld(InputFlags.HeavyAttack)
-                && simFrame - StateStart == superDelayWindow
                 && gameMode == GameMode.Fighting
+                && (triggerHold || triggerDoubleTap)
             )
             {
                 sfloat superCost = options.Global.SuperCost;
@@ -1065,7 +1089,7 @@ namespace Game.Sim
             {
                 return new HitOutcome { Kind = HitKind.None };
             }
-            int immunityVal = HashCode.Combine(props, attackSt);
+            int immunityVal = ComputeImmunityHash(props);
             if (ImmunityHash == immunityVal)
             {
                 return new HitOutcome { Kind = HitKind.None };
@@ -1175,6 +1199,38 @@ namespace Game.Sim
             Velocity = SVector2.zero;
         }
 
+        // Deterministic immunity hash over BoxProps. System.HashCode uses a
+        // per-process seed so its output diverges across peers and desyncs
+        // the serialized ImmunityHash. Every BoxProps field must be mixed in
+        // — add new fields to both BoxProps.Equals and this helper.
+        private static int ComputeImmunityHash(BoxProps props)
+        {
+            unchecked
+            {
+                int h = (int)props.Kind;
+                h = h * 31 + (int)props.AttackKind;
+                h = h * 31 + props.Damage;
+                h = h * 31 + props.HitstunTicks;
+                h = h * 31 + props.BlockstunTicks;
+                h = h * 31 + props.HitstopTicks;
+                h = h * 31 + props.BlockstopTicks;
+                h = h * 31 + (int)props.KnockdownKind;
+                h = h * 31 + (int)props.Knockback.x.RawValue;
+                h = h * 31 + (int)props.Knockback.y.RawValue;
+                h = h * 31 + (int)props.GrabPosition.x.RawValue;
+                h = h * 31 + (int)props.GrabPosition.y.RawValue;
+                h = h * 31 + (props.GrabsGrounded ? 1 : 0);
+                h = h * 31 + (props.GrabsAirborne ? 1 : 0);
+                h = h * 31 + (props.Techable ? 1 : 0);
+                h = h * 31 + (props.HasTransition ? 1 : 0);
+                h = h * 31 + (int)props.OnHitTransition;
+                h ^= h >> 16;
+                h *= (int)0x45d9f3b;
+                h ^= h >> 16;
+                return h;
+            }
+        }
+
         public void AddSuper(sfloat amount, GameOptions options)
         {
             sfloat max = options.Global.SuperMax;
@@ -1185,9 +1241,13 @@ namespace Game.Sim
             Super = Mathsf.Min(Super, max);
             bool crossedTier1 = prevSuper < cost && Super >= cost;
             bool crossedTier2 = prevSuper < doubleCost && Super >= doubleCost;
-            if (crossedTier1 || crossedTier2)
+            if (crossedTier1)
             {
-                SuperMaxedThisRealFrame = true;
+                SuperTier1MaxedThisRealFrame = true;
+            }
+            if (crossedTier2)
+            {
+                SuperTier2MaxedThisRealFrame = true;
             }
         }
     }

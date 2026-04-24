@@ -235,7 +235,7 @@ namespace Utils.SoftFloat
         //   f:
         public static sfloat Log10(sfloat f)
         {
-            return Log((sfloat)10f);
+            return Log(f) / Log((sfloat)10f);
         }
 
         //

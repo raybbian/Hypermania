@@ -16,7 +16,7 @@ namespace Scenes.Menus.CharacterSelect
         public int SkinIndex;
         public ComboMode ComboMode;
         public ManiaDifficulty ManiaDifficulty;
-        public BeatCancelWindow BeatCancelWindow = BeatCancelWindow.Medium;
+        public SuperInputMode SuperInputMode = SuperInputMode.Hold;
 
         /// <summary>
         /// Name of the disk-backed <c>ControlsProfile</c> the player most
@@ -37,7 +37,7 @@ namespace Scenes.Menus.CharacterSelect
                 SkinIndex = SkinIndex,
                 ComboMode = ComboMode,
                 ManiaDifficulty = ManiaDifficulty,
-                BeatCancelWindow = BeatCancelWindow,
+                SuperInputMode = SuperInputMode,
                 OptionsRow = OptionsRow,
             };
         }
@@ -49,7 +49,7 @@ namespace Scenes.Menus.CharacterSelect
             SkinIndex = payload.SkinIndex;
             ComboMode = payload.ComboMode;
             ManiaDifficulty = payload.ManiaDifficulty;
-            BeatCancelWindow = payload.BeatCancelWindow;
+            SuperInputMode = payload.SuperInputMode;
             OptionsRow = payload.OptionsRow;
         }
     }

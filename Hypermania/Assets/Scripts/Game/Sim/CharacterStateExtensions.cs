@@ -38,5 +38,13 @@ namespace Game.Sim
             state == CharacterState.HeavyKnockdown
             || state == CharacterState.SoftKnockdown
             || state == CharacterState.GetUp;
+
+        public static bool IsStunned(this CharacterState state) =>
+            state == CharacterState.Hit
+            || state == CharacterState.BlockCrouch
+            || state == CharacterState.BlockStand
+            || state == CharacterState.Grabbed
+            || state == CharacterState.Death
+            || state.IsKnockdown();
     }
 }

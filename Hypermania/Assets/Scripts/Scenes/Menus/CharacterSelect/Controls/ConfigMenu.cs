@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Design.Configs;
 using Game.Sim;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
-using UnityEngine.InputSystem.Utilities;
 
 namespace Scenes.Menus.CharacterSelect.Controls
 {
@@ -29,20 +26,14 @@ namespace Scenes.Menus.CharacterSelect.Controls
     }
 
     /// <summary>
-    /// Controls-configuration overlay. Opened with the <see cref="InputDevice"/>
-    /// that triggered the open; only that device drives navigation, but bind
-    /// capture accepts any device matching the active tab. Two half-screen
-    /// instances can run concurrently without stealing each other's inputs —
-    /// see <see cref="_liveMenus"/> / <see cref="IsDeviceOwnedByOtherMenu"/>.
+    /// Controls-configuration overlay. Orchestrates a <see cref="ConfigMenuInputPoller"/>,
+    /// a <see cref="BindingListener"/>, and three view components against a
+    /// <see cref="ControlsMenuSession"/> injected by <c>CharacterSelectDirectory</c>.
+    /// Cross-menu sync happens via the session's <c>Changed</c> event —
+    /// menu A mutating its cursor re-renders menu B's display the same frame.
     /// </summary>
     public class ConfigMenu : MonoBehaviour
     {
-        private const float AxisThreshold = 0.75f;
-
-        // Used during bind capture to skip inputs from a device currently
-        // navigating another open menu.
-        private static readonly HashSet<ConfigMenu> _liveMenus = new HashSet<ConfigMenu>();
-
         [Tooltip("Toggled by Open/Close. Falls back to this.gameObject when null.")]
         [SerializeField]
         private GameObject _contentRoot;
@@ -56,6 +47,11 @@ namespace Scenes.Menus.CharacterSelect.Controls
         [SerializeField]
         private ConfigInputMenu _inputMenu;
 
+        private ControlsMenuSession _session;
+        private bool _attached;
+        private ConfigMenuInputPoller _poller;
+        private BindingListener _listener;
+
         private InputDevice _ownerDevice;
         private InputDevice _recentOwnerDevice;
         private int _recentOwnerFrame = -1;
@@ -63,37 +59,28 @@ namespace Scenes.Menus.CharacterSelect.Controls
 
         private List<ControlsProfile> _profiles = new List<ControlsProfile>();
         private int _profileIndex;
-
         private ConfigMenuColumn _column;
         private ConfigDevice _device;
         private int _bindingRow;
         private BindingSlot _bindingSlot;
 
-        private bool _listening;
-        private IDisposable _listenSubscription;
-
-        // Swallow the rest of the frame's edges after (a) listen mode ends,
-        // so the bound key doesn't double-fire as nav, and (b) Open(), so the
-        // L/R press that opened the menu doesn't immediately jump the cursor
-        // off the profile list.
+        // Swallows the rest of the frame's edges after (a) listen mode ends
+        // so the bound key doesn't double-fire as nav, and (b) Open() so the
+        // L/R press that opened the menu doesn't immediately jump the cursor.
         private int _suppressEdgesThroughFrame = -1;
-
-        private bool _prevLeft;
-        private bool _prevRight;
-        private bool _prevUp;
-        private bool _prevDown;
 
         public event Action Closed;
 
         public bool IsOpen => _isOpen;
-
+        public InputDevice OwnerDevice => _ownerDevice;
         public ControlsProfile ActiveProfile =>
             _profileIndex >= 0 && _profileIndex < _profiles.Count ? _profiles[_profileIndex] : null;
-
         public string ActiveProfileName => ActiveProfile?.Name;
 
-        // Stays true for one frame after Close so the close-triggering edge
-        // doesn't leak into the character-select controller.
+        /// <summary>
+        /// Stays true for one frame after Close so the close-triggering edge
+        /// doesn't leak into the character-select controller.
+        /// </summary>
         public bool OwnsDevice(InputDevice device)
         {
             if (device == null)
@@ -101,6 +88,35 @@ namespace Scenes.Menus.CharacterSelect.Controls
             if (_isOpen && device == _ownerDevice)
                 return true;
             return device == _recentOwnerDevice && Time.frameCount <= _recentOwnerFrame;
+        }
+
+        public void SetSession(ControlsMenuSession session)
+        {
+            if (_session == session)
+                return;
+            DetachFromSession();
+            _session = session;
+            AttachToSession();
+        }
+
+        // Idempotent: guards against OnEnable firing after SetSession has
+        // already attached, which would double-subscribe RefreshViews.
+        private void AttachToSession()
+        {
+            if (_session == null || _attached)
+                return;
+            _session.Register(this);
+            _session.Changed += RefreshViews;
+            _attached = true;
+        }
+
+        private void DetachFromSession()
+        {
+            if (_session == null || !_attached)
+                return;
+            _session.Changed -= RefreshViews;
+            _session.Unregister(this);
+            _attached = false;
         }
 
         public void Open(InputDevice device, string preferredProfileName = null)
@@ -112,203 +128,211 @@ namespace Scenes.Menus.CharacterSelect.Controls
             SetContentActive(true);
 
             _profiles = ControlsProfileStore.LoadAll();
-            _profileIndex = FindProfileIndex(preferredProfileName);
+            _profileIndex = FindInitialProfileIndex(preferredProfileName);
             _column = ConfigMenuColumn.ProfileList;
-            _device = DefaultTabFor(device);
+            _device = device is Gamepad ? ConfigDevice.Gamepad : ConfigDevice.Keyboard;
             _bindingRow = 0;
             _bindingSlot = BindingSlot.Primary;
-            StopListening();
-            InitPrevAxesFromOwner();
+
+            _poller = new ConfigMenuInputPoller(device);
+            _listener = new BindingListener();
+            _listener.KeyboardBound += OnKeyboardBound;
+            _listener.GamepadBound += OnGamepadBound;
+            _listener.ClearRequested += OnClearRequested;
+
             _suppressEdgesThroughFrame = Time.frameCount;
 
-            RefreshAll();
-        }
-
-        // Seed _prev stick state from the owner's live axis values so a stick
-        // still tilted from the L/R press that opened the menu doesn't get
-        // re-read as a fresh edge by the next PollGamepad.
-        private void InitPrevAxesFromOwner()
-        {
-            if (_ownerDevice is Gamepad gp)
-            {
-                _prevLeft = gp.leftStick.x.value < -AxisThreshold;
-                _prevRight = gp.leftStick.x.value > AxisThreshold;
-                _prevUp = gp.leftStick.y.value > AxisThreshold;
-                _prevDown = gp.leftStick.y.value < -AxisThreshold;
-            }
-            else
-            {
-                _prevLeft = _prevRight = _prevUp = _prevDown = false;
-            }
-        }
-
-        private int FindProfileIndex(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-                return 0;
-            for (int i = 0; i < _profiles.Count; i++)
-            {
-                if (_profiles[i] != null
-                    && string.Equals(_profiles[i].Name, name, StringComparison.OrdinalIgnoreCase))
-                    return i;
-            }
-            return 0;
+            NotifySessionChanged();
         }
 
         public void Close()
         {
             if (!_isOpen)
                 return;
-            StopListening();
+            StopListeningAndSuppress();
+            DetachListener();
+            _poller = null;
             _isOpen = false;
             _recentOwnerDevice = _ownerDevice;
             _recentOwnerFrame = Time.frameCount;
             _ownerDevice = null;
             SetContentActive(false);
             Closed?.Invoke();
+            NotifySessionChanged();
         }
 
         private void OnEnable()
         {
-            _liveMenus.Add(this);
+            // Re-attach in case the gameObject was toggled off/on; session
+            // itself is set once by the directory and survives the cycle.
+            AttachToSession();
         }
 
         private void OnDisable()
         {
-            _liveMenus.Remove(this);
-            StopListening();
+            StopListeningAndSuppress();
+            DetachListener();
+            DetachFromSession();
         }
 
         private void Update()
         {
             if (!_isOpen || _ownerDevice == null)
                 return;
-            if (_listening)
+            if (_listener != null && _listener.IsActive)
                 return;
             if (Time.frameCount <= _suppressEdgesThroughFrame)
                 return;
 
-            PollOwnerEdges(out bool left, out bool right, out bool up, out bool down, out bool confirm, out bool back);
-            if (!(left || right || up || down || confirm || back))
+            EdgeSet edges = _poller.Poll();
+            if (!(edges.Left || edges.Right || edges.Up || edges.Down || edges.Confirm || edges.Back))
                 return;
 
             switch (_column)
             {
                 case ConfigMenuColumn.ProfileList:
-                    HandleProfileList(left, right, up, down, confirm, back);
+                    HandleProfileList(edges);
                     break;
                 case ConfigMenuColumn.TabRow:
-                    HandleTabRow(left, right, up, down, confirm, back);
+                    HandleTabRow(edges);
                     break;
                 case ConfigMenuColumn.BindingList:
-                    HandleBindingList(left, right, up, down, confirm, back);
+                    HandleBindingList(edges);
                     break;
             }
 
-            RefreshAll();
+            NotifySessionChanged();
         }
 
-        private void HandleProfileList(bool left, bool right, bool up, bool down, bool confirm, bool back)
+        private void HandleProfileList(in EdgeSet edges)
         {
-            int total = _profileList != null ? _profileList.RowCount(_profiles) : _profiles.Count + 1;
-            if (total <= 0)
-                return;
+            int total = _profiles.Count + 1; // +1 for the "+ New Profile" dummy
+            if (edges.Up)
+                _profileIndex = StepProfileIndex(total, -1);
+            else if (edges.Down)
+                _profileIndex = StepProfileIndex(total, 1);
 
-            if (up)
-                _profileIndex = (_profileIndex - 1 + total) % total;
-            else if (down)
-                _profileIndex = (_profileIndex + 1) % total;
-
-            if (right && ActiveProfile != null)
+            if (edges.Right && ActiveProfile != null)
             {
                 _column = ConfigMenuColumn.TabRow;
                 return;
             }
 
-            if (confirm)
+            if (edges.Confirm)
             {
                 if (IsNewDummySelected)
-                {
                     CreateNewProfile();
-                }
                 else if (ActiveProfile != null)
-                {
                     _column = ConfigMenuColumn.TabRow;
-                }
                 return;
             }
 
-            if (back)
-            {
+            if (edges.Back)
                 Close();
-            }
         }
 
-        private void HandleTabRow(bool left, bool right, bool up, bool down, bool confirm, bool back)
+        private void HandleTabRow(in EdgeSet edges)
         {
-            if (left || right)
+            if (edges.Left || edges.Right)
             {
                 _device = _device == ConfigDevice.Keyboard ? ConfigDevice.Gamepad : ConfigDevice.Keyboard;
                 return;
             }
-            if (down)
+            if (edges.Down)
             {
                 _column = ConfigMenuColumn.BindingList;
                 if (_inputMenu != null)
                     _bindingRow = Mathf.Clamp(_bindingRow, 0, Mathf.Max(0, _inputMenu.RowCount - 1));
                 return;
             }
-            if (back)
-            {
+            if (edges.Back)
                 _column = ConfigMenuColumn.ProfileList;
-            }
         }
 
-        private void HandleBindingList(bool left, bool right, bool up, bool down, bool confirm, bool back)
+        private void HandleBindingList(in EdgeSet edges)
         {
             int rowCount = _inputMenu != null ? _inputMenu.RowCount : 0;
 
-            if (left || right)
+            if (edges.Left || edges.Right)
             {
                 _bindingSlot = _bindingSlot == BindingSlot.Primary ? BindingSlot.Alt : BindingSlot.Primary;
                 return;
             }
-            if (up)
+            if (edges.Up)
             {
                 if (_bindingRow <= 0)
-                {
                     _column = ConfigMenuColumn.TabRow;
-                }
                 else
-                {
                     _bindingRow--;
-                }
                 return;
             }
-            if (down)
+            if (edges.Down)
             {
                 if (rowCount > 0 && _bindingRow < rowCount - 1)
                     _bindingRow++;
                 return;
             }
-            if (confirm)
+            if (edges.Confirm)
             {
                 if (ActiveProfile != null && _inputMenu != null && rowCount > 0)
                     StartListening();
                 return;
             }
-            if (back)
-            {
+            if (edges.Back)
                 _column = ConfigMenuColumn.ProfileList;
-            }
         }
 
         private bool IsNewDummySelected => _profileIndex == _profiles.Count;
 
+        // Preferred profile wins if it exists and isn't claimed; otherwise the
+        // first free profile, else the "+ New Profile" dummy.
+        private int FindInitialProfileIndex(string preferred)
+        {
+            if (!string.IsNullOrEmpty(preferred))
+            {
+                for (int i = 0; i < _profiles.Count; i++)
+                {
+                    if (_profiles[i] != null
+                        && string.Equals(_profiles[i].Name, preferred, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return IsProfileTaken(_profiles[i].Name) ? FirstFreeProfileIndex() : i;
+                    }
+                }
+            }
+            return FirstFreeProfileIndex();
+        }
+
+        private int FirstFreeProfileIndex()
+        {
+            for (int i = 0; i < _profiles.Count; i++)
+            {
+                string n = _profiles[i]?.Name;
+                if (!string.IsNullOrEmpty(n) && !IsProfileTaken(n))
+                    return i;
+            }
+            return _profiles.Count;
+        }
+
+        // Dummy row is always selectable; real rows claimed by another open
+        // menu are skipped.
+        private int StepProfileIndex(int total, int dir)
+        {
+            for (int step = 1; step <= total; step++)
+            {
+                int candidate = ((_profileIndex + dir * step) % total + total) % total;
+                if (candidate == _profiles.Count)
+                    return candidate;
+                string n = _profiles[candidate]?.Name;
+                if (!string.IsNullOrEmpty(n) && !IsProfileTaken(n))
+                    return candidate;
+            }
+            return _profileIndex;
+        }
+
         private void CreateNewProfile()
         {
-            // Reload so a concurrent "+ New Profile" in the other menu is
-            // visible to SuggestName and the two players don't collide.
+            // Reload first so a concurrent create in the other menu is visible
+            // to SuggestName; otherwise both players would pick the same fruit.
             _profiles = ControlsProfileStore.LoadAll();
             string name = ControlsProfileStore.SuggestName(_profiles);
             ControlsProfile profile = ControlsProfile.CreateWithDefaults(name);
@@ -320,202 +344,115 @@ namespace Scenes.Menus.CharacterSelect.Controls
 
         private void StartListening()
         {
-            if (_listening)
+            if (_listener == null || _listener.IsActive)
                 return;
-            _listening = true;
-            ArmListenOnce();
+            _listener.Start(_device, IsDeviceExcludedFromCapture);
         }
 
-        private void ArmListenOnce()
+        private void StopListeningAndSuppress()
         {
-            _listenSubscription?.Dispose();
-            _listenSubscription = InputSystem.onAnyButtonPress.CallOnce(OnAnyButtonPressed);
-        }
-
-        private void StopListening()
-        {
-            if (_listening)
+            if (_listener != null && _listener.IsActive)
             {
+                _listener.Stop();
                 _suppressEdgesThroughFrame = Time.frameCount;
-                _listening = false;
-            }
-            if (_listenSubscription != null)
-            {
-                _listenSubscription.Dispose();
-                _listenSubscription = null;
             }
         }
 
-        private void OnAnyButtonPressed(InputControl ctrl)
+        private void DetachListener()
         {
-            if (!_isOpen || !_listening || ctrl == null)
+            if (_listener == null)
                 return;
-
-            // Escape is un-bindable; instead it clears the focused slot.
-            if (ctrl is KeyControl esc && esc.keyCode == Key.Escape)
-            {
-                ClearCurrentSlot();
-                StopListening();
-                RefreshAll();
-                return;
-            }
-
-            bool accepted = false;
-            if (IsDeviceOwnedByOtherMenu(ctrl.device))
-            {
-                // re-arm
-            }
-            else if (_device == ConfigDevice.Keyboard)
-            {
-                if (ctrl.device is Keyboard && ctrl is KeyControl kc)
-                {
-                    ApplyKeyboardBinding(kc.keyCode);
-                    accepted = true;
-                }
-            }
-            else
-            {
-                if (ctrl.device is Gamepad gp)
-                {
-                    GamepadButtons btn = GamepadButtonFromControl(gp, ctrl);
-                    if (btn != GamepadButtons.None)
-                    {
-                        ApplyGamepadBinding(btn);
-                        accepted = true;
-                    }
-                }
-            }
-
-            if (accepted)
-            {
-                StopListening();
-                RefreshAll();
-            }
-            else
-            {
-                ArmListenOnce();
-            }
+            _listener.KeyboardBound -= OnKeyboardBound;
+            _listener.GamepadBound -= OnGamepadBound;
+            _listener.ClearRequested -= OnClearRequested;
+            _listener = null;
         }
 
-        private void ClearCurrentSlot()
+        private bool IsDeviceExcludedFromCapture(InputDevice device)
         {
-            ControlsProfile profile = ActiveProfile;
-            if (profile == null || _inputMenu == null)
-                return;
-            InputFlags flag = _inputMenu.FlagAt(_bindingRow);
-            if (flag == InputFlags.None)
-                return;
-            if (_device == ConfigDevice.Keyboard)
+            return _session != null && _session.IsDeviceOwnedElsewhere(this, device);
+        }
+
+        private void OnKeyboardBound(Key key)
+        {
+            WriteBinding(profile =>
             {
+                InputFlags flag = _inputMenu.FlagAt(_bindingRow);
+                if (flag == InputFlags.None)
+                    return;
                 if (_bindingSlot == BindingSlot.Primary)
-                    profile.SetKeyboardPrimary(flag, Key.None);
+                    profile.SetKeyboardPrimary(flag, key);
                 else
-                    profile.SetKeyboardAlt(flag, Key.None);
-            }
-            else
+                    profile.SetKeyboardAlt(flag, key);
+            });
+        }
+
+        private void OnGamepadBound(GamepadButtons button)
+        {
+            WriteBinding(profile =>
             {
+                InputFlags flag = _inputMenu.FlagAt(_bindingRow);
+                if (flag == InputFlags.None)
+                    return;
                 if (_bindingSlot == BindingSlot.Primary)
-                    profile.SetGamepadPrimary(flag, GamepadButtons.None);
+                    profile.SetGamepadPrimary(flag, button);
                 else
-                    profile.SetGamepadAlt(flag, GamepadButtons.None);
-            }
-            ControlsProfileStore.Save(profile);
+                    profile.SetGamepadAlt(flag, button);
+            });
         }
 
-        private bool IsDeviceOwnedByOtherMenu(InputDevice device)
+        private void OnClearRequested()
         {
-            if (device == null)
-                return false;
-            foreach (ConfigMenu other in _liveMenus)
+            WriteBinding(profile =>
             {
-                if (other == this || other == null)
-                    continue;
-                if (other._isOpen && other._ownerDevice == device)
-                    return true;
-            }
-            return false;
+                InputFlags flag = _inputMenu.FlagAt(_bindingRow);
+                if (flag == InputFlags.None)
+                    return;
+                if (_device == ConfigDevice.Keyboard)
+                {
+                    if (_bindingSlot == BindingSlot.Primary)
+                        profile.SetKeyboardPrimary(flag, Key.None);
+                    else
+                        profile.SetKeyboardAlt(flag, Key.None);
+                }
+                else
+                {
+                    if (_bindingSlot == BindingSlot.Primary)
+                        profile.SetGamepadPrimary(flag, GamepadButtons.None);
+                    else
+                        profile.SetGamepadAlt(flag, GamepadButtons.None);
+                }
+            });
         }
 
-        private void ApplyKeyboardBinding(Key key)
+        private void WriteBinding(Action<ControlsProfile> mutate)
         {
             ControlsProfile profile = ActiveProfile;
             if (profile == null || _inputMenu == null)
                 return;
-            InputFlags flag = _inputMenu.FlagAt(_bindingRow);
-            if (flag == InputFlags.None)
-                return;
-            if (_bindingSlot == BindingSlot.Primary)
-                profile.SetKeyboardPrimary(flag, key);
-            else
-                profile.SetKeyboardAlt(flag, key);
+            mutate(profile);
             ControlsProfileStore.Save(profile);
+            _suppressEdgesThroughFrame = Time.frameCount;
+            NotifySessionChanged();
         }
 
-        private void ApplyGamepadBinding(GamepadButtons button)
+        private bool IsProfileTaken(string name) =>
+            _session != null && _session.IsProfileTaken(this, name);
+
+        private void NotifySessionChanged()
         {
-            ControlsProfile profile = ActiveProfile;
-            if (profile == null || _inputMenu == null)
-                return;
-            InputFlags flag = _inputMenu.FlagAt(_bindingRow);
-            if (flag == InputFlags.None)
-                return;
-            if (_bindingSlot == BindingSlot.Primary)
-                profile.SetGamepadPrimary(flag, button);
+            if (_session != null)
+                _session.NotifyChanged();
             else
-                profile.SetGamepadAlt(flag, button);
-            ControlsProfileStore.Save(profile);
+                RefreshViews();
         }
 
-        // Reference comparison survives layout/locale variations that would
-        // break name-based matches.
-        private static GamepadButtons GamepadButtonFromControl(Gamepad gp, InputControl ctrl)
-        {
-            if (ctrl == gp.buttonSouth)
-                return GamepadButtons.South;
-            if (ctrl == gp.buttonNorth)
-                return GamepadButtons.North;
-            if (ctrl == gp.buttonEast)
-                return GamepadButtons.East;
-            if (ctrl == gp.buttonWest)
-                return GamepadButtons.West;
-            if (ctrl == gp.leftShoulder)
-                return GamepadButtons.LeftShoulder;
-            if (ctrl == gp.rightShoulder)
-                return GamepadButtons.RightShoulder;
-            if (ctrl == gp.leftTrigger)
-                return GamepadButtons.LeftTrigger;
-            if (ctrl == gp.rightTrigger)
-                return GamepadButtons.RightTrigger;
-            if (ctrl == gp.leftStickButton)
-                return GamepadButtons.LeftStick;
-            if (ctrl == gp.rightStickButton)
-                return GamepadButtons.RightStick;
-            if (ctrl == gp.startButton)
-                return GamepadButtons.Start;
-            if (ctrl == gp.selectButton)
-                return GamepadButtons.Select;
-            if (ctrl == gp.dpad.up)
-                return GamepadButtons.DpadUp;
-            if (ctrl == gp.dpad.down)
-                return GamepadButtons.DpadDown;
-            if (ctrl == gp.dpad.left)
-                return GamepadButtons.DpadLeft;
-            if (ctrl == gp.dpad.right)
-                return GamepadButtons.DpadRight;
-            return GamepadButtons.None;
-        }
-
-        private static ConfigDevice DefaultTabFor(InputDevice device)
-        {
-            return device is Gamepad ? ConfigDevice.Gamepad : ConfigDevice.Keyboard;
-        }
-
-        private void RefreshAll()
+        private void RefreshViews()
         {
             if (_profileList != null)
-                // focused=true always — the modified profile stays highlighted
-                // even when the cursor moves off to the tab/binding column.
-                _profileList.Refresh(_profiles, _profileIndex, focused: true);
+                // focused=true always — the profile being modified stays
+                // highlighted even when the cursor moves off to the right.
+                _profileList.Refresh(_profiles, _profileIndex, focused: true, IsProfileTaken);
             if (_deviceTab != null)
                 _deviceTab.SetDisplay(_device, _column == ConfigMenuColumn.TabRow);
             if (_inputMenu != null)
@@ -524,7 +461,7 @@ namespace Scenes.Menus.CharacterSelect.Controls
                 _inputMenu.SetFocus(
                     _column == ConfigMenuColumn.BindingList ? _bindingRow : -1,
                     _bindingSlot,
-                    _listening
+                    _listener != null && _listener.IsActive
                 );
             }
         }
@@ -534,76 +471,6 @@ namespace Scenes.Menus.CharacterSelect.Controls
             GameObject target = _contentRoot != null ? _contentRoot : gameObject;
             if (target.activeSelf != active)
                 target.SetActive(active);
-        }
-
-        private void PollOwnerEdges(
-            out bool left,
-            out bool right,
-            out bool up,
-            out bool down,
-            out bool confirm,
-            out bool back
-        )
-        {
-            left = right = up = down = confirm = back = false;
-            switch (_ownerDevice)
-            {
-                case Gamepad gp:
-                    PollGamepad(gp, out left, out right, out up, out down, out confirm, out back);
-                    break;
-                case Keyboard kb:
-                    PollKeyboard(kb, out left, out right, out up, out down, out confirm, out back);
-                    break;
-            }
-        }
-
-        private void PollGamepad(
-            Gamepad gp,
-            out bool left,
-            out bool right,
-            out bool up,
-            out bool down,
-            out bool confirm,
-            out bool back
-        )
-        {
-            bool stickLeft = gp.leftStick.x.value < -AxisThreshold;
-            bool stickRight = gp.leftStick.x.value > AxisThreshold;
-            bool stickUp = gp.leftStick.y.value > AxisThreshold;
-            bool stickDown = gp.leftStick.y.value < -AxisThreshold;
-
-            left = gp.dpad.left.wasPressedThisFrame || (stickLeft && !_prevLeft);
-            right = gp.dpad.right.wasPressedThisFrame || (stickRight && !_prevRight);
-            up = gp.dpad.up.wasPressedThisFrame || (stickUp && !_prevUp);
-            down = gp.dpad.down.wasPressedThisFrame || (stickDown && !_prevDown);
-
-            _prevLeft = stickLeft;
-            _prevRight = stickRight;
-            _prevUp = stickUp;
-            _prevDown = stickDown;
-
-            confirm = gp.buttonSouth.wasPressedThisFrame || gp.startButton.wasPressedThisFrame;
-            back = gp.buttonEast.wasPressedThisFrame || gp.selectButton.wasPressedThisFrame;
-        }
-
-        private void PollKeyboard(
-            Keyboard kb,
-            out bool left,
-            out bool right,
-            out bool up,
-            out bool down,
-            out bool confirm,
-            out bool back
-        )
-        {
-            left = kb.aKey.wasPressedThisFrame || kb.leftArrowKey.wasPressedThisFrame;
-            right = kb.dKey.wasPressedThisFrame || kb.rightArrowKey.wasPressedThisFrame;
-            up = kb.wKey.wasPressedThisFrame || kb.upArrowKey.wasPressedThisFrame;
-            down = kb.sKey.wasPressedThisFrame || kb.downArrowKey.wasPressedThisFrame;
-            confirm = kb.enterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame;
-            back = kb.escapeKey.wasPressedThisFrame || kb.backspaceKey.wasPressedThisFrame;
-
-            _prevLeft = _prevRight = _prevUp = _prevDown = false;
         }
     }
 }

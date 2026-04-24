@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -39,7 +40,12 @@ namespace Scenes.Menus.CharacterSelect.Controls
             return index == (profiles?.Count ?? 0);
         }
 
-        public void Refresh(List<ControlsProfile> profiles, int selectedIndex, bool focused)
+        public void Refresh(
+            List<ControlsProfile> profiles,
+            int selectedIndex,
+            bool focused,
+            Func<string, bool> isTakenByOther
+        )
         {
             int profileCount = profiles?.Count ?? 0;
             int desired = profileCount + 1;
@@ -53,7 +59,8 @@ namespace Scenes.Menus.CharacterSelect.Controls
                     continue;
                 bool isNew = i == profileCount;
                 string label = isNew ? _newProfileLabel : profiles[i].Name;
-                row.SetDisplay(label, isNew, focused && i == selectedIndex);
+                bool taken = !isNew && isTakenByOther != null && isTakenByOther(label);
+                row.SetDisplay(label, isNew, focused && i == selectedIndex, taken);
             }
         }
 
