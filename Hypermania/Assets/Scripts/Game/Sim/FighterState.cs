@@ -649,7 +649,7 @@ namespace Game.Sim
             GameMode gameMode
         )
         {
-            if (InputH.IsHeld(InputFlags.Burst) && State != CharacterState.Burst)
+            if (InputH.IsHeld(InputFlags.Burst) && State != CharacterState.Burst && Burst >= config.BurstMax)
             {
                 Burst = 0;
                 SetState(
@@ -893,6 +893,11 @@ namespace Game.Sim
 
                 if (Velocity.y < 0)
                     Velocity.y = 0;
+            }
+
+            if (State == CharacterState.Death && OnGround(options))
+            {
+                Velocity = SVector2.zero;
             }
 
             sfloat cameraMaxBounds =
