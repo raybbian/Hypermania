@@ -123,5 +123,7 @@ Material:
     - _EmissionColor: {r: 4, g: 0.14339566, b: 0.14339566, a: 1}
     - _FaceDisplacement: {r: 0.2, g: 0.2, b: 0.2, a: 0}
     - _FrontColor: {r: 0, g: 1.0284806, b: 4.237095, a: 1}
+    - _Strike_Back_Color: {r: 0, g: 0, b: 0, a: 0}
+    - _Strike_Color: {r: 41.298107, g: 8.337542, b: 40.710155, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
