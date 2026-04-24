@@ -126,6 +126,10 @@ MonoBehaviour:
     To: 8
   - From: 8
     To: 11
+  - From: 11
+    To: 14
+  - From: 8
+    To: 10
   Projectiles:
   - {fileID: 11400000, guid: 0ac431547a91b964d8629bd76100680c, type: 2}
   - {fileID: 11400000, guid: 9a5b6ba854911a344abba47ddbf15cc3, type: 2}
