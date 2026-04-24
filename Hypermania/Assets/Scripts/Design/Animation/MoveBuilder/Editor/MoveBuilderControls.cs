@@ -226,7 +226,6 @@ namespace Design.Animation.MoveBuilder.Editor
                 p.HitstopTicks = EditorGUILayout.IntField("Hitstop Ticks", p.HitstopTicks);
                 p.BlockstopTicks = EditorGUILayout.IntField("Blockstop Ticks", p.BlockstopTicks);
                 p.Knockback = SFloatGUI.Field("Knockback", p.Knockback);
-                p.Unblockable = EditorGUILayout.Toggle("Unblockable", p.Unblockable);
             }
 
             using (new EditorGUI.DisabledScope(p.Kind != HitboxKind.Grabbox))

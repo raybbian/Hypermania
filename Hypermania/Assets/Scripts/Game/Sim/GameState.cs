@@ -723,6 +723,12 @@ namespace Game.Sim
 
                 Manias[i].Tick(RealFrame, inputs[i].input);
 
+                // Burst is the one input allowed through while a mania is
+                // running: it's the defender's only out, and the attacker
+                // pressing it themselves is a no-op because ApplyActiveState
+                // only transitions to Burst when not already in Burst state.
+                outInputs[i].Flags |= inputs[i].input.Flags & InputFlags.Burst;
+
                 foreach (ManiaEvent ev in Manias[i].ManiaEvents)
                 {
                     switch (ev.Kind)

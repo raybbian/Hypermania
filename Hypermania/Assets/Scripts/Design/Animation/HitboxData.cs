@@ -54,7 +54,6 @@ namespace Design.Animation
         public bool GrabsAirborne;
         public bool Techable;
         public bool HasTransition;
-        public bool Unblockable;
         public CharacterState OnHitTransition;
 
         public bool Equals(BoxProps other) =>
@@ -72,7 +71,6 @@ namespace Design.Animation
             && GrabsAirborne == other.GrabsAirborne
             && Techable == other.Techable
             && HasTransition == other.HasTransition
-            && Unblockable == other.Unblockable
             && OnHitTransition == other.OnHitTransition;
 
         public override bool Equals(object obj) => obj is BoxProps other && Equals(other);
@@ -83,7 +81,6 @@ namespace Design.Animation
                 HashCode.Combine(HitstopTicks, BlockstopTicks, GrabPosition, GrabsGrounded, GrabsAirborne),
                 Techable,
                 HasTransition,
-                Unblockable,
                 OnHitTransition
             );
 

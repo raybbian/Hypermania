@@ -649,6 +649,17 @@ namespace Game.Sim
             GameMode gameMode
         )
         {
+            if (InputH.IsHeld(InputFlags.Burst) && State != CharacterState.Burst)
+            {
+                Burst = 0;
+                SetState(
+                    CharacterState.Burst,
+                    simFrame,
+                    simFrame + config.GetHitboxData(CharacterState.Burst).TotalTicks
+                );
+                return;
+            }
+
             if (
                 State == CharacterState.Hit
                 || State == CharacterState.SoftKnockdown
@@ -656,17 +667,6 @@ namespace Game.Sim
                 || State == CharacterState.GetUp
             )
             {
-                if (InputH.IsHeld(InputFlags.Burst))
-                {
-                    Burst = 0;
-                    SetState(
-                        CharacterState.Burst,
-                        simFrame,
-                        simFrame + config.GetHitboxData(CharacterState.Burst).TotalTicks
-                    );
-                    // TODO: apply knockback to other player (this should be a hitbox on a burst animation with large kb)
-                }
-
                 return;
             }
 
@@ -1065,8 +1065,7 @@ namespace Game.Sim
             bool blockSuccess = holdingBack && ((holdingDown && crouchBlock) || (!holdingDown && standBlock));
 
             if (
-                !props.Unblockable
-                && blockSuccess
+                blockSuccess
                 && (Actionable || State == CharacterState.BlockCrouch || State == CharacterState.BlockStand)
             )
             {

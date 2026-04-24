@@ -55,7 +55,6 @@ namespace Design.Animation.FrameDataWindow.Editor
             "On Hit",
             "On Block",
             "KD",
-            "Unbl",
             "Tech",
             "Gatlings",
         };
@@ -77,7 +76,6 @@ namespace Design.Animation.FrameDataWindow.Editor
             55f, // On Hit
             65f, // On Block
             50f, // KD
-            40f, // Unbl
             40f, // Tech
             260f, // Gatlings (minimum)
         };
@@ -94,10 +92,9 @@ namespace Design.Animation.FrameDataWindow.Editor
             "Hitstun",
             "Blockstun",
             "KD",
-            "Unbl",
         };
 
-        private static readonly float[] ProjectileWidths = { 180f, 55f, 65f, 55f, 55f, 50f, 40f, 55f, 65f, 50f, 40f };
+        private static readonly float[] ProjectileWidths = { 180f, 55f, 65f, 55f, 55f, 50f, 40f, 55f, 65f, 50f };
 
         [MenuItem("Hypermania/Frame Data Viewer")]
         public static void ShowWindow()
@@ -241,7 +238,6 @@ namespace Design.Animation.FrameDataWindow.Editor
             BlackOut(row, widths, c++); // OnHit
             BlackOut(row, widths, c++); // OnBlock
             BlackOut(row, widths, c++); // KD
-            BlackOut(row, widths, c++); // Unbl
             BlackOut(row, widths, c++); // Tech
 
             GUI.Label(CellRect(row, widths, c++), gatlings);
@@ -292,7 +288,6 @@ namespace Design.Animation.FrameDataWindow.Editor
             }
 
             GUI.Label(CellRect(row, widths, c++), KnockdownLabel(props.KnockdownKind));
-            GUI.Label(CellRect(row, widths, c++), props.Unblockable ? "Y" : "");
 
             if (isGrab)
                 GUI.Label(CellRect(row, widths, c++), props.Techable ? "Y" : "N");
@@ -422,7 +417,6 @@ namespace Design.Animation.FrameDataWindow.Editor
             GUI.Label(CellRect(row, widths, c++), props.BlockstunTicks.ToString());
 
             GUI.Label(CellRect(row, widths, c++), KnockdownLabel(props.KnockdownKind));
-            GUI.Label(CellRect(row, widths, c++), props.Unblockable ? "Y" : "");
         }
 
         private static void DrawProjectileMissingHitboxRow(int rowIndex, float[] widths)

@@ -156,6 +156,11 @@ namespace Game.View.Fighters
                     direction: dir
                 );
             }
+
+            if (state.StateChangedThisRealFrame && state.State == CharacterState.Burst)
+            {
+                vfxManager.AddDesired(VfxKind.Burst, realFrame, position: _visualCenter.position);
+            }
         }
 
         private static bool IsHitRecipient(CharacterState s) =>
