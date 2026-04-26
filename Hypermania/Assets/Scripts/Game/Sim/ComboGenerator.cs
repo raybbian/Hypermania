@@ -11,27 +11,10 @@ using Utils.SoftFloat;
 
 namespace Game.Sim
 {
-    /// <summary>
-    /// Which slot a <see cref="GeneratedComboMove"/> fills. The three kinds are
-    /// mutually exclusive.
-    /// </summary>
     public enum ComboMoveKind
     {
-        /// <summary>Landed attack. <see cref="GeneratedComboMove.Input"/>
-        /// carries the tier bit (optionally OR'd with <c>Down</c>).</summary>
         Attack,
-
-        /// <summary>Dash or jump note emitted when no attack qualified.
-        /// Resets the progression constraint so the next attack starts
-        /// fresh.</summary>
         Movement,
-
-        /// <summary>Empty beat (<see cref="GeneratedComboMove.Input"/> =
-        /// <see cref="InputFlags.None"/>) the player still has to press.
-        /// Emitted as the second half of an on-beat attack+no-op pair when
-        /// an otherwise-valid attack would have bled hitstop into this
-        /// beat's window; grants a decaying damage bonus to the next
-        /// attack.</summary>
         NoOp,
     }
 
@@ -40,26 +23,9 @@ namespace Game.Sim
         public InputFlags Input;
         public Frame BeatFrame;
         public ComboMoveKind Kind;
-
-        /// <summary>
-        /// Mania channel (column) the authored note this move corresponds to
-        /// lives on. Routed by <see cref="RhythmComboManager"/> when the move
-        /// is queued onto <see cref="ManiaState.Channels"/>. For moves that
-        /// don't originate from an authored note (e.g. the inter-beat NoOp
-        /// half of an on-beat pair), the generator copies the source note's
-        /// channel so the queue still has a valid target.
-        /// </summary>
         public int Channel;
     }
 
-    /// <summary>
-    /// A snapshot of the generator's <c>_working</c> state captured at the end
-    /// of a beat's hit window (<c>noteTick + HitHalfRange</c>, clamped to
-    /// <c>nextBeat - 1</c>). Used by <see cref="ComboVerifyDebug"/> to verify
-    /// that the real simulation reaches an equivalent fighter state at the
-    /// same frame regardless of where inside the hit window the player
-    /// actually pressed.
-    /// </summary>
     public struct ComboBeatSnapshot
     {
         public Frame CompareFrame;
@@ -70,79 +36,37 @@ namespace Game.Sim
     {
         public List<GeneratedComboMove> Moves;
         public Frame EndFrame;
-
-        /// <summary>
-        /// Per-beat snapshots of the generator's <c>_working</c> state.
-        /// Populated only when <see cref="InfoOptions.VerifyComboPrediction"/>
-        /// is enabled, otherwise null.
-        /// </summary>
+        // Only filled in when InfoOptions.VerifyComboPrediction is on.
         public List<ComboBeatSnapshot> BeatSnapshots;
     }
 
-    /// <summary>
-    /// Generates a dynamic combo for a rhythm pattern by simulating candidate
-    /// moves against a working copy of the game state. The generator owns the
-    /// working state and a beat snapshot, so each beat is advanced exactly
-    /// once: candidates are tried by reverting to the snapshot, not by cloning
-    /// from scratch on every try.
-    ///
-    /// <para>Invariants the per-beat code depends on:</para>
-    /// <list type="bullet">
-    ///   <item><b>Dispatch-frame alignment.</b> The real game's
-    ///     <see cref="GameState.DoManiaStep"/> withholds each note's Input
-    ///     event until <c>RealFrame = noteTick + HitHalfRange</c>. The
-    ///     generator matches this by stopping one frame short of the
-    ///     dispatch frame, then applying the attacker input with a single
-    ///     <see cref="AdvanceOnce"/> call — see <see cref="ApplyInputAtBeat"/>.
-    ///     Advancing TO the dispatch frame before applying would consume it
-    ///     with empty input and desync by one.</item>
-    ///   <item><b>AlwaysRhythmCancel is one-frame only.</b> It must be true
-    ///     ONLY on the frame the attacker input is applied. Leaving it on
-    ///     across inter-beat empty-input advances lets a buffered press
-    ///     retrigger mid-recovery and overwrite crouching variants with
-    ///     standing ones, desyncing the sim from the real Mania game.</item>
-    ///   <item><b>_working advances monotonically.</b> Candidate trials
-    ///     revert to <see cref="_beatSnapshot"/>; the movement lookahead
-    ///     uses a secondary <see cref="_lookaheadSnapshot"/> so its nested
-    ///     trials don't clobber <see cref="_beatSnapshot"/>.</item>
-    /// </list>
-    /// </summary>
+    // Things this generator depends on:
+    //
+    // Dispatch alignment: stop one frame short of dispatch, then apply the
+    // attacker input with a single AdvanceOnce. If you advance all the way
+    // to the dispatch frame first, it gets consumed with empty input and
+    // the sim desyncs by one. See ApplyInputAtBeat.
+    //
+    // AlwaysRhythmCancel is only on for the frame the attacker input is
+    // applied. Leaving it on across empty-input advances lets a buffered
+    // press retrigger mid-recovery, and then the prediction won't match
+    // the real Mania game.
+    //
+    // _working advances monotonically. Per-beat trials revert to
+    // _beatSnapshot. The movement lookahead has its own _lookaheadSnapshot
+    // so nested trials there don't clobber the per-beat snapshot.
     public class ComboGenerator
     {
-        /// <summary>
-        /// Maximum frames to simulate when testing if a move hits.
-        /// Should cover the longest attack animation (startup + active).
-        /// </summary>
         private const int MAX_TEST_FRAMES = 40;
 
-        /// <summary>
-        /// Default trailing pad past the last authored note before the mania
-        /// deactivates. Half a second at 60 TPS — used when the pattern is
-        /// too short to derive a pad from the gap between the last two
-        /// beats.
-        /// </summary>
-        private const int DEFAULT_TRAILING_PAD = 30;
+        // Keeps GameMode == Mania for a few frames after the last beat,
+        // otherwise the finisher's hit lands in Fighting mode and the combo
+        // grants super meter to itself.
+        private const int POST_FINISHER_BUFFER = 15;
 
-        /// <summary>
-        /// Extra buffer past the last beat so the finisher's hit still
-        /// registers while GameMode == Mania. Otherwise it lands in
-        /// Fighting mode and spuriously grants super meter from the combo
-        /// itself.
-        /// </summary>
-        private const int POST_FINISHER_BUFFER = 10;
-
-        /// <summary>
-        /// Bitmask of every attack tier. Used to extract the single tier
-        /// bit carried by a candidate input.
-        /// </summary>
         private const InputFlags AttackTierMask =
             InputFlags.LightAttack | InputFlags.MediumAttack | InputFlags.HeavyAttack | InputFlags.SpecialAttack;
 
-        /// <summary>
-        /// All 8 attack candidates (4 tiers × {standing, crouching}) as a
-        /// flat list so the per-beat trial loops don't need the tier ×
-        /// Down-modifier nest.
-        /// </summary>
         private static readonly InputFlags[] AllAttackVariants =
         {
             InputFlags.LightAttack,
@@ -155,72 +79,29 @@ namespace Game.Sim
             InputFlags.SpecialAttack | InputFlags.Down,
         };
 
-        /// <summary>
-        /// Distinct <see cref="DeterministicHash"/> contexts so the strict
-        /// and relaxed passes within one beat produce independent pick
-        /// sequences (and so future passes can be added without bit-patching
-        /// the hash at the call site).
-        /// </summary>
+        // Lets the strict and relaxed passes within one beat draw
+        // independent picks instead of landing on the same index.
         private enum HashSalt
         {
             Strict = 0,
             Relaxed = 1,
         }
 
-        /// <summary>
-        /// Serialization scratch for <see cref="CloneInto"/>. Per-instance —
-        /// the generator is a single-use object driven synchronously by
-        /// <see cref="Generate"/>, never shared across threads.
-        /// </summary>
         private readonly ArrayBufferWriter<byte> _cloneWriter = new ArrayBufferWriter<byte>(4096);
 
-        /// <summary>
-        /// Canonical simulation state that advances monotonically through the
-        /// pattern. Every candidate trial reverts this back to
-        /// <see cref="_beatSnapshot"/>.
-        /// </summary>
         private GameState _working;
-
-        /// <summary>
-        /// Snapshot of <see cref="_working"/> at the start of the current
-        /// beat, used to revert between candidate tests within a single beat.
-        /// </summary>
         private GameState _beatSnapshot;
-
-        /// <summary>
-        /// Secondary snapshot used by the movement lookahead path. Holds the
-        /// post-movement state at the next beat so each trial attack can be
-        /// tested in isolation without clobbering <see cref="_beatSnapshot"/>.
-        /// </summary>
         private GameState _lookaheadSnapshot;
 
         private GameOptions _options;
         private int _attackerIndex;
         private CharacterConfig _attackerConfig;
-
-        /// <summary>
-        /// Half-window (in frames) of the rhythm note hit window, matching
-        /// <see cref="ManiaConfig.HitHalfRange"/>. A note at BeatFrame can be
-        /// hit during [BeatFrame − _noteHitHalfRange, BeatFrame +
-        /// _noteHitHalfRange].
-        /// </summary>
         private int _noteHitHalfRange;
-
-        /// <summary>Cached <see cref="AudioConfig"/> for on-beat tests.</summary>
         private AudioConfig _audio;
-
-        /// <summary>
-        /// Reusable input buffer for <see cref="AdvanceOnce"/>. Sized to
-        /// <c>Fighters.Length</c> at the start of <see cref="Run"/>; only the
-        /// attacker's slot is mutated per call.
-        /// </summary>
         private (GameInput input, InputStatus status)[] _inputScratch;
 
-        /// <summary>
-        /// Cache of move reach (max horizontal hitbox/grabbox extent from
-        /// attacker origin) per <see cref="CharacterState"/>. Reach is
-        /// config-static so it only needs to be computed once per run.
-        /// </summary>
+        // Reach is config-static, so we only need to compute it once per
+        // CharacterState per run.
         private readonly Dictionary<CharacterState, sfloat> _reachCache = new Dictionary<CharacterState, sfloat>();
 
         private struct MoveTestResult
@@ -230,10 +111,6 @@ namespace Game.Sim
             public sfloat Reach;
         }
 
-        /// <summary>
-        /// Static shim so existing callers (RhythmComboManager) continue to
-        /// work without constructing a generator themselves.
-        /// </summary>
         public static GeneratedCombo Generate(
             in GameState state,
             GameOptions options,
@@ -259,15 +136,12 @@ namespace Game.Sim
                 return new GeneratedCombo { Moves = new List<GeneratedComboMove>(), EndFrame = state.RealFrame };
             }
 
-            // Simultaneous-note handling: multiple authored notes on the same
-            // frame (different mania columns) collapse to ONE primary note
-            // that runs the full attack/movement pipeline, plus one NoOp per
-            // extra column so the player still sees and presses every note.
-            // Without this split, each duplicate iteration would snapshot the
-            // post-primary-attack state, fail every strict-attack candidate
-            // (attacker mid-animation), fall through to the movement fallback,
-            // and emit non-damaging dashes — which looked like "moves aren't
-            // hitting" because half the notes were movements, not attacks.
+            // When multiple notes share a tick, only the first runs through
+            // the full attack/movement pipeline; the extras come back as
+            // NoOps appended at the end. If we let every duplicate iterate
+            // normally they'd snapshot the post-attack state, fail every
+            // strict candidate (attacker is mid-animation), and fall through
+            // to dashes that do no damage.
             List<BeatmapNote> primaryNotes = new List<BeatmapNote>(notes.Length);
             List<BeatmapNote> extraNoOps = new List<BeatmapNote>();
             for (int i = 0; i < notes.Length; i++)
@@ -288,9 +162,8 @@ namespace Game.Sim
                     ? new List<ComboBeatSnapshot>()
                     : null;
 
-            // Progression constraint: any move after the first must strictly
-            // exceed the previous move on knockback OR reach. Movement (dash
-            // fallback) resets the constraint.
+            // Each move after the first has to strictly beat the previous
+            // one on knockback or reach. The movement fallback wipes this.
             bool hasPrev = false;
             sfloat prevKb = sfloat.Zero;
             sfloat prevReach = sfloat.Zero;
@@ -329,9 +202,6 @@ namespace Game.Sim
                     continue;
                 }
 
-                // On-beat no-op pair: requires the current note to sit on
-                // a quarter-note grid position, and a beat i+2 to exist so
-                // the relaxed hitstop check has a target window.
                 bool canTryNoOp =
                     i + 2 < primaryNotes.Count
                     && _audio.IsOnBeat(currentBeat, _options.Global.PreGameDelayTicks);
@@ -358,7 +228,7 @@ namespace Game.Sim
                     hasPrev = true;
                     prevKb = relaxed.KnockbackSqr;
                     prevReach = relaxed.Reach;
-                    i++; // skip the beat consumed as the no-op
+                    i++;
                     continue;
                 }
 
@@ -369,13 +239,11 @@ namespace Game.Sim
                 prevReach = sfloat.Zero;
             }
 
-            // Append NoOps for same-frame duplicates, then sort so moves land
-            // in BeatFrame order. RhythmComboManager queues in list order, and
-            // each channel's deque must be Tick-ordered or ManiaState.Tick
-            // will auto-miss earlier notes stuck behind later ones — which
-            // can happen when the on-beat pair logic emits a NoOp on channel X
-            // at a later frame before an appended duplicate NoOp on the same
-            // channel X lands at an earlier frame.
+            // Each channel's deque has to stay Tick-ordered or ManiaState.Tick
+            // will auto-miss earlier notes that ended up queued behind later
+            // ones. The on-beat pair logic can emit a later-frame NoOp on a
+            // channel before an appended duplicate NoOp on that same channel,
+            // so we sort once at the end.
             for (int k = 0; k < extraNoOps.Count; k++)
             {
                 moves.Add(
@@ -393,14 +261,10 @@ namespace Game.Sim
             return new GeneratedCombo
             {
                 Moves = moves,
-                EndFrame = ComputeEndFrame(primaryNotes),
+                EndFrame = primaryNotes[primaryNotes.Count - 1].Tick + POST_FINISHER_BUFFER,
                 BeatSnapshots = beatSnapshots,
             };
         }
-
-        // ------------------------------------------------------------------
-        // Run setup
-        // ------------------------------------------------------------------
 
         private void InitializeFromCaller(GameOptions options, int attackerIndex)
         {
@@ -409,11 +273,10 @@ namespace Game.Sim
             _noteHitHalfRange = 5;
             _audio = options.Global.Audio;
 
-            // Clone Players so we can suppress the attacker's ComboMode on
-            // the generator's copy (forcing Freestyle) without leaking the
-            // change back to the real game's shared PlayerOptions. Prevents
-            // the generator's inner simulation from recursively triggering
-            // mania when its own super-hit connects.
+            // Clone Players so we can flip the attacker to Freestyle on our
+            // copy without touching the real game's PlayerOptions. Without
+            // this, the inner sim would recursively trigger mania every time
+            // its super hit landed.
             PlayerOptions[] clonedPlayers = new PlayerOptions[options.Players.Length];
             for (int p = 0; p < options.Players.Length; p++)
             {
@@ -442,8 +305,6 @@ namespace Game.Sim
                 AlwaysRhythmCancel = false,
             };
 
-            // One reusable input buffer; only the attacker's slot mutates
-            // across AdvanceOnce calls.
             _inputScratch = new (GameInput input, InputStatus status)[options.Players.Length];
             for (int i = 0; i < _inputScratch.Length; i++)
             {
@@ -461,47 +322,21 @@ namespace Game.Sim
                 _working.Fighters[i].Health = sfloat.PositiveInfinity;
             }
 
-            // Mania alignment preamble: use the game's hitstop (which aligns
-            // to the next quarter-note beat boundary) so the simulation's
-            // hitstop/slow-mo split matches the real game exactly.
+            // Pull in the live hitstop, which is already snapped to the next
+            // quarter-note boundary, so our hitstop and slow-mo split match
+            // the real game.
             _working.HitstopFramesRemaining = gameHitstop;
             _working.GameMode = GameMode.ManiaStart;
             _working.ModeStart = _working.RealFrame;
 
             AdvanceToDispatchOf(firstBeatFrame);
 
-            // Override back to Fighting so candidate trials run at full
-            // speed instead of through the ManiaStart slow-mo curve.
+            // Flip back to Fighting so trials run at full speed instead of
+            // through the ManiaStart slow-mo curve.
             _working.GameMode = GameMode.Fighting;
             _working.SpeedRatio = (sfloat)1f;
         }
 
-        private static Frame ComputeEndFrame(List<BeatmapNote> notes)
-        {
-            // Trail the last note by the gap of the authored slice, so the
-            // window closes at a musically sensible distance past the
-            // finisher. Fall back to a fixed pad for single-note slices.
-            int trailingPad = DEFAULT_TRAILING_PAD;
-            if (notes.Count >= 2)
-            {
-                int lastGap = notes[notes.Count - 1].Tick - notes[notes.Count - 2].Tick;
-                if (lastGap > 0)
-                    trailingPad = lastGap;
-            }
-            trailingPad += POST_FINISHER_BUFFER;
-            return notes[notes.Count - 1].Tick + trailingPad;
-        }
-
-        // ------------------------------------------------------------------
-        // Per-beat passes
-        // ------------------------------------------------------------------
-
-        /// <summary>
-        /// Try every attack candidate under the strict rule (no hitstop
-        /// overlap with <paramref name="nextBeat"/>'s window), pick the best
-        /// via <see cref="PickFinisher"/> or <see cref="PickChainLink"/>,
-        /// and commit it if found.
-        /// </summary>
         private bool TryStrictAttack(
             in GameState state,
             List<MoveTestResult> candidates,
@@ -547,14 +382,6 @@ namespace Game.Sim
             return true;
         }
 
-        /// <summary>
-        /// Relaxed pass used when <paramref name="currentBeat"/> sits on a
-        /// quarter-note grid position. Allows an attack whose hitstop bleeds
-        /// into <paramref name="nextBeat"/>'s window, provided the hitstop
-        /// clears before <paramref name="beatAfterNoop"/>'s window. On
-        /// success, commits the attack on <paramref name="currentBeat"/> and
-        /// a no-op on <paramref name="nextBeat"/>.
-        /// </summary>
         private bool TryOnBeatNoOpPair(
             in GameState state,
             List<MoveTestResult> candidates,
@@ -600,14 +427,6 @@ namespace Game.Sim
             return true;
         }
 
-        /// <summary>
-        /// Emit a movement (dash/jump) on <paramref name="currentBeat"/> as
-        /// a last resort. Prefers a lookahead-validated choice that sets up
-        /// a direct attack on <paramref name="nextBeat"/>; falls back to the
-        /// preferred movement (jump if defender airborne, else dash) if no
-        /// setup qualifies. Resets the progression constraint (the caller
-        /// clears <c>hasPrev</c>/<c>prevKb</c>/<c>prevReach</c>).
-        /// </summary>
         private void CommitMovementFallback(
             Frame currentBeat,
             int currentChannel,
@@ -617,14 +436,10 @@ namespace Game.Sim
             List<ComboBeatSnapshot> beatSnapshots
         )
         {
-            // Candidate trials left _working advanced up to MAX_TEST_FRAMES
-            // past the beat, during which FaceTowards (and, for grab
-            // candidates, back-throw) can have flipped the attacker's
-            // FacingDir. Restore to the pristine beat snapshot so the
-            // forward-direction and defender-airborne reads reflect the
-            // beat itself, not the tail of the last probed attack —
-            // otherwise the emitted Dash/Up note can point backwards on a
-            // cross-up.
+            // Restore before reading ForwardInput / Location. Probing trials
+            // can flip facing (FaceTowards, back-throw), and we don't want
+            // the emitted Dash or Up to inherit that flip and end up pointing
+            // backwards on a cross-up.
             RestoreWorking();
             InputFlags forwardInput = _working.Fighters[_attackerIndex].ForwardInput;
             InputFlags dashMove = InputFlags.Dash | forwardInput;
@@ -659,15 +474,6 @@ namespace Game.Sim
             );
         }
 
-        // ------------------------------------------------------------------
-        // Commit helpers
-        // ------------------------------------------------------------------
-
-        /// <summary>
-        /// Revert to <see cref="_beatSnapshot"/>, apply
-        /// <paramref name="input"/> on the current beat's dispatch frame,
-        /// append the move, and take a verify-snapshot.
-        /// </summary>
         private void CommitFromBeatSnapshot(
             InputFlags input,
             Frame currentBeat,
@@ -692,13 +498,6 @@ namespace Game.Sim
             CaptureBeatSnapshot(beatSnapshots, currentBeat, nextBeat);
         }
 
-        /// <summary>
-        /// Advance <see cref="_working"/> forward to
-        /// <paramref name="noOpBeat"/>'s dispatch frame, consume it with an
-        /// empty input, register the no-op bonus (mirroring
-        /// <see cref="GameState.DoManiaStep"/>'s Input-event side effect so
-        /// the verify snapshot stays byte-equivalent), and append the note.
-        /// </summary>
         private void CommitNoOpBeat(
             Frame noOpBeat,
             int noOpChannel,
@@ -708,6 +507,8 @@ namespace Game.Sim
         )
         {
             ApplyInputAtBeat(noOpBeat, InputFlags.None);
+            // DoManiaStep calls this on every Input event, so we need the
+            // same call here or the verify snapshot won't match byte-for-byte.
             _working.Fighters[_attackerIndex].RegisterManiaNoOp();
             moves.Add(
                 new GeneratedComboMove
@@ -721,24 +522,13 @@ namespace Game.Sim
             CaptureBeatSnapshot(beatSnapshots, noOpBeat, beatAfterNoop);
         }
 
-        // ------------------------------------------------------------------
-        // Hit trial (strict / lookahead share this)
-        // ------------------------------------------------------------------
-
-        /// <summary>
-        /// Probe whether <paramref name="input"/>, applied from
-        /// <paramref name="snapshotSource"/>, connects within
-        /// <see cref="MAX_TEST_FRAMES"/> without bleeding hitstop into
-        /// <paramref name="windowBeat"/>'s hit window. On success returns
-        /// true and populates <paramref name="hitProps"/> with the BoxProps
-        /// of the defender's <c>HitProps</c>.
-        /// </summary>
+        // Probes whether `input`, applied from `snapshotSource`, lands a hit
+        // within MAX_TEST_FRAMES without any hitstop bleeding into
+        // `windowBeat`'s hit window.
         private bool TryHit(ref GameState snapshotSource, InputFlags input, Frame windowBeat, out BoxProps hitProps)
         {
             hitProps = default;
 
-            // Respect per-move opt-out: moves whose HitboxData.ComboEligible
-            // is false must never appear in a generated combo.
             CharacterState cs = MapInputToState(input);
             HitboxData data = _attackerConfig.GetHitboxData(cs);
             if (data == null || !data.ComboEligible)
@@ -754,10 +544,9 @@ namespace Game.Sim
             bool hit = false;
             bool hitstopInWindow = false;
 
-            // Phase 1: advance up to MAX_TEST_FRAMES looking for the hit.
-            // While advancing, also watch for the game being in hitstop
-            // inside the window — residual hitstop from a prior move can
-            // land in the window even before this candidate connects.
+            // Phase 1: step forward looking for the hit. We also watch for
+            // hitstop landing in the window here, since residual hitstop from
+            // an earlier move can show up before this candidate even connects.
             for (int frame = 0; frame < MAX_TEST_FRAMES; frame++)
             {
                 InputFlags flags = frame == 0 ? input : InputFlags.None;
@@ -779,9 +568,8 @@ namespace Game.Sim
             if (!hit)
                 return false;
 
-            // Phase 2: the current move connected. Continue advancing
-            // through the end of the window, checking whether the fresh
-            // hitstop overlaps. Early-exit on first overlap.
+            // Phase 2: keep stepping through the window to catch any fresh
+            // hitstop from the move we just landed.
             if (checkWindow && !hitstopInWindow)
             {
                 while (_working.RealFrame < windowEnd)
@@ -798,9 +586,6 @@ namespace Game.Sim
             return !hitstopInWindow;
         }
 
-        /// <summary>Run <see cref="TryHit"/> from
-        /// <see cref="_beatSnapshot"/>; on success append a
-        /// <see cref="MoveTestResult"/> with cached knockback/reach.</summary>
         private void TryHitFromBeatSnapshot(List<MoveTestResult> candidates, InputFlags input, Frame windowBeat)
         {
             if (!TryHit(ref _beatSnapshot, input, windowBeat, out BoxProps hitProps))
@@ -815,24 +600,15 @@ namespace Game.Sim
             );
         }
 
-        /// <summary>Run <see cref="TryHit"/> from
-        /// <see cref="_lookaheadSnapshot"/>; caller only needs pass/fail.</summary>
         private bool TryHitFromLookaheadSnapshot(InputFlags input, Frame windowBeat)
         {
             return TryHit(ref _lookaheadSnapshot, input, windowBeat, out _);
         }
 
-        /// <summary>
-        /// Lookahead: restore to the current beat snapshot, apply
-        /// <paramref name="movement"/> on the beat frame, advance to
-        /// <paramref name="nextBeat"/>'s dispatch frame, and test whether
-        /// any grounded attack (standing or crouching, each tier) would
-        /// land a direct hit from that post-movement position without
-        /// causing hitstop overlap with <paramref name="beatAfterNext"/>'s
-        /// window. Returns true on the first attack that passes both
-        /// checks. Mutates <see cref="_working"/>; the caller is expected
-        /// to <see cref="RestoreWorking"/> before committing.
-        /// </summary>
+        // Apply the movement on the beat, advance to nextBeat's dispatch,
+        // and see if any grounded attack would land without bleeding hitstop
+        // into beatAfterNext's window. Mutates _working, so the caller has
+        // to RestoreWorking before committing anything.
         private bool TryMovementLookahead(InputFlags movement, Frame nextBeat, Frame beatAfterNext)
         {
             RestoreWorking();
@@ -855,15 +631,9 @@ namespace Game.Sim
                 && _working.HitstopFramesRemaining > 0;
         }
 
-        // ------------------------------------------------------------------
-        // Candidate selection
-        // ------------------------------------------------------------------
-
-        /// <summary>
-        /// Finisher rule (last beat of the pattern, no chain to build):
-        /// prefer the LARGEST knockback, random-pick among every candidate
-        /// sharing the winner's tier bit. No progression filter.
-        /// </summary>
+        // Finisher pick: take the largest knockback, then random-pick among
+        // any candidates sharing the winner's tier bit. No progression
+        // filter here.
         private static int PickFinisher(List<MoveTestResult> pool, int hashValue)
         {
             if (pool.Count == 0)
@@ -891,14 +661,11 @@ namespace Game.Sim
             return eCount == 0 ? -1 : eligible[hashValue % eCount];
         }
 
-        /// <summary>
-        /// Chain-link rule (non-last beat): candidates must strictly exceed
-        /// the previous move on knockback OR reach (if a previous move
-        /// exists). Among qualifying candidates, prefer the smallest
-        /// knockback; if the winner is a heavy attack, random-pick among
-        /// every qualifying heavy (standing or crouching), otherwise pick
-        /// among candidates tied on knockback.
-        /// </summary>
+        // Chain-link pick: candidates have to strictly beat the previous
+        // move on knockback or reach. Take the smallest qualifying knockback.
+        // If the winner happens to be a heavy, random-pick among the
+        // qualifying heavies; otherwise random-pick among the candidates
+        // tied on knockback.
         private static int PickChainLink(
             List<MoveTestResult> pool,
             bool hasPrev,
@@ -941,24 +708,10 @@ namespace Game.Sim
             return eCount == 0 ? -1 : eligible[hashValue % eCount];
         }
 
-        // ------------------------------------------------------------------
-        // Input classification (shared by TryHit and PickFinisher)
-        // ------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns the tier bit (Light/Medium/Heavy/Special) carried by an
-        /// attack input, or <see cref="InputFlags.None"/> if none is present.
-        /// Candidates are always generated from a single tier bit OR'd with
-        /// an optional <see cref="InputFlags.Down"/> modifier, so exactly
-        /// one tier bit is set in practice.
-        /// </summary>
         private static InputFlags GetAttackTierBit(InputFlags input) => input & AttackTierMask;
 
-        /// <summary>
-        /// Map an attack InputFlags (with optional Down modifier) to the
-        /// corresponding grounded CharacterState. Mirrors the
-        /// Standing/Crouching rows of <c>FighterState._attackDictionary</c>.
-        /// </summary>
+        // Keep this in sync with the Standing/Crouching rows of
+        // FighterState._attackDictionary.
         private static CharacterState MapInputToState(InputFlags input)
         {
             bool crouching = (input & InputFlags.Down) != 0;
@@ -977,14 +730,9 @@ namespace Game.Sim
             }
         }
 
-        /// <summary>
-        /// Maximum horizontal hitbox/grabbox extent from attacker origin for
-        /// the given attack input, across every frame of the move. Uses
-        /// attacker-local coordinates (not mirrored by facing) since
-        /// <c>BoxData.CenterLocal</c> is stored facing-agnostic — see
-        /// <c>FighterState.AddBoxes</c> where the X mirror is applied at
-        /// read time.
-        /// </summary>
+        // BoxData.CenterLocal is stored facing-agnostic, so we compute reach
+        // in attacker-local coordinates and never mirror it. The X mirror
+        // happens at read time in FighterState.AddBoxes.
         private sfloat GetReach(InputFlags input)
         {
             CharacterState state = MapInputToState(input);
@@ -1014,12 +762,6 @@ namespace Game.Sim
             return maxExtent;
         }
 
-        /// <summary>
-        /// Deterministic hash for tie-breaking, derived from game state so
-        /// rollback produces identical selections.
-        /// <paramref name="salt"/> keeps independent pass decisions (strict
-        /// vs. relaxed) from picking the same index out of lookalike pools.
-        /// </summary>
         private static int DeterministicHash(int realFrame, int beatIndex, HashSalt salt)
         {
             unchecked
@@ -1033,10 +775,6 @@ namespace Game.Sim
             }
         }
 
-        // ------------------------------------------------------------------
-        // State management: snapshot / restore / advance
-        // ------------------------------------------------------------------
-
         private void SnapshotWorking()
         {
             CloneInto(ref _beatSnapshot, _working);
@@ -1047,12 +785,6 @@ namespace Game.Sim
             CloneInto(ref _working, _beatSnapshot);
         }
 
-        /// <summary>
-        /// Capture a clone of <see cref="_working"/> at
-        /// <paramref name="currentBeat"/>'s dispatch frame (or
-        /// <paramref name="nextBeat"/> − 1 if that would land earlier).
-        /// No-op when the caller passed a null list (verify flag off).
-        /// </summary>
         private void CaptureBeatSnapshot(List<ComboBeatSnapshot> snapshots, Frame currentBeat, Frame nextBeat)
         {
             if (snapshots == null)
@@ -1073,12 +805,6 @@ namespace Game.Sim
             snapshots.Add(new ComboBeatSnapshot { CompareFrame = _working.RealFrame, Predicted = cloned });
         }
 
-        /// <summary>
-        /// Serialize <paramref name="src"/> and deserialize into
-        /// <paramref name="dst"/> via a per-instance ArrayBufferWriter;
-        /// passes the writer's span straight to <c>Deserialize</c> so no
-        /// intermediate byte[] is allocated.
-        /// </summary>
         private void CloneInto(ref GameState dst, GameState src)
         {
             _cloneWriter.Clear();
@@ -1086,12 +812,6 @@ namespace Game.Sim
             dst = MemoryPackSerializer.Deserialize<GameState>(_cloneWriter.WrittenSpan);
         }
 
-        /// <summary>
-        /// Advance <see cref="_working"/> with empty inputs until its
-        /// RealFrame reaches <paramref name="targetRealFrame"/>. The last
-        /// <see cref="AdvanceOnce"/> processes
-        /// <paramref name="targetRealFrame"/> itself with empty input.
-        /// </summary>
         private void AdvanceWorkingTo(Frame targetRealFrame)
         {
             while (_working.RealFrame < targetRealFrame)
@@ -1100,23 +820,15 @@ namespace Game.Sim
             }
         }
 
-        /// <summary>
-        /// Advance <see cref="_working"/> to one frame before
-        /// <paramref name="beat"/>'s dispatch frame, so a subsequent
-        /// <see cref="AdvanceOnce"/>(input) lands the input on the dispatch
-        /// frame itself (see class-level invariants).
-        /// </summary>
+        // Stops one frame before dispatch, so the next AdvanceOnce(input)
+        // lands the input on the dispatch frame itself. See class invariants.
         private void AdvanceToDispatchOf(Frame beat)
         {
             AdvanceWorkingTo(beat + _noteHitHalfRange - 1);
         }
 
-        /// <summary>
-        /// Apply a single attacker input for one frame on
-        /// <see cref="_working"/>, with rhythm cancel enabled for exactly
-        /// that frame. Assumes <see cref="_working"/> is already at the
-        /// dispatch frame − 1 (see <see cref="AdvanceToDispatchOf"/>).
-        /// </summary>
+        // Assumes _working is sitting at (dispatch frame - 1). Rhythm cancel
+        // is on for exactly this single frame. See class invariants.
         private void ApplyInputToWorking(InputFlags input)
         {
             _options.AlwaysRhythmCancel = true;
@@ -1124,23 +836,12 @@ namespace Game.Sim
             _options.AlwaysRhythmCancel = false;
         }
 
-        /// <summary>
-        /// Advance to the dispatch frame of <paramref name="beat"/> and
-        /// apply <paramref name="input"/> there. The common "commit one
-        /// chosen input at a beat" path.
-        /// </summary>
         private void ApplyInputAtBeat(Frame beat, InputFlags input)
         {
             AdvanceToDispatchOf(beat);
             ApplyInputToWorking(input);
         }
 
-        /// <summary>
-        /// Advance <see cref="_working"/> by exactly one frame with
-        /// <paramref name="attackerInput"/> in the attacker's slot. Uses the
-        /// per-instance <see cref="_inputScratch"/> so no per-call
-        /// allocation happens in this hot loop.
-        /// </summary>
         private void AdvanceOnce(InputFlags attackerInput)
         {
             for (int i = 0; i < _inputScratch.Length; i++)

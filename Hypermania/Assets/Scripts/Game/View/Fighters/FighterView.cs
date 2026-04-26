@@ -82,7 +82,8 @@ namespace Game.View.Fighters
             HitboxData data = _characterConfig.GetHitboxData(animState);
             if (data == null)
                 return;
-            float normalizedTime = data.GetAnimNormalizedTime(frame - state.StateStart);
+            // add small amount to ensure that right frame is displayed
+            float normalizedTime = data.GetAnimNormalizedTime(frame - state.StateStart) + 0.01f;
             _animator.Play(animState.ToString(), 0, normalizedTime);
             _animator.Update(0f); // force pose evaluation this frame while paused
 

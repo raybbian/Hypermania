@@ -26,10 +26,8 @@ namespace Game.Sim
             return sizeof(int);
         }
 
-        /// <summary>
-        /// Input's serialization size is assumed to be constant regardless of the input's value in the networking code.
-        /// </summary>
-        /// <returns></returns>
+        // Networking code assumes the serialization size is constant
+        // regardless of the input's value.
         public int SerdeSize()
         {
             return sizeof(int);

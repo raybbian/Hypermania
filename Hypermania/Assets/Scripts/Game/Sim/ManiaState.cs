@@ -22,47 +22,20 @@ namespace Game.Sim
         public int NextActiveIdx;
         public bool Pressed;
 
-        /// <summary>
-        /// Latched true when the player presses the channel's key inside the
-        /// active note's hit window. On latch, <see cref="ManiaState.Tick"/>
-        /// emits a view-facing <see cref="ManiaEventKind.Hit"/> event
-        /// immediately (so SFX/VFX are not delayed) but defers the
-        /// mechanic-facing <see cref="ManiaEventKind.Input"/> event to the
-        /// last frame of the hit window (<c>noteTick + HitHalfRange</c>).
-        /// This makes the effective input frame deterministic: every hit,
-        /// regardless of press timing within the window, resolves at the
-        /// same frame, so downstream fighter state no longer needs
-        /// offset-compensating guards to stay in sync with the combo
-        /// generator's predictions.
-        /// </summary>
+        // Latches on press inside the hit window. The mechanic-facing Input
+        // event then fires at noteTick + HitHalfRange instead of the press
+        // frame, so every hit resolves on the same frame no matter when the
+        // press came in. Keeps the sim aligned with the combo generator.
         public bool HitPending;
 
-        /// <summary>
-        /// Offset (<c>pressFrame - noteTick</c>) captured at the moment
-        /// <see cref="HitPending"/> latches. Preserved for the view layer's
-        /// timing grade (e.g. Perfect/Great); not consulted by sim logic.
-        /// </summary>
+        // pressFrame - noteTick at latch time. View-only (timing grade).
         public int HitPendingOffset;
     }
 
     public enum ManiaEventKind
     {
-        /// <summary>
-        /// Emitted on the frame the player latches a press inside a note's
-        /// hit window. View-only: drives SFX/VFX so feedback is immediate,
-        /// not delayed to the dispatch frame.
-        /// </summary>
-        Hit,
-
-        /// <summary>
-        /// Emitted at the end of a latched note's hit window
-        /// (<c>noteTick + HitHalfRange</c>). This is the mechanic-facing
-        /// event: <see cref="GameState.DoManiaStep"/> injects the note's
-        /// <see cref="ManiaNote.HitInput"/> into the attacker's input and
-        /// raises the rhythm-cancel flag only on this event.
-        /// </summary>
-        Input,
-
+        Hit,    // View-only: fires on press for immediate SFX/VFX.
+        Input,  // Mechanic-facing: fires at noteTick + HitHalfRange; injects HitInput and raises rhythm-cancel.
         Missed,
         End,
     }
@@ -74,14 +47,7 @@ namespace Game.Sim
 
         public ManiaNote Note;
 
-        /// <summary>
-        /// If the note was hit, how many ticks away from the exact timing it was hit
-        /// </summary>
         public int Offset;
-
-        /// <summary>
-        /// If the note was missed, if it was hit early or late
-        /// </summary>
         public bool Early;
 
         public static ManiaEvent EndEvent()
@@ -125,16 +91,12 @@ namespace Game.Sim
     {
         public int NumKeys;
 
-        /// <summary>
-        /// The half window of when the note is able to be hit. In other words, there are 2 * HitHalfRange + 1 ticks
-        /// in which a note may be hit (and not missed)
-        /// </summary>
+        // Half-width of the hit window, so 2 * HitHalfRange + 1 ticks total.
         public int HitHalfRange;
 
-        /// <summary>
-        /// The additional window outside of the hit window in which a note can be actively missed. This is used to
-        /// prevent notes from being hit wayyyy to early.
-        /// </summary>
+        // Extra window outside the hit window where a press still counts as
+        // a miss instead of being ignored. Stops players from hitting notes
+        // way too early.
         public int MissHalfRange;
 
         public int MissTotalRange => HitHalfRange + MissHalfRange;
@@ -143,9 +105,7 @@ namespace Game.Sim
     [MemoryPackable]
     public partial struct ManiaState
     {
-        /// <summary>
-        /// Used to initialized the deque with capacity, not necessarily a hard cap
-        /// </summary>
+        // Initial deque capacity, not a hard cap.
         const int MAX_NOTES = 100;
         public int TotalNoteCount;
         public ManiaConfig Config;
@@ -247,11 +207,11 @@ namespace Game.Sim
                 bool advance = false;
                 if (hasInput && frame < noteTick - Config.MissTotalRange)
                 {
-                    // tried to hit note way too early — no event
+                    // Way too early to count as anything. Ignore.
                 }
                 else if (hasInput && frame < noteTick - Config.HitHalfRange)
                 {
-                    // early miss (fires immediately — misses do not withhold)
+                    // Early miss. Misses fire immediately, no withholding.
                     ManiaEvents.Add(ManiaEvent.MissEvent(note, true));
                     advance = true;
                 }
@@ -267,18 +227,18 @@ namespace Game.Sim
                     }
                     else if (hasInput && frame <= noteTick + Config.MissTotalRange)
                     {
-                        // late press after hit window closed — miss
+                        // Late press, hit window already closed. Miss.
                         ManiaEvents.Add(ManiaEvent.MissEvent(note, false));
                         advance = true;
                     }
                     else if (frame > noteTick + Config.MissTotalRange)
                     {
-                        // no press arrived in time — auto-miss
+                        // No press ever arrived. Auto-miss.
                         ManiaEvents.Add(ManiaEvent.MissEvent(note, false));
                         advance = true;
                     }
-                    // else: inside (noteTick + HitHalfRange, noteTick + MissTotalRange]
-                    // with no press yet — keep the note active to catch a late press.
+                    // Otherwise we're inside (noteTick + HitHalfRange, noteTick + MissTotalRange]
+                    // with no press yet. Leave the note active so a late press can still register.
                 }
 
                 if (advance)

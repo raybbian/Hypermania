@@ -148,9 +148,8 @@ namespace Game.Sim
         }
     }
 
-    /// <summary>
-    /// Data structure to avoid many reallocs in game state simulation (are cleared every frame)
-    /// </summary>
+    // Holds the per-frame physics scratch so we don't reallocate the lists
+    // and dicts every tick. Cleared every frame.
     public class PhysicsContext<TData>
     {
         public Physics<TData> Physics;

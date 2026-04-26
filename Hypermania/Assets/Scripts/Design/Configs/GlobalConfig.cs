@@ -62,6 +62,7 @@ namespace Design.Configs
         public int ManiaStartPaddingTicks = 30;
         public int ManiaFailStunTicks = 30;
         public sfloat ManiaFailKnockbackMagnitude = (sfloat)1.5f;
+        public int ManiaPostComboInputLockTicks = 10;
         public int GrabTechWindow = 10;
         public int GrabTechStunTicks = 20;
         public int LightKnockdownTicks = 30;

@@ -7,10 +7,8 @@ namespace Game.Sim
 {
     public struct RhythmComboManager
     {
-        /// <summary>
-        /// Generates a dynamic combo using simulation and queues the resulting notes.
-        /// Returns the number of hitstop frames to apply.
-        /// </summary>
+        // Generates a dynamic combo by simulating it, queues the resulting
+        // notes, and returns the number of hitstop frames to apply.
         public int StartRhythmCombo(
             Frame realFrame,
             ref ManiaState state,
@@ -20,27 +18,27 @@ namespace Game.Sim
             int comboBeatCount
         )
         {
-            // Hitstop bridges slow-mo end to the nearest beat boundary,
+            // Hitstop bridges the end of slow-mo to the next beat boundary,
             // independent of where the first authored note falls.
             //
-            // Shift earliestStart forward past both the ManiaSlowTicks
-            // boundary AND the first note's own hit window so that the
-            // entire input window [firstNote - halfRange, firstNote + halfRange]
-            // lies inside GameMode.Mania (where DoManiaStep runs
+            // We shift earliestStart forward past both the ManiaSlowTicks
+            // boundary AND the first note's own hit window, so the entire
+            // input window [firstNote - halfRange, firstNote + halfRange]
+            // sits inside GameMode.Mania (where DoManiaStep runs
             // ManiaState.Tick). Without this padding, a beat aligned right
-            // at the end of the slow-mo would put the early frames of its
-            // hit window inside ManiaStart — those frames never tick the
-            // mania, so an otherwise-valid press would be silently dropped
-            // and the note would auto-miss. The +3 covers the 1-2 RealFrame
-            // gap between DoManiaStart's nominal ManiaSlowTicks boundary
-            // and the first frame DoManiaStep actually runs (the gap comes
-            // from PartialSimFrameCount sub-frame gating under
-            // SpeedRatio=0.5, plus the switch statement re-entering on
-            // GameMode==Mania the frame after the transition).
+            // at the end of slow-mo would put the early frames of its hit
+            // window inside ManiaStart, which never ticks the mania, so an
+            // otherwise-valid press would be silently dropped and the note
+            // would auto-miss. The +3 covers the 1-2 RealFrame gap between
+            // DoManiaStart's nominal ManiaSlowTicks boundary and the first
+            // frame DoManiaStep actually runs (the gap comes from
+            // PartialSimFrameCount sub-frame gating under SpeedRatio=0.5,
+            // plus the switch statement re-entering on GameMode==Mania the
+            // frame after the transition).
             //
-            // ManiaStartPaddingTicks adds additional sim frames after slow-mo
+            // ManiaStartPaddingTicks adds extra sim frames after slow-mo
             // ends (inside GameMode.Mania at SpeedRatio=1, before any queued
-            // note), so heavy aerial knockback / super followups can resolve
+            // note), so heavy aerial knockback or super followups can resolve
             // and the defender can land before the first note fires.
             AudioConfig audio = options.Global.Audio;
             int halfRange = state.Config.HitHalfRange;
@@ -48,9 +46,9 @@ namespace Game.Sim
                 realFrame + options.Global.ManiaSlowTicks + options.Global.ManiaStartPaddingTicks + halfRange + 3;
 
             // Next quarter-note boundary at or after earliestStart. Use the
-            // exact fpb ratio rather than the pre-rounded FramesPerBeat — the
-            // integer ceil against a rounded fpb could pick the wrong beat
-            // when fpb's rounding direction disagreed with the true 3600/BPM,
+            // exact fpb ratio rather than the pre-rounded FramesPerBeat. An
+            // integer ceil against a rounded fpb can pick the wrong beat
+            // when fpb's rounding direction disagrees with the true 3600/BPM,
             // occasionally yielding nextBeat < earliestStart.
             sfloat framesPerBeatExact = (sfloat)60f / audio.Bpm * (sfloat)GameManager.TPS;
             Frame firstBeat = audio.FirstBeatFrame(options.Global.PreGameDelayTicks);
@@ -70,7 +68,7 @@ namespace Game.Sim
 
             if (notes.Length == 0)
             {
-                // Song chart exhausted — no combo to run this trigger.
+                // Song chart exhausted, no combo to run this trigger.
                 return 0;
             }
 
@@ -79,13 +77,13 @@ namespace Game.Sim
             GeneratedCombo combo = ComboGenerator.Generate(gameState, options, attackerIndex, notes, hitstop);
 
             // Queue notes to mania channels. ComboGenerator already emits
-            // world-space inputs (e.g. Dash | Left for a left-facing attacker's
-            // forward dash), computed from the sim's per-beat facing. Do not
-            // flip them here — the blanket flip based on combo-start facing
-            // both inverts the dash direction and mishandles mid-combo
-            // cross-ups, where the attacker's facing changes between beats.
-            // Channel comes from the authored beatmap (.osz column), routed by
-            // ComboGenerator onto each emitted move.
+            // world-space inputs (e.g. Dash | Left for a left-facing
+            // attacker's forward dash), computed from the sim's per-beat
+            // facing. Don't flip them here. The old blanket flip based on
+            // combo-start facing both inverted the dash direction and broke
+            // mid-combo cross-ups where the attacker's facing changes between
+            // beats. Channel comes from the authored beatmap (.osz column),
+            // and ComboGenerator threads it onto each emitted move.
             for (int i = 0; i < combo.Moves.Count; i++)
             {
                 state.QueueNote(

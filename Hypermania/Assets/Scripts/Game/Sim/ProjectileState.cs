@@ -21,13 +21,12 @@ namespace Game.Sim
         public bool IsDying;
         public Frame DeathFrame;
 
-        /// <summary>
-        /// Advances this projectile by one tick: applies gravity/friction, checks
-        /// lifetime/bounds/destruction, updates position. When HasOnDeath is set
-        /// and the projectile would despawn (lifetime expired or hit), transitions
-        /// into a dying state that plays out the OnDeathHitbox frames instead of
-        /// immediately deactivating. Sets Active = false once fully done.
-        /// </summary>
+        // Advances this projectile by one tick. Applies gravity and friction,
+        // checks lifetime, bounds, and destruction, then updates position.
+        // If HasOnDeath is set and the projectile would despawn (lifetime
+        // expired or hit landed), it transitions into a dying state that
+        // plays out the OnDeathHitbox frames instead of disappearing right
+        // away. Sets Active = false once fully done.
         public void Advance(Frame simFrame, GameOptions options, ProjectileConfig config)
         {
             if (!Active)
@@ -99,11 +98,10 @@ namespace Game.Sim
             return true;
         }
 
-        /// <summary>
-        /// Adds this projectile's hitboxes to the physics context for collision detection.
-        /// While dying, uses the config's OnDeathHitbox ticked from DeathFrame; otherwise
-        /// uses the normal HitboxData ticked from CreationFrame.
-        /// </summary>
+        // Adds this projectile's hitboxes to the physics context for
+        // collision detection. While dying, uses OnDeathHitbox ticked from
+        // DeathFrame. Otherwise uses the normal HitboxData ticked from
+        // CreationFrame.
         public void AddBoxes(Frame simFrame, ProjectileConfig config, Physics<BoxProps> physics, int projectileIndex)
         {
             if (!Active || config == null)

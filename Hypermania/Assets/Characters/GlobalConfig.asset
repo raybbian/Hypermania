@@ -58,10 +58,12 @@ MonoBehaviour:
   ManiaFailStunTicks: 25
   ManiaFailKnockbackMagnitude:
     rawValue: 1069547520
+  ManiaPostComboInputLockTicks: 10
   GrabTechWindow: 10
   GrabTechStunTicks: 20
   LightKnockdownTicks: 25
   HeavyKnockdownTicks: 35
+  BurstVfxTicks: 30
   GrabTechKnockbackMagnitude:
     rawValue: 1073741824
   StalingBufferSize: 8

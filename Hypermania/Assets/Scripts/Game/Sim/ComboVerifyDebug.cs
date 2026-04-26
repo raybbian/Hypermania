@@ -8,27 +8,21 @@ using Utils.SoftFloat;
 
 namespace Game.Sim
 {
-    /// <summary>
-    /// Developer-only invariant checker for the rhythm combo system. When
-    /// <see cref="InfoOptions.VerifyComboPrediction"/> is enabled,
-    /// <see cref="ComboGenerator"/> captures a deep clone of its
-    /// <c>_working</c> state at <c>noteTick + HitHalfRange</c> for every
-    /// beat it generates (see <see cref="ComboBeatSnapshot"/>), and
-    /// <see cref="RhythmComboManager.StartRhythmCombo"/> registers those
-    /// snapshots here. When the real simulation reaches each snapshot's
-    /// <c>CompareFrame</c>, <see cref="CheckAtFrame"/> diffs the real
-    /// <see cref="GameState.Fighters"/> array against the predicted one
-    /// field by field and logs MATCH, or the exact list of differing
-    /// fighter fields on MISMATCH. Non-fighter state (GameMode, ManiaState,
-    /// Hype, etc.) is intentionally excluded from the diff — the generator
-    /// runs in Fighting mode with AlwaysRhythmCancel, so those fields
-    /// legitimately diverge from the real Mania-mode sim even when the
-    /// beat-snap invariant holds.
-    ///
-    /// State is static so it survives rollback (statics aren't included in
-    /// MemoryPack serialization). During rollback re-advance the predictions
-    /// are recomputed deterministically and overwrite the dict entries.
-    /// </summary>
+    // Dev-only invariant checker for the rhythm combo system. When
+    // InfoOptions.VerifyComboPrediction is on, ComboGenerator clones its
+    // _working state at every beat (see ComboBeatSnapshot) and
+    // RhythmComboManager.StartRhythmCombo registers those clones here. When
+    // the real sim reaches a snapshot's CompareFrame, CheckAtFrame diffs the
+    // Fighters arrays field-by-field and throws if anything differs.
+    //
+    // Non-fighter state (GameMode, ManiaState, Hype, ...) is deliberately
+    // excluded. The generator runs in Fighting mode with AlwaysRhythmCancel,
+    // so those fields legitimately differ from the real Mania-mode sim even
+    // when the beat-snap invariant holds.
+    //
+    // State is static so it survives rollback (statics don't go through
+    // MemoryPack). On rollback re-advance, predictions get recomputed
+    // deterministically and overwrite the dict entries.
     public static class ComboVerifyDebug
     {
         private struct Pending
@@ -39,34 +33,24 @@ namespace Game.Sim
 
         private static readonly Dictionary<Frame, Pending> _pending = new Dictionary<Frame, Pending>();
 
-        /// <summary>Scratch list reused by <see cref="DiscardFutureSnapshots"/>.</summary>
         private static readonly List<Frame> _scratchRemove = new List<Frame>();
 
-        /// <summary>
-        /// Field names to skip during the reflective fighter diff. These fields
-        /// legitimately diverge between the generator's Fighting-mode sim and
-        /// the real game's Mania-mode sim:
-        ///   - <c>InputH</c>: the real game's attacker receives Mania channel
-        ///     inputs routed through DoManiaStep, while the generator applies
-        ///     direct attack inputs with AlwaysRhythmCancel. The downstream
-        ///     fighter effect is equivalent, but the raw input-history ring
-        ///     buffer stores different flags.
-        ///   - <c>Super</c>: DoManiaStep dissipates the attacker's super
-        ///     meter every frame the mania is active; the generator never
-        ///     runs DoManiaStep, so its meter stays put.
-        /// Matched by <see cref="CleanFieldName"/>-cleaned name (so
-        /// auto-property backing fields like <c>&lt;Super&gt;k__BackingField</c>
-        /// are matched as <c>Super</c>).
-        /// </summary>
+        // Fields the diff skips. These legitimately differ between the
+        // generator's Fighting-mode sim and the real Mania-mode sim:
+        //   InputH: in the real game, the attacker's input history records
+        //     mania channel keys; the generator records the direct attack
+        //     inputs it injected. Downstream fighter state ends up the same,
+        //     but the raw ring buffer doesn't.
+        //   Super: DoManiaStep drains the attacker's super meter every active
+        //     frame; the generator skips DoManiaStep, so its meter stays put.
+        // Matched by CleanFieldName so auto-property backing fields like
+        // <Super>k__BackingField also count as "Super".
         private static readonly HashSet<string> IgnoredFields = new HashSet<string> { "InputH", "Super" };
 
-        /// <summary>Max recursion depth for the field-by-field diff.</summary>
         private const int MAX_DIFF_DEPTH = 10;
 
-        /// <summary>
-        /// Max number of differing fields to report per mismatch; protects
-        /// against log spam when everything desyncs (e.g. total divergence).
-        /// </summary>
+        // Caps how many differing fields we report. Stops total-divergence
+        // mismatches from spamming the log.
         private const int MAX_DIFF_LINES = 64;
 
         public static void StorePrediction(Frame frame, GameState predicted, int attackerIndex)
@@ -92,14 +76,10 @@ namespace Game.Sim
             }
         }
 
-        /// <summary>
-        /// Drop every remaining pending snapshot for <paramref name="attackerIndex"/>
-        /// whose <c>CompareFrame</c> is strictly after <paramref name="currentFrame"/>.
-        /// Called when the real simulation's mania terminates before its natural
-        /// <c>EndFrame</c> (miss, death, etc.) so the remaining snapshots — which
-        /// belong to beats that will never be reached — don't log spurious
-        /// MISMATCHes against a sim that has already left combo mode.
-        /// </summary>
+        // Called when the real sim's mania ends early (miss, death, etc.).
+        // Drops any pending snapshots for this attacker past currentFrame so
+        // they don't fire spurious MISMATCHes against a sim that's already
+        // out of combo mode.
         public static void DiscardFutureSnapshots(int attackerIndex, Frame currentFrame)
         {
             _scratchRemove.Clear();
@@ -118,21 +98,18 @@ namespace Game.Sim
             _pending.Clear();
         }
 
-        // ------------------------------------------------------------------
         // Reflective diff. Walks two GameStates in lockstep and appends one
-        // line per differing field to <paramref name="sb"/>.
+        // line per differing field to sb.
         //
-        // Terminal types (primitives, enums, strings, and known atomic
-        // structs with meaningful ToString) are compared with Equals and
-        // printed as expected/actual values.
+        // Terminal types (primitives, enums, strings, and atomic structs with
+        // a useful ToString) get compared with Equals and printed as
+        // expected/actual.
         //
-        // Composite types (other structs and classes) have their instance
-        // fields enumerated and recursed into; [MemoryPackIgnore]-decorated
-        // fields are skipped so the diff matches Checksum semantics.
+        // Composite types recurse into their instance fields. Anything tagged
+        // [MemoryPackIgnore] is skipped so the diff matches Checksum semantics.
         //
         // Collections (arrays, List<T>, Deque<T>) are compared elementwise
         // after a Count/Length check.
-        // ------------------------------------------------------------------
 
         private static void DiffValue(
             object expected,
@@ -272,10 +249,10 @@ namespace Game.Sim
                 return true;
             if (t == typeof(string))
                 return true;
-            // sfloat, Frame, SVector2, SVector3 all have meaningful ToString
-            // and implement value-equality via Equals; treat as terminal so
-            // diffs read "Position: expected=(1.5, 0) actual=(1.7, 0)" rather
-            // than drilling into the raw bit fields.
+            // sfloat, Frame, SVector2, SVector3 all have a useful ToString
+            // and value-equality via Equals. Treating them as terminal makes
+            // diffs read like "Position: expected=(1.5, 0) actual=(1.7, 0)"
+            // instead of drilling into raw bit fields.
             if (t == typeof(sfloat) || t == typeof(Frame))
                 return true;
             if (t == typeof(SVector2) || t == typeof(SVector3))
@@ -307,11 +284,8 @@ namespace Game.Sim
             }
         }
 
-        /// <summary>
-        /// Strips the compiler-generated &lt;PropertyName&gt;k__BackingField
-        /// decoration from auto-property backing field names so diff paths
-        /// read like source (e.g. "State" not "&lt;State&gt;k__BackingField").
-        /// </summary>
+        // Strips the compiler-generated <PropertyName>k__BackingField wrapper
+        // so diff paths read "State" instead of "<State>k__BackingField".
         private static string CleanFieldName(string name)
         {
             if (name.Length > 0 && name[0] == '<')
