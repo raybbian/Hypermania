@@ -33,6 +33,9 @@ namespace Netcode.P2P
         public const string LobbyGameKey = "game";
         public const string LobbyGameValue = "Hypermania";
 
+        private const string OnlinePresenceKey = "ol_present";
+        private const string OnlinePresentValue = "1";
+
         public CSteamID CurrentLobby => _currentLobby;
         public bool InLobby => _currentLobby.IsValid();
         public Action<List<CSteamID>> OnStartWithPlayers;
@@ -76,6 +79,8 @@ namespace Netcode.P2P
         /// silent-departure cases where no chat message is sent.
         /// </summary>
         public Action<CSteamID> OnPeerLeft;
+
+        private string _lastPresenceWrite;
 
         public SteamMatchmakingClient()
         {
@@ -158,6 +163,7 @@ namespace Netcode.P2P
                 }
                 _currentLobby = default;
             }
+            _lastPresenceWrite = null;
             return Task.CompletedTask;
         }
 
@@ -231,6 +237,53 @@ namespace Netcode.P2P
             );
             SendChat(LobbyChatOpcode.CsLaunch, args);
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Advertises whether the local client is actively showing the Online
+        /// lobby screen. Writes to this client's per-member lobby data slot
+        /// (<see cref="OnlinePresenceKey"/>) so peers can poll via
+        /// <see cref="AllMembersInOnlineLobby"/> before relying on the Online
+        /// lobby's chat subscribers being active on the far side. Deduped
+        /// against the last write so idempotent calls from the per-frame
+        /// Update loop don't spam Steam.
+        /// </summary>
+        public void SetSelfInOnlineLobby(bool present)
+        {
+            if (!SteamManager.Initialized || !InLobby)
+                return;
+            string value = present ? OnlinePresentValue : string.Empty;
+            if (value == _lastPresenceWrite)
+                return;
+            _lastPresenceWrite = value;
+            SteamMatchmaking.SetLobbyMemberData(_currentLobby, OnlinePresenceKey, value);
+        }
+
+        /// <summary>
+        /// Host-side gate for starting a match: returns true only when every
+        /// current lobby member has advertised themselves as present in the
+        /// Online lobby scene via <see cref="SetSelfInOnlineLobby"/>. Guards
+        /// against the host sending a START chat message before a peer
+        /// (e.g. returning from BattleEnd) has remounted OnlineDirectory and
+        /// subscribed to it.
+        /// </summary>
+        public bool AllMembersInOnlineLobby()
+        {
+            if (!InLobby)
+                return false;
+            int count = SteamMatchmaking.GetNumLobbyMembers(_currentLobby);
+            if (count <= 0)
+                return false;
+            for (int i = 0; i < count; i++)
+            {
+                CSteamID m = SteamMatchmaking.GetLobbyMemberByIndex(_currentLobby, i);
+                if (!m.IsValid())
+                    return false;
+                string value = SteamMatchmaking.GetLobbyMemberData(_currentLobby, m, OnlinePresenceKey);
+                if (value != OnlinePresentValue)
+                    return false;
+            }
+            return true;
         }
 
         private CSteamID _currentLobby;

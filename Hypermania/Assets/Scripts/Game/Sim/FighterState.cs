@@ -49,45 +49,38 @@ namespace Game.Sim
         public bool IsSuperAttack;
         public int SuperComboBeats;
 
-        /// <summary>
-        /// Set when this fighter is in hitstun while a mania is active. Keeps
-        /// the fighter treated as non-actionable (and prevents the combo count
-        /// from resetting) even after <see cref="TickStateMachine"/> returns
-        /// them to <see cref="CharacterState.Idle"/>, until the mania ends.
-        /// Cleared when the mania ends or the round resets.
-        /// </summary>
+        // True when the fighter is in hitstun while a mania is running. Keeps
+        // them non-actionable and stops the combo counter from resetting,
+        // even after TickStateMachine returns them to Idle. Cleared when the
+        // mania ends or the round resets.
         public bool LockedHitstun;
+
+        // Inclusive last frame inputs are forced to None. NullFrame = no lock.
+        public Frame InputLockUntil;
 
         public bool RhythmComboFinisherActive;
         public bool RhythmComboTier2;
 
         public bool FreestyleActive;
 
-        /// <summary>
-        /// Multiplier the next damage calculation will apply and then
-        /// consume. Accumulated from rhythm no-op beats during a mania:
-        /// each no-op takes half of <see cref="NoOpBonusRemaining"/> and
-        /// adds it here, so after n consecutive no-ops the value equals
-        /// <c>1 + 0.25 * (1 - 0.5^n)</c> — approaching 1.25. Reset to 1
-        /// on hit consumption, mania end, mania miss, and round reset.
-        /// </summary>
+        // Damage multiplier the next attack consumes. Builds up from rhythm
+        // no-op beats during a mania: each no-op takes half of
+        // NoOpBonusRemaining and adds it here, so after n no-ops the value is
+        // 1 + 0.25 * (1 - 0.5^n), which approaches 1.25 but never reaches it.
+        // Resets to 1 on hit consumption, mania end, mania miss, and round
+        // reset.
         public sfloat NoOpBonus;
 
-        /// <summary>
-        /// Remaining budget for future no-op bonus accrual. Starts at
-        /// 0.25 and halves on each no-op so the sum of all future
-        /// contributions stays bounded by 0.25 (closed-form geometric
-        /// series <c>1/2 + 1/4 + ... = 1</c>, scaled by 0.25).
-        /// </summary>
+        // Budget left to feed into NoOpBonus. Starts at 0.25, halves on each
+        // no-op, so the total of all contributions stays under 0.25 (the
+        // geometric series 1/2 + 1/4 + ... = 1, scaled by 0.25).
         public sfloat NoOpBonusRemaining;
 
         public int Index { get; private set; }
         public CharacterState State { get; private set; }
         public Frame StateStart { get; private set; }
 
-        /// <summary>
-        /// Set to a value that marks the first frame in which the character should return to neutral.
-        /// </summary>
+        // First frame on which the character should return to neutral.
         public Frame StateEnd { get; private set; }
 
         public int ImmunityHash { get; private set; }
@@ -99,29 +92,31 @@ namespace Game.Sim
         public BoxProps? HitProps { get; private set; }
         public SVector2? HitLocation { get; private set; }
         public SVector2? ClankLocation { get; private set; }
+        public bool CurrentGrabTechable { get; private set; }
+        public bool GrabTechedThisRealFrame { get; private set; }
         public bool StateChangedThisRealFrame { get; private set; }
-        public bool SuperMaxedThisRealFrame { get; private set; }
+        public bool SuperTier1MaxedThisRealFrame { get; private set; }
+        public bool SuperTier2MaxedThisRealFrame { get; private set; }
         public CharacterState? PostActionState { get; private set; }
         public Frame? PostActionStateStart { get; private set; }
 
-        /// <summary>
-        /// Attacker-side OnHitTransition enqueued by <see cref="ProcessHit"/>
-        /// on frame F. The actual <see cref="SetState"/> is deferred to the
-        /// start of the next sim frame by <see cref="ApplyPendingHitTransition"/>,
-        /// so frame F's remaining steps still see the pre-transition state and
-        /// the new state (e.g. Throw) first renders on F+1.
-        /// </summary>
+        // Attacker-side OnHitTransition that ProcessHit queues on frame F.
+        // ApplyPendingHitTransition runs the real SetState at the start of
+        // F+1, so the rest of frame F still sees the old state and the new
+        // one (Throw, etc.) first appears on F+1.
         public CharacterState? PendingHitState { get; private set; }
         public Frame? PendingHitStateStart { get; private set; }
         public Frame? PendingHitStateEnd { get; private set; }
         public bool PendingHitStateForce { get; private set; }
+        public KnockdownKind PendingKnockdown { get; private set; }
 
         public bool HitLastRealFrame =>
             HitProps.HasValue
             && HitLocation.HasValue
             && (
                 State == CharacterState.Death
-                || State == CharacterState.Knockdown
+                || State == CharacterState.SoftKnockdown
+                || State == CharacterState.HeavyKnockdown
                 || State == CharacterState.Hit
                 || State == CharacterState.Grabbed
             );
@@ -134,13 +129,10 @@ namespace Game.Sim
         public bool DashedLastRealFrame =>
             StateChangedThisRealFrame && (State == CharacterState.BackDash || State == CharacterState.ForwardDash);
 
-        /// <summary>
-        /// Whether the fighter is actionable this frame. Mirrors
-        /// <see cref="CharacterStateExtensions.IsActionable"/> but additionally
-        /// returns false while <see cref="LockedHitstun"/> is set, so a fighter
-        /// whose hitstun rolled over into a mania stays locked down (no new
-        /// inputs, no combo reset, no blocking) until the mania ends.
-        /// </summary>
+        // Same as CharacterStateExtensions.IsActionable, but also returns
+        // false while LockedHitstun is set. A fighter whose hitstun rolled
+        // into a mania stays locked down (no inputs, no combo reset, no
+        // blocking) until the mania ends.
         public bool Actionable => !LockedHitstun && State.IsActionable();
 
         public SVector2 StoredJumpVelocity;
@@ -156,7 +148,8 @@ namespace Game.Sim
             SVector2 position,
             FighterFacing facingDirection,
             int lives,
-            int stalingBufferSize
+            int stalingBufferSize,
+            sfloat startingBurst
         )
         {
             FighterState state = new FighterState
@@ -176,18 +169,20 @@ namespace Game.Sim
                 Health = health,
                 FacingDir = facingDirection,
                 Lives = lives,
-                Burst = 0,
+                Burst = startingBurst,
                 Super = 0,
                 AirDashCount = 0,
                 Victories = new VictoryKind[lives],
                 NumVictories = 0,
                 LockedHitstun = false,
+                InputLockUntil = Frame.NullFrame,
                 IsSuperAttack = false,
                 RhythmComboFinisherActive = false,
                 RhythmComboTier2 = false,
                 FreestyleActive = false,
                 NoOpBonus = sfloat.One,
                 NoOpBonusRemaining = (sfloat)0.25f,
+                PendingKnockdown = KnockdownKind.None,
             };
             return state;
         }
@@ -221,6 +216,7 @@ namespace Game.Sim
             Array.Clear(StalingBuffer, 0, StalingBuffer.Length);
             StalingBufferIndex = 0;
             LockedHitstun = false;
+            InputLockUntil = Frame.NullFrame;
             RhythmComboFinisherActive = false;
             RhythmComboTier2 = false;
             FreestyleActive = false;
@@ -233,21 +229,22 @@ namespace Game.Sim
             InputH.Clear(); // Clear, don't want to read input from a previous round.
             // TODO: character dependent?
             IsSuperAttack = false;
-            Burst = 0;
             Super = 0;
             AirDashCount = 0;
             Health = config.Health;
             FacingDir = facingDirection;
+            PendingKnockdown = KnockdownKind.None;
         }
 
         public void DoFrameStart(GameOptions options, bool maniaActive)
         {
-            // Latch the mania hitstun lock: if this fighter is currently in
-            // hitstun while a mania is running, they must remain treated as
-            // non-actionable for the rest of the mania even after
+            // Latch the mania hitstun lock: if this fighter is in hitstun
+            // while a mania is running, they have to keep being treated as
+            // non-actionable for the rest of the mania, even after
             // TickStateMachine transitions them out of CharacterState.Hit.
-            // Must run before TickStateMachine — otherwise a fighter whose
-            // hitstun ends this frame would transition to Idle and be missed.
+            // Has to run before TickStateMachine, otherwise a fighter whose
+            // hitstun ends this frame would already be Idle by the time we
+            // checked.
             if (maniaActive && State == CharacterState.Hit)
             {
                 LockedHitstun = true;
@@ -259,14 +256,12 @@ namespace Game.Sim
             }
         }
 
-        /// <summary>
-        /// Applies the actionable-gated resets (combo count, heal-on-actionable,
-        /// super/burst max-on-actionable). Must run after <see cref="TickStateMachine"/>
-        /// so <see cref="Actionable"/> reflects the state the fighter will act
-        /// from this frame — otherwise a fighter whose stun ends this frame
-        /// would be seen as non-actionable and skip the resets even though
-        /// they're about to process input normally.
-        /// </summary>
+        // Applies the actionable-gated resets (combo count, heal-on-actionable,
+        // super/burst max-on-actionable). Has to run after TickStateMachine so
+        // Actionable reflects the state the fighter will act from this frame.
+        // Otherwise a fighter whose stun ends this frame would still look
+        // non-actionable and skip the resets, even though they're about to
+        // process input normally.
         public void ApplyActionableFrameResets(GameOptions options, GameMode gameMode)
         {
             if (!Actionable)
@@ -291,12 +286,9 @@ namespace Game.Sim
 
         public bool OnGround(GameOptions options) => Position.y > options.Global.GroundY ? false : true;
 
-        /// <summary>
-        /// Register a rhythm no-op press. Transfers half of the remaining
-        /// 0.25 budget into <see cref="NoOpBonus"/>, so the bonus
-        /// approaches but never reaches 1.25 no matter how many no-ops
-        /// accrue in a row.
-        /// </summary>
+        // Records a rhythm no-op press. Moves half of the remaining 0.25
+        // budget into NoOpBonus, so the bonus approaches 1.25 but never
+        // gets there no matter how many no-ops chain.
         public void RegisterManiaNoOp()
         {
             sfloat share = NoOpBonusRemaining * (sfloat)0.5f;
@@ -304,11 +296,9 @@ namespace Game.Sim
             NoOpBonusRemaining -= share;
         }
 
-        /// <summary>
-        /// Read the current no-op bonus and reset it. Called by the damage
-        /// pipeline so the bonus applies once, to the next attack after
-        /// one or more no-ops.
-        /// </summary>
+        // Read the current no-op bonus and reset. The damage pipeline calls
+        // this so the bonus applies exactly once, to the attack right after
+        // one or more no-ops.
         public sfloat ConsumeNoOpBonus()
         {
             sfloat bonus = NoOpBonus;
@@ -317,11 +307,8 @@ namespace Game.Sim
             return bonus;
         }
 
-        /// <summary>
-        /// Reset no-op bonus to the default (1.0x, full 0.25 budget).
-        /// Used when a mania ends or fails to prevent a stale bonus from
-        /// carrying into a fresh combo.
-        /// </summary>
+        // Reset no-op bonus to defaults (1.0x, full 0.25 budget). Called on
+        // mania end / fail so a stale bonus doesn't carry into a fresh combo.
         public void ResetNoOpBonus()
         {
             NoOpBonus = sfloat.One;
@@ -351,18 +338,18 @@ namespace Game.Sim
             HitProps = null;
             HitLocation = null;
             ClankLocation = null;
+            GrabTechedThisRealFrame = false;
             StateChangedThisRealFrame = false;
-            SuperMaxedThisRealFrame = false;
+            SuperTier1MaxedThisRealFrame = false;
+            SuperTier2MaxedThisRealFrame = false;
             PostActionState = null;
             PostActionStateStart = null;
         }
 
-        /// <summary>
-        /// Records a collision-driven state transition to apply at the start of
-        /// the next sim frame. Pass <paramref name="start"/> as the frame the
-        /// state should take effect on (typically the hit-frame + 1), so tick 0
-        /// lands on the first frame the new state is visible.
-        /// </summary>
+        // Queues a collision-driven state transition to apply at the start of
+        // the next sim frame. Pass `start` as the frame the state should
+        // first be visible on (usually hit-frame + 1), so tick 0 lines up
+        // with the first frame of the new state.
         public void EnqueueHitTransition(CharacterState state, Frame start, Frame end, bool force = false)
         {
             PendingHitState = state;
@@ -371,13 +358,10 @@ namespace Game.Sim
             PendingHitStateForce = force;
         }
 
-        /// <summary>
-        /// Applies any transition queued by <see cref="EnqueueHitTransition"/>
-        /// during the previous sim frame's collision step. Call at the start of
-        /// a sim frame (after <c>SimFrame</c> increments, before
-        /// <see cref="DoFrameStart"/>) so the new state is visible to every
-        /// subsequent step of the frame.
-        /// </summary>
+        // Applies any transition that EnqueueHitTransition queued during the
+        // previous frame's collision step. Call at the start of a sim frame
+        // (after SimFrame increments, before DoFrameStart) so every
+        // subsequent step sees the new state.
         public void ApplyPendingHitTransition()
         {
             if (!PendingHitState.HasValue)
@@ -399,10 +383,15 @@ namespace Game.Sim
         {
             if (State != nextState || forceChange)
             {
+                if (State.IsStunned() && !nextState.IsStunned())
+                {
+                    ImmunityHash = 0;
+                }
                 State = nextState;
                 StateStart = start;
                 StateEnd = end;
                 StateChangedThisRealFrame = true;
+                IsSuperAttack = false;
             }
         }
 
@@ -445,6 +434,16 @@ namespace Game.Sim
                     Velocity = StoredJumpVelocity;
                     StoredJumpVelocity = SVector2.zero;
                     SetState(CharacterState.Jump, frame, Frame.Infinity);
+                    return;
+                }
+
+                if (State == CharacterState.HeavyKnockdown)
+                {
+                    SetState(
+                        CharacterState.GetUp,
+                        frame,
+                        frame + options.Players[Index].Character.GetHitboxData(CharacterState.GetUp).TotalTicks
+                    );
                     return;
                 }
 
@@ -535,7 +534,11 @@ namespace Game.Sim
 
                 if (DashInputs(BackwardInput, ref this))
                 {
-                    SetState(CharacterState.BackDash, frame, frame + options.Global.BackDashTicks);
+                    SetState(
+                        CharacterState.BackDash,
+                        frame,
+                        frame + options.Global.BackDashTicks + config.BackDashRecoveryTicks
+                    );
                     return;
                 }
             }
@@ -631,22 +634,34 @@ namespace Game.Sim
             GameOptions options,
             CharacterConfig config,
             bool isRhythmCancel,
-            GameMode gameMode
+            GameMode gameMode,
+            bool isManiaAttacker
         )
         {
-            if (State == CharacterState.Hit)
+            if (
+                InputH.IsHeld(InputFlags.Burst)
+                && State != CharacterState.Burst
+                && Burst >= config.BurstMax
+                && Health > sfloat.Zero
+                && !isManiaAttacker
+            )
             {
-                if (InputH.IsHeld(InputFlags.Burst))
-                {
-                    Burst = 0;
-                    SetState(
-                        CharacterState.Burst,
-                        simFrame,
-                        simFrame + config.GetHitboxData(CharacterState.Burst).TotalTicks
-                    );
-                    // TODO: apply knockback to other player (this should be a hitbox on a burst animation with large kb)
-                }
+                Burst = 0;
+                SetState(
+                    CharacterState.Burst,
+                    simFrame,
+                    simFrame + config.GetHitboxData(CharacterState.Burst).TotalTicks
+                );
+                return;
+            }
 
+            if (
+                State == CharacterState.Hit
+                || State == CharacterState.SoftKnockdown
+                || State == CharacterState.HeavyKnockdown
+                || State == CharacterState.GetUp
+            )
+            {
                 return;
             }
 
@@ -681,20 +696,38 @@ namespace Game.Sim
                 return;
             }
 
-            // Hold-to-super: once the heavy attack has been active for
-            // SuperDelayWindow ticks, promote to a super if the heavy button
-            // is still held at that frame.
+            // Heavy-attack → super promotion. Two trigger shapes, chosen per
+            // player via SuperInputMode:
+            //   Hold:      on frame SuperDelayWindow, heavy must still be held
+            //              and must not have been released at any point inside
+            //              the window.
+            //   DoubleTap: any time inside the window, a release-then-re-press
+            //              of heavy promotes immediately on the re-press frame.
             int superDelayWindow = options.Global.Input.SuperDelayWindow;
             bool isHeavyAttackState =
                 State == CharacterState.HeavyAttack
                 || State == CharacterState.HeavyAerial
                 || State == CharacterState.HeavyCrouching;
+            int framesInto = simFrame - StateStart;
+            SuperInputMode superInputMode = options.Players[Index].SuperInputMode;
+
+            bool triggerHold =
+                superInputMode == SuperInputMode.Hold
+                && framesInto == superDelayWindow
+                && InputH.IsHeld(InputFlags.HeavyAttack)
+                && !InputH.ReleasedRecently(InputFlags.HeavyAttack, withinFrames: superDelayWindow + 1);
+
+            bool triggerDoubleTap =
+                superInputMode == SuperInputMode.DoubleTap
+                && framesInto > 0
+                && framesInto <= superDelayWindow
+                && InputH.PressedRecently(InputFlags.HeavyAttack, withinFrames: framesInto + 1);
+
             if (
                 isHeavyAttackState
                 && !IsSuperAttack
-                && InputH.IsHeld(InputFlags.HeavyAttack)
-                && simFrame - StateStart == superDelayWindow
                 && gameMode == GameMode.Fighting
+                && (triggerHold || triggerDoubleTap)
             )
             {
                 sfloat superCost = options.Global.SuperCost;
@@ -802,7 +835,7 @@ namespace Game.Sim
             return ticksIntoState >= recoveryEnd - cancelWindow;
         }
 
-        public void UpdatePosition(Frame frame, GameOptions options, SVector2 otherFighterPos)
+        public void UpdatePosition(Frame frame, GameOptions options, ref SVector2 otherFighterPos)
         {
             // Apply gravity if not grounded and not in airdash
             FrameData curData = options.Players[Index].Character.GetFrameData(State, frame - StateStart);
@@ -854,7 +887,14 @@ namespace Game.Sim
                     Velocity.y = 0;
                     break;
                 case CharacterState.BackDash:
-                    Velocity.x = BackwardVector.x * (config.BackDashDistance / options.Global.BackDashTicks);
+                    if (frame >= StateEnd - config.BackDashRecoveryTicks)
+                    {
+                        Velocity.x = 0;
+                    }
+                    else
+                    {
+                        Velocity.x = BackwardVector.x * (config.BackDashDistance / options.Global.BackDashTicks);
+                    }
                     Velocity.y = 0;
                     break;
                 case CharacterState.ForwardDash:
@@ -875,24 +915,45 @@ namespace Game.Sim
                     Velocity.y = 0;
             }
 
+            if (State == CharacterState.Death && OnGround(options))
+            {
+                Velocity = SVector2.zero;
+            }
+
             sfloat cameraMaxBounds =
                 otherFighterPos.x + 2 * (options.Global.CameraHalfWidth - options.Global.CameraPadding);
             sfloat cameraMinBounds =
                 otherFighterPos.x - 2 * (options.Global.CameraHalfWidth - options.Global.CameraPadding);
             sfloat maxBounds = Mathsf.Min(options.Global.WallsX, cameraMaxBounds);
             sfloat minBounds = Mathsf.Max(-options.Global.WallsX, cameraMinBounds);
+            bool stunned = State.IsStunned();
+
             if (Position.x >= maxBounds)
             {
+                if (stunned && Velocity.x > sfloat.Zero && Position.x > options.Global.WallsX)
+                {
+                    sfloat excess = Position.x - options.Global.WallsX;
+                    otherFighterPos.x -= excess;
+                }
+                else if (Velocity.x > sfloat.Zero)
+                {
+                    Velocity.x = sfloat.Zero;
+                }
                 Position.x = maxBounds;
-                if (Velocity.x > 0)
-                    Velocity.x = 0;
             }
 
             if (Position.x <= minBounds)
             {
+                if (stunned && Velocity.x < sfloat.Zero && Position.x < -options.Global.WallsX)
+                {
+                    sfloat excess = -options.Global.WallsX - Position.x;
+                    otherFighterPos.x += excess;
+                }
+                else if (Velocity.x < sfloat.Zero)
+                {
+                    Velocity.x = sfloat.Zero;
+                }
                 Position.x = minBounds;
-                if (Velocity.x < 0)
-                    Velocity.x = 0;
             }
         }
 
@@ -914,10 +975,27 @@ namespace Game.Sim
                 return;
             }
 
-            if (State == CharacterState.Knockdown)
+            if (State == CharacterState.HeavyKnockdown && PendingKnockdown == KnockdownKind.Light)
             {
-                // TODO: getup options
-                SetState(CharacterState.Idle, frame, Frame.Infinity);
+                PendingKnockdown = KnockdownKind.None;
+                Velocity = SVector2.zero;
+                SetState(
+                    CharacterState.SoftKnockdown,
+                    frame,
+                    frame + config.GetHitboxData(CharacterState.SoftKnockdown).TotalTicks,
+                    true
+                );
+                return;
+            }
+
+            if (State == CharacterState.HeavyKnockdown && PendingKnockdown == KnockdownKind.Heavy)
+            {
+                PendingKnockdown = KnockdownKind.None;
+                Velocity = SVector2.zero;
+                // Preserve StateStart so the HeavyKnockdown animation keeps
+                // playing from where it was when the fighter lands. Only the
+                // downed-timer end frame gets latched here.
+                StateEnd = frame + options.Global.HeavyKnockdownTicks;
                 return;
             }
 
@@ -1006,7 +1084,11 @@ namespace Game.Sim
             sfloat damageMult
         )
         {
-            int immunityVal = HashCode.Combine(props, attackSt);
+            if (State.IsKnockdown())
+            {
+                return new HitOutcome { Kind = HitKind.None };
+            }
+            int immunityVal = ComputeImmunityHash(props);
             if (ImmunityHash == immunityVal)
             {
                 return new HitOutcome { Kind = HitKind.None };
@@ -1024,8 +1106,7 @@ namespace Game.Sim
             bool blockSuccess = holdingBack && ((holdingDown && crouchBlock) || (!holdingDown && standBlock));
 
             if (
-                !props.Unblockable
-                && blockSuccess
+                blockSuccess
                 && (Actionable || State == CharacterState.BlockCrouch || State == CharacterState.BlockStand)
             )
             {
@@ -1049,7 +1130,12 @@ namespace Game.Sim
                     SetState(CharacterState.Hit, frame, frame + props.HitstunTicks, true);
                     break;
                 case KnockdownKind.Light:
-                    SetState(CharacterState.Knockdown, frame, Frame.Infinity, true);
+                    PendingKnockdown = KnockdownKind.Light;
+                    SetState(CharacterState.HeavyKnockdown, frame, Frame.Infinity, true);
+                    break;
+                case KnockdownKind.Heavy:
+                    PendingKnockdown = KnockdownKind.Heavy;
+                    SetState(CharacterState.HeavyKnockdown, frame, Frame.Infinity, true);
                     break;
             }
 
@@ -1068,11 +1154,15 @@ namespace Game.Sim
 
         public void ApplyGrab(Frame frame, BoxProps props, SVector2 hitboxCenter, FighterFacing grabberFacingDir)
         {
+            // only consider the first grab tech property
             if (State != CharacterState.Grabbed)
             {
                 ComboedCount++;
+                CurrentGrabTechable = props.Techable;
             }
-            SetState(CharacterState.Grabbed, frame, Frame.Infinity);
+
+            SetState(CharacterState.Grabbed, frame, frame + 2, true);
+
             Velocity = SVector2.zero;
 
             SVector2 grabPos = props.GrabPosition;
@@ -1084,12 +1174,62 @@ namespace Game.Sim
             Position = hitboxCenter + grabPos;
         }
 
+        public void ApplyGrabTech(Frame frame, GameOptions options, SVector2 pushDirection)
+        {
+            SetState(CharacterState.Hit, frame, frame + options.Global.GrabTechStunTicks, true);
+            Velocity = pushDirection * options.Global.GrabTechKnockbackMagnitude;
+            CurrentGrabTechable = false;
+            GrabTechedThisRealFrame = true;
+            CancelPendingHitTransition();
+        }
+
+        public void CancelPendingHitTransition()
+        {
+            PendingHitState = null;
+            PendingHitStateStart = null;
+            PendingHitStateEnd = null;
+            PendingHitStateForce = false;
+        }
+
         public void ApplyClank(Frame frame, GameOptions options, SVector2 location)
         {
             SetState(CharacterState.Hit, frame, frame + options.Global.ClankTicks);
             ClankLocation = location;
 
             Velocity = SVector2.zero;
+        }
+
+        // Deterministic immunity hash over BoxProps. System.HashCode uses a
+        // per-process seed, so its output diverges across peers and desyncs
+        // the serialized ImmunityHash. Every BoxProps field has to be mixed
+        // in here. When you add a field to BoxProps, update both BoxProps.Equals
+        // and this helper.
+        private static int ComputeImmunityHash(BoxProps props)
+        {
+            unchecked
+            {
+                int h = (int)props.Kind;
+                h = h * 31 + (int)props.AttackKind;
+                h = h * 31 + props.Damage;
+                h = h * 31 + props.HitstunTicks;
+                h = h * 31 + props.BlockstunTicks;
+                h = h * 31 + props.HitstopTicks;
+                h = h * 31 + props.BlockstopTicks;
+                h = h * 31 + (int)props.KnockdownKind;
+                h = h * 31 + (int)props.Knockback.x.RawValue;
+                h = h * 31 + (int)props.Knockback.y.RawValue;
+                h = h * 31 + (int)props.GrabPosition.x.RawValue;
+                h = h * 31 + (int)props.GrabPosition.y.RawValue;
+                h = h * 31 + (props.GrabsGrounded ? 1 : 0);
+                h = h * 31 + (props.GrabsAirborne ? 1 : 0);
+                h = h * 31 + (props.Techable ? 1 : 0);
+                h = h * 31 + (props.HasTransition ? 1 : 0);
+                h = h * 31 + (int)props.OnHitTransition;
+                h ^= h >> 16;
+                h *= (int)0x45d9f3b;
+                h ^= h >> 16;
+                return h;
+            }
         }
 
         public void AddSuper(sfloat amount, GameOptions options)
@@ -1102,9 +1242,13 @@ namespace Game.Sim
             Super = Mathsf.Min(Super, max);
             bool crossedTier1 = prevSuper < cost && Super >= cost;
             bool crossedTier2 = prevSuper < doubleCost && Super >= doubleCost;
-            if (crossedTier1 || crossedTier2)
+            if (crossedTier1)
             {
-                SuperMaxedThisRealFrame = true;
+                SuperTier1MaxedThisRealFrame = true;
+            }
+            if (crossedTier2)
+            {
+                SuperTier2MaxedThisRealFrame = true;
             }
         }
     }

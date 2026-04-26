@@ -25,6 +25,12 @@ namespace Game.Runners
         protected bool _initialized;
         public bool Initialized => _initialized;
         public virtual bool Disconnected => false;
+
+        // True once the local sim has reached the post-match End mode. Used by
+        // BattleDirectory to distinguish "peer left after the match was already
+        // decided locally" from a genuine mid-match disconnect.
+        public bool MatchDecided => _curState?.GameMode == GameMode.End;
+
         protected float _time;
 
         public virtual void Init(
@@ -52,7 +58,7 @@ namespace Game.Runners
             {
                 _inputBuffers[i] = new InputBuffer(
                     _options.LocalPlayers[i]?.InputDevice,
-                    _options.LocalPlayers[i]?.Controls?.ControlScheme ?? ControlsConfig.DefaultBindings
+                    _options.LocalPlayers[i]?.ControlScheme ?? ControlsConfig.DefaultBindings
                 );
             }
             _curState = GameState.Create(_options);

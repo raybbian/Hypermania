@@ -90,11 +90,9 @@ namespace Scenes.Menus.CharacterSelect
                 state.Phase = SelectPhase.Options;
                 state.OptionsRow = 0;
                 ClampSkin(state, ctx);
-                ClampControls(state, ctx);
-                // Both slots in Character phase don't block each other, so
-                // they can share a (char, skin). If the other slot already
-                // confirmed onto our skin while we were sitting on it, bump
-                // off so we never enter Options on a colliding slot.
+                // Both slots can share a (char, skin) while browsing. If the
+                // other slot already confirmed onto our skin, bump off so we
+                // never enter Options on a colliding slot.
                 if (state.CharacterIndex < ctx.CharacterCount && ctx.IsTaken(state.CharacterIndex, state.SkinIndex))
                 {
                     int free = FirstFreeSkin(state.CharacterIndex, ctx);
@@ -129,7 +127,6 @@ namespace Scenes.Menus.CharacterSelect
                 int delta = left ? -1 : 1;
                 CycleRow(state, ctx, state.OptionsRow, delta);
                 ClampSkin(state, ctx);
-                ClampControls(state, ctx);
             }
 
             if (confirm)
@@ -167,27 +164,20 @@ namespace Scenes.Menus.CharacterSelect
                     state.ManiaDifficulty =
                         state.ManiaDifficulty == ManiaDifficulty.Normal ? ManiaDifficulty.Hard : ManiaDifficulty.Normal;
                     break;
-                case OptionsRows.BeatCancel:
-                    state.BeatCancelWindow = CycleBeatCancel(state.BeatCancelWindow, delta);
+                case OptionsRows.SuperInput:
+                    state.SuperInputMode = CycleSuperInputMode(state.SuperInputMode, delta);
                     break;
-                case OptionsRows.ControlsPreset:
-                    if (ctx.ControlsPresetCount > 0)
-                    {
-                        state.ControlsIndex =
-                            ((state.ControlsIndex + delta) % ctx.ControlsPresetCount + ctx.ControlsPresetCount)
-                            % ctx.ControlsPresetCount;
-                    }
-                    break;
+                // ControlsPreset row is handled by CharacterSelectDirectory —
+                // L/R there opens the controls config menu, never cycled here.
             }
         }
 
-        private static BeatCancelWindow CycleBeatCancel(BeatCancelWindow current, int delta)
+        private static SuperInputMode CycleSuperInputMode(SuperInputMode current, int delta)
         {
-            // Order by intended difficulty progression: Easy → Medium → Hard.
-            BeatCancelWindow[] order = { BeatCancelWindow.Medium, BeatCancelWindow.Hard };
+            SuperInputMode[] order = { SuperInputMode.Hold, SuperInputMode.DoubleTap };
             int idx = Array.IndexOf(order, current);
             if (idx < 0)
-                idx = 1;
+                idx = 0;
             int next = ((idx + delta) % order.Length + order.Length) % order.Length;
             return order[next];
         }
@@ -237,19 +227,6 @@ namespace Scenes.Menus.CharacterSelect
             if (state.SkinIndex < 0 || state.SkinIndex >= ctx.SkinCount)
             {
                 state.SkinIndex = 0;
-            }
-        }
-
-        private static void ClampControls(PlayerSelectionState state, in SelectionContext ctx)
-        {
-            if (ctx.ControlsPresetCount <= 0)
-            {
-                state.ControlsIndex = 0;
-                return;
-            }
-            if (state.ControlsIndex < 0 || state.ControlsIndex >= ctx.ControlsPresetCount)
-            {
-                state.ControlsIndex = 0;
             }
         }
 
@@ -357,7 +334,6 @@ namespace Scenes.Menus.CharacterSelect
     public readonly struct SelectionContext
     {
         public readonly int CharacterCount;
-        public readonly int ControlsPresetCount;
         public readonly int SkinCount;
         public readonly Func<int, bool> IsRowInteractable;
 
@@ -365,20 +341,18 @@ namespace Scenes.Menus.CharacterSelect
         public readonly int OtherCharacter;
         public readonly int OtherSkin;
 
-        /// <summary>Skin count for a given character index — used when cycling characters to find a non-colliding skin.</summary>
         public readonly Func<int, int> SkinCountForChar;
 
         /// <summary>
         /// When true, the grid exposes an extra "Random" slot at index
-        /// <see cref="CharacterCount"/> that cycles into the navigation. The
-        /// slot remains as "random" through Options/Confirmed and is resolved
-        /// to a concrete character at commit time by the directory.
+        /// <see cref="CharacterCount"/>. The slot stays "random" through
+        /// Options/Confirmed and is resolved to a concrete character at
+        /// commit time.
         /// </summary>
         public readonly bool HasRandomSlot;
 
         public SelectionContext(
             int characterCount,
-            int controlsPresetCount,
             int skinCount,
             Func<int, bool> isRowInteractable,
             int otherCharacter,
@@ -388,7 +362,6 @@ namespace Scenes.Menus.CharacterSelect
         )
         {
             CharacterCount = characterCount;
-            ControlsPresetCount = controlsPresetCount;
             SkinCount = skinCount;
             IsRowInteractable = isRowInteractable;
             OtherCharacter = otherCharacter;
@@ -406,7 +379,7 @@ namespace Scenes.Menus.CharacterSelect
         public const int ComboMode = 0;
         public const int Skin = 1;
         public const int ManiaDifficulty = 2;
-        public const int BeatCancel = 3;
+        public const int SuperInput = 3;
         public const int ControlsPreset = 4;
         public const int Count = 5;
 
@@ -422,8 +395,8 @@ namespace Scenes.Menus.CharacterSelect
         /// <summary>
         /// Whether the row is selectable / editable. Non-interactable rows
         /// remain visible but grayed out; nav skips them and L/R is a no-op.
-        /// ManiaDifficulty and BeatCancel are non-interactable when ComboMode
-        /// is <see cref="Game.Sim.ComboMode.Freestyle"/>. ControlsPreset is
+        /// ManiaDifficulty is non-interactable when ComboMode is
+        /// <see cref="Game.Sim.ComboMode.Freestyle"/>. ControlsPreset is
         /// non-interactable on the remote player's mirrored panel since the
         /// value is never synced.
         /// </summary>
@@ -438,7 +411,7 @@ namespace Scenes.Menus.CharacterSelect
                 return false;
             if (row == ControlsPreset && !isLocal)
                 return false;
-            if (state.ComboMode == Game.Sim.ComboMode.Freestyle && (row == ManiaDifficulty || row == BeatCancel))
+            if (state.ComboMode == Game.Sim.ComboMode.Freestyle && row == ManiaDifficulty)
                 return false;
             // Skin row is meaningless while the slot is on the Random tile —
             // the concrete skin isn't picked until commit.

@@ -56,7 +56,10 @@ namespace Scenes.Online
         public void OnDisable()
         {
             if (Matchmaking != null)
+            {
                 Matchmaking.OnStartWithPlayers -= OnStartWithPlayers;
+                Matchmaking.SetSelfInOnlineLobby(false);
+            }
         }
 
         public void CreateLobby() => StartCoroutine(CreateLobbyRoutine());
@@ -181,6 +184,8 @@ namespace Scenes.Online
             if (!SteamManager.IsInitialized || Matchmaking == null)
                 return;
 
+            Matchmaking.SetSelfInOnlineLobby(true);
+
             _createLobbyButton.interactable = !InLobby;
             _joinLobbyButton.interactable = !InLobby;
             _leaveLobbyButton.interactable = InLobby;
@@ -193,7 +198,11 @@ namespace Scenes.Online
             _playerList.UpdatePlayerList(players);
 
             CSteamID host = SteamMatchmaking.GetLobbyOwner(Matchmaking.CurrentLobby);
-            _startGameButton.interactable = players != null && players.Count == 2 && host == SteamUser.GetSteamID();
+            _startGameButton.interactable =
+                players != null
+                && players.Count == 2
+                && host == SteamUser.GetSteamID()
+                && Matchmaking.AllMembersInOnlineLobby();
         }
 
         void OnStartWithPlayers(List<CSteamID> players)

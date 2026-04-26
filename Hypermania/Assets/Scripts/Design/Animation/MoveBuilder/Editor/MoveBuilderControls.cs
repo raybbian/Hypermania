@@ -226,12 +226,14 @@ namespace Design.Animation.MoveBuilder.Editor
                 p.HitstopTicks = EditorGUILayout.IntField("Hitstop Ticks", p.HitstopTicks);
                 p.BlockstopTicks = EditorGUILayout.IntField("Blockstop Ticks", p.BlockstopTicks);
                 p.Knockback = SFloatGUI.Field("Knockback", p.Knockback);
-                p.Unblockable = EditorGUILayout.Toggle("Unblockable", p.Unblockable);
             }
 
             using (new EditorGUI.DisabledScope(p.Kind != HitboxKind.Grabbox))
             {
                 p.GrabPosition = SFloatGUI.Field("Grab Position", p.GrabPosition);
+                p.GrabsGrounded = EditorGUILayout.Toggle("Grabs Grounded", p.GrabsGrounded);
+                p.GrabsAirborne = EditorGUILayout.Toggle("Grabs Airborne", p.GrabsAirborne);
+                p.Techable = EditorGUILayout.Toggle("Techable", p.Techable);
             }
 
             using (new EditorGUI.DisabledScope(p.Kind != HitboxKind.Hitbox && p.Kind != HitboxKind.Grabbox))

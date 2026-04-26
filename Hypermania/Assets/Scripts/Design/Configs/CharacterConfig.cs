@@ -22,6 +22,13 @@ namespace Design.Configs
     }
 
     [Serializable]
+    public struct ManiaArrowSpritePair
+    {
+        public Sprite Active;
+        public Sprite Inactive;
+    }
+
+    [Serializable]
     public struct SkinConfig
     {
         public Color MainColor;
@@ -31,6 +38,8 @@ namespace Design.Configs
         public SpriteLibraryAsset SpriteLibrary;
         public Texture2D Portrait;
         public Texture2D Splash;
+        public ManiaArrowSpritePair ManiaInnerArrow;
+        public ManiaArrowSpritePair ManiaOuterArrow;
     }
 
     [Serializable]
@@ -57,6 +66,7 @@ namespace Design.Configs
         public sfloat BurstMax;
         public sfloat ForwardDashDistance;
         public sfloat BackDashDistance;
+        public int BackDashRecoveryTicks = 2;
         public int NumAirDashes;
         public sfloat ForwardAirDashDistance;
         public sfloat BackAirDashDistance;
@@ -121,9 +131,15 @@ namespace Design.Configs
             {
                 return new FrameData();
             }
-            // By default loop the animation, but this should never happen because we would have switched to a different
-            // state in the fighter state for ones that should not loop
-            tick = ((tick % data.TotalTicks) + data.TotalTicks) % data.TotalTicks;
+            if (data.Clip != null && data.AnimLoops)
+            {
+                tick = ((tick % data.TotalTicks) + data.TotalTicks) % data.TotalTicks;
+            }
+            else
+            {
+                // Non-looping states (e.g. attacks extended by SuperRecoveryFrames) hold the last frame.
+                tick = Mathsf.Clamp(tick, 0, data.TotalTicks - 1);
+            }
             return data.Frames[tick];
         }
 

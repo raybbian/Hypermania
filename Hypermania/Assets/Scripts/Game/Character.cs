@@ -11,7 +11,7 @@ namespace Game
         Jump = 2,
         PreJump = 29,
         Idle = 3,
-        Knockdown = 4,
+        SoftKnockdown = 4,
         LightAttack = 5,
         LightAerial = 6,
         LightCrouching = 7,
@@ -43,6 +43,8 @@ namespace Game
         HeavyAerialFollowUp = 35,
         MediumAttackFollowUp = 36,
         SpecialAerialFollowUp = 37,
+        HeavyKnockdown = 38,
+        GetUp = 39,
     }
 
     [Serializable]

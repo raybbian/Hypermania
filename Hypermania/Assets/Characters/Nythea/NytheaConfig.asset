@@ -17,9 +17,9 @@ MonoBehaviour:
   Prefab: {fileID: 5766376669795590084, guid: 692614c6f0138c5709de58dbca0159e4, type: 3}
   MoveSfx: {fileID: 11400000, guid: 4e16a963506edac26ae5b3acd6883da1, type: 2}
   Skins:
-  - MainColor: {r: 0.27058825, g: 0.30980393, b: 0.93725497, a: 1}
-    LightColor: {r: 0.7137255, g: 0.8352942, b: 0.95294124, a: 1}
-    AccentColor: {r: 0.8078432, g: 0.21960786, b: 0.20392159, a: 1}
+  - MainColor: {r: 0.70980394, g: 0.015686275, b: 0, a: 1}
+    LightColor: {r: 0.8078432, g: 0.3372549, b: 0.3254902, a: 1}
+    AccentColor: {r: 0.3019608, g: 0.3372549, b: 0.9960785, a: 1}
     HypeBarColors:
     - {r: 0.80784315, g: 0.5403107, b: 0.5331765, a: 1}
     - {r: 0.80784315, g: 0.3388745, b: 0.32636866, a: 1}
@@ -28,9 +28,15 @@ MonoBehaviour:
     SpriteLibrary: {fileID: 7108339969198208228, guid: 7bce4506c706589b0ba441fd802927e8, type: 3}
     Portrait: {fileID: 2800000, guid: 66bd42930e8db0f4b911bfdc119f8c13, type: 3}
     Splash: {fileID: 2800000, guid: 04a46b432d6a62443800ebef7de33dce, type: 3}
-  - MainColor: {r: 0.27058825, g: 0.30980393, b: 0.93725497, a: 1}
-    LightColor: {r: 0.7607844, g: 0.8745099, b: 0.9960785, a: 1}
-    AccentColor: {r: 0.6901961, g: 0.454902, b: 0.92549026, a: 1}
+    ManiaInnerArrow:
+      Active: {fileID: 8617828211107082129, guid: e22c1b97d9f9dbd448294319e3e1e615, type: 3}
+      Inactive: {fileID: -8883600614224032692, guid: 32966ac437a3048489624a64e04e2614, type: 3}
+    ManiaOuterArrow:
+      Active: {fileID: -2641461401451428804, guid: 8341a8a6eea3a074e9976d4e295f7271, type: 3}
+      Inactive: {fileID: 742394407609332487, guid: 114e039b3256085488b6e962cb57ebe2, type: 3}
+  - MainColor: {r: 0.54901963, g: 0.098039225, b: 1, a: 1}
+    LightColor: {r: 0.6935859, g: 0.5238824, b: 0.85882354, a: 1}
+    AccentColor: {r: 0.18431373, g: 0.13333334, b: 0.427451, a: 1}
     HypeBarColors:
     - {r: 0.71214, g: 0.56628, b: 0.85800004, a: 1}
     - {r: 0.6993217, g: 0.4446, b: 0.95, a: 1}
@@ -39,6 +45,29 @@ MonoBehaviour:
     SpriteLibrary: {fileID: 7108339969198208228, guid: f6fdaaf67e68349c7961174219f92281, type: 3}
     Portrait: {fileID: 2800000, guid: 02b2dafe45ba6af4181a6795730a3e14, type: 3}
     Splash: {fileID: 2800000, guid: 515b1a4207a987d4b9ef99b7d025f51e, type: 3}
+    ManiaInnerArrow:
+      Active: {fileID: -6629343155083197429, guid: 3538955c4bd69bd4188a0004a3b26c0a, type: 3}
+      Inactive: {fileID: 8457640894194228491, guid: bc248f9345af6174897779bb8884f81c, type: 3}
+    ManiaOuterArrow:
+      Active: {fileID: -1647495070530756300, guid: ee02fd80fca1199468c9249eebc95035, type: 3}
+      Inactive: {fileID: -455746072436578536, guid: 67e8484bd9ee5eb478e7b9c1a00f31e5, type: 3}
+  - MainColor: {r: 0.43921572, g: 0.054901965, b: 0.25490198, a: 1}
+    LightColor: {r: 0.7372549, g: 0.17254902, b: 0.45882356, a: 1}
+    AccentColor: {r: 0.9686275, g: 0.91372555, b: 0.7686275, a: 1}
+    HypeBarColors:
+    - {r: 0.851, g: 0.398268, b: 0.6338734, a: 1}
+    - {r: 0.624, g: 0.21215999, b: 0.42648488, a: 1}
+    - {r: 0.589, g: 0.11249899, b: 0.360474, a: 1}
+    - {r: 0.43921572, g: 0.054901965, b: 0.25490198, a: 1}
+    SpriteLibrary: {fileID: 7108339969198208228, guid: c1f4577aa690030458daaab2a8144c60, type: 3}
+    Portrait: {fileID: 2800000, guid: 84f57b056c92ce546b799e7eb799603d, type: 3}
+    Splash: {fileID: 2800000, guid: a2130c1b55a445148a779eb93d979194, type: 3}
+    ManiaInnerArrow:
+      Active: {fileID: -2641461401451428804, guid: 15fa66e8682f31f489273cea59f6a2fa, type: 3}
+      Inactive: {fileID: 742394407609332487, guid: 15b2032dcae869247b6b0e9898820dac, type: 3}
+    ManiaOuterArrow:
+      Active: {fileID: 8617828211107082129, guid: c0af1d09897f4b94fbc416bee6b6f69b, type: 3}
+      Inactive: {fileID: -8883600614224032692, guid: a6ea9e3f25acdd646b641f4220659ea6, type: 3}
   AnimationController: {fileID: 22100000, guid: b2247d1bd644d04a3a78e3aa68904cb8, type: 2}
   CharacterHeight:
     rawValue: 1071225242
@@ -49,13 +78,14 @@ MonoBehaviour:
   JumpVelocity:
     rawValue: 1089470464
   Health:
-    rawValue: 1132068864
+    rawValue: 1128792064
   BurstMax:
-    rawValue: 1132068864
+    rawValue: 1123680256
   ForwardDashDistance:
     rawValue: 1116471296
   BackDashDistance:
     rawValue: 1114636288
+  BackDashRecoveryTicks: 5
   NumAirDashes: 2
   ForwardAirDashDistance:
     rawValue: 1115815936
@@ -63,7 +93,7 @@ MonoBehaviour:
     rawValue: 1113325568
   SuperDisplay:
     AnimState: 11
-    StartFrame: 12
+    StartFrame: 13
     CameraLocalPosition: {x: 0, y: 1.35, z: -2}
     CameraOrthoSize:
       rawValue: 1053609165
@@ -73,7 +103,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 219390c45eefcde0dba74ec923eb3419, type: 2}
     - {fileID: 11400000, guid: 77993e6206ae5d42280c665e746df5b1, type: 2}
     - {fileID: 11400000, guid: 6935d7dcf4841d9cf948ff0efee3d2cb, type: 2}
-    - {fileID: 11400000, guid: fba29297a217f0b3293fe4dd64a90655, type: 2}
+    - {fileID: 11400000, guid: a3bad1ed65c08f24389cd65312a40c9b, type: 2}
     - {fileID: 11400000, guid: 0fdef0c6d04a9f2f594bed51a1cbfde4, type: 2}
     - {fileID: 11400000, guid: 48513f93e714938feada1914de251d00, type: 2}
     - {fileID: 11400000, guid: 5447394c70299f385baef6478190f24b, type: 2}
@@ -90,7 +120,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: ca7cee3bf8a92c320bfa17c7e66c2748, type: 2}
     - {fileID: 11400000, guid: f15ccb862e8cab1de92a5b8300795d41, type: 2}
     - {fileID: 11400000, guid: 54621a6ec599c53329497872728662a8, type: 2}
-    - {fileID: 11400000, guid: b823ab6ff6abc4e19860515b60dde0e2, type: 2}
+    - {fileID: 11400000, guid: 119df3c9f216d104d8a0ab45160b66a6, type: 2}
     - {fileID: 11400000, guid: 1ffcd5f04379a683297da713073bd0bb, type: 2}
     - {fileID: 11400000, guid: aa87373ccaf1f30a39e16bf42d10e572, type: 2}
     - {fileID: 11400000, guid: 5bd1c0ba4fd68c61aa5b25eade712298, type: 2}
@@ -107,6 +137,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: a4a09fb1d790b6041b2b8ae4eb7d0f33, type: 2}
     - {fileID: 11400000, guid: bdf1bc94e8de9a34bb6aa50ae488cce9, type: 2}
     - {fileID: 11400000, guid: fef47fb6a49229b47bf508f50d7136b8, type: 2}
+    - {fileID: 11400000, guid: 8d42bd13e68a79f42ae4f8f26eaed901, type: 2}
+    - {fileID: 11400000, guid: 4840cb431b0e8834288160696e35ce2f, type: 2}
   Gatlings:
   - From: 5
     To: 8

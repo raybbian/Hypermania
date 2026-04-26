@@ -39,5 +39,19 @@ namespace Game.View.Mania
                 _imageComponent.sprite = SpriteDefault;
             }
         }
+
+        public void ApplySprites(Sprite inactive, Sprite active)
+        {
+            SpriteDefault = inactive;
+            SpritePressed = active;
+            if (_imageComponent == null)
+            {
+                _imageComponent = GetComponent<Image>();
+            }
+            if (_imageComponent != null)
+            {
+                _imageComponent.sprite = SpriteDefault;
+            }
+        }
     }
 }

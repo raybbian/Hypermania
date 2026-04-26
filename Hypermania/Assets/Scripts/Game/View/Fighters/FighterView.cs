@@ -26,11 +26,16 @@ namespace Game.View.Fighters
         [SerializeField]
         private Transform _visualCenter;
 
+        public Vector3 VisualCenter => _visualCenter.position;
+
         [SerializeField]
         private float _hitJitterMagnitude = 0.04f;
 
         [SerializeField]
         private float _thinHitKnockbackMagnitude = 0.04f;
+
+        [SerializeField]
+        private FighterShadow _shadow;
 
         private int _jitterFramesRemaining;
 
@@ -77,7 +82,8 @@ namespace Game.View.Fighters
             HitboxData data = _characterConfig.GetHitboxData(animState);
             if (data == null)
                 return;
-            float normalizedTime = data.GetAnimNormalizedTime(frame - state.StateStart);
+            // add small amount to ensure that right frame is displayed
+            float normalizedTime = data.GetAnimNormalizedTime(frame - state.StateStart) + 0.01f;
             _animator.Play(animState.ToString(), 0, normalizedTime);
             _animator.Update(0f); // force pose evaluation this frame while paused
 
@@ -95,13 +101,17 @@ namespace Game.View.Fighters
                 desired.z = transform.position.z;
                 transform.position = desired - animWorld;
             }
+
+            if (_shadow != null)
+                _shadow.Render();
         }
 
         public virtual void RollbackRender(
             Frame realFrame,
             in FighterState state,
             VfxManager vfxManager,
-            SfxManager sfxManager
+            SfxManager sfxManager,
+            GlobalConfig globalConfig
         )
         {
             if (state.StateChangedThisRealFrame)
@@ -156,10 +166,23 @@ namespace Game.View.Fighters
                     direction: dir
                 );
             }
+
+            if (state.StateChangedThisRealFrame && state.State == CharacterState.Burst)
+            {
+                sfxManager.AddDesired(SfxKind.Burst, realFrame);
+            }
+
+            if (state.State == CharacterState.Burst && realFrame - state.StateStart == globalConfig.BurstVfxTicks)
+            {
+                vfxManager.AddDesired(VfxKind.Burst, realFrame, position: _visualCenter.position);
+            }
         }
 
         private static bool IsHitRecipient(CharacterState s) =>
-            s == CharacterState.Hit || s == CharacterState.Knockdown || s == CharacterState.Death;
+            s == CharacterState.Hit
+            || s == CharacterState.SoftKnockdown
+            || s == CharacterState.HeavyKnockdown
+            || s == CharacterState.Death;
 
         public void DeInit()
         {

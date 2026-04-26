@@ -14,6 +14,8 @@ namespace Game.View.Events.Vfx
         SmallHit,
         ThinHit,
         Clank,
+        Burst,
+        Tech,
     }
 
     [Serializable]

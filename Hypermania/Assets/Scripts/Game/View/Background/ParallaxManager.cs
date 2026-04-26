@@ -12,7 +12,6 @@ namespace Game.View.Background
             public Vector2 Speed; // 0 = no movement, 1 = moves with camera
         }
 
-        [SerializeField]
         private Camera _camera;
 
         [SerializeField]
@@ -20,8 +19,9 @@ namespace Game.View.Background
 
         private Vector3 _cameraPrevPos;
 
-        void Start()
+        public void Init(Camera camera)
         {
+            _camera = camera;
             _cameraPrevPos = _camera.transform.position;
         }
 

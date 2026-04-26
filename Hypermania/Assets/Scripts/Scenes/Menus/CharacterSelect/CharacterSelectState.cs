@@ -16,19 +16,16 @@ namespace Scenes.Menus.CharacterSelect
         public int SkinIndex;
         public ComboMode ComboMode;
         public ManiaDifficulty ManiaDifficulty;
-        public BeatCancelWindow BeatCancelWindow = BeatCancelWindow.Medium;
+        public SuperInputMode SuperInputMode = SuperInputMode.Hold;
 
         /// <summary>
-        /// Controls preset index into <c>CharacterSelectDirectory._controlsPresets</c>.
-        /// Local-only; never included in <see cref="CharacterSelectPayload"/>.
+        /// Name of the disk-backed <c>ControlsProfile</c> the player most
+        /// recently landed on in the controls menu. Empty when the menu was
+        /// never opened — <see cref="GameRunner"/> then falls back to
+        /// <see cref="Design.Configs.ControlsConfig.DefaultBindings"/>. Local-only.
         /// </summary>
-        public int ControlsIndex;
+        public string ControlsProfileName;
 
-        /// <summary>
-        /// Currently-highlighted row inside <see cref="PlayerOptionsPanel"/>.
-        /// Synced to remote peers so the remote panel can mirror the peer's
-        /// highlight position.
-        /// </summary>
         public int OptionsRow;
 
         public CharacterSelectPayload ToPayload()
@@ -40,7 +37,7 @@ namespace Scenes.Menus.CharacterSelect
                 SkinIndex = SkinIndex,
                 ComboMode = ComboMode,
                 ManiaDifficulty = ManiaDifficulty,
-                BeatCancelWindow = BeatCancelWindow,
+                SuperInputMode = SuperInputMode,
                 OptionsRow = OptionsRow,
             };
         }
@@ -52,7 +49,7 @@ namespace Scenes.Menus.CharacterSelect
             SkinIndex = payload.SkinIndex;
             ComboMode = payload.ComboMode;
             ManiaDifficulty = payload.ManiaDifficulty;
-            BeatCancelWindow = payload.BeatCancelWindow;
+            SuperInputMode = payload.SuperInputMode;
             OptionsRow = payload.OptionsRow;
         }
     }

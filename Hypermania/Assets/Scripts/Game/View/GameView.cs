@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Design.Configs;
 using Game.Sim;
+using Game.View.Background;
 using Game.View.Events;
 using Game.View.Events.Vfx;
 using Game.View.Fighters;
@@ -45,10 +46,12 @@ namespace Game.View
             public VfxManager VfxManager;
             public FrameDataOverlay FrameDataOverlay;
             public RoundCountdownView RoundCountdownView;
+            public IntroView IntroView;
             public HypeBarView HypeBarView;
             public KOScreenView KOScreenView;
             public BoxVisualizer BoxVisualizer;
             public OutlineGlowView OutlineGlowView;
+            public StageBackgroundLoader BackgroundLoader;
         }
 
         public FighterView[] Fighters => _fighters;
@@ -96,7 +99,12 @@ namespace Game.View
                 _fighters[i].Init(config, options.Players[i].SkinIndex);
                 _fighters[i].SetOutlinePlayerIndex(i);
 
-                _playerParams[i].ManiaView.Init(options.Global.Audio);
+                _playerParams[i]
+                    .ManiaView.Init(
+                        options.Global.Audio,
+                        options.Global.PreGameDelayTicks,
+                        options.Players[i].Character.Skins[options.Players[i].SkinIndex]
+                    );
                 _playerParams[i].HealthBarView.Init(config, options.Players[i].SkinIndex);
                 _playerParams[i].HealthBarView.SetOutlinePlayerIndex(i);
                 _playerParams[i].HealthBarView.SetMaxHealth((float)config.Health);
@@ -117,9 +125,15 @@ namespace Game.View
                 options.Players[0].Character.Skins[options.Players[0].SkinIndex],
                 options.Players[1].Character.Skins[options.Players[1].SkinIndex]
             );
+            if (_params.IntroView != null)
+                _params.IntroView.Init(options);
+
             _conductor.Init(options);
             _conductor.SetFrame(Frame.FirstFrame);
             _rollbackStart = Frame.NullFrame;
+
+            if (_params.BackgroundLoader != null)
+                _params.BackgroundLoader.Init(options.Stage);
         }
 
         public void Render(float deltaTime, in GameState state, GameOptions options, InfoOverlayDetails overlayDetails)
@@ -191,7 +205,25 @@ namespace Game.View
                 _playerParams[i].VictoryMarkView.SetVictories(state.Fighters[i].Victories, (i == 0 ? -1 : 1));
             }
 
-            _params.CameraControl.UpdateCamera(interestPoints, state.GameMode);
+            Vector2? countdownFocus = null;
+            if (state.GameMode == GameMode.Countdown)
+            {
+                int elapsed = state.SimFrame.No - state.RoundStart.No;
+                var audio = _options.Global.Audio;
+                int focusPlayer = -1;
+                if (elapsed >= 0 && elapsed < audio.BeatsToFrame(2))
+                    focusPlayer = 0;
+                else if (elapsed >= 0 && elapsed < audio.BeatsToFrame(4))
+                    focusPlayer = 1;
+
+                if (focusPlayer >= 0)
+                {
+                    countdownFocus =
+                        (Vector2)state.Fighters[focusPlayer].Position
+                        + new Vector2(0, (float)_options.Players[focusPlayer].Character.CharacterHeight);
+                }
+            }
+            _params.CameraControl.UpdateCamera(interestPoints, state.GameMode, countdownFocus);
             _params.FighterIndicatorManager.Track(state.Fighters);
 
             for (int i = 0; i < _options.Players.Length; i++)
@@ -202,6 +234,7 @@ namespace Game.View
             }
 
             _params.InfoOverlayView.Render(overlayDetails);
+            _params.IntroView.DisplayIntro(state.SimFrame, options);
             _params.RoundCountdownView.DisplayRoundCD(state.SimFrame, state.RoundStart, options);
             _params.RoundTimerView.DisplayRoundTimer(state.SimFrame, state.RoundEnd, state.GameMode, options);
             _params.KOScreenView.Render(state);
@@ -218,7 +251,7 @@ namespace Game.View
             {
                 _conductor.t = Mathf.Lerp(
                     _conductor.t,
-                    (float)(state.HypeMeter / options.Global.MaxHype),
+                    (float)(-state.HypeMeter / options.Global.MaxHype),
                     deltaTime * _conductorLerpSpeed
                 );
             }
@@ -257,12 +290,36 @@ namespace Game.View
             // TODO: refactor me, im thinking some listener pattern
             for (int i = 0; i < _options.Players.Length; i++)
             {
-                _fighters[i].RollbackRender(state.RealFrame, state.Fighters[i], _params.VfxManager, _params.SfxManager);
+                _fighters[i]
+                    .RollbackRender(
+                        state.RealFrame,
+                        state.Fighters[i],
+                        _params.VfxManager,
+                        _params.SfxManager,
+                        _options.Global
+                    );
                 _playerParams[i]
                     .ManiaView.RollbackRender(state.RealFrame, state.Manias[i], _params.VfxManager, _params.SfxManager);
-                if (state.Fighters[i].SuperMaxedThisRealFrame)
+                if (state.Fighters[i].SuperTier1MaxedThisRealFrame)
                 {
-                    _params.SfxManager.AddDesired(SfxKind.SuperReady, state.RealFrame, hash: i);
+                    _params.SfxManager.AddDesired(
+                        i == 0 ? SfxKind.SuperReady : SfxKind.OppSuperReady,
+                        state.RealFrame,
+                        hash: i
+                    );
+                }
+                if (state.Fighters[i].SuperTier2MaxedThisRealFrame)
+                {
+                    _params.SfxManager.AddDesired(
+                        i == 0 ? SfxKind.Super2Ready : SfxKind.OppSuper2Ready,
+                        state.RealFrame,
+                        hash: i
+                    );
+                }
+                if (i == 0 && state.Fighters[i].GrabTechedThisRealFrame)
+                {
+                    Vector2 center = (_fighters[0].VisualCenter + _fighters[1].VisualCenter) * 0.5f;
+                    _params.VfxManager.AddDesired(VfxKind.Tech, state.RealFrame, position: center);
                 }
                 if (state.Fighters[i].HitLastRealFrame)
                 {

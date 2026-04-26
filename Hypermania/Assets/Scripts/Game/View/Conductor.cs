@@ -25,6 +25,7 @@ namespace Game.View
         private double _loopStartFrame;
         private double _targetSourceFrame;
         private bool _hasStarted;
+        private int _startDelayTicks;
 
         public float t;
 
@@ -47,6 +48,7 @@ namespace Game.View
             _targetSourceFrame = 0.0;
             t = 0.0f;
             _hasStarted = false;
+            _startDelayTicks = options.Global.PreGameDelayTicks;
 
             AudioClip songClip = options.Global.Audio.AudioClip;
             if (songClip == null)
@@ -124,11 +126,21 @@ namespace Game.View
 
         public void SetFrame(long frameNo)
         {
-            double seconds = (double)frameNo / GameManager.TPS - _msOffset / 1000.0;
-            double sourceFrames = seconds * _sampleRate;
+            long effectiveFrame = frameNo - _startDelayTicks;
 
             lock (_lock)
             {
+                if (effectiveFrame < 0)
+                {
+                    _sourceFrameCursor = 0.0;
+                    _targetSourceFrame = 0.0;
+                    _hasStarted = false;
+                    return;
+                }
+
+                double seconds = (double)effectiveFrame / GameManager.TPS - _msOffset / 1000.0;
+                double sourceFrames = seconds * _sampleRate;
+
                 _sourceFrameCursor = ClampOrWrapSourceFrame(sourceFrames);
                 _targetSourceFrame = _sourceFrameCursor;
                 _hasStarted = true;
@@ -137,6 +149,12 @@ namespace Game.View
 
         public void PublishTick(Frame frame, double deltaTime)
         {
+            if (frame.No < _startDelayTicks)
+                return;
+
+            if (!_hasStarted)
+                SetFrame(frame);
+
             PublishTick(deltaTime);
         }
 
@@ -151,6 +169,9 @@ namespace Game.View
 
             lock (_lock)
             {
+                if (!_hasStarted)
+                    return;
+
                 double maxLeadFrames = Math.Max(1.0, _maxQueuedSeconds * _sampleRate);
                 double newTarget = AdvancePlaybackFrame(_targetSourceFrame, framesToPublish);
 
@@ -159,7 +180,6 @@ namespace Game.View
                     newTarget = AdvancePlaybackFrame(_sourceFrameCursor, maxLeadFrames);
 
                 _targetSourceFrame = newTarget;
-                _hasStarted = true;
             }
         }
 

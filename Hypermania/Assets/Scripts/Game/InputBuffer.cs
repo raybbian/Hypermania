@@ -27,8 +27,8 @@ namespace Game
         public InputBuffer(
             InputDevice inputDevice,
             EnumArray<InputFlags, Binding> controlScheme,
-            float joystickDeadzone = 0.25f,
-            float triggerThreshold = 0.25f
+            float joystickDeadzone = 0.5f,
+            float triggerThreshold = 0.7f
         )
         {
             _controlScheme = controlScheme;
@@ -125,8 +125,8 @@ namespace Game
 
         // Handles both binary and analog trigger reports. Binary-reporting devices
         // populate the bit/value as 0/1 and register via ButtonControl.isPressed.
-        // Analog-reporting devices get a lower _triggerThreshold so partial pulls
-        // register instead of having to cross Unity's default pressPoint (0.5).
+        // Analog-reporting devices use _triggerThreshold so we can require a
+        // near-full pull instead of Unity's default pressPoint (0.5).
         private bool IsGamepadButtonPressed(Gamepad gamepad, GamepadButtons button)
         {
             if (button == GamepadButtons.None)

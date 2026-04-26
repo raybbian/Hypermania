@@ -33,5 +33,18 @@ namespace Game.Sim
 
         public static bool IsActionable(this CharacterState state) =>
             state == CharacterState.Jump || state == CharacterState.Falling || state.IsGroundedActionable();
+
+        public static bool IsKnockdown(this CharacterState state) =>
+            state == CharacterState.HeavyKnockdown
+            || state == CharacterState.SoftKnockdown
+            || state == CharacterState.GetUp;
+
+        public static bool IsStunned(this CharacterState state) =>
+            state == CharacterState.Hit
+            || state == CharacterState.BlockCrouch
+            || state == CharacterState.BlockStand
+            || state == CharacterState.Grabbed
+            || state == CharacterState.Death
+            || state.IsKnockdown();
     }
 }

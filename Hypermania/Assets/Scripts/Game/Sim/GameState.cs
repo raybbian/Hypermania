@@ -3,12 +3,14 @@ using System.Buffers;
 using System.Linq;
 using Design.Animation;
 using Design.Configs;
+using Game.View.Background;
 using Game.View.Overlay;
 using MemoryPack;
 using Netcode.Rollback;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Utils;
+using Utils.EnumArray;
 using Utils.SoftFloat;
 
 namespace Game.Sim
@@ -35,10 +37,10 @@ namespace Game.Sim
         Hard,
     }
 
-    public enum BeatCancelWindow
+    public enum SuperInputMode
     {
-        Medium = 5,
-        Hard = 3,
+        Hold,
+        DoubleTap,
     }
 
     [Serializable]
@@ -52,14 +54,18 @@ namespace Game.Sim
         public int SkinIndex;
         public ComboMode ComboMode;
         public ManiaDifficulty ManiaDifficulty;
-        public BeatCancelWindow BeatCancelWindow = BeatCancelWindow.Medium;
+        public SuperInputMode SuperInputMode = SuperInputMode.Hold;
     }
 
     [Serializable]
     public class LocalPlayerOptions
     {
         public InputDevice InputDevice;
-        public ControlsConfig Controls;
+
+        // Per-player bindings from the disk-backed ControlsProfile selected
+        // in the character-select controls menu. Null falls back to
+        // ControlsConfig.DefaultBindings.
+        public EnumArray<InputFlags, Binding> ControlScheme;
     }
 
     [Serializable]
@@ -68,16 +74,13 @@ namespace Game.Sim
         public bool ShowFrameData;
         public bool ShowBoxes;
 
-        /// <summary>
-        /// Developer-only. When true, each generated rhythm combo is simulated
-        /// a second time with perfect on-beat mania presses, and the real
-        /// <see cref="GameState"/> at the mania's <c>EndFrame</c> is diffed
-        /// field-by-field against the prediction via
-        /// <see cref="ComboVerifyDebug"/>. Any differing field means pressing
-        /// within the hit window (instead of exactly on the beat) produced a
-        /// different downstream state — i.e. the beat-snap / rhythm-cancel
-        /// invariant is broken. Log-only; no gameplay effect.
-        /// </summary>
+        // Dev-only. When on, each generated rhythm combo is also simulated
+        // with perfect on-beat presses, and at the mania's EndFrame the real
+        // GameState gets diffed field-by-field against that prediction via
+        // ComboVerifyDebug. Any differing field means pressing inside the
+        // hit window (rather than dead on the beat) produced a different
+        // downstream state, which would mean the beat-snap / rhythm-cancel
+        // invariant is broken. Log-only, no gameplay effect.
         public bool VerifyComboPrediction;
     }
 
@@ -89,14 +92,13 @@ namespace Game.Sim
         public LocalPlayerOptions[] LocalPlayers;
         public InfoOptions InfoOptions;
         public bool AlwaysRhythmCancel;
+        public Stage Stage;
     }
 
     [MemoryPackable]
     public partial class GameState : IState<GameState>
     {
-        /// <summary>
-        /// Physics context used to resolve collisions between boxes.
-        /// </summary>
+        // Physics context for resolving collisions between boxes.
         [ThreadStatic]
         private static PhysicsContext<BoxProps> _physicsCtx;
 
@@ -132,32 +134,25 @@ namespace Game.Sim
         public sfloat SpeedRatio;
         public Frame ModeStart;
 
-        /// <summary>
-        /// Attacker index whose rhythm combo should be started at the end of
-        /// the current <see cref="Advance"/> call. -1 when nothing is pending.
-        /// DoCollisionStep just records the attacker here; the actual combo
-        /// generation and note queueing runs after <see cref="FighterState.UpdatePosition"/>
-        /// so that the combo generator's cloned snapshot already has frame
-        /// F's velocity integration applied — otherwise the generator's sim
-        /// would be one <c>UpdatePosition</c> tick behind the real game and
-        /// predicted hits at the edge of a move's range could whiff in play.
-        /// </summary>
+        // Attacker index whose rhythm combo should kick off at the end of
+        // the current Advance call. -1 when nothing is pending. DoCollisionStep
+        // just records who the attacker is; the actual combo generation and
+        // note queueing runs after FighterState.UpdatePosition so the
+        // generator's cloned snapshot already has frame F's velocity
+        // integration applied. If we ran it earlier the generator's sim would
+        // be one UpdatePosition behind the real game, and predicted hits at
+        // the edge of a move's range could whiff in play.
         public int PendingRhythmComboAttacker;
 
-        /// <summary>
-        /// Use this static builder instead of the constructor for creating new GameStates. This is because MemoryPack,
-        /// which we use to serialize the GameState, places some funky restrictions on the constructor's paratmeter
-        /// list.
-        /// </summary>
-        /// <param name="characterConfigs">Character configs to use</param>
-        /// <returns>The created GameState</returns>
+        // Use this builder, not the constructor. MemoryPack (our serializer)
+        // imposes some funky restrictions on the constructor's parameter list.
         public static GameState Create(GameOptions options)
         {
             GameState state = new GameState
             {
                 RealFrame = Frame.FirstFrame,
                 SimFrame = Frame.FirstFrame,
-                RoundStart = Frame.FirstFrame,
+                RoundStart = new Frame(options.Global.PreGameDelayTicks),
                 RoundEnd = new Frame(options.Global.RoundTimeTicks),
                 Fighters = new FighterState[options.Players.Length],
                 Manias = new ManiaState[options.Players.Length],
@@ -178,15 +173,15 @@ namespace Game.Sim
                     new SVector2(xPos, sfloat.Zero),
                     facing,
                     3,
-                    options.Global.StalingBufferSize
+                    options.Global.StalingBufferSize,
+                    options.Players[i].Character.BurstMax
                 );
-                int beatWindow = (int)options.Players[i].BeatCancelWindow;
                 state.Manias[i] = ManiaState.Create(
                     new ManiaConfig
                     {
                         NumKeys = 4,
-                        HitHalfRange = beatWindow,
-                        MissHalfRange = beatWindow + 3,
+                        HitHalfRange = 5,
+                        MissHalfRange = 8,
                     }
                 );
             }
@@ -232,10 +227,13 @@ namespace Game.Sim
             // RealFrame advance in lockstep during Countdown (SpeedRatio=1, no hitstop),
             // so aligning RealFrame here keeps every subsequent beat transition on-beat.
             var audio = options.Global.Audio;
-            int framesPerWholeNote = audio.FramesPerBeat * 4;
-            int phase =
-                ((RealFrame.No - audio.FirstMusicalBeat.No) % framesPerWholeNote + framesPerWholeNote)
-                % framesPerWholeNote;
+            // Round 4*Y once instead of Round(Y)*4. The latter amplifies the
+            // rounding error of FramesPerBeat to about 2 frames, while
+            // BeatsToFrame(4) rounds the product a single time and caps drift
+            // at about half a frame.
+            int framesPerWholeNote = audio.BeatsToFrame(4);
+            int firstBeat = audio.FirstBeatFrame(options.Global.PreGameDelayTicks).No;
+            int phase = ((RealFrame.No - firstBeat) % framesPerWholeNote + framesPerWholeNote) % framesPerWholeNote;
             int delay = (framesPerWholeNote - phase) % framesPerWholeNote;
             RoundStart = SimFrame + delay;
             SpeedRatio = 1;
@@ -283,9 +281,12 @@ namespace Game.Sim
             }
         }
 
-        // While an opponent is in the startup+active window of a super, mask the
-        // defender's input to only bits that were held last frame: releases pass
-        // through, new presses are dropped.
+        // Inputs pass through unchanged during an opponent's super startup,
+        // but from the first active frame through the end of the active
+        // window the defender's input is frozen to whatever it was on the
+        // last frame before active. Neither presses nor releases register
+        // during the hit window. The held snapshot propagates each locked
+        // frame via GetInput(0).
         private void ApplySuperInputLock(GameOptions options, Span<GameInput> remapInputs)
         {
             for (int i = 0; i < Fighters.Length; i++)
@@ -303,11 +304,38 @@ namespace Game.Sim
                     continue;
 
                 HitboxData hd = options.Players[i ^ 1].Character.GetHitboxData(s);
-                if (SimFrame - opp.StateStart >= hd.StartupTicks + hd.ActiveTicks)
+                int tick = SimFrame - opp.StateStart;
+                if (tick < hd.StartupTicks || tick >= hd.StartupTicks + hd.ActiveTicks)
                     continue;
 
-                InputFlags prev = Fighters[i].InputH.GetInput(0).Flags;
-                remapInputs[i] = new GameInput(remapInputs[i].Flags & prev);
+                remapInputs[i] = Fighters[i].InputH.GetInput(0);
+            }
+        }
+
+        private void HandleGrabTechs(GameOptions options)
+        {
+            int bufferWindow = options.Global.Input.InputBufferWindow;
+            int techWindow = options.Global.GrabTechWindow;
+
+            for (int i = 0; i < Fighters.Length; i++)
+            {
+                if (Fighters[i].State != CharacterState.Grabbed)
+                    continue;
+                if (!Fighters[i].CurrentGrabTechable)
+                    continue;
+                if (SimFrame - Fighters[i].StateStart > techWindow)
+                    continue;
+                if (!Fighters[i].InputH.PressedRecently(InputFlags.Grab, bufferWindow))
+                    continue;
+
+                int j = i ^ 1;
+
+                SVector2 grabbeePush =
+                    Fighters[i].Position.x <= Fighters[j].Position.x ? SVector2.left : SVector2.right;
+                SVector2 grabberPush = -grabbeePush;
+
+                Fighters[i].ApplyGrabTech(SimFrame, options, grabbeePush);
+                Fighters[j].ApplyGrabTech(SimFrame, options, grabberPush);
             }
         }
 
@@ -370,6 +398,15 @@ namespace Game.Sim
             if (GameMode == GameMode.Fighting)
             {
                 ApplySuperInputLock(options, remapInputs);
+                // Mania post-combo lockout. Mania end must come after the last
+                // mania note, otherwise that note's input gets eaten.
+                for (int i = 0; i < Fighters.Length; i++)
+                {
+                    if (RealFrame <= Fighters[i].InputLockUntil)
+                    {
+                        remapInputs[i].Flags = InputFlags.None;
+                    }
+                }
             }
 
             // Push the current input into the input history, to read for buffering.
@@ -453,8 +490,18 @@ namespace Game.Sim
             // If a player applies inputs to start a state at the start of the frame, we should apply those immediately
             for (int i = 0; i < Fighters.Length; i++)
             {
-                Fighters[i].ApplyActiveState(SimFrame, options, options.Players[i].Character, rhythmCancel, GameMode);
+                Fighters[i]
+                    .ApplyActiveState(
+                        SimFrame,
+                        options,
+                        options.Players[i].Character,
+                        rhythmCancel,
+                        GameMode,
+                        Manias[i].Enabled(RealFrame)
+                    );
             }
+
+            HandleGrabTechs(options);
 
             for (int i = 0; i < Fighters.Length; i++)
             {
@@ -530,15 +577,39 @@ namespace Game.Sim
 
             if (SimFrame >= RoundEnd && !rhythmComboActive)
             {
-                RoundEnd = SimFrame + options.Global.RoundTimeTicks;
-                //TODO: Properly handle edge case where player health is equal. Currently player 1 wins by default.
                 if (Fighters[0].Health < Fighters[1].Health)
                 {
                     Fighters[0].Health = 0;
                 }
-                else
+                else if (Fighters[0].Health > Fighters[1].Health)
                 {
                     Fighters[1].Health = 0;
+                }
+                else if (GameMode == GameMode.Fighting)
+                {
+                    // Tie at time-up: neither fighter earns a victory. Both
+                    // lose a life and both NumVictories advance with an Empty
+                    // slot so the two mark arrays stay aligned round-for-round.
+                    for (int i = 0; i < Fighters.Length; i++)
+                    {
+                        if (options.Players[i].Immortal)
+                        {
+                            continue;
+                        }
+                        Fighters[i].Health = sfloat.Zero;
+                        Fighters[i].Lives--;
+                        Fighters[i].Victories[Fighters[i].NumVictories] = VictoryKind.Empty;
+                        Fighters[i].NumVictories++;
+                        Fighters[i].SetState(CharacterState.Death, SimFrame, Frame.Infinity);
+                    }
+                    GameMode = GameMode.RoundEnd;
+                    ModeStart = RealFrame;
+                    for (int j = 0; j < Manias.Length; j++)
+                    {
+                        Manias[j].End();
+                    }
+                    ClearLockedHitstun();
+                    return;
                 }
             }
 
@@ -580,7 +651,7 @@ namespace Game.Sim
             // Apply any velocities set during movement or through knockback.
             for (int i = 0; i < Fighters.Length; i++)
             {
-                Fighters[i].UpdatePosition(SimFrame, options, Fighters[i ^ 1].Position);
+                Fighters[i].UpdatePosition(SimFrame, options, ref Fighters[i ^ 1].Position);
             }
 
             // Update hype if they are holding forward
@@ -634,8 +705,8 @@ namespace Game.Sim
             {
                 ComboVerifyDebug.CheckAtFrame(RealFrame, this);
 
-                // If a mania has terminated (natural end, missed note, fighter
-                // death, etc. — all paths clear EndFrame to NullFrame), drop
+                // If a mania has ended (natural end, missed note, fighter
+                // death, etc.; all paths clear EndFrame to NullFrame), drop
                 // any remaining snapshots for that attacker whose CompareFrame
                 // is still in the future. Without this, an early-failed combo
                 // would log spurious MISMATCHes for beats that never happened.
@@ -690,6 +761,12 @@ namespace Game.Sim
 
                 Manias[i].Tick(RealFrame, inputs[i].input);
 
+                // Burst is the one input allowed through while a mania is
+                // running: it's the defender's only out, and the attacker
+                // pressing it themselves is a no-op because ApplyActiveState
+                // only transitions to Burst when not already in Burst state.
+                outInputs[i].Flags |= inputs[i].input.Flags & InputFlags.Burst;
+
                 foreach (ManiaEvent ev in Manias[i].ManiaEvents)
                 {
                     switch (ev.Kind)
@@ -700,6 +777,7 @@ namespace Game.Sim
                             Fighters[i].RhythmComboFinisherActive = false;
                             Fighters[i].RhythmComboTier2 = false;
                             Fighters[i].ResetNoOpBonus();
+                            // don't input lock on a graceful mania end
                             break;
                         case ManiaEventKind.Input:
                             outInputs[i].Flags |= ev.Note.HitInput;
@@ -745,6 +823,7 @@ namespace Game.Sim
                             Fighters[i].RhythmComboFinisherActive = false;
                             Fighters[i].RhythmComboTier2 = false;
                             Fighters[i].ResetNoOpBonus();
+                            Fighters[i].InputLockUntil = RealFrame + options.Global.ManiaPostComboInputLockTicks;
                             break;
                     }
                 }
@@ -916,7 +995,7 @@ namespace Game.Sim
 
                     if (aIsProjectile || bIsProjectile)
                     {
-                        // Destroy any projectile(s) involved — no clank
+                        // Projectile involved: destroy it, no clank.
                         if (aIsProjectile)
                             MarkProjectileDestroyed(options, c.BoxA.ProjectileIndex);
                         if (bIsProjectile)
@@ -924,7 +1003,7 @@ namespace Game.Sim
                     }
                     else
                     {
-                        // Both are fighter hitboxes — normal clank
+                        // Both are fighter hitboxes, so a normal clank.
                         clank = c;
                     }
                 }
@@ -988,6 +1067,27 @@ namespace Game.Sim
                         {
                             MarkProjectileDestroyed(options, attackerBox.ProjectileIndex);
                         }
+                    }
+
+                    // If the fighter that just took this hit is currently
+                    // running their own rhythm combo (as the attacker), tear
+                    // the combo down. Incoming hitstun/knockback from
+                    // ApplyHit already landed; we only need to unwind the
+                    // combo state so inputs stop firing and the opponent
+                    // leaves locked hitstun.
+                    if (outcome.Kind == HitKind.Hit && Manias[owners.Item2].Enabled(RealFrame))
+                    {
+                        Manias[owners.Item2].End();
+                        GameMode = GameMode.Fighting;
+                        // If the cancel lands during ManiaStart's slow-mo,
+                        // DoManiaStart left SpeedRatio at 0.25 or 0.5. Reset
+                        // it so Fighting mode doesn't inherit the slowdown.
+                        SpeedRatio = 1;
+                        ClearLockedHitstun();
+                        Fighters[owners.Item2].RhythmComboFinisherActive = false;
+                        Fighters[owners.Item2].RhythmComboTier2 = false;
+                        Fighters[owners.Item2].ResetNoOpBonus();
+                        Fighters[owners.Item2].InputLockUntil = RealFrame + options.Global.ManiaPostComboInputLockTicks;
                     }
 
                     //to start a rhythm combo, we must sure that the move was not traded
@@ -1166,9 +1266,39 @@ namespace Game.Sim
 
             if (attacker.Data.Kind == HitboxKind.Grabbox)
             {
+                bool grabsGrounded = attacker.Data.GrabsGrounded;
+                bool grabsAirborne = attacker.Data.GrabsAirborne;
+                // Legacy fallback: grabboxes authored before these flags existed load
+                // as both-false. Treat that as "grabs both", since a grab that can
+                // never connect is nonsense and the sentinel is safe to repurpose.
+                if (!grabsGrounded && !grabsAirborne)
+                {
+                    grabsGrounded = true;
+                    grabsAirborne = true;
+                }
+                bool defenderGrounded = Fighters[defender.Owner].Location == FighterLocation.Grounded;
+                if (defenderGrounded ? !grabsGrounded : !grabsAirborne)
+                {
+                    return new HitOutcome { Kind = HitKind.None };
+                }
+                if (Fighters[defender.Owner].State.IsKnockdown())
+                {
+                    return new HitOutcome { Kind = HitKind.None };
+                }
+
                 Fighters[defender.Owner]
                     .ApplyGrab(SimFrame, attacker.Data, attacker.Box.Pos, Fighters[attacker.Owner].FacingDir);
+
+                FighterFacing grabberFacingBefore = Fighters[attacker.Owner].FacingDir;
                 Fighters[attacker.Owner].ProcessHit(SimFrame, attacker.Data, options.Players[attacker.Owner].Character);
+                if (Fighters[attacker.Owner].FacingDir != grabberFacingBefore)
+                {
+                    Fighters[defender.Owner].FacingDir =
+                        Fighters[defender.Owner].FacingDir == FighterFacing.Right
+                            ? FighterFacing.Left
+                            : FighterFacing.Right;
+                }
+
                 return new HitOutcome { Kind = HitKind.Grabbed, Props = attacker.Data };
             }
 
@@ -1212,6 +1342,14 @@ namespace Game.Sim
             // so it applies exactly once, to the next attack that lands after
             // one or more no-op beats in the current mania.
             mult *= Fighters[attacker.Owner].ConsumeNoOpBonus();
+
+            if (options.Players[attacker.Owner].ManiaDifficulty == ManiaDifficulty.Normal)
+                mult *= options.Global.NormalDifficultyDamageMultiplier;
+
+            if (Manias[attacker.Owner].Enabled(RealFrame))
+            {
+                propsForHit.KnockdownKind = KnockdownKind.None;
+            }
 
             HitOutcome outcome = Fighters[defender.Owner]
                 .ApplyHit(

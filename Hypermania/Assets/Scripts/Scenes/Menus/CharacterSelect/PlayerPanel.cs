@@ -65,7 +65,6 @@ namespace Scenes.Menus.CharacterSelect
             PlayerSelectionState state,
             PlayerSelectionState otherState,
             CharacterConfig[] roster,
-            ControlsConfig[] controlsPresets,
             SkinConfig randomSkin,
             bool isLocal
         )
@@ -81,7 +80,7 @@ namespace Scenes.Menus.CharacterSelect
 
             if (_optionsPanel != null)
             {
-                _optionsPanel.Bind(state, otherState, roster, controlsPresets, isLocal);
+                _optionsPanel.Bind(state, otherState, roster, isLocal);
             }
 
             if (_animator != null)

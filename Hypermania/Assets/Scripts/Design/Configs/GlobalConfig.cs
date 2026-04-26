@@ -43,6 +43,7 @@ namespace Design.Configs
         public sfloat SuperJumpMultiplier = (sfloat)1.25f;
         public int RoundTimeTicks = 10800;
         public int RoundCountdownTicks => Audio.BeatsToFrame(8);
+        public int PreGameDelayTicks = 0;
         public sfloat MaxHype = 100;
         public sfloat HypeMovementFactor = (sfloat)0.3f;
         public sfloat PassiveSuperGain = (sfloat)5f;
@@ -58,12 +59,28 @@ namespace Design.Configs
         public int SuperRecoveryFrames = 0;
         public sfloat FloatingFactor = (sfloat)1.3f;
         public int ManiaSlowTicks = 60;
+        public int ManiaStartPaddingTicks = 30;
         public int ManiaFailStunTicks = 30;
         public sfloat ManiaFailKnockbackMagnitude = (sfloat)1.5f;
+        public int ManiaPostComboInputLockTicks = 10;
+        public int GrabTechWindow = 10;
+        public int GrabTechStunTicks = 20;
+        public int LightKnockdownTicks = 30;
+        public int HeavyKnockdownTicks = 60;
+        public int BurstVfxTicks = 30;
+        public sfloat GrabTechKnockbackMagnitude = (sfloat)2f;
         public int StalingBufferSize = 8;
         public sfloat RhythmComboFinisherDamageMult = (sfloat)2f;
         public sfloat FreestyleDamageMultiplier = (sfloat)1.5f;
         public sfloat FreestyleHitstunMultiplier = (sfloat)1.25f;
+
+        /// <summary>
+        /// Damage multiplier applied to hits dealt by an attacker whose
+        /// <see cref="Game.Sim.PlayerOptions.ManiaDifficulty"/> is
+        /// <see cref="Game.Sim.ManiaDifficulty.Normal"/> (the easier setting).
+        /// Hard attackers deal full damage (implicit 1.0x).
+        /// </summary>
+        public sfloat NormalDifficultyDamageMultiplier = (sfloat)0.6f;
         public sfloat CameraHalfWidth => CameraHalfHeight * (sfloat)1.7777777f;
 
         [SerializeField]

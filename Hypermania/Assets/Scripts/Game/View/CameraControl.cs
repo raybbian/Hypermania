@@ -19,6 +19,7 @@ namespace Game.View
             public float CameraSpeed;
             public float ZoomSpeed;
             public float ManiaHalfHeight;
+            public float CountdownFocusHalfHeight;
             public GlobalConfig Config;
 
             // Additional area outside the arena bounds that the camera is allowed to see
@@ -48,8 +49,15 @@ namespace Game.View
             }
         }
 
-        public void UpdateCamera(List<Vector2> interestPoints, GameMode gameMode)
+        public void UpdateCamera(List<Vector2> interestPoints, GameMode gameMode, Vector2? focusPoint = null)
         {
+            if (focusPoint.HasValue)
+            {
+                _interestPoints = new List<Vector2> { focusPoint.Value };
+                _targetZoom = _params.CountdownFocusHalfHeight;
+                return;
+            }
+
             _interestPoints = interestPoints;
             bool inMania = gameMode == GameMode.ManiaStart || gameMode == GameMode.Mania;
             _targetZoom = inMania ? _params.ManiaHalfHeight : (float)_params.Config.CameraHalfHeight;

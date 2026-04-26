@@ -1,5 +1,6 @@
 using Game.Sim;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.View.Mania
 {
@@ -7,6 +8,17 @@ namespace Game.View.Mania
     {
         [SerializeField]
         private RectTransform _tail;
+
+        [SerializeField]
+        private Image _head;
+
+        public void ApplySprites(Sprite inactive, Sprite active)
+        {
+            if (_head != null)
+            {
+                _head.sprite = active;
+            }
+        }
 
         public void Render(float x, float y, ManiaNote note, float scrollSpeed)
         {

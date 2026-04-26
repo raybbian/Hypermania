@@ -65,10 +65,8 @@ namespace Game.View.Overlay
             int beatIndex = 0;
             if (framesPerBeat > 0)
             {
-                long offsetFrames = Math.Max(
-                    0L,
-                    (long)state.RealFrame.No - (long)options.Global.Audio.FirstMusicalBeat.No
-                );
+                long firstBeat = options.Global.Audio.FirstBeatFrame(options.Global.PreGameDelayTicks).No;
+                long offsetFrames = Math.Max(0L, (long)state.RealFrame.No - firstBeat);
                 beatIndex = (int)(offsetFrames / framesPerBeat);
             }
             if (beatIndex != _lastBeatIndex)
