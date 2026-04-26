@@ -548,6 +548,13 @@ namespace Design.Animation.FrameDataWindow.Editor
             if (data == null || data.Frames == null || data.Frames.Count == 0)
                 return "no frames";
 
+            if (data.Clip != null)
+            {
+                int expectedTicks = Mathf.CeilToInt(data.Clip.length * GameManager.TPS) + 1;
+                if (data.Frames.Count != expectedTicks)
+                    return $"frame count {data.Frames.Count} != clip length {expectedTicks}";
+            }
+
             int firstHit = -1;
             int lastHit = -1;
             for (int i = 0; i < data.Frames.Count; i++)

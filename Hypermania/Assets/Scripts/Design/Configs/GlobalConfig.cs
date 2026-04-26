@@ -66,6 +66,7 @@ namespace Design.Configs
         public int GrabTechStunTicks = 20;
         public int LightKnockdownTicks = 30;
         public int HeavyKnockdownTicks = 60;
+        public int BurstVfxTicks = 30;
         public sfloat GrabTechKnockbackMagnitude = (sfloat)2f;
         public int StalingBufferSize = 8;
         public sfloat RhythmComboFinisherDamageMult = (sfloat)2f;

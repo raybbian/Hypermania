@@ -295,9 +295,11 @@ namespace Game.Sim
             }
         }
 
-        // While an opponent is in the startup+active window of a super, mask the
-        // defender's input to only bits that were held last frame: releases pass
-        // through, new presses are dropped.
+        // Inputs pass through unchanged during an opponent's super startup, but
+        // from the first active frame through the end of the active window the
+        // defender's input is frozen to whatever it was on the frame right
+        // before active — neither presses nor releases register during the hit
+        // window. The held snapshot propagates each locked frame via GetInput(0).
         private void ApplySuperInputLock(GameOptions options, Span<GameInput> remapInputs)
         {
             for (int i = 0; i < Fighters.Length; i++)
@@ -315,11 +317,11 @@ namespace Game.Sim
                     continue;
 
                 HitboxData hd = options.Players[i ^ 1].Character.GetHitboxData(s);
-                if (SimFrame - opp.StateStart >= hd.StartupTicks + hd.ActiveTicks)
+                int tick = SimFrame - opp.StateStart;
+                if (tick < hd.StartupTicks || tick >= hd.StartupTicks + hd.ActiveTicks)
                     continue;
 
-                InputFlags prev = Fighters[i].InputH.GetInput(0).Flags;
-                remapInputs[i] = new GameInput(remapInputs[i].Flags & prev);
+                remapInputs[i] = Fighters[i].InputH.GetInput(0);
             }
         }
 
@@ -571,7 +573,6 @@ namespace Game.Sim
 
             if (SimFrame >= RoundEnd && !rhythmComboActive)
             {
-                RoundEnd = SimFrame + options.Global.RoundTimeTicks;
                 if (Fighters[0].Health < Fighters[1].Health)
                 {
                     Fighters[0].Health = 0;
@@ -1072,6 +1073,10 @@ namespace Game.Sim
                     {
                         Manias[owners.Item2].End();
                         GameMode = GameMode.Fighting;
+                        // If the cancel lands during ManiaStart's slow-mo,
+                        // DoManiaStart left SpeedRatio at 0.25/0.5 — restore
+                        // it so Fighting mode doesn't inherit the slowdown.
+                        SpeedRatio = 1;
                         ClearLockedHitstun();
                         Fighters[owners.Item2].RhythmComboFinisherActive = false;
                         Fighters[owners.Item2].RhythmComboTier2 = false;

@@ -113,6 +113,8 @@ namespace Design.Animation.MoveBuilder.Editor
         {
             if (!state.Data)
                 return null;
+            if (state.Tick < 0 || state.Tick >= state.Data.TotalTicks)
+                return null;
             return state.Data.GetFrame(state.Tick);
         }
 

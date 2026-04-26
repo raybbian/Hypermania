@@ -109,7 +109,8 @@ namespace Game.View.Fighters
             Frame realFrame,
             in FighterState state,
             VfxManager vfxManager,
-            SfxManager sfxManager
+            SfxManager sfxManager,
+            GlobalConfig globalConfig
         )
         {
             if (state.StateChangedThisRealFrame)
@@ -167,8 +168,12 @@ namespace Game.View.Fighters
 
             if (state.StateChangedThisRealFrame && state.State == CharacterState.Burst)
             {
-                vfxManager.AddDesired(VfxKind.Burst, realFrame, position: _visualCenter.position);
                 sfxManager.AddDesired(SfxKind.Burst, realFrame);
+            }
+
+            if (state.State == CharacterState.Burst && realFrame - state.StateStart == globalConfig.BurstVfxTicks)
+            {
+                vfxManager.AddDesired(VfxKind.Burst, realFrame, position: _visualCenter.position);
             }
         }
 
