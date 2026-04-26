@@ -15,7 +15,8 @@ namespace Game.View.Background
         [SerializeField]
         private EnumArray<Stage, GameObject> _prefabs;
 
-        [SerializeField] private Camera _camera;
+        [SerializeField]
+        private Camera _camera;
 
         private GameObject _instance;
 

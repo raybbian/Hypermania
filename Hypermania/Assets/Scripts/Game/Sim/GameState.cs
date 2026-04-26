@@ -233,8 +233,7 @@ namespace Game.Sim
             // at about half a frame.
             int framesPerWholeNote = audio.BeatsToFrame(4);
             int firstBeat = audio.FirstBeatFrame(options.Global.PreGameDelayTicks).No;
-            int phase =
-                ((RealFrame.No - firstBeat) % framesPerWholeNote + framesPerWholeNote) % framesPerWholeNote;
+            int phase = ((RealFrame.No - firstBeat) % framesPerWholeNote + framesPerWholeNote) % framesPerWholeNote;
             int delay = (framesPerWholeNote - phase) % framesPerWholeNote;
             RoundStart = SimFrame + delay;
             SpeedRatio = 1;
@@ -491,7 +490,15 @@ namespace Game.Sim
             // If a player applies inputs to start a state at the start of the frame, we should apply those immediately
             for (int i = 0; i < Fighters.Length; i++)
             {
-                Fighters[i].ApplyActiveState(SimFrame, options, options.Players[i].Character, rhythmCancel, GameMode, Manias[i].Enabled(RealFrame));
+                Fighters[i]
+                    .ApplyActiveState(
+                        SimFrame,
+                        options,
+                        options.Players[i].Character,
+                        rhythmCancel,
+                        GameMode,
+                        Manias[i].Enabled(RealFrame)
+                    );
             }
 
             HandleGrabTechs(options);

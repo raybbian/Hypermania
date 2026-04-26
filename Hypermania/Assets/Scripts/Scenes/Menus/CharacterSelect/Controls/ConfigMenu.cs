@@ -292,8 +292,10 @@ namespace Scenes.Menus.CharacterSelect.Controls
             {
                 for (int i = 0; i < _profiles.Count; i++)
                 {
-                    if (_profiles[i] != null
-                        && string.Equals(_profiles[i].Name, preferred, StringComparison.OrdinalIgnoreCase))
+                    if (
+                        _profiles[i] != null
+                        && string.Equals(_profiles[i].Name, preferred, StringComparison.OrdinalIgnoreCase)
+                    )
                     {
                         return IsProfileTaken(_profiles[i].Name) ? FirstFreeProfileIndex() : i;
                     }
@@ -436,8 +438,7 @@ namespace Scenes.Menus.CharacterSelect.Controls
             NotifySessionChanged();
         }
 
-        private bool IsProfileTaken(string name) =>
-            _session != null && _session.IsProfileTaken(this, name);
+        private bool IsProfileTaken(string name) => _session != null && _session.IsProfileTaken(this, name);
 
         private void NotifySessionChanged()
         {

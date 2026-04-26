@@ -34,8 +34,8 @@ namespace Game.Sim
 
     public enum ManiaEventKind
     {
-        Hit,    // View-only: fires on press for immediate SFX/VFX.
-        Input,  // Mechanic-facing: fires at noteTick + HitHalfRange; injects HitInput and raises rhythm-cancel.
+        Hit, // View-only: fires on press for immediate SFX/VFX.
+        Input, // Mechanic-facing: fires at noteTick + HitHalfRange; injects HitInput and raises rhythm-cancel.
         Missed,
         End,
     }

@@ -186,8 +186,7 @@ namespace Design.Configs
                 return result.ToArray();
 
             int approxLoopLen = songEnd - loopStartFrame;
-            int startIter =
-                audioMinStart.No >= songEnd ? Math.Max(1, (audioMinStart.No - songEnd) / approxLoopLen) : 1;
+            int startIter = audioMinStart.No >= songEnd ? Math.Max(1, (audioMinStart.No - songEnd) / approxLoopLen) : 1;
 
             for (int n = startIter; ; n++)
             {

@@ -638,7 +638,13 @@ namespace Game.Sim
             bool isManiaAttacker
         )
         {
-            if (InputH.IsHeld(InputFlags.Burst) && State != CharacterState.Burst && Burst >= config.BurstMax && Health > sfloat.Zero && !isManiaAttacker)
+            if (
+                InputH.IsHeld(InputFlags.Burst)
+                && State != CharacterState.Burst
+                && Burst >= config.BurstMax
+                && Health > sfloat.Zero
+                && !isManiaAttacker
+            )
             {
                 Burst = 0;
                 SetState(

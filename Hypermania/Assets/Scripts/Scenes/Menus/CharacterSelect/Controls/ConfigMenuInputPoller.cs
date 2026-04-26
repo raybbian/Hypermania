@@ -37,7 +37,12 @@ namespace Scenes.Menus.CharacterSelect.Controls
 
         public EdgeSet Poll()
         {
-            bool left = false, right = false, up = false, down = false, confirm = false, back = false;
+            bool left = false,
+                right = false,
+                up = false,
+                down = false,
+                confirm = false,
+                back = false;
             switch (_device)
             {
                 case Gamepad gp:

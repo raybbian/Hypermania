@@ -36,6 +36,7 @@ namespace Game.Sim
     {
         public List<GeneratedComboMove> Moves;
         public Frame EndFrame;
+
         // Only filled in when InfoOptions.VerifyComboPrediction is on.
         public List<ComboBeatSnapshot> BeatSnapshots;
     }
@@ -203,8 +204,7 @@ namespace Game.Sim
                 }
 
                 bool canTryNoOp =
-                    i + 2 < primaryNotes.Count
-                    && _audio.IsOnBeat(currentBeat, _options.Global.PreGameDelayTicks);
+                    i + 2 < primaryNotes.Count && _audio.IsOnBeat(currentBeat, _options.Global.PreGameDelayTicks);
                 if (
                     canTryNoOp
                     && TryOnBeatNoOpPair(

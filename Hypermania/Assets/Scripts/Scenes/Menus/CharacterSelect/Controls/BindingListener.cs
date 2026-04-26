@@ -92,22 +92,38 @@ namespace Scenes.Menus.CharacterSelect.Controls
         // layout/locale variations that would break name-based matches.
         private static GamepadButtons GamepadButtonFromControl(Gamepad gp, InputControl ctrl)
         {
-            if (ctrl == gp.buttonSouth) return GamepadButtons.South;
-            if (ctrl == gp.buttonNorth) return GamepadButtons.North;
-            if (ctrl == gp.buttonEast) return GamepadButtons.East;
-            if (ctrl == gp.buttonWest) return GamepadButtons.West;
-            if (ctrl == gp.leftShoulder) return GamepadButtons.LeftShoulder;
-            if (ctrl == gp.rightShoulder) return GamepadButtons.RightShoulder;
-            if (ctrl == gp.leftTrigger) return GamepadButtons.LeftTrigger;
-            if (ctrl == gp.rightTrigger) return GamepadButtons.RightTrigger;
-            if (ctrl == gp.leftStickButton) return GamepadButtons.LeftStick;
-            if (ctrl == gp.rightStickButton) return GamepadButtons.RightStick;
-            if (ctrl == gp.startButton) return GamepadButtons.Start;
-            if (ctrl == gp.selectButton) return GamepadButtons.Select;
-            if (ctrl == gp.dpad.up) return GamepadButtons.DpadUp;
-            if (ctrl == gp.dpad.down) return GamepadButtons.DpadDown;
-            if (ctrl == gp.dpad.left) return GamepadButtons.DpadLeft;
-            if (ctrl == gp.dpad.right) return GamepadButtons.DpadRight;
+            if (ctrl == gp.buttonSouth)
+                return GamepadButtons.South;
+            if (ctrl == gp.buttonNorth)
+                return GamepadButtons.North;
+            if (ctrl == gp.buttonEast)
+                return GamepadButtons.East;
+            if (ctrl == gp.buttonWest)
+                return GamepadButtons.West;
+            if (ctrl == gp.leftShoulder)
+                return GamepadButtons.LeftShoulder;
+            if (ctrl == gp.rightShoulder)
+                return GamepadButtons.RightShoulder;
+            if (ctrl == gp.leftTrigger)
+                return GamepadButtons.LeftTrigger;
+            if (ctrl == gp.rightTrigger)
+                return GamepadButtons.RightTrigger;
+            if (ctrl == gp.leftStickButton)
+                return GamepadButtons.LeftStick;
+            if (ctrl == gp.rightStickButton)
+                return GamepadButtons.RightStick;
+            if (ctrl == gp.startButton)
+                return GamepadButtons.Start;
+            if (ctrl == gp.selectButton)
+                return GamepadButtons.Select;
+            if (ctrl == gp.dpad.up)
+                return GamepadButtons.DpadUp;
+            if (ctrl == gp.dpad.down)
+                return GamepadButtons.DpadDown;
+            if (ctrl == gp.dpad.left)
+                return GamepadButtons.DpadLeft;
+            if (ctrl == gp.dpad.right)
+                return GamepadButtons.DpadRight;
             return GamepadButtons.None;
         }
     }

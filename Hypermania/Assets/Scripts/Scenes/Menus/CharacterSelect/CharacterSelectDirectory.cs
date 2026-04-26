@@ -30,7 +30,9 @@ namespace Scenes.Menus.CharacterSelect
         [SerializeField]
         private GlobalConfig _globalConfig;
 
-        [Tooltip("Per-slot controls config menus. Opened on L/R over the ControlsPreset row; null entries (remote slot in online, absent slot in single-device) simply never open.")]
+        [Tooltip(
+            "Per-slot controls config menus. Opened on L/R over the ControlsPreset row; null entries (remote slot in online, absent slot in single-device) simply never open."
+        )]
         [SerializeField]
         private ConfigMenu[] _controlsMenus = new ConfigMenu[2];
 

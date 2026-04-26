@@ -290,7 +290,14 @@ namespace Game.View
             // TODO: refactor me, im thinking some listener pattern
             for (int i = 0; i < _options.Players.Length; i++)
             {
-                _fighters[i].RollbackRender(state.RealFrame, state.Fighters[i], _params.VfxManager, _params.SfxManager, _options.Global);
+                _fighters[i]
+                    .RollbackRender(
+                        state.RealFrame,
+                        state.Fighters[i],
+                        _params.VfxManager,
+                        _params.SfxManager,
+                        _options.Global
+                    );
                 _playerParams[i]
                     .ManiaView.RollbackRender(state.RealFrame, state.Manias[i], _params.VfxManager, _params.SfxManager);
                 if (state.Fighters[i].SuperTier1MaxedThisRealFrame)

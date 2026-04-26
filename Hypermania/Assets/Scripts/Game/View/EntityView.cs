@@ -6,7 +6,9 @@ namespace Game.View
     public class EntityView : MonoBehaviour
     {
         [SerializeField]
-        [Tooltip("GameObjects (and their children) to skip when SetOutlinePlayerIndex reassigns layers — keeps VFX or props that need to stay on their own layer off the outline pass.")]
+        [Tooltip(
+            "GameObjects (and their children) to skip when SetOutlinePlayerIndex reassigns layers — keeps VFX or props that need to stay on their own layer off the outline pass."
+        )]
         private GameObject[] _outlineExclusions;
 
         // Layer 6 = CharacterOutline1, Layer 7 = CharacterOutline2 (ProjectSettings/TagManager.asset).
