@@ -279,6 +279,7 @@ namespace Scenes.Menus.CharacterSelect
             }
 
             _localControllers[_onlineLocalPlayerIndex] = new LocalSelectionController(_onlineLocalDevice);
+            _slotDevices[_onlineLocalPlayerIndex] = _onlineLocalDevice;
 
             _netSync = new CharacterSelectNetSync(OnlineBaseDirectory.Matchmaking);
             int remoteIndex = 1 - _onlineLocalPlayerIndex;
