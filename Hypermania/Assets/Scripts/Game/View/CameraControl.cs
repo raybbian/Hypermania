@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Design.Configs;
+using Game.Sim.Configs;
 using Game.Sim;
 using Game.View.Events;
 using UnityEngine;
@@ -18,35 +18,36 @@ namespace Game.View
         {
             public float CameraSpeed;
             public float ZoomSpeed;
-            public float ManiaHalfHeight;
-            public float CountdownFocusHalfHeight;
-            public GlobalConfig Config;
 
-            // Additional area outside the arena bounds that the camera is allowed to see
+            // Most zoomed-in orthographic half-height. Used during mania.
+            public float MinZoom;
+
+            // Most zoomed-out orthographic half-height. Used during normal fighting.
+            public float MaxZoom;
+
+            public float CountdownFocusHalfHeight;
+
+            // Extra space added around the interest-point bounding box before
+            // computing camera position. Pure visual padding.
+            public float Padding;
+
+            // Additional area outside the arena bounds the camera is allowed to see.
             public float Margin;
             public Camera Camera;
         }
 
         [SerializeField]
         private Params _params;
+        private GlobalStats _stats;
         private List<Vector2> _interestPoints;
         private float _targetZoom;
 
-        void Start()
+        public void Init(GlobalStats stats)
         {
+            _stats = stats;
             _interestPoints = new List<Vector2>();
-            _targetZoom = (float)_params.Config.CameraHalfHeight;
+            _targetZoom = _params.MaxZoom;
             _params.Camera.orthographicSize = _targetZoom;
-        }
-
-        public void OnValidate()
-        {
-            if (_params.Config == null)
-            {
-                throw new InvalidOperationException(
-                    "Must set the config field on CameraControl because it reference the arena bounds"
-                );
-            }
         }
 
         public void UpdateCamera(List<Vector2> interestPoints, GameMode gameMode, Vector2? focusPoint = null)
@@ -60,7 +61,7 @@ namespace Game.View
 
             _interestPoints = interestPoints;
             bool inMania = gameMode == GameMode.ManiaStart || gameMode == GameMode.Mania;
-            _targetZoom = inMania ? _params.ManiaHalfHeight : (float)_params.Config.CameraHalfHeight;
+            _targetZoom = inMania ? _params.MinZoom : _params.MaxZoom;
         }
 
         public void Update()
@@ -77,7 +78,7 @@ namespace Game.View
                 min = Vector2.Min(min, point);
                 max = Vector2.Max(max, point);
             }
-            Vector2 padding = new Vector2((float)_params.Config.CameraPadding, (float)_params.Config.CameraPadding);
+            Vector2 padding = new Vector2(_params.Padding, _params.Padding);
             min -= padding;
             max += padding;
 
@@ -95,9 +96,9 @@ namespace Game.View
             float halfHeight = _params.Camera.orthographicSize;
             float halfWidth = _params.Camera.orthographicSize * _params.Camera.aspect;
 
-            float minX = (float)-_params.Config.WallsX + halfWidth - _params.Margin;
-            float maxX = (float)_params.Config.WallsX - halfWidth + _params.Margin;
-            float minY = (float)_params.Config.GroundY + halfHeight - _params.Margin;
+            float minX = (float)-_stats.WallsX + halfWidth - _params.Margin;
+            float maxX = (float)_stats.WallsX - halfWidth + _params.Margin;
+            float minY = (float)_stats.GroundY + halfHeight - _params.Margin;
             float maxY = float.PositiveInfinity;
 
             // Clamping Camera View

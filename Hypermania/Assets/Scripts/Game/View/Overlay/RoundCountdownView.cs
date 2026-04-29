@@ -1,4 +1,3 @@
-using Design.Configs;
 using Game.Sim;
 using TMPro;
 using UnityEngine;
@@ -29,7 +28,7 @@ namespace Game.View.Overlay
 
         public void DisplayRoundCD(Frame currentFrame, Frame roundStart, GameOptions options)
         {
-            var audio = options.Global.Audio;
+            var audio = options.Sim.Global.Audio;
             int elapsed = currentFrame.No - roundStart.No;
             int totalCountdown = audio.BeatsToFrame(8);
 

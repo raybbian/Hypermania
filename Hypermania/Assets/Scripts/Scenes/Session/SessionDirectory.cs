@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Game;
+using Game.Sim.Configs;
 using Game.Sim;
+using Game.View.Configs;
 using Scenes.Menus.InputSelect;
 using Scenes.Menus.MainMenu;
 using UnityEngine;
@@ -13,8 +16,18 @@ namespace Scenes.Session
     {
         public static GameConfig Config;
         public static GameOptions Options;
+        public static GlobalStats GlobalStats;
+        public static AudioPresentation AudioPresentation;
         public static Dictionary<InputDevice, DeviceAssignment> RegisteredDevices { get; private set; } = new();
 
+        [Header("Required")]
+        [SerializeField]
+        private GlobalStats _globalStats;
+
+        [SerializeField]
+        private AudioPresentation _audioPresentation;
+
+        [Header("Overrides")]
         [SerializeField]
         private GameConfig _config;
 
@@ -25,15 +38,19 @@ namespace Scenes.Session
         {
             Config = _config;
             Options = _options;
+            GlobalStats = _globalStats;
+            AudioPresentation = _audioPresentation;
         }
 
         private void OnValidate()
         {
             Config = _config;
             Options = _options;
-            if (_options.LocalPlayers.Length >= 1)
+            GlobalStats = _globalStats;
+            AudioPresentation = _audioPresentation;
+            if (_options?.Input?.Players != null && _options.Input.Players.Length >= 1 && _options.Input.Players[0] != null)
             {
-                _options.LocalPlayers[0].InputDevice = Keyboard.current;
+                _options.Input.Players[0].InputDevice = Keyboard.current;
             }
         }
     }

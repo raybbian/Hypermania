@@ -1,9 +1,8 @@
-using Design.Animation;
-using Design.Configs;
 using Game.Sim;
 using TMPro;
 using UnityEngine;
 using Utils;
+using Game.Sim.Configs;
 
 namespace Game.View.Overlay
 {
@@ -95,7 +94,7 @@ namespace Game.View.Overlay
             }
         }
 
-        public void AddFrameData(in GameState state, GameOptions options)
+        public void AddFrameData(in GameState state, SimOptions options)
         {
             if (state.SimFrame == Frame.NullFrame)
             {
@@ -106,10 +105,10 @@ namespace Game.View.Overlay
             int baseIdx = frame.No % _numColumns;
             for (int i = 0; i < 2; i++)
             {
-                if (state.Fighters[i].PostActionState.HasValue)
+                if (state.Fighters[i].View.PostActionState.HasValue)
                 {
-                    CharacterState displayState = state.Fighters[i].PostActionState.Value;
-                    Frame displayStateStart = state.Fighters[i].PostActionStateStart.Value;
+                    CharacterState displayState = state.Fighters[i].View.PostActionState.Value;
+                    Frame displayStateStart = state.Fighters[i].View.PostActionStateStart.Value;
 
                     if (displayState == CharacterState.Grabbed)
                     {

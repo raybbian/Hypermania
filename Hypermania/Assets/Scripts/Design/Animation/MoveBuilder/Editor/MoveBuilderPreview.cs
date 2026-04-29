@@ -1,3 +1,4 @@
+using Game.Sim;
 using Game.View;
 using Game.View.Fighters;
 using UnityEditor;
@@ -5,6 +6,7 @@ using UnityEditor.EditorTools;
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
 using Utils.SoftFloat;
+using Game.Sim.Configs;
 
 namespace Design.Animation.MoveBuilder.Editor
 {

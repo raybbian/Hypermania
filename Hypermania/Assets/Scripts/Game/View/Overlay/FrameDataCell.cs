@@ -1,5 +1,4 @@
-using Design.Animation;
-using Design.Configs;
+using Game.Sim.Configs;
 using Game.Sim;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -19,16 +18,16 @@ namespace Game.View.Overlay
 
         public FrameType CurType { get; private set; } = FrameType.Neutral;
 
-        public void SetType(Frame frame, in FighterState state, CharacterConfig characterConfig)
+        public void SetType(Frame frame, in FighterState state, CharacterStats stats)
         {
-            FrameData data = characterConfig.GetHitboxData(state.State).GetFrame(frame - state.StateStart);
+            FrameData data = stats.GetHitboxData(state.State).GetFrame(frame - state.StateStart);
             FrameType res = data == null ? FrameType.Neutral : data.FrameType;
             SetType(res);
         }
 
-        public void SetType(Frame frame, CharacterState animState, Frame stateStart, CharacterConfig characterConfig)
+        public void SetType(Frame frame, CharacterState animState, Frame stateStart, CharacterStats stats)
         {
-            FrameData data = characterConfig.GetHitboxData(animState).GetFrame(frame - stateStart);
+            FrameData data = stats.GetHitboxData(animState).GetFrame(frame - stateStart);
             FrameType res = data == null ? FrameType.Neutral : data.FrameType;
             SetType(res);
         }

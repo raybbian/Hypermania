@@ -1,14 +1,10 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using Utils.EnumArray;
+using Game.Sim;
 
 namespace Game.View.Background
 {
-    public enum Stage
-    {
-        Stage1 = 0,
-        Stage2 = 1,
-    }
 
     public class StageBackgroundLoader : MonoBehaviour
     {

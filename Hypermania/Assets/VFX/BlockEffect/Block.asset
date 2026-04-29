@@ -12,6 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
   m_Name: Block
   m_EditorClassIdentifier: 
-  Clip: {fileID: 0}
+  AnimLoops: 0
+  ClipName: Block
   ComboEligible: 1
+  Followup: 3
+  FollowupInput: 0
+  IgnoreOwner: 0
+  ApplyRootMotion: 0
   Frames: []

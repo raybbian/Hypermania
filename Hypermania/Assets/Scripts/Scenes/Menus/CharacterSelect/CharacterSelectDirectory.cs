@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Design.Configs;
 using Game;
+using Game.Sim.Configs;
 using Game.Sim;
 using Game.View.Background;
+using Game.View.Configs;
+using Game.View.Configs.Input;
 using Netcode.P2P;
 using Scenes.Menus.CharacterSelect.Controls;
 using Scenes.Menus.InputSelect;
@@ -16,6 +18,7 @@ using Steamworks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Utils.EnumArray;
+using SkinConfig = Game.View.Configs.SkinConfig;
 
 namespace Scenes.Menus.CharacterSelect
 {
@@ -28,7 +31,7 @@ namespace Scenes.Menus.CharacterSelect
     public class CharacterSelectDirectory : MonoBehaviour
     {
         [SerializeField]
-        private GlobalConfig _globalConfig;
+        private PresentationRoster _presentationRoster;
 
         [Tooltip(
             "Per-slot controls config menus. Opened on L/R over the ControlsPreset row; null entries (remote slot in online, absent slot in single-device) simply never open."
@@ -42,13 +45,10 @@ namespace Scenes.Menus.CharacterSelect
         )]
         private SkinConfig _randomSkin;
 
-        /// <summary>
-        /// Character roster derived from <see cref="_globalConfig"/> at OnEnable.
-        /// Order is determined by the sorted <see cref="Character"/> enum values
-        /// (via <see cref="EnumIndexCache{T}"/>), so host and joiner see the
-        /// same index ordering for online sync.
-        /// </summary>
-        private CharacterConfig[] _roster;
+        // Character roster built from _presentationRoster at OnEnable. Order is
+        // determined by the sorted Character enum values (via EnumIndexCache),
+        // so host and joiner see the same index ordering for online sync.
+        private CharacterPresentation[] _roster;
 
         [Header("Child views")]
         [SerializeField]
@@ -90,7 +90,7 @@ namespace Scenes.Menus.CharacterSelect
             _exiting = false;
             _state = new CharacterSelectState();
             _isOnline = SessionDirectory.Config == GameConfig.Online;
-            _roster = BuildRoster(_globalConfig);
+            _roster = BuildRoster(_presentationRoster);
             _controlsMenuSession = new ControlsMenuSession(IsProfileClaimedByOtherSlotState);
 
             if (_grid != null)
@@ -199,7 +199,7 @@ namespace Scenes.Menus.CharacterSelect
             List<(int, int)> candidates = new List<(int, int)>(_roster.Length * 2);
             for (int c = 0; c < _roster.Length; c++)
             {
-                CharacterConfig cfg = _roster[c];
+                CharacterPresentation cfg = _roster[c];
                 int skinCount = cfg != null && cfg.Skins != null ? cfg.Skins.Length : 0;
                 for (int s = 0; s < skinCount; s++)
                 {
@@ -725,7 +725,7 @@ namespace Scenes.Menus.CharacterSelect
         {
             PlayerSelectionState slot = _state.Players[slotIndex];
             PlayerSelectionState otherSlot = _state.Players[1 - slotIndex];
-            CharacterConfig selected = GetSelectedCharacter(slot.CharacterIndex);
+            CharacterPresentation selected = GetSelectedCharacter(slot.CharacterIndex);
             int skinCount = selected != null && selected.Skins != null ? selected.Skins.Length : 0;
             bool isLocal = _isOnline ? (slotIndex == _onlineLocalPlayerIndex) : true;
             // Treat the other slot as not blocking anything while it's still
@@ -750,11 +750,11 @@ namespace Scenes.Menus.CharacterSelect
         {
             if (_roster == null || charIdx < 0 || charIdx >= _roster.Length)
                 return 0;
-            CharacterConfig cfg = _roster[charIdx];
+            CharacterPresentation cfg = _roster[charIdx];
             return cfg != null && cfg.Skins != null ? cfg.Skins.Length : 0;
         }
 
-        private CharacterConfig GetSelectedCharacter(int index)
+        private CharacterPresentation GetSelectedCharacter(int index)
         {
             if (_roster == null || _roster.Length == 0)
                 return null;
@@ -762,16 +762,16 @@ namespace Scenes.Menus.CharacterSelect
             return _roster[clamped];
         }
 
-        private static CharacterConfig[] BuildRoster(GlobalConfig config)
+        private static CharacterPresentation[] BuildRoster(PresentationRoster roster)
         {
-            if (config == null)
-                return System.Array.Empty<CharacterConfig>();
-            List<CharacterConfig> list = new List<CharacterConfig>(EnumIndexCache<Character>.Count);
+            if (roster == null)
+                return System.Array.Empty<CharacterPresentation>();
+            List<CharacterPresentation> list = new List<CharacterPresentation>(EnumIndexCache<Character>.Count);
             for (int i = 0; i < EnumIndexCache<Character>.Count; i++)
             {
                 Character key = EnumIndexCache<Character>.Keys[i];
-                CharacterConfig entry = config.CharacterConfig(key);
-                if (entry != null && entry.Enabled)
+                CharacterPresentation entry = roster.Get(key);
+                if (entry != null && entry.Stats != null && entry.Stats.Enabled)
                     list.Add(entry);
             }
             return list.ToArray();
@@ -879,52 +879,67 @@ namespace Scenes.Menus.CharacterSelect
             GameOptions scaffold = SessionDirectory.Options ?? new GameOptions();
             bool training = SessionDirectory.Config == GameConfig.Training;
 
-            GameOptions options = new GameOptions
+            SimOptions sim = new SimOptions
             {
-                Global = _globalConfig != null ? _globalConfig : scaffold.Global,
+                Global = scaffold.Sim?.Global,
                 InfoOptions =
-                    scaffold.InfoOptions
+                    scaffold.Sim?.InfoOptions
                     ?? new InfoOptions
                     {
                         ShowFrameData = training,
                         ShowBoxes = training,
                         VerifyComboPrediction = false,
                     },
-                Players = new PlayerOptions[2],
+                Players = new PlayerSimOptions[2],
                 AlwaysRhythmCancel = false,
+            };
+
+            PresentationOptions presentation = new PresentationOptions
+            {
+                Players = new PlayerPresentation[2],
+                Audio = scaffold.Presentation?.Audio,
                 Stage = _resolvedStage,
             };
 
             for (int i = 0; i < 2; i++)
             {
                 PlayerSelectionState slot = _state.Players[i];
-                CharacterConfig character = GetSelectedCharacter(slot.CharacterIndex);
-                options.Players[i] = new PlayerOptions
+                CharacterPresentation character = GetSelectedCharacter(slot.CharacterIndex);
+                int skinIndex = ClampSkinIndex(character, slot.SkinIndex);
+                sim.Players[i] = new PlayerSimOptions
                 {
                     HealOnActionable = training,
                     SuperMaxOnActionable = training,
                     BurstMaxOnActionable = training,
                     Immortal = false,
-                    Character = character,
-                    SkinIndex = ClampSkinIndex(character, slot.SkinIndex),
+                    Character = character?.Stats,
                     ComboMode = slot.ComboMode,
                     ManiaDifficulty = slot.ManiaDifficulty,
                     SuperInputMode = slot.SuperInputMode,
                 };
+                presentation.Players[i] = new PlayerPresentation
+                {
+                    Character = character,
+                    SkinIndex = skinIndex,
+                };
             }
 
-            options.LocalPlayers = BuildLocalPlayers();
-            return options;
+            return new GameOptions
+            {
+                Sim = sim,
+                Presentation = presentation,
+                Input = new InputOptions { Players = BuildLocalPlayers() },
+            };
         }
 
-        private LocalPlayerOptions[] BuildLocalPlayers()
+        private PlayerInputBindings[] BuildLocalPlayers()
         {
             if (_isOnline)
             {
                 int idx = _onlineLocalPlayerIndex >= 0 ? _onlineLocalPlayerIndex : 0;
                 return new[]
                 {
-                    new LocalPlayerOptions
+                    new PlayerInputBindings
                     {
                         InputDevice = _onlineLocalDevice,
                         ControlScheme = BuildControlScheme(_state.Players[idx]),
@@ -932,10 +947,10 @@ namespace Scenes.Menus.CharacterSelect
                 };
             }
 
-            LocalPlayerOptions[] result = new LocalPlayerOptions[2];
+            PlayerInputBindings[] result = new PlayerInputBindings[2];
             for (int i = 0; i < 2; i++)
             {
-                result[i] = new LocalPlayerOptions
+                result[i] = new PlayerInputBindings
                 {
                     InputDevice = _slotDevices[i],
                     ControlScheme = BuildControlScheme(_state.Players[i]),
@@ -955,11 +970,11 @@ namespace Scenes.Menus.CharacterSelect
             return profile?.Bindings;
         }
 
-        private static int ClampSkinIndex(CharacterConfig config, int skinIndex)
+        private static int ClampSkinIndex(CharacterPresentation pres, int skinIndex)
         {
-            if (config == null || config.Skins == null || config.Skins.Length == 0)
+            if (pres == null || pres.Skins == null || pres.Skins.Length == 0)
                 return 0;
-            return Mathf.Clamp(skinIndex, 0, config.Skins.Length - 1);
+            return Mathf.Clamp(skinIndex, 0, pres.Skins.Length - 1);
         }
     }
 }

@@ -1,4 +1,3 @@
-using Design.Configs;
 using Game.Sim;
 using TMPro;
 using UnityEngine;
@@ -21,7 +20,7 @@ namespace Game.View.Overlay
         {
             if (gameMode == GameMode.Countdown)
             {
-                time = options.Global.RoundTimeTicks / 60;
+                time = options.Sim.Global.RoundTimeTicks / 60;
             }
             else
             {

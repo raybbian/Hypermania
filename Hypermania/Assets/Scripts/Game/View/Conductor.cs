@@ -1,6 +1,7 @@
 using System;
-using Design.Configs;
+using Game.Sim.Configs;
 using Game.Sim;
+using Game.View.Configs;
 using UnityEngine;
 using Utils;
 using Utils.EnumArray;
@@ -48,9 +49,10 @@ namespace Game.View
             _targetSourceFrame = 0.0;
             t = 0.0f;
             _hasStarted = false;
-            _startDelayTicks = options.Global.PreGameDelayTicks;
+            _startDelayTicks = options.Sim.Global.PreGameDelayTicks;
 
-            AudioClip songClip = options.Global.Audio.AudioClip;
+            AudioPresentation audioPres = options.Presentation.Audio;
+            AudioClip songClip = audioPres.AudioClip;
             if (songClip == null)
                 throw new InvalidOperationException("songClip not assigned.");
 
@@ -71,9 +73,9 @@ namespace Game.View
             _pcms = new float[3][];
             AudioClip[] clips = new[]
             {
-                options.Global.Audio.CharacterThemes[options.Players[0].Character.Character],
+                audioPres.CharacterThemes[options.Presentation.Players[0].Character.Character],
                 songClip,
-                options.Global.Audio.CharacterThemes[options.Players[1].Character.Character],
+                audioPres.CharacterThemes[options.Presentation.Players[1].Character.Character],
             };
             for (int i = 0; i < 3; i++)
             {
@@ -111,7 +113,7 @@ namespace Game.View
                 }
             }
 
-            _loopStartFrame = ComputeLoopStartFrame(options.Global.Audio);
+            _loopStartFrame = ComputeLoopStartFrame(options.Sim.Global.Audio);
 
             _output.Stop();
             _output.clip = null;
@@ -138,7 +140,7 @@ namespace Game.View
                     return;
                 }
 
-                double seconds = (double)effectiveFrame / GameManager.TPS - _msOffset / 1000.0;
+                double seconds = (double)effectiveFrame / SimConstants.TPS - _msOffset / 1000.0;
                 double sourceFrames = seconds * _sampleRate;
 
                 _sourceFrameCursor = ClampOrWrapSourceFrame(sourceFrames);
@@ -300,13 +302,13 @@ namespace Game.View
                 data[dstBase + ch] = 0f;
         }
 
-        private double ComputeLoopStartFrame(AudioConfig audioConfig)
+        private double ComputeLoopStartFrame(AudioStats audioStats)
         {
             if (!_loopSong || _totalSamples <= 0)
                 return 0.0;
 
-            double bpm = (double)audioConfig.Bpm;
-            double loopBeat = Math.Max(0.0, audioConfig.LoopBeat);
+            double bpm = (double)audioStats.Bpm;
+            double loopBeat = Math.Max(0.0, audioStats.LoopBeat);
 
             if (bpm <= 0.0)
                 return 0.0;

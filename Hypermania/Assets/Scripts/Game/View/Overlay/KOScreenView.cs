@@ -8,7 +8,7 @@ namespace Game.View.Overlay
     {
         public void Render(in GameState state)
         {
-            if (state.GameMode == GameMode.RoundEnd && state.RealFrame - state.ModeStart > GameManager.ROLLBACK_FRAMES)
+            if (state.GameMode == GameMode.RoundEnd && state.RealFrame - state.ModeStart > SimConstants.ROLLBACK_FRAMES)
             {
                 gameObject.SetActive(true);
             }

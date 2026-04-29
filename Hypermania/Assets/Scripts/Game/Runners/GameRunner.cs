@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Design.Configs;
 using Game.Sim;
 using Game.View;
+using Game.View.Configs.Input;
 using Netcode.P2P;
 using Netcode.Rollback;
 using Steamworks;
@@ -53,15 +53,16 @@ namespace Game.Runners
                 throw new InvalidOperationException("must get 2 players");
             }
             _options = options;
-            _inputBuffers = new InputBuffer[_options.LocalPlayers.Length];
+            int localCount = _options.Input?.Players?.Length ?? 0;
+            _inputBuffers = new InputBuffer[localCount];
             for (int i = 0; i < _inputBuffers.Length; i++)
             {
                 _inputBuffers[i] = new InputBuffer(
-                    _options.LocalPlayers[i]?.InputDevice,
-                    _options.LocalPlayers[i]?.ControlScheme ?? ControlsConfig.DefaultBindings
+                    _options.Input.Players[i]?.InputDevice,
+                    _options.Input.Players[i]?.ControlScheme ?? ControlsConfig.DefaultBindings
                 );
             }
-            _curState = GameState.Create(_options);
+            _curState = GameState.Create(_options.Sim);
             _view.Init(_options);
             _time = 0;
             _initialized = true;

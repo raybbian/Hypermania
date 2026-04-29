@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Design.Animation;
-using Design.Configs;
-using Game.View.Overlay;
+using Game.Sim.Configs;
+using Game.Sim.Observation;
 using MemoryPack;
-using UnityEngine;
 using Utils;
 using Utils.SoftFloat;
+using Game.Sim;
 
 namespace Game.Sim
 {
@@ -27,6 +26,42 @@ namespace Game.Sim
         Standing,
         Aerial,
         Crouching,
+    }
+
+    // Transient one-frame triggers consumed by the view layer (VFX, SFX,
+    // overlay flashes). Written during Advance, cleared at the start of the
+    // next Advance via FighterState.ClearViewNotifiers. Serialized so that
+    // rollback Save/Load restores them on the loaded state - the view layer
+    // re-asserts the VFX/SFX on each loaded-state RollbackRender, which is
+    // what keeps GameView's ViewEventManager from dropping in-flight effects
+    // during the re-sim window. Excluded from ML observations.
+    [MemoryPackable]
+    public partial struct FighterViewNotifiers
+    {
+        public BoxProps? HitProps;
+        public SVector2? HitLocation;
+        public SVector2? ClankLocation;
+        public bool CurrentGrabTechable;
+        public bool GrabTechedThisRealFrame;
+        public bool StateChangedThisRealFrame;
+        public bool SuperTier1MaxedThisRealFrame;
+        public bool SuperTier2MaxedThisRealFrame;
+        public CharacterState? PostActionState;
+        public Frame? PostActionStateStart;
+
+        public void Clear()
+        {
+            HitProps = null;
+            HitLocation = null;
+            ClankLocation = null;
+            GrabTechedThisRealFrame = false;
+            StateChangedThisRealFrame = false;
+            SuperTier1MaxedThisRealFrame = false;
+            SuperTier2MaxedThisRealFrame = false;
+            PostActionState = null;
+            PostActionStateStart = null;
+            // CurrentGrabTechable persists across the active grab, not the frame.
+        }
     }
 
     [MemoryPackable]
@@ -89,16 +124,8 @@ namespace Game.Sim
 
         public Frame LocationSt { get; private set; }
 
-        public BoxProps? HitProps { get; private set; }
-        public SVector2? HitLocation { get; private set; }
-        public SVector2? ClankLocation { get; private set; }
-        public bool CurrentGrabTechable { get; private set; }
-        public bool GrabTechedThisRealFrame { get; private set; }
-        public bool StateChangedThisRealFrame { get; private set; }
-        public bool SuperTier1MaxedThisRealFrame { get; private set; }
-        public bool SuperTier2MaxedThisRealFrame { get; private set; }
-        public CharacterState? PostActionState { get; private set; }
-        public Frame? PostActionStateStart { get; private set; }
+        [NonObservable]
+        public FighterViewNotifiers View;
 
         // Attacker-side OnHitTransition that ProcessHit queues on frame F.
         // ApplyPendingHitTransition runs the real SetState at the start of
@@ -111,8 +138,8 @@ namespace Game.Sim
         public KnockdownKind PendingKnockdown { get; private set; }
 
         public bool HitLastRealFrame =>
-            HitProps.HasValue
-            && HitLocation.HasValue
+            View.HitProps.HasValue
+            && View.HitLocation.HasValue
             && (
                 State == CharacterState.Death
                 || State == CharacterState.SoftKnockdown
@@ -122,12 +149,12 @@ namespace Game.Sim
             );
 
         public bool BlockedLastRealFrame =>
-            HitProps.HasValue
-            && HitLocation.HasValue
+            View.HitProps.HasValue
+            && View.HitLocation.HasValue
             && (State == CharacterState.BlockCrouch || State == CharacterState.BlockStand);
 
         public bool DashedLastRealFrame =>
-            StateChangedThisRealFrame && (State == CharacterState.BackDash || State == CharacterState.ForwardDash);
+            View.StateChangedThisRealFrame && (State == CharacterState.BackDash || State == CharacterState.ForwardDash);
 
         // Same as CharacterStateExtensions.IsActionable, but also returns
         // false while LockedHitstun is set. A fighter whose hitstun rolled
@@ -204,7 +231,7 @@ namespace Game.Sim
             };
         }
 
-        public void RoundReset(CharacterConfig config, SVector2 position, FighterFacing facingDirection)
+        public void RoundReset(CharacterStats config, SVector2 position, FighterFacing facingDirection)
         {
             Position = position;
             Velocity = SVector2.zero;
@@ -236,7 +263,7 @@ namespace Game.Sim
             PendingKnockdown = KnockdownKind.None;
         }
 
-        public void DoFrameStart(GameOptions options, bool maniaActive)
+        public void DoFrameStart(SimOptions options, bool maniaActive)
         {
             // Latch the mania hitstun lock: if this fighter is in hitstun
             // while a mania is running, they have to keep being treated as
@@ -262,7 +289,7 @@ namespace Game.Sim
         // Otherwise a fighter whose stun ends this frame would still look
         // non-actionable and skip the resets, even though they're about to
         // process input normally.
-        public void ApplyActionableFrameResets(GameOptions options, GameMode gameMode)
+        public void ApplyActionableFrameResets(SimOptions options, GameMode gameMode)
         {
             if (!Actionable)
             {
@@ -284,7 +311,7 @@ namespace Game.Sim
             }
         }
 
-        public bool OnGround(GameOptions options) => Position.y > options.Global.GroundY ? false : true;
+        public bool OnGround(SimOptions options) => Position.y > options.Global.GroundY ? false : true;
 
         // Records a rhythm no-op press. Moves half of the remaining 0.25
         // budget into NoOpBonus, so the bonus approaches 1.25 but never
@@ -335,15 +362,7 @@ namespace Game.Sim
 
         public void ClearViewNotifiers()
         {
-            HitProps = null;
-            HitLocation = null;
-            ClankLocation = null;
-            GrabTechedThisRealFrame = false;
-            StateChangedThisRealFrame = false;
-            SuperTier1MaxedThisRealFrame = false;
-            SuperTier2MaxedThisRealFrame = false;
-            PostActionState = null;
-            PostActionStateStart = null;
+            View.Clear();
         }
 
         // Queues a collision-driven state transition to apply at the start of
@@ -375,8 +394,8 @@ namespace Game.Sim
 
         public void CapturePostActionState()
         {
-            PostActionState = State;
-            PostActionStateStart = StateStart;
+            View.PostActionState = State;
+            View.PostActionStateStart = StateStart;
         }
 
         public void SetState(CharacterState nextState, Frame start, Frame end, bool forceChange = false)
@@ -390,7 +409,7 @@ namespace Game.Sim
                 State = nextState;
                 StateStart = start;
                 StateEnd = end;
-                StateChangedThisRealFrame = true;
+                View.StateChangedThisRealFrame = true;
                 IsSuperAttack = false;
             }
         }
@@ -412,7 +431,7 @@ namespace Game.Sim
             }
         }
 
-        public void TickStateMachine(Frame frame, GameOptions options)
+        public void TickStateMachine(Frame frame, SimOptions options)
         {
             // if animation ends, switch back to idle
             if (frame >= StateEnd)
@@ -458,9 +477,9 @@ namespace Game.Sim
             }
         }
 
-        public void ApplyMovementState(Frame frame, GameOptions options, bool isRhythmCancel)
+        public void ApplyMovementState(Frame frame, SimOptions options, bool isRhythmCancel)
         {
-            CharacterConfig config = options.Players[Index].Character;
+            CharacterStats config = options.Players[Index].Character;
             sfloat runMult = State == CharacterState.Running ? options.Global.RunningSpeedMultiplier : (sfloat)1f;
 
             bool gatlingPreJumpAllowed =
@@ -569,9 +588,9 @@ namespace Game.Sim
             }
         }
 
-        private void TriggerPreJump(Frame frame, GameOptions options, bool isRhythmCancel, sfloat runMult)
+        private void TriggerPreJump(Frame frame, SimOptions options, bool isRhythmCancel, sfloat runMult)
         {
-            CharacterConfig config = options.Players[Index].Character;
+            CharacterStats config = options.Players[Index].Character;
 
             if (InputH.PressedAndReleasedRecently(InputFlags.Down, options.Global.Input.SuperJumpWindow))
             {
@@ -631,8 +650,8 @@ namespace Game.Sim
 
         public void ApplyActiveState(
             Frame simFrame,
-            GameOptions options,
-            CharacterConfig config,
+            SimOptions options,
+            CharacterStats config,
             bool isRhythmCancel,
             GameMode gameMode,
             bool isManiaAttacker
@@ -803,7 +822,7 @@ namespace Game.Sim
             }
         }
 
-        private bool IsGatlingCancelAllowed(CharacterState to, Frame simFrame, CharacterConfig config)
+        private bool IsGatlingCancelAllowed(CharacterState to, Frame simFrame, CharacterStats config)
         {
             if (!AttackConnected)
                 return false;
@@ -835,7 +854,7 @@ namespace Game.Sim
             return ticksIntoState >= recoveryEnd - cancelWindow;
         }
 
-        public void UpdatePosition(Frame frame, GameOptions options, ref SVector2 otherFighterPos)
+        public void UpdatePosition(Frame frame, SimOptions options, ref SVector2 otherFighterPos)
         {
             // Apply gravity if not grounded and not in airdash
             FrameData curData = options.Players[Index].Character.GetFrameData(State, frame - StateStart);
@@ -872,10 +891,10 @@ namespace Game.Sim
 
             if (curData.GravityEnabled && Position.y > options.Global.GroundY)
             {
-                Velocity.y += options.Global.Gravity * 1 / GameManager.TPS;
+                Velocity.y += options.Global.Gravity * 1 / SimConstants.TPS;
             }
 
-            CharacterConfig config = options.Players[Index].Character;
+            CharacterStats config = options.Players[Index].Character;
             switch (State)
             {
                 case CharacterState.BackAirDash:
@@ -904,7 +923,7 @@ namespace Game.Sim
             }
 
             // Update Position
-            Position += Velocity * 1 / GameManager.TPS;
+            Position += Velocity * 1 / SimConstants.TPS;
 
             // Floor collision
             if (Position.y <= options.Global.GroundY)
@@ -920,12 +939,10 @@ namespace Game.Sim
                 Velocity = SVector2.zero;
             }
 
-            sfloat cameraMaxBounds =
-                otherFighterPos.x + 2 * (options.Global.CameraHalfWidth - options.Global.CameraPadding);
-            sfloat cameraMinBounds =
-                otherFighterPos.x - 2 * (options.Global.CameraHalfWidth - options.Global.CameraPadding);
-            sfloat maxBounds = Mathsf.Min(options.Global.WallsX, cameraMaxBounds);
-            sfloat minBounds = Mathsf.Max(-options.Global.WallsX, cameraMinBounds);
+            sfloat distMaxBounds = otherFighterPos.x + options.Global.MaxFighterDistance;
+            sfloat distMinBounds = otherFighterPos.x - options.Global.MaxFighterDistance;
+            sfloat maxBounds = Mathsf.Min(options.Global.WallsX, distMaxBounds);
+            sfloat minBounds = Mathsf.Max(-options.Global.WallsX, distMinBounds);
             bool stunned = State.IsStunned();
 
             if (Position.x >= maxBounds)
@@ -957,7 +974,7 @@ namespace Game.Sim
             }
         }
 
-        public void ApplyAerialCancel(Frame frame, GameOptions options, CharacterConfig config)
+        public void ApplyAerialCancel(Frame frame, SimOptions options, CharacterStats config)
         {
             if (!OnGround(options))
             {
@@ -1010,7 +1027,7 @@ namespace Game.Sim
             }
         }
 
-        public void AddBoxes(Frame frame, CharacterConfig config, Physics<BoxProps> physics, int handle)
+        public void AddBoxes(Frame frame, CharacterStats config, Physics<BoxProps> physics, int handle)
         {
             int tick = frame - StateStart;
             HitboxData hitboxData = config.GetHitboxData(State);
@@ -1041,7 +1058,7 @@ namespace Game.Sim
             }
         }
 
-        public void ProcessHit(Frame frame, BoxProps props, CharacterConfig config)
+        public void ProcessHit(Frame frame, BoxProps props, CharacterStats config)
         {
             if (props.HasTransition)
             {
@@ -1078,7 +1095,7 @@ namespace Game.Sim
         public HitOutcome ApplyHit(
             Frame frame,
             Frame attackSt,
-            CharacterConfig characterConfig,
+            CharacterStats characterConfig,
             BoxProps props,
             SVector2 location,
             sfloat damageMult
@@ -1094,8 +1111,8 @@ namespace Game.Sim
                 return new HitOutcome { Kind = HitKind.None };
             }
 
-            HitProps = props;
-            HitLocation = location;
+            View.HitProps = props;
+            View.HitLocation = location;
             ImmunityHash = immunityVal;
 
             bool holdingBack = InputH.IsHeld(BackwardInput);
@@ -1158,7 +1175,7 @@ namespace Game.Sim
             if (State != CharacterState.Grabbed)
             {
                 ComboedCount++;
-                CurrentGrabTechable = props.Techable;
+                View.CurrentGrabTechable = props.Techable;
             }
 
             SetState(CharacterState.Grabbed, frame, frame + 2, true);
@@ -1174,12 +1191,12 @@ namespace Game.Sim
             Position = hitboxCenter + grabPos;
         }
 
-        public void ApplyGrabTech(Frame frame, GameOptions options, SVector2 pushDirection)
+        public void ApplyGrabTech(Frame frame, SimOptions options, SVector2 pushDirection)
         {
             SetState(CharacterState.Hit, frame, frame + options.Global.GrabTechStunTicks, true);
             Velocity = pushDirection * options.Global.GrabTechKnockbackMagnitude;
-            CurrentGrabTechable = false;
-            GrabTechedThisRealFrame = true;
+            View.CurrentGrabTechable = false;
+            View.GrabTechedThisRealFrame = true;
             CancelPendingHitTransition();
         }
 
@@ -1191,10 +1208,10 @@ namespace Game.Sim
             PendingHitStateForce = false;
         }
 
-        public void ApplyClank(Frame frame, GameOptions options, SVector2 location)
+        public void ApplyClank(Frame frame, SimOptions options, SVector2 location)
         {
             SetState(CharacterState.Hit, frame, frame + options.Global.ClankTicks);
-            ClankLocation = location;
+            View.ClankLocation = location;
 
             Velocity = SVector2.zero;
         }
@@ -1232,7 +1249,7 @@ namespace Game.Sim
             }
         }
 
-        public void AddSuper(sfloat amount, GameOptions options)
+        public void AddSuper(sfloat amount, SimOptions options)
         {
             sfloat max = options.Global.SuperMax;
             sfloat cost = options.Global.SuperCost;
@@ -1244,11 +1261,11 @@ namespace Game.Sim
             bool crossedTier2 = prevSuper < doubleCost && Super >= doubleCost;
             if (crossedTier1)
             {
-                SuperTier1MaxedThisRealFrame = true;
+                View.SuperTier1MaxedThisRealFrame = true;
             }
             if (crossedTier2)
             {
-                SuperTier2MaxedThisRealFrame = true;
+                View.SuperTier2MaxedThisRealFrame = true;
             }
         }
     }

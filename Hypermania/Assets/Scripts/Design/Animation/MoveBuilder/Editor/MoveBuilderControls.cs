@@ -5,6 +5,7 @@ using Game.View.Fighters;
 using UnityEditor;
 using UnityEngine;
 using Utils.SoftFloat;
+using Game.Sim.Configs;
 
 namespace Design.Animation.MoveBuilder.Editor
 {

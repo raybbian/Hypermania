@@ -55,17 +55,18 @@ namespace Game.View.Overlay
                     _currentColors[i] = _colors.Hype;
             }
 
-            float hypeRatio = (float)(state.HypeMeter / options.Global.MaxHype);
+            var global = options.Sim.Global;
+            float hypeRatio = (float)(state.HypeMeter / global.MaxHype);
             float t = 1f - Mathf.Exp(-_colorLerpSpeed * deltaTime);
 
             // Beat pulse: spike brightness each quarter note, exponentially decay
             // back to baseline before the next beat. Shared across both players
             // since they hear the same track.
-            int framesPerBeat = options.Global.Audio.FramesPerBeat;
+            int framesPerBeat = global.Audio.FramesPerBeat;
             int beatIndex = 0;
             if (framesPerBeat > 0)
             {
-                long firstBeat = options.Global.Audio.FirstBeatFrame(options.Global.PreGameDelayTicks).No;
+                long firstBeat = global.Audio.FirstBeatFrame(global.PreGameDelayTicks).No;
                 long offsetFrames = Math.Max(0L, (long)state.RealFrame.No - firstBeat);
                 beatIndex = (int)(offsetFrames / framesPerBeat);
             }

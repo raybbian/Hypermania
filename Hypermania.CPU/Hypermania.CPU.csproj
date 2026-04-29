@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <RootNamespace>Hypermania.CPU</RootNamespace>
+    <OutputType>Exe</OutputType>
+    <DefineConstants>$(DefineConstants);HYPERMANIA_HEADLESS</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CS0414;CS0649;CS0169;CS8981;CS0108;CS0114</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MemoryPack" Version="1.21.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Hypermania\Assets\Scripts\Utils\**\*.cs" />
+    <Compile Include="..\Hypermania\Assets\Scripts\Game\Sim\**\*.cs" />
+    <Compile Include="..\Hypermania\Assets\Scripts\Netcode\Rollback\Rollback.Core.cs" />
+
+    <Compile Remove="..\Hypermania\**\Editor\**" />
+    <Compile Remove="..\Hypermania\Assets\Scripts\Utils\Build\**" />
+  </ItemGroup>
+</Project>

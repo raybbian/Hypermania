@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
   m_Name: MediumAttack
   m_EditorClassIdentifier: 
-  Clip: {fileID: 7400000, guid: 9856e8797989a4fbf8359d8f13c83937, type: 2}
+  AnimLoops: 0
+  ClipName: MediumAttack
   ComboEligible: 1
   Followup: 36
   FollowupInput: 64

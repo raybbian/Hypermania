@@ -1,7 +1,9 @@
 using System.IO;
 using System.Linq;
+using Game.Sim;
 using UnityEditor;
 using UnityEngine;
+using Game.Sim.Configs;
 
 namespace Design.Animation.MoveBuilder.Editor
 {

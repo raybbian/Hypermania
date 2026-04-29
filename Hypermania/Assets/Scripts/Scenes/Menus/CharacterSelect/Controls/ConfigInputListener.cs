@@ -1,5 +1,5 @@
-using Design.Configs;
 using Game.Sim;
+using Game.View.Configs.Input;
 using TMPro;
 using UnityEngine;
 

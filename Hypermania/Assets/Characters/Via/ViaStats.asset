@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cebd605a5f3d924584bc28f27e09e17, type: 3}
+  m_Name: ViaStats
+  m_EditorClassIdentifier: 
+  Character: 2
+  Enabled: 1
+  CharacterHeight:
+    rawValue: 1072064102
+  ForwardSpeed:
+    rawValue: 1075000115
+  BackSpeed:
+    rawValue: 1068708659
+  JumpVelocity:
+    rawValue: 1089470464
+  Health:
+    rawValue: 1127153664
+  BurstMax:
+    rawValue: 1123680256
+  ForwardDashDistance:
+    rawValue: 1115815936
+  BackDashDistance:
+    rawValue: 1114636288
+  BackDashRecoveryTicks: 5
+  NumAirDashes: 1
+  ForwardAirDashDistance:
+    rawValue: 1114636288
+  BackAirDashDistance:
+    rawValue: 1113325568
+  Hitboxes:
+    values:
+    - {fileID: 11400000, guid: 888af7c8677801b4e98813875190acde, type: 2}
+    - {fileID: 11400000, guid: 5d8d962af0ba34b46b5ca0f916190d28, type: 2}
+    - {fileID: 11400000, guid: 7e1eecd466260e94884d7d2c12dc0885, type: 2}
+    - {fileID: 11400000, guid: afe832777fef25e449997662a55d0dcc, type: 2}
+    - {fileID: 11400000, guid: 72331699334936c42ad6d4ef63da5c81, type: 2}
+    - {fileID: 11400000, guid: 3a6cdd11ee6bc5d42b1ffae749230389, type: 2}
+    - {fileID: 11400000, guid: cce461f311093a344979e9527c48dfa7, type: 2}
+    - {fileID: 11400000, guid: 4f4739db13875f4408d053a0c11e17ef, type: 2}
+    - {fileID: 11400000, guid: 710407ef638a59d42a95994cbc233399, type: 2}
+    - {fileID: 11400000, guid: c177b9ab93584fd4bbf98fb326d98315, type: 2}
+    - {fileID: 11400000, guid: cd8de06d4ceb40241a97a041bb618c9f, type: 2}
+    - {fileID: 11400000, guid: 81858c45ad6fd1445baa7bf7cc7202cd, type: 2}
+    - {fileID: 11400000, guid: 6bc76e8b9b4a5b84699a150b1639ff59, type: 2}
+    - {fileID: 11400000, guid: d0be783c3fa22034aaaa43c424ab440a, type: 2}
+    - {fileID: 11400000, guid: 891c161b546a14e44b36366453e7c69c, type: 2}
+    - {fileID: 11400000, guid: 6e70399e2411b734aa9f2c0b0d66c3fc, type: 2}
+    - {fileID: 11400000, guid: 60bb754bfd8dd6f4fb1e6429e606e082, type: 2}
+    - {fileID: 11400000, guid: 35bea362134556d438b1df30155dd19f, type: 2}
+    - {fileID: 11400000, guid: af34e645a5abd134da8cc440acc634d1, type: 2}
+    - {fileID: 11400000, guid: 5c3c09230f1fd4743bc37fec58271c34, type: 2}
+    - {fileID: 11400000, guid: 2dbc03a6a92e89746a85b11bac004160, type: 2}
+    - {fileID: 11400000, guid: c69ed354e1c78ac45b22094e13a893a2, type: 2}
+    - {fileID: 11400000, guid: 23f1b1cb8f646db4689ec0e2f8c5881f, type: 2}
+    - {fileID: 11400000, guid: 9fabe18d76eca6540a3e8072b5f72aff, type: 2}
+    - {fileID: 11400000, guid: 5089615872ca9824da0d498578424d68, type: 2}
+    - {fileID: 11400000, guid: 4908b138711c71d40b1fc006961aad82, type: 2}
+    - {fileID: 11400000, guid: 8ec6e1da187245b46a072a20d40bcb34, type: 2}
+    - {fileID: 11400000, guid: 3012bac6fc6850d4da54ab59e94c32a5, type: 2}
+    - {fileID: 11400000, guid: 6f848bbd9afb2ae44bb94dd75275a10d, type: 2}
+    - {fileID: 11400000, guid: d6e1f9a1a302f8946be5c506315a064c, type: 2}
+    - {fileID: 11400000, guid: 2b462b59c1fb5e54a8e2533a8b86fe8d, type: 2}
+    - {fileID: 11400000, guid: cb22b1e6edd0f834186b664962228463, type: 2}
+    - {fileID: 11400000, guid: 0e5f6ca573beadf46814c95b25a61a2d, type: 2}
+    - {fileID: 11400000, guid: 022d752e9a246aa41ae29614571729b2, type: 2}
+    - {fileID: 11400000, guid: 204e568b025849d489d2d831807a21da, type: 2}
+    - {fileID: 11400000, guid: b66ee5a34fcf412439fbb33036e9c63f, type: 2}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 11400000, guid: 3ad34aefe3ba39a4f8f4b78cbb430898, type: 2}
+    - {fileID: 11400000, guid: acf6942ca1d6b364982aa64a4a507ef4, type: 2}
+  Gatlings:
+  - From: 5
+    To: 8
+  - From: 8
+    To: 11
+  - From: 11
+    To: 14
+  - From: 8
+    To: 10
+  Projectiles:
+  - {fileID: 11400000, guid: c52f47966dd05cc4789a74dc454f0354, type: 2}
+  - {fileID: 11400000, guid: 2cba2ce532439924180d0661c66510fb, type: 2}

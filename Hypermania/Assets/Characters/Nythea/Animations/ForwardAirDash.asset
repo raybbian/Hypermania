@@ -12,7 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
   m_Name: ForwardAirDash
   m_EditorClassIdentifier: 
-  Clip: {fileID: 7400000, guid: 252efafcc2dff816986b751c1191ddf1, type: 2}
+  AnimLoops: 0
+  ClipName: ForwardAirDash
+  ComboEligible: 1
+  Followup: 3
+  FollowupInput: 0
+  IgnoreOwner: 0
+  ApplyRootMotion: 0
   Frames:
   - Boxes: []
     FrameType: 0
@@ -24,12 +30,13 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
-    FrameType: 0
-    Floating: 0
-    GravityEnabled: 0
-    ShouldApplyVel: 0
-    ApplyVelocity:
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -44,12 +51,13 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes: []
-    FrameType: 0
-    Floating: 0
-    GravityEnabled: 0
-    ShouldApplyVel: 0
-    ApplyVelocity:
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -64,12 +72,76 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes: []
     FrameType: 0
     Floating: 0
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes: []
+    FrameType: 0
+    Floating: 0
+    GravityEnabled: 0
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:

@@ -1,4 +1,4 @@
-using Design.Configs;
+using Game.Sim.Configs;
 using Game;
 using Utils;
 using Utils.SoftFloat;
@@ -12,7 +12,7 @@ namespace Game.Sim
         public int StartRhythmCombo(
             Frame realFrame,
             ref ManiaState state,
-            GameOptions options,
+            SimOptions options,
             in GameState gameState,
             int attackerIndex,
             int comboBeatCount
@@ -40,7 +40,7 @@ namespace Game.Sim
             // ends (inside GameMode.Mania at SpeedRatio=1, before any queued
             // note), so heavy aerial knockback or super followups can resolve
             // and the defender can land before the first note fires.
-            AudioConfig audio = options.Global.Audio;
+            AudioStats audio = options.Global.Audio;
             int halfRange = state.Config.HitHalfRange;
             Frame earliestStart =
                 realFrame + options.Global.ManiaSlowTicks + options.Global.ManiaStartPaddingTicks + halfRange + 3;
@@ -50,7 +50,7 @@ namespace Game.Sim
             // integer ceil against a rounded fpb can pick the wrong beat
             // when fpb's rounding direction disagrees with the true 3600/BPM,
             // occasionally yielding nextBeat < earliestStart.
-            sfloat framesPerBeatExact = (sfloat)60f / audio.Bpm * (sfloat)GameManager.TPS;
+            sfloat framesPerBeatExact = (sfloat)60f / audio.Bpm * (sfloat)SimConstants.TPS;
             Frame firstBeat = audio.FirstBeatFrame(options.Global.PreGameDelayTicks);
             int delta = earliestStart - firstBeat;
             int beats = Mathsf.CeilToInt((sfloat)delta / framesPerBeatExact);

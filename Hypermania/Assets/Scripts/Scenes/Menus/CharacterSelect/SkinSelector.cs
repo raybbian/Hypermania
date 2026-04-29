@@ -1,6 +1,7 @@
 using System.Collections.Generic;
-using Design.Configs;
+using Game.View.Configs;
 using UnityEngine;
+using Game.Sim;
 
 namespace Scenes.Menus.CharacterSelect
 {
@@ -37,7 +38,7 @@ namespace Scenes.Menus.CharacterSelect
 
         private PlayerSelectionState _state;
         private PlayerSelectionState _otherState;
-        private CharacterConfig[] _roster;
+        private CharacterPresentation[] _roster;
         private readonly List<SkinIcon> _icons = new();
 
         // Cached state so we only rebuild the icon list when the character
@@ -45,7 +46,7 @@ namespace Scenes.Menus.CharacterSelect
         private int _builtCharIndex = -1;
         private bool _builtRandom = false;
 
-        public void Bind(PlayerSelectionState state, PlayerSelectionState otherState, CharacterConfig[] roster)
+        public void Bind(PlayerSelectionState state, PlayerSelectionState otherState, CharacterPresentation[] roster)
         {
             _state = state;
             _otherState = otherState;
@@ -93,7 +94,7 @@ namespace Scenes.Menus.CharacterSelect
             RefreshCursor();
         }
 
-        private void Rebuild(CharacterConfig config)
+        private void Rebuild(CharacterPresentation config)
         {
             ClearIcons();
 

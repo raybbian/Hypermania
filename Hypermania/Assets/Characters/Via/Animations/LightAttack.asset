@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
   m_Name: LightAttack
   m_EditorClassIdentifier: 
-  Clip: {fileID: 7400000, guid: 07697d0ae4bfb5341819810ed4191337, type: 2}
+  AnimLoops: 0
+  ClipName: LightAttack
   ComboEligible: 1
   Followup: 3
   FollowupInput: 0

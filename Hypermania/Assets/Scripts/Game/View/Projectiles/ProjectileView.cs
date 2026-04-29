@@ -1,5 +1,6 @@
-using Design.Configs;
+using Game.Sim.Configs;
 using Game.Sim;
+using Game.View.Configs;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
 using Utils;
@@ -20,12 +21,12 @@ namespace Game.View.Projectiles
             _animator.speed = 0f;
         }
 
-        public virtual void Init(CharacterConfig characterConfig, int skinIndex)
+        public virtual void Init(CharacterPresentation presentation, int skinIndex)
         {
-            _spriteLibrary.spriteLibraryAsset = characterConfig.Skins[skinIndex].SpriteLibrary;
+            _spriteLibrary.spriteLibraryAsset = presentation.Skins[skinIndex].SpriteLibrary;
         }
 
-        public abstract void Render(Frame simFrame, in ProjectileState state, ProjectileConfig config);
+        public abstract void Render(Frame simFrame, in ProjectileState state, ProjectileStats stats);
 
         public virtual void DeInit() { }
     }

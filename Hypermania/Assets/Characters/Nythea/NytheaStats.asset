@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cebd605a5f3d924584bc28f27e09e17, type: 3}
+  m_Name: NytheaStats
+  m_EditorClassIdentifier: 
+  Character: 1
+  Enabled: 1
+  CharacterHeight:
+    rawValue: 1071225242
+  ForwardSpeed:
+    rawValue: 1075838976
+  BackSpeed:
+    rawValue: 1069547520
+  JumpVelocity:
+    rawValue: 1089470464
+  Health:
+    rawValue: 1128792064
+  BurstMax:
+    rawValue: 1123680256
+  ForwardDashDistance:
+    rawValue: 1116471296
+  BackDashDistance:
+    rawValue: 1114636288
+  BackDashRecoveryTicks: 5
+  NumAirDashes: 2
+  ForwardAirDashDistance:
+    rawValue: 1115815936
+  BackAirDashDistance:
+    rawValue: 1113325568
+  Hitboxes:
+    values:
+    - {fileID: 11400000, guid: b3afc991f416967e5b3e636cd58f772a, type: 2}
+    - {fileID: 11400000, guid: 219390c45eefcde0dba74ec923eb3419, type: 2}
+    - {fileID: 11400000, guid: 77993e6206ae5d42280c665e746df5b1, type: 2}
+    - {fileID: 11400000, guid: 6935d7dcf4841d9cf948ff0efee3d2cb, type: 2}
+    - {fileID: 11400000, guid: a3bad1ed65c08f24389cd65312a40c9b, type: 2}
+    - {fileID: 11400000, guid: 0fdef0c6d04a9f2f594bed51a1cbfde4, type: 2}
+    - {fileID: 11400000, guid: 48513f93e714938feada1914de251d00, type: 2}
+    - {fileID: 11400000, guid: 5447394c70299f385baef6478190f24b, type: 2}
+    - {fileID: 11400000, guid: fca7b8fe21553ad638c8a20c70e9749c, type: 2}
+    - {fileID: 11400000, guid: 4a9ae5b8445d2e2178568832e958b90c, type: 2}
+    - {fileID: 11400000, guid: c40b0df0d1b321d2c9e09f3d78ed8f9c, type: 2}
+    - {fileID: 11400000, guid: 0d95c1ae31236b6b8a26cd6e3243d85c, type: 2}
+    - {fileID: 11400000, guid: f720517925b1314e19665d74159894e4, type: 2}
+    - {fileID: 11400000, guid: 6c64153939f7007c1ba2e5f38a84c00e, type: 2}
+    - {fileID: 11400000, guid: 63ff73e5b0e4c3b4b912a71b07eb74e7, type: 2}
+    - {fileID: 11400000, guid: ded2dadb2af2e9c33a79c144134d0ee5, type: 2}
+    - {fileID: 11400000, guid: be4cf71787d5caf52a6806bec8365d62, type: 2}
+    - {fileID: 11400000, guid: 97ba04320ad0d79b19091599ba08bb36, type: 2}
+    - {fileID: 11400000, guid: ca7cee3bf8a92c320bfa17c7e66c2748, type: 2}
+    - {fileID: 11400000, guid: f15ccb862e8cab1de92a5b8300795d41, type: 2}
+    - {fileID: 11400000, guid: 54621a6ec599c53329497872728662a8, type: 2}
+    - {fileID: 11400000, guid: 119df3c9f216d104d8a0ab45160b66a6, type: 2}
+    - {fileID: 11400000, guid: 1ffcd5f04379a683297da713073bd0bb, type: 2}
+    - {fileID: 11400000, guid: aa87373ccaf1f30a39e16bf42d10e572, type: 2}
+    - {fileID: 11400000, guid: 5bd1c0ba4fd68c61aa5b25eade712298, type: 2}
+    - {fileID: 11400000, guid: 67399e7fc95d14740b5103df67dff5b2, type: 2}
+    - {fileID: 11400000, guid: b1a789ee0f02e7fde82776764c5fd193, type: 2}
+    - {fileID: 11400000, guid: f89c80537f05cc724b7718df5ed11f65, type: 2}
+    - {fileID: 11400000, guid: cbe6bbc5c57159c69818f9da9dc445a0, type: 2}
+    - {fileID: 11400000, guid: 14a63c9ee180e6815a798c717c53def4, type: 2}
+    - {fileID: 11400000, guid: f43038ecce381d3519c8d5d7e3d176ae, type: 2}
+    - {fileID: 11400000, guid: 7df773ebc66a3903eade94cab88d8482, type: 2}
+    - {fileID: 11400000, guid: 5500f7246b7ab4e46bf16bbf8031a43d, type: 2}
+    - {fileID: 11400000, guid: 16bd5e4831fe7ea44a55e99b0c2de25d, type: 2}
+    - {fileID: 11400000, guid: 4bc7b5e3f82fd5546b2510cbf9f3d05f, type: 2}
+    - {fileID: 11400000, guid: a4a09fb1d790b6041b2b8ae4eb7d0f33, type: 2}
+    - {fileID: 11400000, guid: bdf1bc94e8de9a34bb6aa50ae488cce9, type: 2}
+    - {fileID: 11400000, guid: fef47fb6a49229b47bf508f50d7136b8, type: 2}
+    - {fileID: 11400000, guid: 8d42bd13e68a79f42ae4f8f26eaed901, type: 2}
+    - {fileID: 11400000, guid: 4840cb431b0e8834288160696e35ce2f, type: 2}
+  Gatlings:
+  - From: 5
+    To: 8
+  - From: 5
+    To: 11
+  - From: 8
+    To: 11
+  - From: 13
+    To: 29
+  - From: 36
+    To: 11
+  - From: 5
+    To: 7
+  - From: 36
+    To: 10
+  - From: 11
+    To: 13
+  Projectiles:
+  - {fileID: 11400000, guid: 75b1b2e0152d7e54aa670f05fd4748f4, type: 2}

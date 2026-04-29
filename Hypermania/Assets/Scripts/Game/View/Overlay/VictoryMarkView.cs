@@ -1,15 +1,9 @@
 using UnityEngine;
 using Utils.EnumArray;
+using Game.Sim;
 
 namespace Game.View.Overlay
 {
-    public enum VictoryKind
-    {
-        Empty,
-        Normal,
-        Perfect,
-    }
-
     public class VictoryMarkView : MonoBehaviour
     {
         [SerializeField]

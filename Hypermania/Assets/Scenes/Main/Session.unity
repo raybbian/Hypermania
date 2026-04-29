@@ -164,21 +164,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _config: 0
+  _globalStats: {fileID: 11400000, guid: c4e9c8cfedf9ba5478c2e35f56cc48ae, type: 2}
+  _audioPresentation: {fileID: 11400000, guid: ad019aa479cc54e43916c7d00a4157e9, type: 2}
   _options:
-    Global: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
-    Players:
-    - HealOnActionable: 1
-      Immortal: 1
-      Character: {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}
-      SkinIndex: 0
-    - HealOnActionable: 1
-      Immortal: 1
-      Character: {fileID: 11400000, guid: b193994fbc9b652d2985b409cb9f63cf, type: 2}
-      SkinIndex: 1
-    LocalPlayers:
-    - Controls: {fileID: 0}
-    InfoOptions:
-      ShowFrameData: 1
+    Sim:
+      Global: {fileID: 0}
+      Players: []
+      InfoOptions:
+        ShowFrameData: 0
+        ShowBoxes: 0
+        VerifyComboPrediction: 0
+      AlwaysRhythmCancel: 0
+    Presentation:
+      Players: []
+      Audio: {fileID: 0}
+      Stage: 0
+    Input:
+      Players: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

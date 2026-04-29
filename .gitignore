@@ -6,3 +6,13 @@ CLAUDE.md
 .mcp.json
 Hypermania.Scripts/venv/
 Hypermania.Scripts/output/
+
+# Hypermania.CPU build + training artifacts
+Hypermania.CPU/bin/
+Hypermania.CPU/obj/
+Hypermania.CPU/snapshots/
+Hypermania.CPU/replays/
+
+# Replays and policy snapshots emitted into the Unity project at runtime
+Hypermania/Assets/StreamingAssets/Replays/
+Hypermania/Assets/StreamingAssets/Policies/

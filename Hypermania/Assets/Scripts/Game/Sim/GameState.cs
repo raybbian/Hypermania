@@ -1,17 +1,12 @@
 using System;
 using System.Buffers;
 using System.Linq;
-using Design.Animation;
-using Design.Configs;
-using Game.View.Background;
-using Game.View.Overlay;
+using Game.Sim.Configs;
 using MemoryPack;
 using Netcode.Rollback;
-using UnityEngine;
-using UnityEngine.InputSystem;
 using Utils;
-using Utils.EnumArray;
 using Utils.SoftFloat;
+using Game.Sim;
 
 namespace Game.Sim
 {
@@ -44,28 +39,16 @@ namespace Game.Sim
     }
 
     [Serializable]
-    public class PlayerOptions
+    public class PlayerSimOptions
     {
         public bool HealOnActionable;
         public bool SuperMaxOnActionable;
         public bool BurstMaxOnActionable;
         public bool Immortal;
-        public CharacterConfig Character;
-        public int SkinIndex;
+        public CharacterStats Character;
         public ComboMode ComboMode;
         public ManiaDifficulty ManiaDifficulty;
         public SuperInputMode SuperInputMode = SuperInputMode.Hold;
-    }
-
-    [Serializable]
-    public class LocalPlayerOptions
-    {
-        public InputDevice InputDevice;
-
-        // Per-player bindings from the disk-backed ControlsProfile selected
-        // in the character-select controls menu. Null falls back to
-        // ControlsConfig.DefaultBindings.
-        public EnumArray<InputFlags, Binding> ControlScheme;
     }
 
     [Serializable]
@@ -84,15 +67,18 @@ namespace Game.Sim
         public bool VerifyComboPrediction;
     }
 
+    // Deterministic-only inputs to the sim. The Unity runner builds this
+    // alongside PresentationOptions (skins, prefabs, audio) and InputOptions
+    // (device + bindings) and packages all three into the top-level
+    // GameOptions in Game/GameOptions.cs. Anything reachable from here must
+    // be Unity-free for the headless trainer.
     [Serializable]
-    public class GameOptions
+    public class SimOptions
     {
-        public GlobalConfig Global;
-        public PlayerOptions[] Players;
-        public LocalPlayerOptions[] LocalPlayers;
+        public GlobalStats Global;
+        public PlayerSimOptions[] Players;
         public InfoOptions InfoOptions;
         public bool AlwaysRhythmCancel;
-        public Stage Stage;
     }
 
     [MemoryPackable]
@@ -146,7 +132,7 @@ namespace Game.Sim
 
         // Use this builder, not the constructor. MemoryPack (our serializer)
         // imposes some funky restrictions on the constructor's parameter list.
-        public static GameState Create(GameOptions options)
+        public static GameState Create(SimOptions options)
         {
             GameState state = new GameState
             {
@@ -189,7 +175,7 @@ namespace Game.Sim
             return state;
         }
 
-        private void DoRoundEnd(GameOptions options, Span<GameInput> outInputs)
+        private void DoRoundEnd(SimOptions options, Span<GameInput> outInputs)
         {
             SpeedRatio =
                 1 - (sfloat)(RealFrame - ModeStart) / (options.Global.RoundEndTicks) * (sfloat)0.25f - (sfloat)0.50f;
@@ -243,7 +229,7 @@ namespace Game.Sim
             PendingRhythmComboAttacker = -1;
         }
 
-        private void DoCountdown(GameOptions options, Span<GameInput> outInputs)
+        private void DoCountdown(SimOptions options, Span<GameInput> outInputs)
         {
             for (int i = 0; i < Fighters.Length; i++)
             {
@@ -258,7 +244,7 @@ namespace Game.Sim
             }
         }
 
-        private void DoManiaStart(GameOptions options, Span<GameInput> outInputs)
+        private void DoManiaStart(SimOptions options, Span<GameInput> outInputs)
         {
             for (int i = 0; i < Fighters.Length; i++)
             {
@@ -287,7 +273,7 @@ namespace Game.Sim
         // last frame before active. Neither presses nor releases register
         // during the hit window. The held snapshot propagates each locked
         // frame via GetInput(0).
-        private void ApplySuperInputLock(GameOptions options, Span<GameInput> remapInputs)
+        private void ApplySuperInputLock(SimOptions options, Span<GameInput> remapInputs)
         {
             for (int i = 0; i < Fighters.Length; i++)
             {
@@ -312,7 +298,7 @@ namespace Game.Sim
             }
         }
 
-        private void HandleGrabTechs(GameOptions options)
+        private void HandleGrabTechs(SimOptions options)
         {
             int bufferWindow = options.Global.Input.InputBufferWindow;
             int techWindow = options.Global.GrabTechWindow;
@@ -321,7 +307,7 @@ namespace Game.Sim
             {
                 if (Fighters[i].State != CharacterState.Grabbed)
                     continue;
-                if (!Fighters[i].CurrentGrabTechable)
+                if (!Fighters[i].View.CurrentGrabTechable)
                     continue;
                 if (SimFrame - Fighters[i].StateStart > techWindow)
                     continue;
@@ -339,7 +325,7 @@ namespace Game.Sim
             }
         }
 
-        public void Advance(GameOptions options, (GameInput input, InputStatus status)[] inputs)
+        public void Advance(SimOptions options, (GameInput input, InputStatus status)[] inputs)
         {
             if (inputs.Length != options.Players.Length || options.Players.Length != Fighters.Length)
             {
@@ -742,7 +728,7 @@ namespace Game.Sim
         }
 
         private bool DoManiaStep(
-            GameOptions options,
+            SimOptions options,
             (GameInput input, InputStatus status)[] inputs,
             Span<GameInput> outInputs
         )
@@ -864,7 +850,7 @@ namespace Game.Sim
             return false;
         }
 
-        private void AdvanceProjectiles(GameOptions options)
+        private void AdvanceProjectiles(SimOptions options)
         {
             for (int i = 0; i < Projectiles.Length; i++)
             {
@@ -872,7 +858,7 @@ namespace Game.Sim
                     continue;
 
                 var projConfigs = options.Players[Projectiles[i].Owner].Character.Projectiles;
-                ProjectileConfig config = null;
+                ProjectileStats config = null;
                 if (projConfigs != null && Projectiles[i].ConfigIndex < projConfigs.Count)
                     config = projConfigs[Projectiles[i].ConfigIndex];
 
@@ -880,7 +866,7 @@ namespace Game.Sim
             }
         }
 
-        private void AddProjectileBoxes(GameOptions options)
+        private void AddProjectileBoxes(SimOptions options)
         {
             for (int i = 0; i < Projectiles.Length; i++)
             {
@@ -895,7 +881,7 @@ namespace Game.Sim
             }
         }
 
-        private void MarkDieOnContact(GameOptions options, int projectileIndex)
+        private void MarkDieOnContact(SimOptions options, int projectileIndex)
         {
             if (projectileIndex < 0)
                 return;
@@ -909,7 +895,7 @@ namespace Game.Sim
                 Projectiles[projectileIndex].MarkedForDestroy = true;
         }
 
-        private void MarkProjectileDestroyed(GameOptions options, int projectileIndex)
+        private void MarkProjectileDestroyed(SimOptions options, int projectileIndex)
         {
             if (projectileIndex < 0 || !Projectiles[projectileIndex].Active)
                 return;
@@ -923,7 +909,7 @@ namespace Game.Sim
             Projectiles[projectileIndex].MarkedForDestroy = true;
         }
 
-        private void DoCollisionStep(GameOptions options)
+        private void DoCollisionStep(SimOptions options)
         {
             // Each fighter then adds their hit/hurtboxes to the physics context, which will solve and find all
             // collisions. It is our job to then handle them.
@@ -1169,7 +1155,7 @@ namespace Game.Sim
             PhysicsCtx.Clear();
         }
 
-        private void UpdateHype(GameOptions options, int handle, sfloat damage)
+        private void UpdateHype(SimOptions options, int handle, sfloat damage)
         {
             if (handle == 0)
             {
@@ -1183,7 +1169,7 @@ namespace Game.Sim
             HypeMeter = Mathsf.Clamp(HypeMeter, -options.Global.MaxHype, options.Global.MaxHype);
         }
 
-        private void HandleClank(GameOptions options, Physics<BoxProps>.Collision c)
+        private void HandleClank(SimOptions options, Physics<BoxProps>.Collision c)
         {
             if (c.BoxA.Data.Kind != HitboxKind.Hitbox || c.BoxB.Data.Kind != HitboxKind.Hitbox)
             {
@@ -1197,7 +1183,7 @@ namespace Game.Sim
             Fighters[c.BoxB.Owner].ApplyClank(SimFrame, options, midpoint);
         }
 
-        private void HandlePush(GameOptions options, Physics<BoxProps>.Collision c)
+        private void HandlePush(SimOptions options, Physics<BoxProps>.Collision c)
         {
             if (c.BoxA.Data.Kind != HitboxKind.Hurtbox || c.BoxB.Data.Kind != HitboxKind.Hurtbox)
             {
@@ -1251,7 +1237,7 @@ namespace Game.Sim
         }
 
         private HitOutcome HandleHit(
-            GameOptions options,
+            SimOptions options,
             Physics<BoxProps>.BoxEntry attacker,
             Physics<BoxProps>.BoxEntry defender
         )
@@ -1390,7 +1376,7 @@ namespace Game.Sim
             return Mathsf.Max((sfloat)0.25f, m);
         }
 
-        private HitOutcome HandleCollision(GameOptions options, Physics<BoxProps>.Collision c)
+        private HitOutcome HandleCollision(SimOptions options, Physics<BoxProps>.Collision c)
         {
             if (c.BoxA.Data.Kind == HitboxKind.Hitbox && c.BoxB.Data.Kind == HitboxKind.Hurtbox)
             {

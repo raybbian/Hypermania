@@ -12,7 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
   m_Name: Falling
   m_EditorClassIdentifier: 
-  Clip: {fileID: 7400000, guid: b4507eea356e3154e83c3e54677aab10, type: 2}
+  AnimLoops: 0
+  ClipName: Falling
+  ComboEligible: 1
+  Followup: 3
+  FollowupInput: 0
+  IgnoreOwner: 0
+  ApplyRootMotion: 0
   Frames:
   - Boxes:
     - CenterLocal:
@@ -32,13 +38,43 @@ MonoBehaviour:
         HitstunTicks: 0
         BlockstunTicks: 0
         HitstopTicks: 0
-        StartsRhythmCombo: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -57,13 +93,43 @@ MonoBehaviour:
         HitstunTicks: 0
         BlockstunTicks: 0
         HitstopTicks: 0
-        StartsRhythmCombo: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -82,13 +148,43 @@ MonoBehaviour:
         HitstunTicks: 0
         BlockstunTicks: 0
         HitstopTicks: 0
-        StartsRhythmCombo: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -107,13 +203,43 @@ MonoBehaviour:
         HitstunTicks: 0
         BlockstunTicks: 0
         HitstopTicks: 0
-        StartsRhythmCombo: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -132,10 +258,40 @@ MonoBehaviour:
         HitstunTicks: 0
         BlockstunTicks: 0
         HitstopTicks: 0
-        StartsRhythmCombo: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
         Knockback:
           x:
             rawValue: 1065353216
           y:
             rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        OnHitTransition: 0
     FrameType: 0
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0

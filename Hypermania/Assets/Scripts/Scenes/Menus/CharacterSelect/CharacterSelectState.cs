@@ -22,7 +22,7 @@ namespace Scenes.Menus.CharacterSelect
         /// Name of the disk-backed <c>ControlsProfile</c> the player most
         /// recently landed on in the controls menu. Empty when the menu was
         /// never opened — <see cref="GameRunner"/> then falls back to
-        /// <see cref="Design.Configs.ControlsConfig.DefaultBindings"/>. Local-only.
+        /// <see cref="Game.View.Configs.Input.ControlsConfig.DefaultBindings"/>. Local-only.
         /// </summary>
         public string ControlsProfileName;
 

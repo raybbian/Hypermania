@@ -1,8 +1,8 @@
-using Design.Animation;
-using Design.Configs;
+using Game.Sim.Configs;
 using MemoryPack;
 using Utils;
 using Utils.SoftFloat;
+using Game.Sim;
 
 namespace Game.Sim
 {
@@ -27,7 +27,7 @@ namespace Game.Sim
         // expired or hit landed), it transitions into a dying state that
         // plays out the OnDeathHitbox frames instead of disappearing right
         // away. Sets Active = false once fully done.
-        public void Advance(Frame simFrame, GameOptions options, ProjectileConfig config)
+        public void Advance(Frame simFrame, SimOptions options, ProjectileStats config)
         {
             if (!Active)
                 return;
@@ -63,10 +63,10 @@ namespace Game.Sim
             FrameData curFrame = config?.HitboxData?.GetFrame(age);
             if (curFrame != null && curFrame.GravityEnabled && Position.y > options.Global.GroundY)
             {
-                Velocity.y += options.Global.Gravity * 1 / GameManager.TPS;
+                Velocity.y += options.Global.Gravity * 1 / SimConstants.TPS;
             }
 
-            Position += Velocity * 1 / GameManager.TPS;
+            Position += Velocity * 1 / SimConstants.TPS;
 
             if (Position.y <= options.Global.GroundY)
             {
@@ -86,7 +86,7 @@ namespace Game.Sim
             }
         }
 
-        private bool TryBeginDeath(Frame simFrame, ProjectileConfig config)
+        private bool TryBeginDeath(Frame simFrame, ProjectileStats config)
         {
             if (config == null || !config.HasOnDeath || config.OnDeathHitbox == null)
                 return false;
@@ -102,7 +102,7 @@ namespace Game.Sim
         // collision detection. While dying, uses OnDeathHitbox ticked from
         // DeathFrame. Otherwise uses the normal HitboxData ticked from
         // CreationFrame.
-        public void AddBoxes(Frame simFrame, ProjectileConfig config, Physics<BoxProps> physics, int projectileIndex)
+        public void AddBoxes(Frame simFrame, ProjectileStats config, Physics<BoxProps> physics, int projectileIndex)
         {
             if (!Active || config == null)
                 return;

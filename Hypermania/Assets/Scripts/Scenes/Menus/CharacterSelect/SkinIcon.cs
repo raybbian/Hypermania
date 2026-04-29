@@ -1,4 +1,4 @@
-using Design.Configs;
+using Game.View.Configs;
 using UnityEngine;
 using UnityEngine.UI;
 

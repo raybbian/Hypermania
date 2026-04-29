@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
   m_Name: MediumCrouching
   m_EditorClassIdentifier: 
-  Clip: {fileID: 7400000, guid: c8413045054ec3745974854e283475a5, type: 2}
+  AnimLoops: 0
+  ClipName: MediumCrouching
   ComboEligible: 1
   Followup: 3
   FollowupInput: 0

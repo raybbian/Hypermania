@@ -1,5 +1,5 @@
-using Design.Configs;
 using Game.Sim;
+using Game.View.Configs;
 using TMPro;
 using UnityEngine;
 
@@ -39,7 +39,7 @@ namespace Scenes.Menus.CharacterSelect
         private float _disabledAlpha = 0.35f;
 
         private PlayerSelectionState _state;
-        private CharacterConfig[] _roster;
+        private CharacterPresentation[] _roster;
         private bool _isLocal;
 
         // Lazily resolved once per row on the first visibility pass. Rows
@@ -50,7 +50,7 @@ namespace Scenes.Menus.CharacterSelect
         public void Bind(
             PlayerSelectionState state,
             PlayerSelectionState otherState,
-            CharacterConfig[] roster,
+            CharacterPresentation[] roster,
             bool isLocal
         )
         {

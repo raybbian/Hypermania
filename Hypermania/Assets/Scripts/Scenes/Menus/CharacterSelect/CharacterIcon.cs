@@ -1,4 +1,4 @@
-using Design.Configs;
+using Game.View.Configs;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,10 +18,10 @@ namespace Scenes.Menus.CharacterSelect
         [SerializeField]
         private Image[] _tintImages;
 
-        public void SetCharacter(CharacterConfig config)
+        public void SetCharacter(CharacterPresentation pres)
         {
-            bool hasSkin = config != null && config.Skins != null && config.Skins.Length > 0;
-            SetSkin(hasSkin ? config.Skins[0] : default, hasSkin);
+            bool hasSkin = pres != null && pres.Skins != null && pres.Skins.Length > 0;
+            SetSkin(hasSkin ? pres.Skins[0] : default, hasSkin);
         }
 
         public void SetSkin(SkinConfig skin)

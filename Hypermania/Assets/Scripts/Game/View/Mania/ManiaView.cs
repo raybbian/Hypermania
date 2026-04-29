@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Design.Configs;
+using Game.Sim.Configs;
 using Game.Sim;
+using Game.View.Configs;
 using Game.View.Events;
 using Game.View.Events.Vfx;
 using Steamworks;
@@ -9,6 +10,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
+using ManiaArrowSpritePair = Game.View.Configs.ManiaArrowSpritePair;
+using SkinConfig = Game.View.Configs.SkinConfig;
 
 namespace Game.View.Mania
 {
@@ -44,15 +47,15 @@ namespace Game.View.Mania
 
         private Dictionary<int, ManiaNoteView> _activeNotes;
 
-        private AudioConfig _audioConfig;
+        private AudioStats _audioStats;
         private int _audioStartFrame;
         private List<RectTransform> _beatLinePool;
         private ManiaArrowSpritePair _innerArrow;
         private ManiaArrowSpritePair _outerArrow;
 
-        public void Init(AudioConfig audioConfig, int audioStartFrame, in SkinConfig skin)
+        public void Init(AudioStats audioStats, int audioStartFrame, in SkinConfig skin)
         {
-            _audioConfig = audioConfig;
+            _audioStats = audioStats;
             _audioStartFrame = audioStartFrame;
             _activeNotes = new Dictionary<int, ManiaNoteView>();
             _beatLinePool = new List<RectTransform>();
@@ -60,7 +63,7 @@ namespace Game.View.Mania
             RectTransform rect = GetComponent<RectTransform>();
             float viewHeight = rect.rect.height;
             int framesVisible = Mathf.CeilToInt(viewHeight / Config.ScrollSpeed);
-            int poolSize = framesVisible / _audioConfig.FramesPerBeat + 3;
+            int poolSize = framesVisible / _audioStats.FramesPerBeat + 3;
 
             Transform lineParent = Config.BeatLineContainer != null ? Config.BeatLineContainer.transform : transform;
 
@@ -130,7 +133,7 @@ namespace Game.View.Mania
                 }
                 _beatLinePool = null;
             }
-            _audioConfig = null;
+            _audioStats = null;
         }
 
         public void OnValidate()
@@ -206,11 +209,11 @@ namespace Game.View.Mania
 
         private void RenderBeatLines(Frame frame)
         {
-            if (_audioConfig == null || _beatLinePool == null)
+            if (_audioStats == null || _beatLinePool == null)
                 return;
 
-            int framesPerBeat = _audioConfig.FramesPerBeat;
-            int firstBeat = _audioConfig.FirstBeatFrame(_audioStartFrame).No;
+            int framesPerBeat = _audioStats.FramesPerBeat;
+            int firstBeat = _audioStats.FirstBeatFrame(_audioStartFrame).No;
             float anchorY = Config.Anchors[0].localPosition.y;
             float halfHeight = GetComponent<RectTransform>().rect.height / 2;
 
@@ -222,7 +225,7 @@ namespace Game.View.Mania
             int poolIndex = 0;
             for (int b = minBeatIndex; poolIndex < _beatLinePool.Count; b++)
             {
-                int beatFrame = firstBeat + _audioConfig.BeatsToFrame(b);
+                int beatFrame = firstBeat + _audioStats.BeatsToFrame(b);
                 float y = (beatFrame - frame) * Config.ScrollSpeed + anchorY;
 
                 if (y > halfHeight)

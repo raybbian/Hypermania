@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9783a1d2dafdd64dbcc0d8a86a5245d, type: 3}
+  m_Name: ViaPresentation
+  m_EditorClassIdentifier: 
+  Character: 2
+  Stats: {fileID: 11400000, guid: 5840da828fd1e1a408e81c0dbe5a6cad, type: 2}
+  Prefab: {fileID: 4912791955225701616, guid: e998a7df4f7d4c845a8165445c71c160, type: 3}
+  MoveSfx: {fileID: 11400000, guid: 96f13b952f0f28a479dcd8702a73c40a, type: 2}
+  AnimationController: {fileID: 22100000, guid: 152e3c4ee00aa684189ad47f4fecc5f2, type: 2}
+  Skins:
+  - MainColor: {r: 0.32156864, g: 0.6509804, b: 0.41960788, a: 1}
+    LightColor: {r: 0.73333335, g: 0.8235295, b: 0.6039216, a: 1}
+    AccentColor: {r: 0.6117647, g: 0.8235295, b: 0.09019608, a: 1}
+    HypeBarColors:
+    - {r: 0.73744196, g: 0.8235294, b: 0.5254118, a: 1}
+    - {r: 0.7635409, g: 0.88699996, b: 0.45946598, a: 1}
+    - {r: 0.6504735, g: 0.851, b: 0.15658401, a: 1}
+    - {r: 0.5049953, g: 0.709, b: 0, a: 1}
+    SpriteLibrary: {fileID: 7108339969198208228, guid: 310dc92627b48b44fadb2a6a8146ee08, type: 3}
+    Portrait: {fileID: 2800000, guid: 9e588d52a7abc7049b36c2d5fcf9177f, type: 3}
+    Splash: {fileID: 2800000, guid: e8019f20b82205f41bf0fec5eb135362, type: 3}
+    ManiaInnerArrow:
+      Active: {fileID: 4406693499826805785, guid: 59e047e11d424fb408c56ef3ed87cb1d, type: 3}
+      Inactive: {fileID: 934328616920416484, guid: 2455ca73b10e5b040b36e3c2176d11f1, type: 3}
+    ManiaOuterArrow:
+      Active: {fileID: -8722155465960229544, guid: 94413c8f71b52e04fa88ee57ffcd31f5, type: 3}
+      Inactive: {fileID: 7674098564294350787, guid: ee5cd2f952022184384675e714fe07e5, type: 3}
+  - MainColor: {r: 0.91372555, g: 0.3019608, b: 0.53333336, a: 1}
+    LightColor: {r: 0.94117653, g: 0.58431375, b: 0.72156864, a: 1}
+    AccentColor: {r: 0.7137255, g: 0.2901961, b: 0.6039216, a: 1}
+    HypeBarColors:
+    - {r: 1, g: 0.656, b: 0.7883077, a: 1}
+    - {r: 0.936, g: 0.451152, b: 0.637632, a: 1}
+    - {r: 0.9411765, g: 0.32752946, b: 0.56354755, a: 1}
+    - {r: 0.766, g: 0.114133984, b: 0.36485168, a: 1}
+    SpriteLibrary: {fileID: 7108339969198208228, guid: df01b8c0109101644bb6fa40d3f91d4c, type: 3}
+    Portrait: {fileID: 2800000, guid: 6b96be9edc3efb442be662e845c8437b, type: 3}
+    Splash: {fileID: 2800000, guid: 2fd2fc7e486bcaf4792e4833509c050b, type: 3}
+    ManiaInnerArrow:
+      Active: {fileID: 666822076855156956, guid: d629b3e470b739e46abd0121d342fe78, type: 3}
+      Inactive: {fileID: -6636167117385558948, guid: f9f19c8bf4e4fcf44a72dd1549045546, type: 3}
+    ManiaOuterArrow:
+      Active: {fileID: 8404671947550861843, guid: 1149d4900c3244748bc7c41e92d20f38, type: 3}
+      Inactive: {fileID: -2241081479375049109, guid: c5016bf878da48e46be7e82121baa1cd, type: 3}
+  - MainColor: {r: 0.16862746, g: 0.5176471, b: 0.54901963, a: 1}
+    LightColor: {r: 0.6117647, g: 0.8745099, b: 0.8705883, a: 1}
+    AccentColor: {r: 0.0627451, g: 0.4784314, b: 0.60784316, a: 1}
+    HypeBarColors:
+    - {r: 0.6117647, g: 0.8745099, b: 0.8705883, a: 1}
+    - {r: 0.48713398, g: 0.83699995, b: 0.83177805, a: 1}
+    - {r: 0.2847, g: 0.73, b: 0.7249966, a: 1}
+    - {r: 0.16862746, g: 0.5176471, b: 0.54901963, a: 1}
+    SpriteLibrary: {fileID: 7108339969198208228, guid: 4959e5e06e1d0674db564822609ef766, type: 3}
+    Portrait: {fileID: 2800000, guid: 20802c87dfbbdd749a4f88068f48e66e, type: 3}
+    Splash: {fileID: 2800000, guid: 4ffd6898b3ab79347b70eff808b1116e, type: 3}
+    ManiaInnerArrow:
+      Active: {fileID: 5072652356856799893, guid: f1dfad61a70d80c4b847e221616c3729, type: 3}
+      Inactive: {fileID: -3865794280420569641, guid: 7b8c95eb773500248a0261d9d3c88005, type: 3}
+    ManiaOuterArrow:
+      Active: {fileID: -1351088020085032094, guid: 592ad1ef829d8354ba1dd66d754aa7da, type: 3}
+      Inactive: {fileID: -2354632436734503508, guid: 4db84022e178c1b4f80bc7d7d0a945aa, type: 3}
+  SuperDisplay:
+    AnimState: 11
+    StartFrame: 8
+    CameraLocalPosition: {x: 0, y: 1.7, z: -2}
+    CameraOrthoSize:
+      rawValue: 1050253722
+  Projectiles:
+  - {fileID: 11400000, guid: 496b4df143bcddf44b4f5eec566e509e, type: 2}
+  - {fileID: 11400000, guid: 7c0dcd91003e256489b2d023b9ba6de9, type: 2}

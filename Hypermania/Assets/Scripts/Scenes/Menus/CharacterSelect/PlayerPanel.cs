@@ -1,9 +1,10 @@
 using System.Collections.Generic;
-using Design.Configs;
+using Game.View.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Game.Sim;
 
 namespace Scenes.Menus.CharacterSelect
 {
@@ -46,7 +47,7 @@ namespace Scenes.Menus.CharacterSelect
 
         private Animator _animator;
         private PlayerSelectionState _state;
-        private CharacterConfig[] _roster;
+        private CharacterPresentation[] _roster;
         private SkinConfig _randomSkin;
         private bool _isLocal;
 
@@ -64,7 +65,7 @@ namespace Scenes.Menus.CharacterSelect
         public void Bind(
             PlayerSelectionState state,
             PlayerSelectionState otherState,
-            CharacterConfig[] roster,
+            CharacterPresentation[] roster,
             SkinConfig randomSkin,
             bool isLocal
         )
@@ -128,7 +129,7 @@ namespace Scenes.Menus.CharacterSelect
 
             bool onRandom = _state.CharacterIndex >= _roster.Length;
             bool visible = !onRandom && _state.Phase != SelectPhase.Character;
-            CharacterConfig config = visible
+            CharacterPresentation config = visible
                 ? _roster[Mathf.Clamp(_state.CharacterIndex, 0, _roster.Length - 1)]
                 : null;
 
@@ -159,7 +160,7 @@ namespace Scenes.Menus.CharacterSelect
             }
 
             int charIdx = Mathf.Clamp(_state.CharacterIndex, 0, _roster.Length - 1);
-            CharacterConfig config = _roster[charIdx];
+            CharacterPresentation config = _roster[charIdx];
             if (config == null)
                 return;
 

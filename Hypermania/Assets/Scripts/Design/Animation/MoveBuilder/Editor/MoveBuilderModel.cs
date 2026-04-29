@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Game;
+using Game.Sim;
 using Game.View;
 using UnityEditor;
 using UnityEngine;
 using Utils.SoftFloat;
+using Game.Sim.Configs;
 
 namespace Design.Animation.MoveBuilder.Editor
 {
@@ -54,11 +56,45 @@ namespace Design.Animation.MoveBuilder.Editor
             if (!ReferenceEquals(state.Data, _lastData))
             {
                 _lastData = state.Data;
-                _savedValueHash = state.Data.GetValueHash();
+                _savedValueHash = ComputeValueHash(state.Data);
                 return false;
             }
 
-            return state.Data.GetValueHash() != _savedValueHash;
+            return ComputeValueHash(state.Data) != _savedValueHash;
+        }
+
+        // Editor-only "is dirty" hash. Compares the values that the inspector
+        // can mutate so we know when to flag the asset dirty.
+        static int ComputeValueHash(HitboxData data)
+        {
+            var hc = new HashCode();
+            hc.Add(data.ClipName);
+            hc.Add(data.AnimLoops);
+            hc.Add(data.IgnoreOwner);
+            hc.Add(data.ApplyRootMotion);
+            hc.Add(data.Frames != null ? data.Frames.Count : 0);
+            if (data.Frames != null)
+            {
+                for (int i = 0; i < data.Frames.Count; i++)
+                {
+                    var f = data.Frames[i];
+                    hc.Add(f.Boxes != null ? f.Boxes.Count : 0);
+                    if (f.Boxes != null)
+                    {
+                        for (int j = 0; j < f.Boxes.Count; j++)
+                            hc.Add(f.Boxes[j]);
+                    }
+                    hc.Add(f.FrameType);
+                    hc.Add(f.Floating);
+                    hc.Add(f.ShouldApplyVel);
+                    hc.Add(f.ApplyVelocity);
+                    hc.Add(f.ShouldTeleport);
+                    hc.Add(f.TeleportLocation);
+                    hc.Add(f.GravityEnabled);
+                    hc.Add(f.RootMotionOffset);
+                }
+            }
+            return hc.ToHashCode();
         }
 
         public MoveBuilderModel()
@@ -72,7 +108,8 @@ namespace Design.Animation.MoveBuilder.Editor
         {
             RecordUndo(state, "Bind Data to Clip");
 
-            bool changed = state.Data.BindToClip(state.Clip);
+            int totalTicks = Mathf.CeilToInt(state.Clip.length * Game.Sim.SimConstants.TPS) + 1;
+            bool changed = state.Data.ApplyClipMeta(state.Clip.name, totalTicks, state.Clip.isLooping);
 
             if (RootMotionSource != null && fighter != null)
             {
@@ -299,7 +336,7 @@ namespace Design.Animation.MoveBuilder.Editor
             AssetDatabase.SaveAssets();
 
             _lastData = state.Data;
-            _savedValueHash = state.Data.GetValueHash();
+            _savedValueHash = ComputeValueHash(state.Data);
         }
 
         private void MarkDirty(MoveBuilderAnimationState state)

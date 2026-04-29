@@ -1,4 +1,4 @@
-using Design.Configs;
+using Game;
 using Game.Sim;
 using Scenes.Menus.MainMenu;
 using Scenes.Session;
@@ -11,9 +11,6 @@ namespace Scenes.Menus.InputSelect
     {
         [SerializeField]
         private DeviceManager _deviceManager;
-
-        [SerializeField]
-        private GlobalConfig _globalConfig;
 
         public void StartGame()
         {
@@ -65,14 +62,19 @@ namespace Scenes.Menus.InputSelect
             bool training = SessionDirectory.Config == GameConfig.Training;
             return new GameOptions
             {
-                Global = _globalConfig,
-                InfoOptions = new InfoOptions
+                Sim = new SimOptions
                 {
-                    ShowFrameData = training,
-                    ShowBoxes = training,
-                    VerifyComboPrediction = false,
+                    Global = SessionDirectory.GlobalStats,
+                    InfoOptions = new InfoOptions
+                    {
+                        ShowFrameData = training,
+                        ShowBoxes = training,
+                        VerifyComboPrediction = false,
+                    },
+                    AlwaysRhythmCancel = false,
                 },
-                AlwaysRhythmCancel = false,
+                Presentation = new PresentationOptions { Audio = SessionDirectory.AudioPresentation },
+                Input = new InputOptions(),
             };
         }
 

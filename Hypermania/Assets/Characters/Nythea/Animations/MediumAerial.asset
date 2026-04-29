@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
   m_Name: MediumAerial
   m_EditorClassIdentifier: 
-  Clip: {fileID: 7400000, guid: 3ec5f4dcd3e619f7a851b9b21d740b77, type: 2}
+  AnimLoops: 0
+  ClipName: MediumAerial
   ComboEligible: 1
   Followup: 3
   FollowupInput: 0

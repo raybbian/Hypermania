@@ -1,4 +1,4 @@
-using Design.Configs;
+using Game.View.Configs;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -42,13 +42,13 @@ namespace Game.View.Overlay
         private Vector3 _baseScale;
         private MusicReactive _musicReactive;
 
-        public void Init(CharacterConfig config, int skinIndex)
+        public void Init(CharacterPresentation pres, int skinIndex)
         {
             _baseScale = _disks[0].localScale;
             _musicReactive = GetComponent<MusicReactive>();
-            _portrait.texture = config.Skins[skinIndex].Portrait;
+            _portrait.texture = pres.Skins[skinIndex].Portrait;
             foreach (var tint in _tint)
-                tint.color = config.Skins[skinIndex].AccentColor;
+                tint.color = pres.Skins[skinIndex].AccentColor;
         }
 
         public void SetMaxHealth(float health)

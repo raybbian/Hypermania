@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Design.Configs;
+using Game.View.Configs;
 using UnityEngine;
 
 namespace Scenes.Menus.CharacterSelect
@@ -29,7 +29,7 @@ namespace Scenes.Menus.CharacterSelect
         public bool HasRandomSlot => _hasRandomSlot;
         public int RandomSlotIndex => _hasRandomSlot ? _icons.Count - 1 : -1;
 
-        public void Initialize(CharacterConfig[] roster, SkinConfig randomSkin)
+        public void Initialize(CharacterPresentation[] roster, SkinConfig randomSkin)
         {
             foreach (CharacterIcon icon in _icons)
             {

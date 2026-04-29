@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils.EnumArray;
+using Game.Sim;
 
 namespace Game.View.Events
 {

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef013e24c30f79f40a70d3961b8ac672, type: 3}
+  m_Name: 5_S_Stats
+  m_EditorClassIdentifier: 
+  TriggerState: 14
+  SpawnTick: 26
+  HitboxData: {fileID: 11400000, guid: a676b6068a13d1646b48779253986619, type: 2}
+  SpawnOffset:
+    x:
+      rawValue: 1074790400
+    y:
+      rawValue: 1048576000
+  Velocity:
+    x:
+      rawValue: 0
+    y:
+      rawValue: 0
+  LifetimeTicks: 50
+  Unique: 1
+  DieOnContact: 0
+  Lingers: 1
+  HasOnDeath: 0
+  OnDeathHitbox: {fileID: 0}

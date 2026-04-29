@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
   m_Name: SpecialAerial
   m_EditorClassIdentifier: 
-  Clip: {fileID: 7400000, guid: e06139487fc3f44a991da5145f0aa9ff, type: 2}
+  AnimLoops: 0
+  ClipName: SpecialAerial
   ComboEligible: 1
   Followup: 37
   FollowupInput: 256
+  IgnoreOwner: 0
+  ApplyRootMotion: 0
   Frames:
   - Boxes:
     - CenterLocal:
@@ -47,6 +50,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -54,6 +60,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -88,6 +105,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -95,6 +115,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -129,6 +160,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -136,6 +170,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -170,6 +215,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -177,6 +225,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -211,6 +270,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -218,6 +280,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -252,6 +325,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -259,6 +335,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -293,6 +380,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -300,6 +390,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -334,6 +435,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -341,6 +445,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -375,6 +490,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -382,6 +500,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -416,6 +545,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -423,6 +555,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -457,6 +600,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -464,6 +610,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -498,6 +655,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -505,6 +665,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -539,6 +710,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -546,6 +720,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -580,6 +765,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -587,6 +775,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -621,6 +820,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -628,6 +830,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -662,6 +875,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -669,6 +885,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -703,6 +930,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 1
@@ -710,6 +940,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -744,6 +985,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -775,6 +1019,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -786,6 +1033,17 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
   - Boxes:
     - CenterLocal:
         x:
@@ -816,6 +1074,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -847,6 +1108,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -854,6 +1118,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -888,6 +1163,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -919,6 +1197,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -926,6 +1207,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -960,6 +1252,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -991,6 +1286,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -998,6 +1296,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1032,6 +1341,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -1063,6 +1375,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -1070,6 +1385,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1104,6 +1430,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -1135,6 +1464,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -1142,6 +1474,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1176,6 +1519,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -1207,6 +1553,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -1214,6 +1563,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1248,6 +1608,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -1279,6 +1642,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -1286,6 +1652,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1320,6 +1697,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -1351,6 +1731,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -1358,6 +1741,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1392,6 +1786,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -1423,6 +1820,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -1430,6 +1830,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1464,6 +1875,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -1495,6 +1909,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -1502,6 +1919,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1536,6 +1964,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -1567,6 +1998,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -1574,6 +2008,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1608,6 +2053,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -1639,6 +2087,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -1646,6 +2097,17 @@ MonoBehaviour:
     GravityEnabled: 0
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1680,6 +2142,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     - CenterLocal:
@@ -1711,6 +2176,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 2
@@ -1722,43 +2190,13 @@ MonoBehaviour:
         rawValue: 0
       y:
         rawValue: 0
-  - Boxes:
-    - CenterLocal:
-        x:
-          rawValue: 1041436008
-        y:
-          rawValue: 1060229178
-      SizeLocal:
-        x:
-          rawValue: 1063750012
-        y:
-          rawValue: 1068681850
-      Props:
-        Kind: 0
-        AttackKind: 0
-        Damage: 0
-        HitstunTicks: 0
-        BlockstunTicks: 0
-        HitstopTicks: 0
-        BlockstopTicks: 0
-        KnockdownKind: 0
-        Knockback:
-          x:
-            rawValue: 1065353216
-          y:
-            rawValue: 0
-        GrabPosition:
-          x:
-            rawValue: 0
-          y:
-            rawValue: 0
-        HasTransition: 0
-        OnHitTransition: 0
-    FrameType: 3
-    Floating: 0
-    GravityEnabled: 1
-    ShouldApplyVel: 0
-    ApplyVelocity:
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1793,6 +2231,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 3
@@ -1800,6 +2241,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1834,6 +2286,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 3
@@ -1841,6 +2296,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1875,6 +2341,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 3
@@ -1882,6 +2351,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1916,6 +2396,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 3
@@ -1923,6 +2406,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1957,6 +2451,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 3
@@ -1964,6 +2461,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -1998,6 +2506,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 3
@@ -2005,6 +2516,72 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+  - Boxes:
+    - CenterLocal:
+        x:
+          rawValue: 1041436008
+        y:
+          rawValue: 1060229178
+      SizeLocal:
+        x:
+          rawValue: 1063750012
+        y:
+          rawValue: 1068681850
+      Props:
+        Kind: 0
+        AttackKind: 0
+        Damage: 0
+        HitstunTicks: 0
+        BlockstunTicks: 0
+        HitstopTicks: 0
+        BlockstopTicks: 0
+        KnockdownKind: 0
+        Knockback:
+          x:
+            rawValue: 1065353216
+          y:
+            rawValue: 0
+        GrabPosition:
+          x:
+            rawValue: 0
+          y:
+            rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
+        HasTransition: 0
+        OnHitTransition: 0
+    FrameType: 3
+    Floating: 0
+    GravityEnabled: 1
+    ShouldApplyVel: 0
+    ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:
@@ -2039,6 +2616,9 @@ MonoBehaviour:
             rawValue: 0
           y:
             rawValue: 0
+        GrabsGrounded: 0
+        GrabsAirborne: 0
+        Techable: 0
         HasTransition: 0
         OnHitTransition: 0
     FrameType: 3
@@ -2046,6 +2626,17 @@ MonoBehaviour:
     GravityEnabled: 1
     ShouldApplyVel: 0
     ApplyVelocity:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    ShouldTeleport: 0
+    TeleportLocation:
+      x:
+        rawValue: 0
+      y:
+        rawValue: 0
+    RootMotionOffset:
       x:
         rawValue: 0
       y:

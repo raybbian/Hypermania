@@ -1,4 +1,4 @@
-using Design.Animation;
+using Game.Sim.Configs;
 using Utils.SoftFloat;
 
 namespace Game.Sim

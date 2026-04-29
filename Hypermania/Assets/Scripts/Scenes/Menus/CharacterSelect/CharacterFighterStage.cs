@@ -1,6 +1,7 @@
-using Design.Configs;
+using Game.View.Configs;
 using Game.View.Fighters;
 using UnityEngine;
+using Game.Sim;
 
 namespace Scenes.Menus.CharacterSelect
 {
@@ -34,7 +35,7 @@ namespace Scenes.Menus.CharacterSelect
         private float _slideDuration = 0.3f;
 
         private readonly FighterView[] _fighters = new FighterView[2];
-        private readonly CharacterConfig[] _currentConfig = new CharacterConfig[2];
+        private readonly CharacterPresentation[] _currentConfig = new CharacterPresentation[2];
         private readonly float[] _progress = { 0f, 0f };
 
         /// <summary>
@@ -43,7 +44,7 @@ namespace Scenes.Menus.CharacterSelect
         /// flip <paramref name="visible"/> on any frame. Teardown and
         /// respawn happen in this method — never async.
         /// </summary>
-        public void Render(int slot, CharacterConfig config, int skinIndex, bool visible)
+        public void Render(int slot, CharacterPresentation config, int skinIndex, bool visible)
         {
             if (!IsValidSlot(slot) || _slotRest[slot] == null)
                 return;
@@ -83,7 +84,7 @@ namespace Scenes.Menus.CharacterSelect
             _fighters[slot].SetSkin(skinIndex);
         }
 
-        private void Spawn(int slot, CharacterConfig config, int skinIndex)
+        private void Spawn(int slot, CharacterPresentation config, int skinIndex)
         {
             FighterView fighter = Instantiate(config.Prefab, _stageRoot);
             fighter.Init(config, skinIndex);

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54628764ab5336a41b767aa01dd251e6, type: 3}
+  m_Name: GlobalPresentations
+  m_EditorClassIdentifier: 
+  _characters:
+    values:
+    - {fileID: 11400000, guid: 8617cb26abce7fb4fa2a6473e178f474, type: 2}
+    - {fileID: 11400000, guid: e4240d6384b249d498aeb1fee46212db, type: 2}

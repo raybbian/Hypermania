@@ -7,7 +7,7 @@ namespace Scenes.Menus.CharacterSelect
     /// <summary>
     /// Polls a single <see cref="InputDevice"/> for nav edges (L/R/U/D/Confirm/Back)
     /// and applies them to the per-player <see cref="PlayerSelectionState"/>.
-    /// Input is polled directly from the device (no <see cref="Design.Configs.ControlsConfig"/>
+    /// Input is polled directly from the device (no <see cref="Game.View.Configs.Input.ControlsConfig"/>
     /// binding) because CharacterSelect is where the player is still choosing
     /// their controls preset — same rationale as
     /// <see cref="InputSelect.DeviceManager.HandlePlayerInputSelect"/>.

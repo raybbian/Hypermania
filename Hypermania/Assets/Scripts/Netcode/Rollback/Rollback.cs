@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using Netcode.Rollback.Network;
 using Utils;
 
+// Session-layer rollback wiring (player handles, request/event envelopes,
+// network socket). Trainer-needed pieces (IInput, IState, InputStatus) live
+// in Rollback.Core.cs so Hypermania.CPU compiles without GameStateCell /
+// Message / Steamworks reach.
 namespace Netcode.Rollback
 {
     public readonly struct PlayerHandle : IFormattable, IEquatable<PlayerHandle>
@@ -16,20 +20,11 @@ namespace Netcode.Rollback
 
         public override string ToString() => Id.ToString();
 
-        public bool Equals(PlayerHandle other)
-        {
-            return Id == other.Id;
-        }
+        public bool Equals(PlayerHandle other) => Id == other.Id;
 
-        public override bool Equals(object obj)
-        {
-            return obj is PlayerHandle other && Equals(other);
-        }
+        public override bool Equals(object obj) => obj is PlayerHandle other && Equals(other);
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Id);
-        }
+        public override int GetHashCode() => HashCode.Combine(Id);
 
         public string ToString(string format, IFormatProvider formatProvider) => Id.ToString(format, formatProvider);
     }
@@ -58,28 +53,15 @@ namespace Netcode.Rollback
             return other.Kind == Kind && other.Address.Equals(Address);
         }
 
-        public override bool Equals(object obj)
-        {
-            return obj is PlayerType<TAddress> other && Equals(other);
-        }
+        public override bool Equals(object obj) => obj is PlayerType<TAddress> other && Equals(other);
 
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Kind, Address);
-        }
+        public override int GetHashCode() => HashCode.Combine(Kind, Address);
     }
 
     public enum SessionState
     {
         Synchronizing,
         Running,
-    }
-
-    public enum InputStatus
-    {
-        Confirmed,
-        Predicted,
-        Disconnected,
     }
 
     public enum RollbackEventKind
@@ -261,10 +243,6 @@ namespace Netcode.Rollback
                 ? _advanceFrameReq
                 : throw new InvalidOperationException("body type mismatch");
     }
-
-    public interface IInput<TSelf> : IEquatable<TSelf>, ISerializable { }
-
-    public interface IState<TSelf> { }
 
     public interface INonBlockingSocket<TAddress>
     {

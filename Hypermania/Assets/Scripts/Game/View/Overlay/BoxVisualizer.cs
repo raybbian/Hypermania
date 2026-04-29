@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Design.Animation;
 using Game.Sim;
 using Game.View.Fighters;
 using UnityEngine;
+using Game.Sim.Configs;
 
 namespace Game.View.Overlay
 {
@@ -31,7 +31,7 @@ namespace Game.View.Overlay
         private readonly List<LineRenderer> _fillPool = new List<LineRenderer>();
         private Camera _cam;
 
-        public void Render(in GameState state, GameOptions options, FighterView[] fighters)
+        public void Render(in GameState state, SimOptions options, FighterView[] fighters)
         {
             if (_cam == null)
                 _cam = Camera.main;

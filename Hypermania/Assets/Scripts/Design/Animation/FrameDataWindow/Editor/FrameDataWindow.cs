@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using System.Text;
-using Design.Configs;
 using Game;
+using Game.Sim;
+using Game.Sim.Configs;
 using UnityEditor;
 using UnityEngine;
 using Utils.EnumArray;
@@ -11,7 +12,7 @@ namespace Design.Animation.FrameDataWindow.Editor
     public sealed class FrameDataWindow : EditorWindow
     {
         [SerializeField]
-        private CharacterConfig _config;
+        private CharacterStats _config;
 
         private Vector2 _scroll;
 
@@ -96,7 +97,7 @@ namespace Design.Animation.FrameDataWindow.Editor
 
         private static readonly float[] ProjectileWidths = { 180f, 55f, 65f, 55f, 55f, 50f, 40f, 55f, 65f, 50f };
 
-        [MenuItem("Hypermania/Frame Data Viewer")]
+        [MenuItem("Window/Hypermania/Frame Data Viewer")]
         public static void ShowWindow()
         {
             var window = GetWindow<FrameDataWindow>("Frame Data");
@@ -106,12 +107,12 @@ namespace Design.Animation.FrameDataWindow.Editor
         private void OnGUI()
         {
             EditorGUILayout.Space();
-            _config = (CharacterConfig)
-                EditorGUILayout.ObjectField("Character Config", _config, typeof(CharacterConfig), false);
+            _config = (CharacterStats)
+                EditorGUILayout.ObjectField("Character Stats", _config, typeof(CharacterStats), false);
 
             if (_config == null)
             {
-                EditorGUILayout.HelpBox("Assign a CharacterConfig asset to view its frame data.", MessageType.Info);
+                EditorGUILayout.HelpBox("Assign a CharacterStats asset to view its frame data.", MessageType.Info);
                 return;
             }
 
@@ -129,7 +130,7 @@ namespace Design.Animation.FrameDataWindow.Editor
 
         // ─────────── Moves ───────────
 
-        private static void DrawMovesTable(CharacterConfig config)
+        private static void DrawMovesTable(CharacterStats config)
         {
             EditorGUILayout.LabelField("Moves", EditorStyles.boldLabel);
 
@@ -299,7 +300,7 @@ namespace Design.Animation.FrameDataWindow.Editor
 
         // ─────────── Projectiles ───────────
 
-        private static void DrawProjectilesTable(CharacterConfig config)
+        private static void DrawProjectilesTable(CharacterStats config)
         {
             EditorGUILayout.LabelField("Projectiles", EditorStyles.boldLabel);
 
@@ -315,7 +316,7 @@ namespace Design.Animation.FrameDataWindow.Editor
             int rowIndex = 0;
             for (int i = 0; i < config.Projectiles.Count; i++)
             {
-                ProjectileConfig p = config.Projectiles[i];
+                ProjectileStats p = config.Projectiles[i];
                 if (p == null)
                     continue;
 
@@ -336,7 +337,7 @@ namespace Design.Animation.FrameDataWindow.Editor
         private static void DrawProjectileHeaderRow(
             int rowIndex,
             float[] widths,
-            ProjectileConfig p,
+            ProjectileStats p,
             string onDeathLabel
         )
         {
@@ -548,13 +549,6 @@ namespace Design.Animation.FrameDataWindow.Editor
             if (data == null || data.Frames == null || data.Frames.Count == 0)
                 return "no frames";
 
-            if (data.Clip != null)
-            {
-                int expectedTicks = Mathf.CeilToInt(data.Clip.length * GameManager.TPS) + 1;
-                if (data.Frames.Count != expectedTicks)
-                    return $"frame count {data.Frames.Count} != clip length {expectedTicks}";
-            }
-
             int firstHit = -1;
             int lastHit = -1;
             for (int i = 0; i < data.Frames.Count; i++)
@@ -732,7 +726,7 @@ namespace Design.Animation.FrameDataWindow.Editor
             return lastRunStart;
         }
 
-        private static string GatlingsFor(CharacterConfig config, CharacterState from)
+        private static string GatlingsFor(CharacterStats config, CharacterState from)
         {
             if (config.Gatlings == null || config.Gatlings.Count == 0)
                 return "";

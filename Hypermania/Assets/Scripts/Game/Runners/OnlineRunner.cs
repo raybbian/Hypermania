@@ -61,7 +61,7 @@ namespace Game.Runners
                 throw new InvalidOperationException("Players not found in multiplayer runner");
             }
 
-            if (_options.LocalPlayers.Length != 1)
+            if (_options.Input.Players.Length != 1)
             {
                 throw new InvalidOperationException("Multiplayer runner only supports one local player");
             }
@@ -167,7 +167,7 @@ namespace Game.Runners
                         _view.RollbackRender(_curState);
                         break;
                     case RollbackRequestKind.AdvanceFrameReq:
-                        _curState.Advance(_options, request.GetAdvanceFrameRequest().Inputs);
+                        _curState.Advance(_options.Sim, request.GetAdvanceFrameRequest().Inputs);
                         _view.RollbackRender(_curState);
                         break;
                 }

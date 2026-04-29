@@ -1,5 +1,5 @@
 using System;
-using Design.Configs;
+using Game.View.Configs.Input;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.Utilities;

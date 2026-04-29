@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
   m_Name: Burst
   m_EditorClassIdentifier: 
-  Clip: {fileID: 7400000, guid: 500ae9a91f269734c90934be1f4f9263, type: 2}
+  AnimLoops: 0
+  ClipName: Burst
   ComboEligible: 1
   Followup: 3
   FollowupInput: 0

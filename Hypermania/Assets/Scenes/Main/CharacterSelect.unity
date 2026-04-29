@@ -752,7 +752,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d9f0a1b2c34567890abcdef0123456c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _globalConfig: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
+  _globalStats: {fileID: 11400000, guid: c4e9c8cfedf9ba5478c2e35f56cc48ae, type: 2}
+  _presentationRoster: {fileID: 11400000, guid: 8157c10f20722ef469c80618c16dcb15, type: 2}
+  _audioPresentation: {fileID: 11400000, guid: ad019aa479cc54e43916c7d00a4157e9, type: 2}
   _controlsMenus:
   - {fileID: 26771177}
   - {fileID: 1636262198}

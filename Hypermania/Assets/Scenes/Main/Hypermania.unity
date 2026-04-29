@@ -169,9 +169,11 @@ MonoBehaviour:
   _params:
     CameraSpeed: 10
     ZoomSpeed: 10
-    ManiaHalfHeight: 1.45
+    MinZoom: 1.55
+    MaxZoom: 1.6
     CountdownFocusHalfHeight: 1.4
-    Config: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
+    Padding: 0
+    Config: {fileID: 11400000, guid: c4e9c8cfedf9ba5478c2e35f56cc48ae, type: 2}
     Margin: 0.3
     Camera: {fileID: 562816628700700724}
 --- !u!114 &102352432

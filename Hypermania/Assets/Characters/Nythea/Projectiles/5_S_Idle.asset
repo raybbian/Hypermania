@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
   m_Name: 5_S_Idle
   m_EditorClassIdentifier: 
-  Clip: {fileID: 7400000, guid: 4ca20e43c26f0634892cadd6db2a84ec, type: 2}
+  AnimLoops: 0
+  ClipName: 5_S_Idle
   ComboEligible: 1
   Followup: 3
   FollowupInput: 0
@@ -179,7 +180,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
@@ -235,7 +235,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
@@ -291,7 +290,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
@@ -347,7 +345,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
@@ -403,7 +400,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
@@ -459,7 +455,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
@@ -515,7 +510,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
@@ -571,7 +565,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
@@ -627,7 +620,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
@@ -683,7 +675,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
@@ -739,7 +730,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
@@ -795,7 +785,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0
@@ -851,7 +840,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 0
     Floating: 0

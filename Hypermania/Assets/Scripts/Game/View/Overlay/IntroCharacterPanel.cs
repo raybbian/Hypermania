@@ -1,7 +1,8 @@
-using Design.Configs;
+using Game.View.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.Sim;
 
 namespace Game.View.Overlay
 {
@@ -24,9 +25,9 @@ namespace Game.View.Overlay
 
         private Sprite _runtimeSplash;
 
-        public void SetCharacter(CharacterConfig config, int skinIndex)
+        public void SetCharacter(CharacterPresentation pres, int skinIndex)
         {
-            SkinConfig skin = config.Skins[skinIndex];
+            SkinConfig skin = pres.Skins[skinIndex];
 
             Tint(_mainColorTints, skin.MainColor);
             Tint(_lightColorTints, skin.LightColor);
@@ -51,7 +52,7 @@ namespace Game.View.Overlay
             }
 
             if (_characterName != null)
-                _characterName.text = config.Character.ToString();
+                _characterName.text = pres.Character.ToString();
         }
 
         private void OnDestroy()

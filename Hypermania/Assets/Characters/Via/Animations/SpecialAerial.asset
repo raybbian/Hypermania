@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be373a019aa534843a9f8df3be036a28, type: 3}
   m_Name: SpecialAerial
   m_EditorClassIdentifier: 
-  Clip: {fileID: 7400000, guid: d273859fb3c44974c9226111291954c6, type: 2}
+  AnimLoops: 0
+  ClipName: SpecialAerial
   ComboEligible: 1
   Followup: 3
   FollowupInput: 0
@@ -53,7 +54,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -109,7 +109,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -165,7 +164,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -221,7 +219,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -277,7 +274,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -333,7 +329,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -389,7 +384,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -445,7 +439,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -501,7 +494,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -557,7 +549,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -613,7 +604,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -669,7 +659,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -725,7 +714,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -781,7 +769,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -837,7 +824,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -893,7 +879,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -949,7 +934,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -1005,7 +989,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -1061,7 +1044,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -1117,7 +1099,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 1
@@ -1173,7 +1154,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 1
@@ -1229,7 +1209,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 1
@@ -1285,7 +1264,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 1
@@ -1341,7 +1319,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -1397,7 +1374,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 1
     Floating: 0
@@ -1453,7 +1429,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1488,7 +1463,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -1544,7 +1518,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1579,7 +1552,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -1635,7 +1607,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1670,7 +1641,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1705,7 +1675,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -1761,7 +1730,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1796,7 +1764,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1831,7 +1798,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -1887,7 +1853,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1922,7 +1887,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -1957,7 +1921,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -2013,7 +1976,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -2048,7 +2010,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -2083,7 +2044,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -2139,7 +2099,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -2174,7 +2133,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     - CenterLocal:
         x:
@@ -2209,7 +2167,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 2
     Floating: 0
@@ -2265,7 +2222,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2321,7 +2277,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2377,7 +2332,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2433,7 +2387,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2489,7 +2442,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2545,7 +2497,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2601,7 +2552,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -2657,7 +2607,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 1
@@ -2713,7 +2662,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 1
@@ -2769,7 +2717,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 1
@@ -2825,7 +2772,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 1
@@ -2881,7 +2827,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 1
@@ -2937,7 +2882,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 1
@@ -2993,7 +2937,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 1
@@ -3049,7 +2992,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 1
@@ -3105,7 +3047,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 1
@@ -3161,7 +3102,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 1
@@ -3217,7 +3157,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 1
@@ -3273,7 +3212,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 1
@@ -3329,7 +3267,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -3385,7 +3322,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -3441,7 +3377,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -3497,7 +3432,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -3553,7 +3487,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -3609,7 +3542,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -3665,7 +3597,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -3721,7 +3652,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -3777,7 +3707,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -3833,7 +3762,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -3889,7 +3817,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -3945,7 +3872,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -4001,7 +3927,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -4057,7 +3982,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -4113,7 +4037,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0
@@ -4169,7 +4092,6 @@ MonoBehaviour:
         GrabsAirborne: 0
         Techable: 0
         HasTransition: 0
-        Unblockable: 0
         OnHitTransition: 0
     FrameType: 3
     Floating: 0

@@ -1,13 +1,12 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
-using Design.Animation;
-using Design.Configs;
+using Game.Sim.Configs;
 using MemoryPack;
 using Netcode.Rollback;
-using UnityEngine;
 using Utils;
 using Utils.SoftFloat;
+using Game.Sim;
 
 namespace Game.Sim
 {
@@ -94,11 +93,11 @@ namespace Game.Sim
         private GameState _beatSnapshot;
         private GameState _lookaheadSnapshot;
 
-        private GameOptions _options;
+        private SimOptions _options;
         private int _attackerIndex;
-        private CharacterConfig _attackerConfig;
+        private CharacterStats _attackerConfig;
         private int _noteHitHalfRange;
-        private AudioConfig _audio;
+        private AudioStats _audio;
         private (GameInput input, InputStatus status)[] _inputScratch;
 
         // Reach is config-static, so we only need to compute it once per
@@ -114,7 +113,7 @@ namespace Game.Sim
 
         public static GeneratedCombo Generate(
             in GameState state,
-            GameOptions options,
+            SimOptions options,
             int attackerIndex,
             BeatmapNote[] notes,
             int gameHitstop
@@ -126,7 +125,7 @@ namespace Game.Sim
 
         public GeneratedCombo Run(
             in GameState state,
-            GameOptions options,
+            SimOptions options,
             int attackerIndex,
             BeatmapNote[] notes,
             int gameHitstop
@@ -266,7 +265,7 @@ namespace Game.Sim
             };
         }
 
-        private void InitializeFromCaller(GameOptions options, int attackerIndex)
+        private void InitializeFromCaller(SimOptions options, int attackerIndex)
         {
             _attackerIndex = attackerIndex;
             _attackerConfig = options.Players[attackerIndex].Character;
@@ -274,33 +273,31 @@ namespace Game.Sim
             _audio = options.Global.Audio;
 
             // Clone Players so we can flip the attacker to Freestyle on our
-            // copy without touching the real game's PlayerOptions. Without
+            // copy without touching the real game's PlayerSimOptions. Without
             // this, the inner sim would recursively trigger mania every time
             // its super hit landed.
-            PlayerOptions[] clonedPlayers = new PlayerOptions[options.Players.Length];
+            PlayerSimOptions[] clonedPlayers = new PlayerSimOptions[options.Players.Length];
             for (int p = 0; p < options.Players.Length; p++)
             {
                 clonedPlayers[p] = options.Players[p];
             }
-            PlayerOptions atk = options.Players[attackerIndex];
-            clonedPlayers[attackerIndex] = new PlayerOptions
+            PlayerSimOptions atk = options.Players[attackerIndex];
+            clonedPlayers[attackerIndex] = new PlayerSimOptions
             {
                 HealOnActionable = atk.HealOnActionable,
                 SuperMaxOnActionable = atk.SuperMaxOnActionable,
                 BurstMaxOnActionable = atk.BurstMaxOnActionable,
                 Immortal = atk.Immortal,
                 Character = atk.Character,
-                SkinIndex = atk.SkinIndex,
                 ComboMode = ComboMode.Freestyle,
                 ManiaDifficulty = atk.ManiaDifficulty,
                 SuperInputMode = atk.SuperInputMode,
             };
 
-            _options = new GameOptions
+            _options = new SimOptions
             {
                 Global = options.Global,
                 Players = clonedPlayers,
-                LocalPlayers = options.LocalPlayers,
                 InfoOptions = options.InfoOptions,
                 AlwaysRhythmCancel = false,
             };
@@ -556,10 +553,10 @@ namespace Game.Sim
                 if (checkWindow && IsHitstopInWindow(windowStart, windowEnd))
                     hitstopInWindow = true;
 
-                if (_working.Fighters[defenderIndex].HitProps.HasValue)
+                if (_working.Fighters[defenderIndex].View.HitProps.HasValue)
                 {
                     hit = true;
-                    hitProps = _working.Fighters[defenderIndex].HitProps.Value;
+                    hitProps = _working.Fighters[defenderIndex].View.HitProps.Value;
                     break;
                 }
             }

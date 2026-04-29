@@ -1,6 +1,6 @@
 using System.Collections;
-using Design.Configs;
 using Game.Sim;
+using Game.View.Configs;
 using Game.View.Events;
 using Game.View.Fighters;
 using UnityEngine;
@@ -45,31 +45,31 @@ namespace Game.View.Overlay
         private Coroutine _hideRoutine;
         private bool _prevIsSuperAttack;
         private bool _active;
-        private CharacterConfig _config;
+        private CharacterPresentation _presentation;
         private int _postDisplayHitstopTicks;
         private int _displayStartFrame;
         private FighterState _dummyFighter;
 
-        public void Init(CharacterConfig config, int skinIndex, int postDisplayHitstopTicks)
+        public void Init(CharacterPresentation pres, int skinIndex, int postDisplayHitstopTicks)
         {
-            _config = config;
+            _presentation = pres;
             _postDisplayHitstopTicks = postDisplayHitstopTicks;
 
             foreach (var img in _mainImages)
-                img.color = config.Skins[skinIndex].MainColor;
+                img.color = pres.Skins[skinIndex].MainColor;
             foreach (var img in _lightImages)
-                img.color = config.Skins[skinIndex].LightColor;
+                img.color = pres.Skins[skinIndex].LightColor;
             foreach (var img in _accentImages)
-                img.color = config.Skins[skinIndex].AccentColor;
+                img.color = pres.Skins[skinIndex].AccentColor;
             int hiddenLayer = LayerMask.NameToLayer(_hiddenLayerName);
 
-            _spawnedFighter = Instantiate(config.Prefab, _stageRoot.transform);
-            _spawnedFighter.Init(config, skinIndex);
+            _spawnedFighter = Instantiate(pres.Prefab, _stageRoot.transform);
+            _spawnedFighter.Init(pres, skinIndex);
             SetLayerRecursive(_spawnedFighter.gameObject, hiddenLayer);
 
             var camGo = new GameObject("SuperDisplayCamera");
             camGo.transform.SetParent(_stageRoot.transform, false);
-            camGo.transform.localPosition = config.SuperDisplay.CameraLocalPosition;
+            camGo.transform.localPosition = pres.SuperDisplay.CameraLocalPosition;
             camGo.transform.localEulerAngles = Vector3.zero;
             camGo.layer = hiddenLayer;
 
@@ -78,7 +78,7 @@ namespace Game.View.Overlay
             _spawnedCamera.clearFlags = CameraClearFlags.SolidColor;
             _spawnedCamera.backgroundColor = new Color(0f, 0f, 0f, 0f);
             _spawnedCamera.orthographic = true;
-            _spawnedCamera.orthographicSize = (float)config.SuperDisplay.CameraOrthoSize;
+            _spawnedCamera.orthographicSize = (float)pres.SuperDisplay.CameraOrthoSize;
             _spawnedCamera.targetTexture = _renderTexture;
 
             _overlayAnimator = GetComponent<Animator>();
@@ -94,7 +94,7 @@ namespace Game.View.Overlay
             bool nowSuper = fighter.IsSuperAttack;
             if (!_prevIsSuperAttack && nowSuper)
             {
-                Show(_config.SuperDisplay.AnimState, _config.SuperDisplay.StartFrame);
+                Show(_presentation.SuperDisplay.AnimState, _presentation.SuperDisplay.StartFrame);
                 _active = true;
                 sfxManager.AddDesired(SfxKind.SuperStart, state.RealFrame, hash: playerIndex);
             }

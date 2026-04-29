@@ -15,8 +15,8 @@ namespace Game
         [SerializeField]
         public GameRunner Runner;
 
-        public const int TPS = 60;
-        public const int ROLLBACK_FRAMES = 8;
+        public const int TPS = SimConstants.TPS;
+        public const int ROLLBACK_FRAMES = SimConstants.ROLLBACK_FRAMES;
 
         public Action OnGameFinished;
         public Action OnGameDisconnected;

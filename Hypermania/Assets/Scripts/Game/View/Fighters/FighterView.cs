@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Design.Animation;
-using Design.Configs;
+using Game.Sim.Configs;
 using Game.Sim;
+using Game.View.Configs;
 using Game.View.Events;
 using Game.View.Events.Vfx;
 using UnityEngine;
@@ -17,7 +17,8 @@ namespace Game.View.Fighters
     {
         private Animator _animator;
         private SpriteLibrary _spriteLibrary;
-        private CharacterConfig _characterConfig;
+        private CharacterPresentation _presentation;
+        private CharacterStats _stats;
         private RuntimeAnimatorController _oldController;
 
         [SerializeField]
@@ -39,9 +40,9 @@ namespace Game.View.Fighters
 
         private int _jitterFramesRemaining;
 
-        public virtual void Init(CharacterConfig characterConfig, int skinIndex)
+        public virtual void Init(CharacterPresentation presentation, int skinIndex)
         {
-            if (skinIndex < 0 || skinIndex >= characterConfig.Skins.Length)
+            if (skinIndex < 0 || skinIndex >= presentation.Skins.Length)
             {
                 throw new InvalidOperationException("Skin index out of range");
             }
@@ -50,10 +51,11 @@ namespace Game.View.Fighters
             _spriteLibrary = GetComponent<SpriteLibrary>();
             _animator.speed = 0f;
 
-            _characterConfig = characterConfig;
+            _presentation = presentation;
+            _stats = presentation.Stats;
             _oldController = _animator.runtimeAnimatorController;
-            _animator.runtimeAnimatorController = characterConfig.AnimationController;
-            _spriteLibrary.spriteLibraryAsset = characterConfig.Skins[skinIndex].SpriteLibrary;
+            _animator.runtimeAnimatorController = presentation.AnimationController;
+            _spriteLibrary.spriteLibraryAsset = presentation.Skins[skinIndex].SpriteLibrary;
         }
 
         public virtual void Render(Frame frame, in FighterState state)
@@ -62,9 +64,9 @@ namespace Game.View.Fighters
             pos.x = (float)state.Position.x;
             pos.y = (float)state.Position.y;
 
-            if (state.HitProps.HasValue && IsHitRecipient(state.State))
+            if (state.View.HitProps.HasValue && IsHitRecipient(state.State))
             {
-                _jitterFramesRemaining = state.HitProps.Value.HitstopTicks;
+                _jitterFramesRemaining = state.View.HitProps.Value.HitstopTicks;
             }
 
             if (_jitterFramesRemaining > 0)
@@ -79,18 +81,21 @@ namespace Game.View.Fighters
             transform.localScale = new Vector3(state.FacingDir == FighterFacing.Left ? -1 : 1, 1f, 1f);
 
             CharacterState animState = state.State;
-            HitboxData data = _characterConfig.GetHitboxData(animState);
+            HitboxData data = _stats.GetHitboxData(animState);
             if (data == null)
                 return;
             // add small amount to ensure that right frame is displayed
-            float normalizedTime = data.GetAnimNormalizedTime(frame - state.StateStart) + 0.01f;
+            int animTick = data.AnimLoops
+                ? (frame - state.StateStart) % data.TotalTicks
+                : Mathf.Min(frame - state.StateStart, data.TotalTicks - 1);
+            float normalizedTime = (float)animTick / (data.TotalTicks - 1) + 0.01f;
             _animator.Play(animState.ToString(), 0, normalizedTime);
             _animator.Update(0f); // force pose evaluation this frame while paused
 
             if (data.ApplyRootMotion)
             {
                 int rmTick = frame - state.StateStart;
-                FrameData fd = _characterConfig.GetFrameData(animState, rmTick);
+                FrameData fd = _stats.GetFrameData(animState, rmTick);
                 float facingSign = state.FacingDir == FighterFacing.Left ? -1f : 1f;
                 Vector3 animWorld = new Vector3(
                     (float)fd.RootMotionOffset.x * facingSign,
@@ -111,15 +116,15 @@ namespace Game.View.Fighters
             in FighterState state,
             VfxManager vfxManager,
             SfxManager sfxManager,
-            GlobalConfig globalConfig
+            GlobalStats globalStats
         )
         {
-            if (state.StateChangedThisRealFrame)
+            if (state.View.StateChangedThisRealFrame)
             {
-                List<SfxKind> sfxKinds = _characterConfig?.MoveSfx?.Sfx[state.State].Kinds;
+                List<SfxKind> sfxKinds = _presentation?.MoveSfx?.Sfx[state.State].Kinds;
                 if (sfxKinds != null)
                 {
-                    foreach (SfxKind sfxKind in _characterConfig.MoveSfx.Sfx[state.State].Kinds)
+                    foreach (SfxKind sfxKind in _presentation.MoveSfx.Sfx[state.State].Kinds)
                     {
                         sfxManager.AddDesired(sfxKind, realFrame);
                     }
@@ -129,7 +134,7 @@ namespace Game.View.Fighters
             if (state.BlockedLastRealFrame)
             {
                 Vector2 center = _visualCenter.position;
-                Vector2 hit = (Vector2)state.HitLocation.Value;
+                Vector2 hit = (Vector2)state.View.HitLocation.Value;
                 vfxManager.AddDesired(VfxKind.Block, realFrame, position: center, direction: center - hit);
                 sfxManager.AddDesired(SfxKind.Block, realFrame);
             }
@@ -137,20 +142,20 @@ namespace Game.View.Fighters
             if (state.HitLastRealFrame)
             {
                 VfxKind kind =
-                    (float)state.HitProps.Value.Knockback.magnitude < _thinHitKnockbackMagnitude
+                    (float)state.View.HitProps.Value.Knockback.magnitude < _thinHitKnockbackMagnitude
                         ? VfxKind.SmallHit
                         : VfxKind.ThinHit;
                 vfxManager.AddDesired(
                     kind,
                     realFrame,
-                    position: (Vector2)state.HitLocation,
-                    direction: (Vector2)state.HitProps.Value.Knockback
+                    position: (Vector2)state.View.HitLocation,
+                    direction: (Vector2)state.View.HitProps.Value.Knockback
                 );
             }
 
-            if (state.ClankLocation.HasValue)
+            if (state.View.ClankLocation.HasValue)
             {
-                vfxManager.AddDesired(VfxKind.Clank, realFrame, position: (Vector2)state.ClankLocation.Value);
+                vfxManager.AddDesired(VfxKind.Clank, realFrame, position: (Vector2)state.View.ClankLocation.Value);
             }
 
             if (state.DashedLastRealFrame)
@@ -167,12 +172,12 @@ namespace Game.View.Fighters
                 );
             }
 
-            if (state.StateChangedThisRealFrame && state.State == CharacterState.Burst)
+            if (state.View.StateChangedThisRealFrame && state.State == CharacterState.Burst)
             {
                 sfxManager.AddDesired(SfxKind.Burst, realFrame);
             }
 
-            if (state.State == CharacterState.Burst && realFrame - state.StateStart == globalConfig.BurstVfxTicks)
+            if (state.State == CharacterState.Burst && realFrame - state.StateStart == globalStats.BurstVfxTicks)
             {
                 vfxManager.AddDesired(VfxKind.Burst, realFrame, position: _visualCenter.position);
             }
@@ -188,20 +193,17 @@ namespace Game.View.Fighters
         {
             _animator.runtimeAnimatorController = _oldController;
             _oldController = null;
-            _characterConfig = null;
+            _presentation = null;
+            _stats = null;
         }
 
-        /// <summary>
-        /// Swaps the sprite library without re-binding the animator
-        /// controller. Safe to call every frame when cycling skins.
-        /// </summary>
         public void SetSkin(int skinIndex)
         {
-            if (_characterConfig == null)
+            if (_presentation == null)
                 return;
-            if (skinIndex < 0 || skinIndex >= _characterConfig.Skins.Length)
+            if (skinIndex < 0 || skinIndex >= _presentation.Skins.Length)
                 throw new ArgumentOutOfRangeException(nameof(skinIndex));
-            _spriteLibrary.spriteLibraryAsset = _characterConfig.Skins[skinIndex].SpriteLibrary;
+            _spriteLibrary.spriteLibraryAsset = _presentation.Skins[skinIndex].SpriteLibrary;
         }
     }
 }

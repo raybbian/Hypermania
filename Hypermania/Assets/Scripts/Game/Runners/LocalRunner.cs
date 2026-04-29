@@ -148,7 +148,7 @@ namespace Game.Runners
                         _view.RollbackRender(_curState);
                         break;
                     case RollbackRequestKind.AdvanceFrameReq:
-                        _curState.Advance(_options, request.GetAdvanceFrameRequest().Inputs);
+                        _curState.Advance(_options.Sim, request.GetAdvanceFrameRequest().Inputs);
                         _view.RollbackRender(_curState);
                         break;
                 }
