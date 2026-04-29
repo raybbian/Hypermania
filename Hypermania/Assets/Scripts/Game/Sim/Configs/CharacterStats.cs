@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using MemoryPack;
 using UnityEngine;
 using Utils;
 using Utils.EnumArray;
@@ -9,7 +10,8 @@ using Game.Sim;
 namespace Game.Sim.Configs
 {
     [Serializable]
-    public struct GatlingEntry
+    [MemoryPackable]
+    public partial struct GatlingEntry
     {
         public CharacterState From;
         public CharacterState To;
@@ -20,7 +22,8 @@ namespace Game.Sim.Configs
     // super-display camera layout for the same character. Sim consumers only
     // ever reach for CharacterStats - the trainer needs nothing else.
     [CreateAssetMenu(menuName = "Hypermania/Sim/Character Stats")]
-    public class CharacterStats : ScriptableObject
+    [MemoryPackable]
+    public partial class CharacterStats : ScriptableObject
     {
         public Character Character;
         public bool Enabled = true;

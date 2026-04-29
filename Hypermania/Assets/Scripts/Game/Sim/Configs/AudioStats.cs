@@ -17,7 +17,8 @@ namespace Game.Sim.Configs
     // One .osz difficulty's authored notes. Paired so each mania-difficulty
     // selection (Normal / Hard) has its own chart.
     [Serializable]
-    public struct BeatmapDifficulty
+    [MemoryPackable]
+    public partial struct BeatmapDifficulty
     {
         public string DifficultyName;
         public BeatmapNote[] Notes;
@@ -27,7 +28,8 @@ namespace Game.Sim.Configs
     // companion AudioPresentation SO (view side) holds the AudioClip and
     // per-character theme map for the Conductor.
     [CreateAssetMenu(menuName = "Hypermania/Sim/Audio Stats")]
-    public class AudioStats : ScriptableObject
+    [MemoryPackable]
+    public partial class AudioStats : ScriptableObject
     {
         public Frame FirstMusicalBeat = Frame.FirstFrame;
         public sfloat Bpm = 60;

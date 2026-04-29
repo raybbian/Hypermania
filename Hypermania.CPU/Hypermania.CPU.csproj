@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="MemoryPack" Version="1.21.4" />
+    <PackageReference Include="TorchSharp-cuda-windows" Version="0.105.0" />
   </ItemGroup>
 
   <ItemGroup>

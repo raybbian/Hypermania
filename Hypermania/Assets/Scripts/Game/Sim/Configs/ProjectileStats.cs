@@ -1,3 +1,4 @@
+using MemoryPack;
 using UnityEngine;
 using Utils.SoftFloat;
 using Game.Sim;
@@ -8,7 +9,8 @@ namespace Game.Sim.Configs
     // (view side) holds the spawned prefab. The sim's ProjectileState only
     // reads from ProjectileStats.
     [CreateAssetMenu(menuName = "Hypermania/Sim/Projectile Stats")]
-    public class ProjectileStats : ScriptableObject
+    [MemoryPackable]
+    public partial class ProjectileStats : ScriptableObject
     {
         public CharacterState TriggerState;
         public int SpawnTick;

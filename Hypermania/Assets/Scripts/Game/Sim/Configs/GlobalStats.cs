@@ -1,4 +1,5 @@
 using System;
+using MemoryPack;
 using UnityEngine;
 using Utils.EnumArray;
 using Utils.SoftFloat;
@@ -6,7 +7,8 @@ using Utils.SoftFloat;
 namespace Game.Sim.Configs
 {
     [Serializable]
-    public struct InputConfig
+    [MemoryPackable]
+    public partial struct InputConfig
     {
         public int DashWindow;
         public int SuperJumpWindow;
@@ -21,7 +23,8 @@ namespace Game.Sim.Configs
     // The character roster lives in PresentationOptions on the runner side;
     // the sim only sees per-player CharacterStats picked from this roster.
     [CreateAssetMenu(menuName = "Hypermania/Sim/Global Stats")]
-    public class GlobalStats : ScriptableObject
+    [MemoryPackable]
+    public partial class GlobalStats : ScriptableObject
     {
         public sfloat Gravity;
         public sfloat GroundY;

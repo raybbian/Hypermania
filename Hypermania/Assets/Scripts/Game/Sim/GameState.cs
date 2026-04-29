@@ -39,7 +39,8 @@ namespace Game.Sim
     }
 
     [Serializable]
-    public class PlayerSimOptions
+    [MemoryPackable]
+    public partial class PlayerSimOptions
     {
         public bool HealOnActionable;
         public bool SuperMaxOnActionable;
@@ -52,7 +53,8 @@ namespace Game.Sim
     }
 
     [Serializable]
-    public class InfoOptions
+    [MemoryPackable]
+    public partial class InfoOptions
     {
         public bool ShowFrameData;
         public bool ShowBoxes;
@@ -73,7 +75,8 @@ namespace Game.Sim
     // GameOptions in Game/GameOptions.cs. Anything reachable from here must
     // be Unity-free for the headless trainer.
     [Serializable]
-    public class SimOptions
+    [MemoryPackable]
+    public partial class SimOptions
     {
         public GlobalStats Global;
         public PlayerSimOptions[] Players;

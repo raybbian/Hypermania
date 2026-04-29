@@ -86,7 +86,8 @@ namespace Game.Sim.Configs
     }
 
     [Serializable]
-    public struct BoxData : IEquatable<BoxData>
+    [MemoryPackable]
+    public partial struct BoxData : IEquatable<BoxData>
     {
         public SVector2 CenterLocal;
         public SVector2 SizeLocal;
@@ -123,7 +124,8 @@ namespace Game.Sim.Configs
     }
 
     [Serializable]
-    public class FrameData
+    [MemoryPackable]
+    public partial class FrameData
     {
         public List<BoxData> Boxes = new List<BoxData>();
         public FrameType FrameType = FrameType.Neutral;
@@ -183,7 +185,8 @@ namespace Game.Sim.Configs
 
     [CreateAssetMenu(menuName = "Hypermania/Move Data")]
     [Serializable]
-    public class HitboxData : ScriptableObject
+    [MemoryPackable]
+    public partial class HitboxData : ScriptableObject
     {
         // Editor-time imported metadata. The MoveBuilder pulls these off the
         // authored AnimationClip; runtime sim never reads the clip itself, so

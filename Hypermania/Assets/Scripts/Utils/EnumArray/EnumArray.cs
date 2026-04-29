@@ -1,13 +1,16 @@
 using System;
+using MemoryPack;
 using UnityEngine;
 
 namespace Utils.EnumArray
 {
     [Serializable]
-    public class EnumArray<TEnum, TValue>
+    [MemoryPackable]
+    public partial class EnumArray<TEnum, TValue>
         where TEnum : unmanaged, Enum
     {
         [SerializeField]
+        [MemoryPackInclude]
         private TValue[] values;
 
         public TValue this[TEnum key]
