@@ -27,6 +27,9 @@ namespace Scenes.Battle
         [SerializeField]
         private GameRunner _manualRunner;
 
+        [SerializeField]
+        private GameRunner _replayRunner;
+
         private static readonly List<(
             PlayerHandle handle,
             PlayerKind playerKind,
@@ -51,6 +54,15 @@ namespace Scenes.Battle
                 case GameConfig.Manual:
                     _gameManager.Runner = _manualRunner;
                     _gameManager.StartGame(LOCAL_DEFAULT, null, SessionDirectory.Options);
+                    break;
+                case GameConfig.Replay:
+                    if (SessionDirectory.Replay == null)
+                    {
+                        Debug.LogError("BattleDirectory: GameConfig.Replay but SessionDirectory.Replay is null.");
+                        return;
+                    }
+                    _gameManager.Runner = _replayRunner;
+                    _gameManager.StartReplay(SessionDirectory.Replay, SessionDirectory.Options);
                     break;
                 case GameConfig.Online:
                     if (

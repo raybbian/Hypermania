@@ -15,7 +15,6 @@ namespace Hypermania.CPU.Training
     public sealed class PpoConfig
     {
         public int RolloutsPerUpdate = 4;
-        public int MaxFramesPerEpisode = 60 * 60; // 60s at 60 TPS
 
         public float Gamma = 0.99f;
         public float Lambda = 0.95f;
@@ -44,7 +43,7 @@ namespace Hypermania.CPU.Training
         readonly SimOptions _simOptions;
         readonly NeuralPolicy _learner;
         readonly NeuralPolicy _frozenOpponent; // refreshed periodically
-        readonly SelfPlayEnv _env;
+        readonly BatchedSelfPlayEnv _env;
         readonly torch.optim.Optimizer _opt;
         readonly Device _device;
         readonly string _runDir;
@@ -57,7 +56,8 @@ namespace Hypermania.CPU.Training
             RewardConfig rewardCfg,
             Device device,
             string outDir,
-            int seed
+            int seed,
+            string resumeFrom = null
         )
         {
             _simOptions = simOptions;
@@ -72,10 +72,21 @@ namespace Hypermania.CPU.Training
 
             int obsDim = Featurizer.Length;
             _learner = new NeuralPolicy(obsDim, device);
+            // Optional warm-start from a prior snapshot. Optimizer state is
+            // not persisted - Adam's per-param momentum/variance buffers
+            // restart from zero. First few updates after resume have noisier
+            // gradients than a continuous run; in practice this washes out
+            // within tens of updates.
+            if (!string.IsNullOrEmpty(resumeFrom))
+            {
+                using FileStream fs = File.OpenRead(resumeFrom);
+                _learner.Load(fs);
+                Console.WriteLine($"resumed from {resumeFrom} at step {_learner.TrainingStep}");
+            }
             _frozenOpponent = new NeuralPolicy(obsDim, device);
             CopyWeights(_learner, _frozenOpponent);
 
-            _env = new SelfPlayEnv(simOptions, rewardCfg, device);
+            _env = new BatchedSelfPlayEnv(simOptions, rewardCfg, device, cfg.RolloutsPerUpdate);
             _opt = torch.optim.Adam(_learner.Net.parameters(), lr: cfg.LearningRate);
 
             torch.manual_seed(seed);
@@ -84,52 +95,115 @@ namespace Hypermania.CPU.Training
         public string RunDir => _runDir;
         public NeuralPolicy Learner => _learner;
 
-        public void Train()
+        public void Train(ITrainingReporter reporter = null)
         {
-            for (int update = 1; update <= _cfg.TotalUpdates; update++)
+            reporter ??= new ConsoleReporter();
+            reporter.Begin(_runId, _runDir, _cfg, _device, Featurizer.Length);
+
+            float updateSecondsEma = 0f;
+
+            try
             {
-                List<Trajectory> rollouts = new List<Trajectory>(_cfg.RolloutsPerUpdate);
-                EpisodeResult lastEpisode = null;
-                int learnerWins = 0;
-                float meanReturn = 0f;
-
-                for (int r = 0; r < _cfg.RolloutsPerUpdate; r++)
+                for (int update = 1; update <= _cfg.TotalUpdates; update++)
                 {
-                    Trajectory traj = new Trajectory();
-                    int learnerIdx = _rng.Next(2);
-                    EpisodeResult ep = _env.Run(
-                        learnerIdx, _learner.Net, _frozenOpponent, traj, maxFrames: _cfg.MaxFramesPerEpisode
+                    System.Diagnostics.Stopwatch updateSw = System.Diagnostics.Stopwatch.StartNew();
+
+                    int[] learnerIndices = new int[_cfg.RolloutsPerUpdate];
+                    for (int r = 0; r < _cfg.RolloutsPerUpdate; r++)
+                        learnerIndices[r] = _rng.Next(2);
+
+                    System.Diagnostics.Stopwatch rolloutSw =
+                        System.Diagnostics.Stopwatch.StartNew();
+                    (Trajectory[] trajArr, EpisodeResult[] eps) = _env.Run(
+                        learnerIndices,
+                        _learner.Net,
+                        _frozenOpponent.Net
                     );
-                    rollouts.Add(traj);
-                    lastEpisode = ep;
-                    meanReturn += ep.TotalReward;
-                    if (ep.LearnerLives > ep.OpponentLives) learnerWins++;
+                    rolloutSw.Stop();
+
+                    List<Trajectory> rollouts = new List<Trajectory>(trajArr);
+                    EpisodeResult lastEpisode = eps[eps.Length - 1];
+                    int learnerWins = 0;
+                    float meanReturn = 0f;
+                    float totalFrames = 0f;
+                    float totalFightingFrames = 0f;
+                    RewardBreakdown breakdownSum = default;
+                    for (int r = 0; r < eps.Length; r++)
+                    {
+                        meanReturn += eps[r].TotalReward;
+                        totalFrames += eps[r].Frames;
+                        totalFightingFrames += trajArr[r].Length;
+                        breakdownSum = breakdownSum + eps[r].TotalBreakdown;
+                        if (eps[r].LearnerLives > eps[r].OpponentLives)
+                            learnerWins++;
+                    }
+                    meanReturn /= _cfg.RolloutsPerUpdate;
+
+                    System.Diagnostics.Stopwatch optSw = System.Diagnostics.Stopwatch.StartNew();
+                    (float policyLoss, float valueLoss, float entropy) = OptimizeOn(rollouts);
+                    optSw.Stop();
+
+                    _learner.TrainingStep++;
+                    _learner.WallclockUtcTicks = DateTime.UtcNow.Ticks;
+                    long step = _learner.TrainingStep;
+
+                    updateSw.Stop();
+                    float updateSecs = (float)updateSw.Elapsed.TotalSeconds;
+                    // 0.2 alpha gives ~5-update half-life; smooth enough to read,
+                    // responsive enough to track regime changes.
+                    updateSecondsEma =
+                        updateSecondsEma == 0f
+                            ? updateSecs
+                            : 0.2f * updateSecs + 0.8f * updateSecondsEma;
+
+                    TrainingMetrics m = new TrainingMetrics
+                    {
+                        Step = step,
+                        TotalUpdates = _cfg.TotalUpdates,
+                        Rollouts = _cfg.RolloutsPerUpdate,
+                        Wins = learnerWins,
+                        MeanReturn = meanReturn,
+                        MeanFrames = totalFrames / _cfg.RolloutsPerUpdate,
+                        MeanFightingFrames = totalFightingFrames / _cfg.RolloutsPerUpdate,
+                        PolicyLoss = policyLoss,
+                        ValueLoss = valueLoss,
+                        Entropy = entropy,
+                        AvgBreakdown = breakdownSum / _cfg.RolloutsPerUpdate,
+                        RolloutTime = rolloutSw.Elapsed,
+                        OptimizeTime = optSw.Elapsed,
+                        UpdateTime = updateSw.Elapsed,
+                        UpdateSecondsEma = updateSecondsEma,
+                    };
+                    reporter.OnUpdate(m);
+
+                    if (update % _cfg.SnapshotEvery == 0 || update == _cfg.TotalUpdates)
+                        WriteSnapshot(step);
+
+                    if (_cfg.OpponentRefreshEvery > 0 && update % _cfg.OpponentRefreshEvery == 0)
+                        CopyWeights(_learner, _frozenOpponent);
+
+                    if (
+                        _cfg.ReplayEvery > 0
+                        && update % _cfg.ReplayEvery == 0
+                        && lastEpisode != null
+                    )
+                        WriteReplay(step, lastEpisode);
                 }
-                meanReturn /= _cfg.RolloutsPerUpdate;
-
-                (float policyLoss, float valueLoss, float entropy) = OptimizeOn(rollouts);
-
-                _learner.TrainingStep++;
-                _learner.WallclockUtcTicks = DateTime.UtcNow.Ticks;
-
-                Console.WriteLine(
-                    $"[update {update,4}] mean_return={meanReturn,7:F3} wins={learnerWins}/{_cfg.RolloutsPerUpdate} " +
-                    $"policy_loss={policyLoss,7:F4} value_loss={valueLoss,7:F4} entropy={entropy,5:F3}"
-                );
-
-                if (update % _cfg.SnapshotEvery == 0 || update == _cfg.TotalUpdates)
-                    WriteSnapshot(update);
-
-                if (_cfg.OpponentRefreshEvery > 0 && update % _cfg.OpponentRefreshEvery == 0)
-                    CopyWeights(_learner, _frozenOpponent);
-
-                if (_cfg.ReplayEvery > 0 && update % _cfg.ReplayEvery == 0 && lastEpisode != null)
-                    WriteReplay(update, lastEpisode);
+            }
+            finally
+            {
+                reporter.End();
             }
         }
 
         // GAE-lambda advantage and discounted return computation, per-trajectory.
-        static void ComputeAdvantages(Trajectory t, float gamma, float lam, out float[] adv, out float[] ret)
+        static void ComputeAdvantages(
+            Trajectory t,
+            float gamma,
+            float lam,
+            out float[] adv,
+            out float[] ret
+        )
         {
             int n = t.Length;
             adv = new float[n];
@@ -150,8 +224,10 @@ namespace Hypermania.CPU.Training
         {
             // Flatten all trajectories into one batch.
             int total = 0;
-            foreach (Trajectory t in rollouts) total += t.Length;
-            if (total == 0) return (0f, 0f, 0f);
+            foreach (Trajectory t in rollouts)
+                total += t.Length;
+            if (total == 0)
+                return (0f, 0f, 0f);
 
             int obsDim = Featurizer.Length;
             float[] flatObs = new float[total * obsDim];
@@ -167,7 +243,13 @@ namespace Hypermania.CPU.Training
                 ComputeAdvantages(t, _cfg.Gamma, _cfg.Lambda, out float[] adv, out float[] ret);
                 for (int i = 0; i < t.Length; i++)
                 {
-                    Buffer.BlockCopy(t.Observations[i], 0, flatObs, o * obsDim * sizeof(float), obsDim * sizeof(float));
+                    Buffer.BlockCopy(
+                        t.Observations[i],
+                        0,
+                        flatObs,
+                        o * obsDim * sizeof(float),
+                        obsDim * sizeof(float)
+                    );
                     flatDir[o] = t.DirActions[i];
                     flatBtn[o] = t.BtnActions[i];
                     flatOldLogp[o] = t.LogProbs[i];
@@ -178,26 +260,40 @@ namespace Hypermania.CPU.Training
             }
 
             // Normalize advantages over the entire batch.
-            float advMean = 0f, advVar = 0f;
-            for (int i = 0; i < total; i++) advMean += flatAdv[i];
+            float advMean = 0f,
+                advVar = 0f;
+            for (int i = 0; i < total; i++)
+                advMean += flatAdv[i];
             advMean /= total;
-            for (int i = 0; i < total; i++) { float d = flatAdv[i] - advMean; advVar += d * d; }
+            for (int i = 0; i < total; i++)
+            {
+                float d = flatAdv[i] - advMean;
+                advVar += d * d;
+            }
             float advStd = MathF.Sqrt(advVar / Math.Max(1, total - 1)) + 1e-8f;
-            for (int i = 0; i < total; i++) flatAdv[i] = (flatAdv[i] - advMean) / advStd;
+            for (int i = 0; i < total; i++)
+                flatAdv[i] = (flatAdv[i] - advMean) / advStd;
 
-            using Tensor obsT = tensor(flatObs, new long[] { total, obsDim }, ScalarType.Float32).to(_device);
+            using Tensor obsT = tensor(flatObs, new long[] { total, obsDim }, ScalarType.Float32)
+                .to(_device);
             using Tensor dirT = tensor(flatDir, new long[] { total }, ScalarType.Int64).to(_device);
             using Tensor btnT = tensor(flatBtn, new long[] { total }, ScalarType.Int64).to(_device);
-            using Tensor oldLogpT = tensor(flatOldLogp, new long[] { total }, ScalarType.Float32).to(_device);
-            using Tensor advT = tensor(flatAdv, new long[] { total }, ScalarType.Float32).to(_device);
-            using Tensor retT = tensor(flatRet, new long[] { total }, ScalarType.Float32).to(_device);
+            using Tensor oldLogpT = tensor(flatOldLogp, new long[] { total }, ScalarType.Float32)
+                .to(_device);
+            using Tensor advT = tensor(flatAdv, new long[] { total }, ScalarType.Float32)
+                .to(_device);
+            using Tensor retT = tensor(flatRet, new long[] { total }, ScalarType.Float32)
+                .to(_device);
 
-            float lastPolicyLoss = 0f, lastValueLoss = 0f, lastEntropy = 0f;
+            float lastPolicyLoss = 0f,
+                lastValueLoss = 0f,
+                lastEntropy = 0f;
             for (int epoch = 0; epoch < _cfg.Epochs; epoch++)
             {
                 // Random permutation for shuffled minibatches.
                 int[] idx = new int[total];
-                for (int i = 0; i < total; i++) idx[i] = i;
+                for (int i = 0; i < total; i++)
+                    idx[i] = i;
                 Shuffle(idx, _rng);
 
                 for (int start = 0; start < total; start += _cfg.MinibatchSize)
@@ -205,8 +301,10 @@ namespace Hypermania.CPU.Training
                     int end = Math.Min(total, start + _cfg.MinibatchSize);
                     int len = end - start;
                     long[] batchIdx = new long[len];
-                    for (int i = 0; i < len; i++) batchIdx[i] = idx[start + i];
-                    using Tensor idxT = tensor(batchIdx, new long[] { len }, ScalarType.Int64).to(_device);
+                    for (int i = 0; i < len; i++)
+                        batchIdx[i] = idx[start + i];
+                    using Tensor idxT = tensor(batchIdx, new long[] { len }, ScalarType.Int64)
+                        .to(_device);
 
                     using Tensor mbObs = obsT.index_select(0, idxT);
                     using Tensor mbDir = dirT.index_select(0, idxT);
@@ -225,7 +323,8 @@ namespace Hypermania.CPU.Training
                     Tensor valueLoss = F.mse_loss(value, mbRet);
                     Tensor entropy = ent.mean();
 
-                    Tensor loss = policyLoss + _cfg.ValueCoef * valueLoss - _cfg.EntropyCoef * entropy;
+                    Tensor loss =
+                        policyLoss + _cfg.ValueCoef * valueLoss - _cfg.EntropyCoef * entropy;
 
                     _opt.zero_grad();
                     loss.backward();
@@ -240,26 +339,32 @@ namespace Hypermania.CPU.Training
             return (lastPolicyLoss, lastValueLoss, lastEntropy);
         }
 
-        void WriteSnapshot(int update)
+        void WriteSnapshot(long step)
         {
-            string path = Path.Combine(_runDir, $"policy_{update:D6}.hmpolicy");
+            string path = Path.Combine(_runDir, $"policy_{step:D6}.hmpolicy");
             using (FileStream fs = File.Create(path))
                 _learner.Save(fs);
             string latest = Path.Combine(_runDir, "latest.hmpolicy");
             File.Copy(path, latest, overwrite: true);
         }
 
-        void WriteReplay(int update, EpisodeResult ep)
+        void WriteReplay(long step, EpisodeResult ep)
         {
+            Character p1Char = _simOptions.Players[0].Character?.Character ?? Character.Nythea;
+            Character p2Char = _simOptions.Players[1].Character?.Character ?? Character.Nythea;
             ReplayFile r = ReplayFile.Build(
                 schemaHash: ObservationSchema.Hash(typeof(GameState)),
-                p1Char: _simOptions.Players[0].Character?.Character ?? Character.Nythea,
-                p2Char: _simOptions.Players[1].Character?.Character ?? Character.Nythea,
+                p1Char: p1Char,
+                p2Char: p2Char,
+                p1Skin: 0,
+                p2Skin: p1Char == p2Char ? 1 : 0,
+                stage: Stage.Stage1,
                 p1Inputs: ep.P1Inputs.ToArray(),
                 p2Inputs: ep.P2Inputs.ToArray(),
-                source: $"train:{_runId}:u{update:D6}"
+                source: $"train:{_runId}:u{step:D6}",
+                simOptions: _simOptions
             );
-            string path = Path.Combine(_runDir, $"rollout_u{update:D6}.hmrep");
+            string path = Path.Combine(_runDir, $"rollout_u{step:D6}.hmrep");
             ReplayFile.Save(path, r);
         }
 

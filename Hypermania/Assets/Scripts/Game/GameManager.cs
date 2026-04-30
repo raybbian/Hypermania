@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Game.Runners;
 using Game.Sim;
+using Game.Sim.Replay;
 using Netcode.P2P;
 using Netcode.Rollback;
 using Steamworks;
@@ -39,6 +40,23 @@ namespace Game
             if (Runner.Initialized)
                 return;
             Runner.Init(players, p2pClient, overrideOptions);
+            FirstFinish = true;
+        }
+
+        // Bypass the standard Init path: ReplayRunner uses its own InitFromReplay
+        // since it doesn't go through the rollback session or input-buffer setup.
+        public void StartReplay(ReplayFile replay, GameOptions overrideOptions)
+        {
+            if (Runner.Initialized)
+                return;
+            if (!(Runner is ReplayRunner replayRunner))
+            {
+                Debug.LogError(
+                    $"{nameof(GameManager)}.{nameof(StartReplay)}: assigned Runner ({Runner?.GetType().Name}) is not a {nameof(ReplayRunner)}."
+                );
+                return;
+            }
+            replayRunner.InitFromReplay(replay, overrideOptions);
             FirstFinish = true;
         }
 

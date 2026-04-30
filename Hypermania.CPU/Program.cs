@@ -24,10 +24,14 @@ namespace Hypermania.CPU
             {
                 switch (args[0])
                 {
-                    case "train": return RunTrain(args);
-                    case "play":  return RunPlay(args);
-                    case "eval":  return RunEval(args);
-                    case "schema": return DumpSchema();
+                    case "train":
+                        return RunTrain(args);
+                    case "play":
+                        return RunPlay(args);
+                    case "eval":
+                        return RunEval(args);
+                    case "schema":
+                        return DumpSchema();
                     default:
                         PrintHelp();
                         return 1;
@@ -42,24 +46,45 @@ namespace Hypermania.CPU
 
         static int RunTrain(string[] args)
         {
-            int episodes = 0;          // 0 = use cfg.TotalUpdates default
+            int episodes = 0; // 0 = use cfg.TotalUpdates default
             int seed = 0;
             int snapshotEvery = 50;
             int replayEvery = 50;
             string outDir = Path.Combine("snapshots");
             string presetPath = null;
+            string resumeFrom = null;
+            bool useTui = false;
 
             for (int i = 1; i < args.Length; i++)
             {
                 switch (args[i])
                 {
-                    case "--episodes": episodes = int.Parse(args[++i]); break;
-                    case "--seed": seed = int.Parse(args[++i]); break;
-                    case "--snapshot-every": snapshotEvery = int.Parse(args[++i]); break;
-                    case "--replay-every": replayEvery = int.Parse(args[++i]); break;
-                    case "--out-dir": outDir = args[++i]; break;
-                    case "--config": presetPath = args[++i]; break;
-                    default: throw new ArgumentException($"unknown flag: {args[i]}");
+                    case "--episodes":
+                        episodes = int.Parse(args[++i]);
+                        break;
+                    case "--seed":
+                        seed = int.Parse(args[++i]);
+                        break;
+                    case "--snapshot-every":
+                        snapshotEvery = int.Parse(args[++i]);
+                        break;
+                    case "--replay-every":
+                        replayEvery = int.Parse(args[++i]);
+                        break;
+                    case "--out-dir":
+                        outDir = args[++i];
+                        break;
+                    case "--config":
+                        presetPath = args[++i];
+                        break;
+                    case "--resume":
+                        resumeFrom = args[++i];
+                        break;
+                    case "--tui":
+                        useTui = true;
+                        break;
+                    default:
+                        throw new ArgumentException($"unknown flag: {args[i]}");
                 }
             }
 
@@ -70,16 +95,31 @@ namespace Hypermania.CPU
                 SnapshotEvery = snapshotEvery,
                 ReplayEvery = replayEvery,
             };
-            if (episodes > 0) cfg.TotalUpdates = episodes;
+            if (episodes > 0)
+                cfg.TotalUpdates = episodes;
 
             torch.Device device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
-            Console.WriteLine($"device: {(device.type == DeviceType.CUDA ? "CUDA" : "CPU")}");
-            Console.WriteLine($"obs dim: {Featurization.Featurizer.Length}");
-            Console.WriteLine($"schema hash: 0x{Featurization.Featurizer.SchemaHash:X16}");
+            // The TUI takes over stdout - skip these intro lines so they don't
+            // scroll above the live frame. ConsoleReporter prints its own.
+            if (!useTui)
+            {
+                Console.WriteLine($"device: {(device.type == DeviceType.CUDA ? "CUDA" : "CPU")}");
+                Console.WriteLine($"obs dim: {Featurization.Featurizer.Length}");
+                Console.WriteLine($"schema hash: 0x{Featurization.Featurizer.SchemaHash:X16}");
+            }
 
-            PpoTrainer trainer = new PpoTrainer(sim, cfg, RewardConfig.Default, device, outDir, seed);
-            Console.WriteLine($"run dir: {trainer.RunDir}");
-            trainer.Train();
+            PpoTrainer trainer = new PpoTrainer(
+                sim,
+                cfg,
+                RewardConfig.Default,
+                device,
+                outDir,
+                seed,
+                resumeFrom: resumeFrom
+            );
+
+            ITrainingReporter reporter = useTui ? new TuiReporter() : new ConsoleReporter();
+            trainer.Train(reporter);
             return 0;
         }
 
@@ -100,11 +140,20 @@ namespace Hypermania.CPU
             {
                 switch (args[i])
                 {
-                    case "--out": outPath = args[++i]; break;
-                    case "--opponent": opponentSpec = args[++i]; break;
-                    case "--seed": seed = int.Parse(args[++i]); break;
-                    case "--config": presetPath = args[++i]; break;
-                    default: throw new ArgumentException($"unknown flag: {args[i]}");
+                    case "--out":
+                        outPath = args[++i];
+                        break;
+                    case "--opponent":
+                        opponentSpec = args[++i];
+                        break;
+                    case "--seed":
+                        seed = int.Parse(args[++i]);
+                        break;
+                    case "--config":
+                        presetPath = args[++i];
+                        break;
+                    default:
+                        throw new ArgumentException($"unknown flag: {args[i]}");
                 }
             }
 
@@ -119,19 +168,27 @@ namespace Hypermania.CPU
 
             SelfPlayEnv env = new SelfPlayEnv(sim, RewardConfig.Default, device);
             Trajectory traj = new Trajectory();
-            EpisodeResult ep = env.Run(0, learner.Net, opp, traj, maxFrames: 60 * 90);
+            EpisodeResult ep = env.Run(0, learner.Net, opp, traj, greedyOpponent: true);
 
-            Console.WriteLine($"frames={ep.Frames} reward={ep.TotalReward:F3} learner_lives={ep.LearnerLives} opp_lives={ep.OpponentLives}");
+            Console.WriteLine(
+                $"frames={ep.Frames} reward={ep.TotalReward:F3} learner_lives={ep.LearnerLives} opp_lives={ep.OpponentLives}"
+            );
 
             if (!string.IsNullOrEmpty(outPath))
             {
+                Character p1Char = sim.Players[0].Character?.Character ?? Character.Nythea;
+                Character p2Char = sim.Players[1].Character?.Character ?? Character.Nythea;
                 ReplayFile r = ReplayFile.Build(
                     schemaHash: ObservationSchema.Hash(typeof(GameState)),
-                    p1Char: sim.Players[0].Character?.Character ?? Character.Nythea,
-                    p2Char: sim.Players[1].Character?.Character ?? Character.Nythea,
+                    p1Char: p1Char,
+                    p2Char: p2Char,
+                    p1Skin: 0,
+                    p2Skin: p1Char == p2Char ? 1 : 0,
+                    stage: Stage.Stage1,
                     p1Inputs: ep.P1Inputs.ToArray(),
                     p2Inputs: ep.P2Inputs.ToArray(),
-                    source: $"eval:{Path.GetFileName(policyPath)}"
+                    source: $"eval:{Path.GetFileName(policyPath)}",
+                    simOptions: sim
                 );
                 ReplayFile.Save(outPath, r);
                 Console.WriteLine($"replay -> {outPath}");
@@ -153,8 +210,11 @@ namespace Hypermania.CPU
             {
                 switch (args[i])
                 {
-                    case "--config": presetPath = args[++i]; break;
-                    default: throw new ArgumentException($"unknown flag: {args[i]}");
+                    case "--config":
+                        presetPath = args[++i];
+                        break;
+                    default:
+                        throw new ArgumentException($"unknown flag: {args[i]}");
                 }
             }
 
@@ -172,7 +232,11 @@ namespace Hypermania.CPU
             for (int i = 0; i < frames; i++)
             {
                 bool ended = env.Step((InputFlags)r.P1Inputs[i], (InputFlags)r.P2Inputs[i]);
-                if (ended) { frames = i + 1; break; }
+                if (ended)
+                {
+                    frames = i + 1;
+                    break;
+                }
             }
 
             int p1Lives = env.State.Fighters[0].Lives;
@@ -180,7 +244,9 @@ namespace Hypermania.CPU
             float p1Hp = (float)env.State.Fighters[0].Health;
             float p2Hp = (float)env.State.Fighters[1].Health;
             string winner = p1Lives > p2Lives ? "P1" : (p2Lives > p1Lives ? "P2" : "draw");
-            Console.WriteLine($"frames={frames} mode={env.State.GameMode} winner={winner} p1=({p1Lives}L,{p1Hp:F0}HP) p2=({p2Lives}L,{p2Hp:F0}HP)");
+            Console.WriteLine(
+                $"frames={frames} mode={env.State.GameMode} winner={winner} p1=({p1Lives}L,{p1Hp:F0}HP) p2=({p2Lives}L,{p2Hp:F0}HP)"
+            );
             Console.WriteLine($"source: {r.Source}");
             return 0;
         }
@@ -189,15 +255,16 @@ namespace Hypermania.CPU
         {
             if (string.IsNullOrEmpty(presetPath))
                 throw new ArgumentException(
-                    "sim options not specified. pass --config <preset.bin>; generate one " +
-                    "from the Unity editor menu 'Hypermania/Export Sim Options Preset...'."
+                    "sim options not specified. pass --config <preset.bin>; generate one "
+                        + "from the Unity editor menu 'Hypermania/Export Sim Options Preset...'."
                 );
             return DefaultSimOptions.LoadPreset(presetPath);
         }
 
         static IPolicy ResolveOpponent(string spec, torch.Device device, int seed)
         {
-            if (spec == "random") return new RandomPolicy(seed);
+            if (spec == "random")
+                return new RandomPolicy(seed);
             if (File.Exists(spec))
             {
                 NeuralPolicy p = new NeuralPolicy(Featurization.Featurizer.Length, device);
@@ -205,7 +272,9 @@ namespace Hypermania.CPU
                 p.Load(fs);
                 return p;
             }
-            throw new ArgumentException($"unknown opponent spec: {spec} (try 'random' or a path to a .hmpolicy)");
+            throw new ArgumentException(
+                $"unknown opponent spec: {spec} (try 'random' or a path to a .hmpolicy)"
+            );
         }
 
         static int DumpSchema()
@@ -214,8 +283,9 @@ namespace Hypermania.CPU
             Console.WriteLine($"GameState observation schema: {fields.Length} fields");
             Console.WriteLine($"Schema hash: 0x{ObservationSchema.Hash(typeof(GameState)):X16}");
             for (int i = 0; i < Math.Min(fields.Length, 40); i++)
-                Console.WriteLine($"  [{i,3}] {fields[i].Path} : {fields[i].Type.Name}");
-            if (fields.Length > 40) Console.WriteLine($"  ... ({fields.Length - 40} more)");
+                Console.WriteLine($"  [{i, 3}] {fields[i].Path} : {fields[i].Type.Name}");
+            if (fields.Length > 40)
+                Console.WriteLine($"  ... ({fields.Length - 40} more)");
             return 0;
         }
 
@@ -224,7 +294,10 @@ namespace Hypermania.CPU
             Console.WriteLine("Hypermania.CPU");
             Console.WriteLine("  train  --config <preset.bin> [--episodes N] [--seed S]");
             Console.WriteLine("         [--snapshot-every M] [--replay-every R] [--out-dir <dir>]");
-            Console.WriteLine("  eval   <policy.hmpolicy> --config <preset.bin> [--out <replay.hmrep>]");
+            Console.WriteLine("         [--resume <policy.hmpolicy>] [--tui]");
+            Console.WriteLine(
+                "  eval   <policy.hmpolicy> --config <preset.bin> [--out <replay.hmrep>]"
+            );
             Console.WriteLine("         [--opponent random|<other.hmpolicy>] [--seed S]");
             Console.WriteLine("  play   <replay.hmrep> --config <preset.bin>");
             Console.WriteLine("  schema");

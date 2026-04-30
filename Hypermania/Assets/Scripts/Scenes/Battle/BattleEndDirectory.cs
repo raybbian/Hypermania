@@ -12,6 +12,7 @@ namespace Scenes.Battle
             {
                 case GameConfig.Local:
                 case GameConfig.Training:
+                case GameConfig.Replay:
                     // unload the end screen and reset the battle scenne
                     SceneLoader
                         .Instance.LoadNewScene()

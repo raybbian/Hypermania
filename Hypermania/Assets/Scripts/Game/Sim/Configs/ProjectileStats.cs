@@ -1,7 +1,7 @@
+using Game.Sim;
 using MemoryPack;
 using UnityEngine;
 using Utils.SoftFloat;
-using Game.Sim;
 
 namespace Game.Sim.Configs
 {
@@ -23,5 +23,19 @@ namespace Game.Sim.Configs
         public bool Lingers;
         public bool HasOnDeath;
         public HitboxData OnDeathHitbox;
+
+        [MemoryPackIgnore]
+        public new string name
+        {
+            get => base.name;
+            set => base.name = value;
+        }
+
+        [MemoryPackIgnore]
+        public new HideFlags hideFlags
+        {
+            get => base.hideFlags;
+            set => base.hideFlags = value;
+        }
     }
 }

@@ -14,8 +14,8 @@ namespace Hypermania.CPU.Hosting
         {
             if (!File.Exists(path))
                 throw new FileNotFoundException(
-                    $"sim-options preset not found at '{path}'. Generate one from the Unity " +
-                    "editor menu 'Hypermania/Export Sim Options Preset...'.",
+                    $"sim-options preset not found at '{path}'. Generate one from the Unity "
+                        + "editor menu 'Hypermania/Export Sim Options Preset...'.",
                     path
                 );
             byte[] bytes = File.ReadAllBytes(path);

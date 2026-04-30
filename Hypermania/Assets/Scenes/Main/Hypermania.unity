@@ -173,7 +173,6 @@ MonoBehaviour:
     MaxZoom: 1.6
     CountdownFocusHalfHeight: 1.4
     Padding: 0
-    Config: {fileID: 11400000, guid: c4e9c8cfedf9ba5478c2e35f56cc48ae, type: 2}
     Margin: 0.3
     Camera: {fileID: 562816628700700724}
 --- !u!114 &102352432
@@ -674,6 +673,7 @@ Transform:
   - {fileID: 731679221}
   - {fileID: 286925406}
   - {fileID: 182256080}
+  - {fileID: 1302522107}
   - {fileID: 2114326935}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1362,6 +1362,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _vfxLibrary: {fileID: 11400000, guid: 22c5ec58bb637110eba46946a37d7072, type: 2}
+--- !u!1 &1302522106
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1302522107}
+  - component: {fileID: 1302522108}
+  m_Layer: 0
+  m_Name: ReplayRunner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1302522107
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302522106}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 556815173}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1302522108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1302522106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ba3fe5484031764d90daa87c3172415, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _view: {fileID: 2114326934}
+  _holdS: 0.3
 --- !u!1 &1316500703
 GameObject:
   m_ObjectHideFlags: 0
@@ -1395,6 +1441,7 @@ MonoBehaviour:
   _localRunner: {fileID: 286925405}
   _onlineRunner: {fileID: 731679223}
   _manualRunner: {fileID: 182256081}
+  _replayRunner: {fileID: 1302522108}
 --- !u!4 &1316500705
 Transform:
   m_ObjectHideFlags: 0

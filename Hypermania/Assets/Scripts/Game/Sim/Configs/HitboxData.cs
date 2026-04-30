@@ -201,6 +201,20 @@ namespace Game.Sim.Configs
         public bool ApplyRootMotion;
         public List<FrameData> Frames = new List<FrameData>();
 
+        [MemoryPackIgnore]
+        public new string name
+        {
+            get => base.name;
+            set => base.name = value;
+        }
+
+        [MemoryPackIgnore]
+        public new HideFlags hideFlags
+        {
+            get => base.hideFlags;
+            set => base.hideFlags = value;
+        }
+
         [NonSerialized]
         private int _startupTicks;
 
@@ -227,6 +241,7 @@ namespace Game.Sim.Configs
                 return _startupTicks;
             }
         }
+
         public int ActiveTicks
         {
             get
@@ -235,6 +250,7 @@ namespace Game.Sim.Configs
                 return _activeTicks;
             }
         }
+
         public int RecoveryTicks
         {
             get

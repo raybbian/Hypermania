@@ -32,10 +32,14 @@ namespace Hypermania.CPU.Policy
 
         public RandomPolicy(int seed) => _rng = new Random(seed);
 
-        public InputFlags Act(in GameState state, int fighterIndex)
+        public InputFlags Act(in GameState state, SimOptions options, int fighterIndex)
         {
             return Directions[_rng.Next(Directions.Length)] | Buttons[_rng.Next(Buttons.Length)];
         }
+
+        // Random already samples uniformly; greedy/sample are identical here.
+        public InputFlags ActSample(in GameState state, SimOptions options, int fighterIndex) =>
+            Act(state, options, fighterIndex);
 
         public void Save(Stream s) { }
 

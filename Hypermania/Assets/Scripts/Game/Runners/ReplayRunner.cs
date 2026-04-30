@@ -16,7 +16,8 @@ namespace Game.Runners
     // The replay's input streams drive Advance directly.
     public class ReplayRunner : GameRunner
     {
-        [SerializeField] private float _holdS = 0.1f;
+        [SerializeField]
+        private float _holdS = 0.1f;
 
         private ReplayFile _replay;
         private (GameInput input, InputStatus status)[] _scratch;
@@ -123,6 +124,11 @@ namespace Game.Runners
             _scratch[0] = (new GameInput((InputFlags)_replay.P1Inputs[_frame]), InputStatus.Confirmed);
             _scratch[1] = (new GameInput((InputFlags)_replay.P2Inputs[_frame]), InputStatus.Confirmed);
             _curState.Advance(_options.Sim, _scratch);
+            // Pump SFX/VFX events produced by the advance into the view, mirroring
+            // the AdvanceFrameReq path in LocalRunner/OnlineRunner. Without this,
+            // hits/blocks/super-readies wouldn't get their audio/vfx queued before
+            // the next Render call drains them.
+            _view.RollbackRender(_curState);
             _frame++;
             return _curState.GameMode == GameMode.End;
         }

@@ -145,11 +145,7 @@ namespace Game.Sim.Configs.Editor
             }
 
             Undo.RecordObject(stats, "Generate Notes from Beatmap");
-            stats.Normal = new BeatmapDifficulty
-            {
-                DifficultyName = stats.Normal.DifficultyName,
-                Notes = normalNotes,
-            };
+            stats.Normal = new BeatmapDifficulty { DifficultyName = stats.Normal.DifficultyName, Notes = normalNotes };
             stats.Hard = new BeatmapDifficulty { DifficultyName = stats.Hard.DifficultyName, Notes = hardNotes };
             EditorUtility.SetDirty(stats);
 

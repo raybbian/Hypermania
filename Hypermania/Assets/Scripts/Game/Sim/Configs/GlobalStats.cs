@@ -73,6 +73,20 @@ namespace Game.Sim.Configs
         public InputConfig Input;
         public AudioStats Audio;
 
+        [MemoryPackIgnore]
+        public new string name
+        {
+            get => base.name;
+            set => base.name = value;
+        }
+
+        [MemoryPackIgnore]
+        public new HideFlags hideFlags
+        {
+            get => base.hideFlags;
+            set => base.hideFlags = value;
+        }
+
         public int RoundCountdownTicks => Audio.BeatsToFrame(8);
     }
 }

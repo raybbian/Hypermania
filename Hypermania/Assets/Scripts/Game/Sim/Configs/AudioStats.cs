@@ -14,6 +14,7 @@ namespace Game.Sim.Configs
         public Frame Tick;
         public int Channel;
     }
+
     // One .osz difficulty's authored notes. Paired so each mania-difficulty
     // selection (Normal / Hard) has its own chart.
     [Serializable]
@@ -38,6 +39,20 @@ namespace Game.Sim.Configs
         public int ComboBeatCount = 8;
         public BeatmapDifficulty Normal;
         public BeatmapDifficulty Hard;
+
+        [MemoryPackIgnore]
+        public new string name
+        {
+            get => base.name;
+            set => base.name = value;
+        }
+
+        [MemoryPackIgnore]
+        public new HideFlags hideFlags
+        {
+            get => base.hideFlags;
+            set => base.hideFlags = value;
+        }
 
         public BeatmapNote[] NotesFor(ManiaDifficulty difficulty)
         {
@@ -131,7 +146,8 @@ namespace Game.Sim.Configs
 
         static int LowerBound(BeatmapNote[] arr, Frame target)
         {
-            int lo = 0, hi = arr.Length;
+            int lo = 0,
+                hi = arr.Length;
             while (lo < hi)
             {
                 int mid = (lo + hi) / 2;

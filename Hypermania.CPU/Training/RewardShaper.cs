@@ -1,57 +1,99 @@
 using System;
 using Game.Sim;
+using Game.Sim.Configs;
 
 namespace Hypermania.CPU.Training
 {
     public struct RewardConfig
     {
-        public float DamageScale;     // per HP of damage
-        public float WhiffPenalty;    // per attack that ended without connecting
-        public float WinBonus;        // terminal, match-level win
-        public float LossPenalty;     // terminal, match-level loss (negative)
-        public float StepPenalty;     // per-tick constant (negative)
+        public float DamageScale; // per HP of damage
+        public float WinBonus; // terminal, match-level win
+        public float LossPenalty; // terminal, match-level loss (negative)
+        public float StepPenalty; // per-tick constant (negative)
+        public float ApproachReward; // per (unit/tick) of horizontal velocity toward the opponent
+        public float BlockReward; // per frame this fighter is in a successful block
+        public float WhiffPenalty; // per recovery tick where the opponent isn't stunned
 
-        public static RewardConfig Default => new RewardConfig
-        {
-            DamageScale = 0.01f,
-            WhiffPenalty = 0.05f,
-            WinBonus = 1.0f,
-            LossPenalty = -1.0f,
-            StepPenalty = 0.0001f,
-        };
+        public static RewardConfig Default =>
+            new RewardConfig
+            {
+                DamageScale = 0.005f,
+                WinBonus = 1.0f,
+                LossPenalty = -1.0f,
+                StepPenalty = 0.0001f,
+                // Dense per-frame shaping scaled so that a full 1500-frame
+                // round can't accumulate more total reward than the terminal
+                // ±1.0 win/loss signal.
+                ApproachReward = 0.00002f,
+                // Per-tick while in blockstun. Dominant shaping term by
+                // design: a single short block (~10 frames) ≈ 0.25, a
+                // heavy-block round (~150 blocked frames) ≈ 3.75 — well above
+                // the ±1.0 win/loss anchor. Forces blocking to emerge before
+                // the policy figures out winning, accepting that the agent
+                // may early on prefer eating shaping over closing matches.
+                BlockReward = 0.025f,
+                WhiffPenalty = 0.001f,
+            };
+    }
+
+    // Per-fighter, per-tick scalar reward decomposed by source. The TUI shows
+    // these category totals so the human can see whether shaping is balanced
+    // (no single term dominating). Sum equals the scalar reward fed to PPO.
+    public struct RewardBreakdown
+    {
+        public float Damage;
+        public float Step;
+        public float Approach;
+        public float Block;
+        public float Whiff;
+        public float Terminal;
+
+        public float Total => Damage + Step + Approach + Block + Whiff + Terminal;
+
+        public static RewardBreakdown operator +(RewardBreakdown a, RewardBreakdown b) =>
+            new RewardBreakdown
+            {
+                Damage = a.Damage + b.Damage,
+                Step = a.Step + b.Step,
+                Approach = a.Approach + b.Approach,
+                Block = a.Block + b.Block,
+                Whiff = a.Whiff + b.Whiff,
+                Terminal = a.Terminal + b.Terminal,
+            };
+
+        public static RewardBreakdown operator /(RewardBreakdown a, float s) =>
+            new RewardBreakdown
+            {
+                Damage = a.Damage / s,
+                Step = a.Step / s,
+                Approach = a.Approach / s,
+                Block = a.Block / s,
+                Whiff = a.Whiff / s,
+                Terminal = a.Terminal / s,
+            };
     }
 
     // Computes per-tick scalar rewards for each fighter from before/after
-    // GameState snapshots. The shaper owns the cross-tick bookkeeping needed
-    // to detect attack windows that ended without ever registering a hit
-    // (whiffs). Usage: BeforeStep(state) -> env.Step(...) -> AfterStep(state, out).
+    // GameState snapshots. Usage: BeforeStep(state) -> env.Step(...) ->
+    // AfterStep(state, out).
     public sealed class RewardShaper
     {
         readonly RewardConfig _cfg;
-        readonly bool[] _attackInProgress;
-        readonly bool[] _attackConnectedSticky;
-        readonly CharacterState[] _attackState;
+        readonly SimOptions _simOptions;
         readonly float[] _prevHealth;
         GameMode _prevMode;
 
-        public RewardShaper(int numFighters, RewardConfig cfg)
+        public RewardShaper(SimOptions simOptions, RewardConfig cfg)
         {
             _cfg = cfg;
-            _attackInProgress = new bool[numFighters];
-            _attackConnectedSticky = new bool[numFighters];
-            _attackState = new CharacterState[numFighters];
-            _prevHealth = new float[numFighters];
+            _simOptions = simOptions;
+            _prevHealth = new float[simOptions.Players.Length];
         }
 
         public void Reset()
         {
-            for (int i = 0; i < _attackInProgress.Length; i++)
-            {
-                _attackInProgress[i] = false;
-                _attackConnectedSticky[i] = false;
-                _attackState[i] = default;
+            for (int i = 0; i < _prevHealth.Length; i++)
                 _prevHealth[i] = 0f;
-            }
             _prevMode = GameMode.Countdown;
         }
 
@@ -64,12 +106,19 @@ namespace Hypermania.CPU.Training
             _prevMode = s.GameMode;
         }
 
-        // Compute per-fighter rewards for the tick that just produced `cur`.
-        public void AfterStep(in GameState cur, Span<float> outRewards)
+        // Compute per-fighter rewards for the tick that just produced `cur`,
+        // decomposed by source. Caller can read the scalar `.Total` for the
+        // PPO reward stream and the individual fields for telemetry.
+        public void AfterStep(in GameState cur, Span<RewardBreakdown> outBreakdowns)
         {
             int n = cur.Fighters.Length;
-            if (outRewards.Length < n)
-                throw new ArgumentException($"need {n} reward slots, got {outRewards.Length}");
+            if (outBreakdowns.Length < n)
+                throw new ArgumentException(
+                    $"need {n} breakdown slots, got {outBreakdowns.Length}"
+                );
+
+            for (int i = 0; i < n; i++)
+                outBreakdowns[i] = default;
 
             // Damage delta: damage taken by self penalizes self; damage dealt
             // to opponent rewards self. Symmetric over the two fighters in 1v1.
@@ -84,50 +133,68 @@ namespace Hypermania.CPU.Training
                 float dmgTaken = Math.Max(0f, prevSelf - curSelf);
                 float dmgDealt = Math.Max(0f, prevOpp - curOpp);
 
-                float r = _cfg.DamageScale * (dmgDealt - dmgTaken);
-                r -= _cfg.StepPenalty;
-                outRewards[i] = r;
+                outBreakdowns[i].Damage = _cfg.DamageScale * (dmgDealt - dmgTaken);
+                outBreakdowns[i].Step = -_cfg.StepPenalty;
             }
 
-            // Whiff edge detection: track per-fighter "is currently in an
-            // attack state" + sticky AttackConnected within that window.
-            for (int i = 0; i < n; i++)
+            // Approach shaping: per-fighter, per-tick reward proportional to
+            // this fighter's own horizontal velocity toward the opponent.
+            // Jumping in place → 0; walking forward → positive; walking back
+            // → negative; jump-toward → positive. Per-fighter attribution
+            // (vs the earlier symmetric distance-closure signal) prevents a
+            // passive fighter from free-riding on its opponent's motion.
+            if (_cfg.ApproachReward != 0f && n >= 2)
             {
-                CharacterState s = cur.Fighters[i].State;
-                bool isAttack = IsAttackState(s);
-                bool ackNow = cur.Fighters[i].AttackConnected;
-
-                if (isAttack)
+                for (int i = 0; i < n; i++)
                 {
-                    if (!_attackInProgress[i])
-                    {
-                        _attackInProgress[i] = true;
-                        _attackState[i] = s;
-                        _attackConnectedSticky[i] = ackNow;
-                    }
-                    else if (s != _attackState[i])
-                    {
-                        // Attack -> attack transition (gatling/cancel). The
-                        // sim only allows that when AttackConnected was true
-                        // (FighterState.IsGatlingCancelAllowed), so closing
-                        // out the previous window here can't produce a
-                        // false whiff.
-                        if (!_attackConnectedSticky[i])
-                            outRewards[i] -= _cfg.WhiffPenalty;
-                        _attackState[i] = s;
-                        _attackConnectedSticky[i] = ackNow;
-                    }
-                    else
-                    {
-                        _attackConnectedSticky[i] |= ackNow;
-                    }
+                    int opp = 1 - i;
+                    float selfX = (float)cur.Fighters[i].Position.x;
+                    float oppX = (float)cur.Fighters[opp].Position.x;
+                    float selfVx = (float)cur.Fighters[i].Velocity.x;
+                    float dirToOpp = oppX > selfX ? 1f : -1f;
+                    outBreakdowns[i].Approach = _cfg.ApproachReward * selfVx * dirToOpp;
                 }
-                else if (_attackInProgress[i])
+            }
+
+            // Block reward: per-tick while the fighter is in blockstun
+            // (BlockStand / BlockCrouch). Rewards holding the guard through
+            // the full block window, not just the contact frame, so the
+            // signal scales with how long an attack the fighter chose to
+            // block — discouraging mash-out-of-block. Symmetric damage term
+            // already rewards "not getting hit" generally; this adds a
+            // targeted signal toward block over jump/dash-back avoidance.
+            if (_cfg.BlockReward != 0f)
+            {
+                for (int i = 0; i < n; i++)
                 {
-                    if (!_attackConnectedSticky[i])
-                        outRewards[i] -= _cfg.WhiffPenalty;
-                    _attackInProgress[i] = false;
-                    _attackConnectedSticky[i] = false;
+                    CharacterState s = cur.Fighters[i].State;
+                    if (s == CharacterState.BlockStand || s == CharacterState.BlockCrouch)
+                        outBreakdowns[i].Block = _cfg.BlockReward;
+                }
+            }
+
+            // Whiff penalty: per-tick negative on recovery frames of an
+            // attack the opponent didn't have to respect. If the opponent
+            // is stunned (hitstun, blockstun, knockdown, grabbed) the move
+            // either connected or got blocked — both fine, no penalty.
+            // Recovery against a free opponent is the punishable state we
+            // want to discourage spamming.
+            if (_cfg.WhiffPenalty != 0f && n >= 2)
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    int opp = 1 - i;
+                    if (cur.Fighters[opp].State.IsStunned())
+                        continue;
+                    CharacterStats stats = _simOptions.Players[i].Character;
+                    if (stats == null)
+                        continue;
+                    HitboxData curData = stats.GetHitboxData(cur.Fighters[i].State);
+                    FrameData frameData = curData?.GetFrame(
+                        cur.SimFrame - cur.Fighters[i].StateStart
+                    );
+                    if (frameData != null && frameData.FrameType == FrameType.Recovery)
+                        outBreakdowns[i].Whiff = -_cfg.WhiffPenalty;
                 }
             }
 
@@ -139,47 +206,15 @@ namespace Hypermania.CPU.Training
                 int p2Lives = cur.Fighters[1].Lives;
                 if (p1Lives > p2Lives)
                 {
-                    outRewards[0] += _cfg.WinBonus;
-                    outRewards[1] += _cfg.LossPenalty;
+                    outBreakdowns[0].Terminal = _cfg.WinBonus;
+                    outBreakdowns[1].Terminal = _cfg.LossPenalty;
                 }
                 else if (p2Lives > p1Lives)
                 {
-                    outRewards[1] += _cfg.WinBonus;
-                    outRewards[0] += _cfg.LossPenalty;
+                    outBreakdowns[1].Terminal = _cfg.WinBonus;
+                    outBreakdowns[0].Terminal = _cfg.LossPenalty;
                 }
                 // Tie: no terminal bonus either way.
-            }
-        }
-
-        // Whether a CharacterState represents the player having thrown out an
-        // attack (something that *should* connect to be worthwhile). Includes
-        // grounded / aerial / crouching variants and special-move follow-ups.
-        // Excludes Burst (defensive) and Grab (graphic outcome of grab depends
-        // on contact, but the connect-vs-whiff signal works the same way).
-        static bool IsAttackState(CharacterState s)
-        {
-            switch (s)
-            {
-                case CharacterState.LightAttack:
-                case CharacterState.LightAerial:
-                case CharacterState.LightCrouching:
-                case CharacterState.MediumAttack:
-                case CharacterState.MediumAerial:
-                case CharacterState.MediumCrouching:
-                case CharacterState.MediumAttackFollowUp:
-                case CharacterState.HeavyAttack:
-                case CharacterState.HeavyAerial:
-                case CharacterState.HeavyCrouching:
-                case CharacterState.HeavyAerialFollowUp:
-                case CharacterState.SpecialAttack:
-                case CharacterState.SpecialAerial:
-                case CharacterState.SpecialCrouching:
-                case CharacterState.SpecialAerialFollowUp:
-                case CharacterState.Ultimate:
-                case CharacterState.Grab:
-                    return true;
-                default:
-                    return false;
             }
         }
     }

@@ -33,18 +33,28 @@ namespace Hypermania.CPU.Policy
 
         public NeuralPolicy(int obsDim, Device device, int hidden = 256)
         {
-            Device = device ?? CPU;
+            Device = device ?? torch.CPU;
             Net = new PolicyNet(obsDim, hidden);
             Net.to(Device);
             _obsBuf = new float[obsDim];
             WallclockUtcTicks = DateTime.UtcNow.Ticks;
         }
 
-        public InputFlags Act(in GameState state, int fighterIndex)
+        public InputFlags Act(in GameState state, SimOptions options, int fighterIndex)
         {
-            Featurizer.Encode(state, fighterIndex, _obsBuf);
-            using Tensor obs = tensor(_obsBuf, new long[] { _obsBuf.Length }, ScalarType.Float32).to(Device);
+            Featurizer.Encode(state, options, fighterIndex, _obsBuf);
+            using Tensor obs = tensor(_obsBuf, new long[] { _obsBuf.Length }, ScalarType.Float32)
+                .to(Device);
             var (dir, btn, _) = Net.ActGreedy(obs);
+            return ActionSpace.Decode(dir, btn);
+        }
+
+        public InputFlags ActSample(in GameState state, SimOptions options, int fighterIndex)
+        {
+            Featurizer.Encode(state, options, fighterIndex, _obsBuf);
+            using Tensor obs = tensor(_obsBuf, new long[] { _obsBuf.Length }, ScalarType.Float32)
+                .to(Device);
+            var (dir, btn, _, _) = Net.Sample(obs);
             return ActionSpace.Decode(dir, btn);
         }
 
@@ -53,10 +63,13 @@ namespace Hypermania.CPU.Policy
             Span<byte> header = stackalloc byte[HeaderSize];
             int o = 0;
             header[o++] = SnapshotVersion;
-            BinaryPrimitives.WriteUInt64LittleEndian(header.Slice(o), Featurizer.SchemaHash); o += 8;
+            BinaryPrimitives.WriteUInt64LittleEndian(header.Slice(o), Featurizer.SchemaHash);
+            o += 8;
             header[o++] = ActionSpace.Version;
-            BinaryPrimitives.WriteInt64LittleEndian(header.Slice(o), TrainingStep); o += 8;
-            BinaryPrimitives.WriteInt64LittleEndian(header.Slice(o), WallclockUtcTicks); o += 8;
+            BinaryPrimitives.WriteInt64LittleEndian(header.Slice(o), TrainingStep);
+            o += 8;
+            BinaryPrimitives.WriteInt64LittleEndian(header.Slice(o), WallclockUtcTicks);
+            o += 8;
             s.Write(header);
 
             // TorchSharp's Module.save writes the parameter tensors as a
@@ -74,14 +87,16 @@ namespace Hypermania.CPU.Policy
             while (read < HeaderSize)
             {
                 int n = s.Read(header.Slice(read));
-                if (n <= 0) throw new EndOfStreamException("snapshot header truncated");
+                if (n <= 0)
+                    throw new EndOfStreamException("snapshot header truncated");
                 read += n;
             }
             int o = 0;
             byte ver = header[o++];
             if (ver != SnapshotVersion)
                 throw new InvalidDataException($"unsupported snapshot version: {ver}");
-            ulong schemaHash = BinaryPrimitives.ReadUInt64LittleEndian(header.Slice(o)); o += 8;
+            ulong schemaHash = BinaryPrimitives.ReadUInt64LittleEndian(header.Slice(o));
+            o += 8;
             if (schemaHash != Featurizer.SchemaHash)
                 throw new InvalidDataException(
                     $"observation schema mismatch: snapshot 0x{schemaHash:X16} vs current 0x{Featurizer.SchemaHash:X16}"
@@ -91,8 +106,10 @@ namespace Hypermania.CPU.Policy
                 throw new InvalidDataException(
                     $"action space version mismatch: snapshot {asv} vs current {ActionSpace.Version}"
                 );
-            TrainingStep = BinaryPrimitives.ReadInt64LittleEndian(header.Slice(o)); o += 8;
-            WallclockUtcTicks = BinaryPrimitives.ReadInt64LittleEndian(header.Slice(o)); o += 8;
+            TrainingStep = BinaryPrimitives.ReadInt64LittleEndian(header.Slice(o));
+            o += 8;
+            WallclockUtcTicks = BinaryPrimitives.ReadInt64LittleEndian(header.Slice(o));
+            o += 8;
 
             using BinaryReader br = new BinaryReader(s, System.Text.Encoding.UTF8, leaveOpen: true);
             Net.load(br);

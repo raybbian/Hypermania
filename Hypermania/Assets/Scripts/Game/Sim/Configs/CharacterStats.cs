@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Game.Sim;
 using MemoryPack;
 using UnityEngine;
 using Utils;
 using Utils.EnumArray;
 using Utils.SoftFloat;
-using Game.Sim;
 
 namespace Game.Sim.Configs
 {
@@ -42,6 +42,20 @@ namespace Game.Sim.Configs
         public EnumArray<CharacterState, HitboxData> Hitboxes;
         public List<GatlingEntry> Gatlings;
         public List<ProjectileStats> Projectiles;
+
+        [MemoryPackIgnore]
+        public new string name
+        {
+            get => base.name;
+            set => base.name = value;
+        }
+
+        [MemoryPackIgnore]
+        public new HideFlags hideFlags
+        {
+            get => base.hideFlags;
+            set => base.hideFlags = value;
+        }
 
         public bool HasGatling(CharacterState from, CharacterState to)
         {
