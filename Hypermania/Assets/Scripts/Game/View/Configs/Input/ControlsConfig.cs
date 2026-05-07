@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Game.Sim;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.Scripting.APIUpdating;
 using Utils.EnumArray;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Game.View.Configs.Input
 {

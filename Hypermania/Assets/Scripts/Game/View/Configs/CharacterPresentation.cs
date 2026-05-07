@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using Game;
-using Game.Sim.Configs;
 using Game.View.Events;
 using Game.View.Fighters;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
-using Utils.SoftFloat;
-using Game.Sim;
+using Utils.EnumArray;
+using Hypermania.Shared;
+using Hypermania.Game;
+using Hypermania.Game.Configs;
+using Hypermania.Shared.SoftFloat;
 
 namespace Game.View.Configs
 {
@@ -49,6 +51,7 @@ namespace Game.View.Configs
     {
         public Character Character;
         public CharacterStats Stats;
+        public EnumArray<CharacterState, HitboxData> Hitboxes;
         public FighterView Prefab;
         public FighterMoveSfx MoveSfx;
         public AnimatorOverrideController AnimationController;

@@ -1,7 +1,8 @@
 using Game.View.Configs;
 using Game.View.Fighters;
 using UnityEngine;
-using Game.Sim;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Scenes.Menus.CharacterSelect
 {

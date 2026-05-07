@@ -2,13 +2,14 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Game;
 using Game.Runners;
-using Game.Sim;
 using Netcode.Rollback;
 using Scenes.Menus.MainMenu;
 using Scenes.Online;
 using Scenes.Session;
 using Steamworks;
 using UnityEngine;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Scenes.Battle
 {

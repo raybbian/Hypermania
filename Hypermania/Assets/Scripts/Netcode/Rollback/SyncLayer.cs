@@ -4,6 +4,7 @@ using MemoryPack;
 using Netcode.Rollback.Network;
 using UnityEngine.Assertions;
 using Utils;
+using Hypermania.Shared;
 
 namespace Netcode.Rollback
 {

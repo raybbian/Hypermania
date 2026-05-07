@@ -1,8 +1,9 @@
 using System.Collections.Generic;
-using Game.Sim;
 using Game.View.Fighters;
 using UnityEngine;
-using Game.Sim.Configs;
+using Hypermania.Game;
+using Hypermania.Game.Configs;
+using Hypermania.Shared;
 
 namespace Game.View.Overlay
 {
@@ -48,7 +49,7 @@ namespace Game.View.Overlay
 
                 CharacterState anim = state.Fighters[i].State;
                 int tick = state.SimFrame - state.Fighters[i].StateStart;
-                FrameData frame = options.Players[i].Character.GetFrameData(anim, tick);
+                FrameData frame = options.Players[i].GetFrameData(anim, tick);
 
                 Transform t = fighterView.transform;
 

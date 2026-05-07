@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Game.Sim;
 using Game.View.Overlay;
 using Netcode.P2P;
 using Netcode.Rollback;
@@ -8,6 +7,8 @@ using Netcode.Rollback.Sessions;
 using Scenes.Battle;
 using Steamworks;
 using UnityEngine;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Game.Runners
 {
@@ -61,7 +62,6 @@ namespace Game.Runners
         public override void DeInit()
         {
             _session = null;
-            ComboVerifyDebug.Clear();
             base.DeInit();
         }
 

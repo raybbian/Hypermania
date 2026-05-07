@@ -1,6 +1,7 @@
-using Game.Sim;
 using UnityEngine;
 using UnityEngine.UI;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Game.View.Mania
 {

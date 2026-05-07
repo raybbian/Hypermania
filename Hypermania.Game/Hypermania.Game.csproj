@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <RootNamespace>Hypermania.Game</RootNamespace>
+    <AssemblyName>Hypermania.Game</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>CS0414;CS0649;CS0169;CS8981;CS0108;CS0114</NoWarn>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <EnableDefaultNoneItems>false</EnableDefaultNoneItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MemoryPack" Version="1.21.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hypermania.Shared\Hypermania.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="CharacterState.cs" />
+    <Compile Include="CharacterStateExtensions.cs" />
+    <Compile Include="ComboGenerator.cs" />
+    <Compile Include="Configs\AudioStats.cs" />
+    <Compile Include="Configs\CharacterStats.cs" />
+    <Compile Include="Configs\GlobalStats.cs" />
+    <Compile Include="Configs\HitboxData.cs" />
+    <Compile Include="Configs\ProjectileStats.cs" />
+    <Compile Include="FighterState.cs" />
+    <Compile Include="GameState.cs" />
+    <Compile Include="HitOutcome.cs" />
+    <Compile Include="Input.cs" />
+    <Compile Include="InputHistory.cs" />
+    <Compile Include="ManiaState.cs" />
+    <Compile Include="Physics.cs" />
+    <Compile Include="Pool.cs" />
+    <Compile Include="ProjectileState.cs" />
+    <Compile Include="Replay\ReplayFile.cs" />
+    <Compile Include="RhythmCombo.cs" />
+    <Compile Include="Runtime\**\*.cs" />
+    <Compile Include="SimConstants.cs" />
+  </ItemGroup>
+</Project>

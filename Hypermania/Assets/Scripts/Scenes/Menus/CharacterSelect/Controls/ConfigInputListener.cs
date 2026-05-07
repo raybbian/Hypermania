@@ -1,7 +1,8 @@
-using Game.Sim;
 using Game.View.Configs.Input;
 using TMPro;
 using UnityEngine;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Scenes.Menus.CharacterSelect.Controls
 {

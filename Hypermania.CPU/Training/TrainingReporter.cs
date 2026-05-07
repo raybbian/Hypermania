@@ -17,6 +17,16 @@ namespace Hypermania.CPU.Training
         public float MeanFrames;
         public float MeanFightingFrames;
 
+        // Training step of the opponent snapshot sampled from the pool for
+        // this update's rollouts. 0 = freshly-initialized snapshot from the
+        // start of training.
+        public long OpponentStep;
+
+        // Cumulative learner win-rate against the sampled opponent over the
+        // entire time that pool entry has been alive (inclusive of this
+        // update). Drives PFSP weighting; useful telemetry under uniform too.
+        public float OpponentWinRate;
+
         public float PolicyLoss;
         public float ValueLoss;
         public float Entropy;
@@ -29,6 +39,13 @@ namespace Hypermania.CPU.Training
         public TimeSpan RolloutTime;
         public TimeSpan OptimizeTime;
         public TimeSpan UpdateTime; // total
+
+        // Rollout sub-phase breakdown summed over all sim steps in this update.
+        // FeaturizeTime + ForwardTime + StepTime accounts for most of RolloutTime;
+        // any remainder is bookkeeping in the rollout outer loop.
+        public TimeSpan FeaturizeTime;
+        public TimeSpan ForwardTime;
+        public TimeSpan StepTime;
 
         // Rolling estimates of seconds-per-update; the TUI uses these to
         // produce a stable ETA. Trainer fills them with EMA/avg.
@@ -68,9 +85,15 @@ namespace Hypermania.CPU.Training
             Console.WriteLine(
                 $"[update {m.Step, 6}] mean_return={m.MeanReturn, 7:F3} "
                     + $"wins={m.Wins}/{m.Rollouts} "
+                    + $"opp@{m.OpponentStep} wr={m.OpponentWinRate, 4:F2} "
                     + $"policy_loss={m.PolicyLoss, 7:F4} value_loss={m.ValueLoss, 7:F4} "
                     + $"entropy={m.Entropy, 5:F3} "
-                    + $"t={m.UpdateTime.TotalSeconds:F2}s"
+                    + $"t={m.UpdateTime.TotalSeconds:F2}s "
+                    + $"(roll {m.RolloutTime.TotalSeconds:F2}s "
+                    + $"[feat {m.FeaturizeTime.TotalSeconds:F2} "
+                    + $"fwd {m.ForwardTime.TotalSeconds:F2} "
+                    + $"step {m.StepTime.TotalSeconds:F2}] "
+                    + $"opt {m.OptimizeTime.TotalSeconds:F2}s)"
             );
         }
 

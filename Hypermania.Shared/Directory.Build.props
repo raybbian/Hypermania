@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <!-- Set before Microsoft.Common.props so MSB3539 doesn't fire. Unity ignores folders ending in '~'. -->
+    <BaseIntermediateOutputPath>obj~\</BaseIntermediateOutputPath>
+    <BaseOutputPath>bin~\</BaseOutputPath>
+  </PropertyGroup>
+</Project>

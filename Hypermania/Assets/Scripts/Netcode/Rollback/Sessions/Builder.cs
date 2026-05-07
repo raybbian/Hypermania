@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Hypermania.Shared;
 using Netcode.Rollback.Network;
 
 namespace Netcode.Rollback.Sessions

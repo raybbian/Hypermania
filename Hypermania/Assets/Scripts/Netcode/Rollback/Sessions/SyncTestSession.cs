@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Netcode.Rollback.Network;
 using UnityEngine.Assertions;
 using Utils;
+using Hypermania.Shared;
 
 namespace Netcode.Rollback.Sessions
 {

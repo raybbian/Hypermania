@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
-using Game.Sim.Configs;
-using Game.Sim;
 using Game.View.Configs;
 using Game.View.Events;
 using Game.View.Events.Vfx;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
 using Utils;
+using Utils.EnumArray;
+using Hypermania.Game;
+using Hypermania.Game.Configs;
+using Hypermania.Shared;
 
 namespace Game.View.Fighters
 {
@@ -19,6 +21,7 @@ namespace Game.View.Fighters
         private SpriteLibrary _spriteLibrary;
         private CharacterPresentation _presentation;
         private CharacterStats _stats;
+        private EnumArray<CharacterState, HitboxData> _hitboxes;
         private RuntimeAnimatorController _oldController;
 
         [SerializeField]
@@ -53,6 +56,7 @@ namespace Game.View.Fighters
 
             _presentation = presentation;
             _stats = presentation.Stats;
+            _hitboxes = presentation.Hitboxes;
             _oldController = _animator.runtimeAnimatorController;
             _animator.runtimeAnimatorController = presentation.AnimationController;
             _spriteLibrary.spriteLibraryAsset = presentation.Skins[skinIndex].SpriteLibrary;
@@ -81,7 +85,7 @@ namespace Game.View.Fighters
             transform.localScale = new Vector3(state.FacingDir == FighterFacing.Left ? -1 : 1, 1f, 1f);
 
             CharacterState animState = state.State;
-            HitboxData data = _stats.GetHitboxData(animState);
+            HitboxData data = LookupHitbox(animState);
             if (data == null)
                 return;
             // add small amount to ensure that right frame is displayed
@@ -95,7 +99,7 @@ namespace Game.View.Fighters
             if (data.ApplyRootMotion)
             {
                 int rmTick = frame - state.StateStart;
-                FrameData fd = _stats.GetFrameData(animState, rmTick);
+                FrameData fd = LookupFrame(animState, rmTick);
                 float facingSign = state.FacingDir == FighterFacing.Left ? -1f : 1f;
                 Vector3 animWorld = new Vector3(
                     (float)fd.RootMotionOffset.x * facingSign,
@@ -195,6 +199,24 @@ namespace Game.View.Fighters
             _oldController = null;
             _presentation = null;
             _stats = null;
+            _hitboxes = null;
+        }
+
+        private HitboxData LookupHitbox(CharacterState anim)
+        {
+            return _hitboxes[anim] ?? _hitboxes[CharacterState.Idle];
+        }
+
+        private FrameData LookupFrame(CharacterState anim, int tick)
+        {
+            HitboxData data = LookupHitbox(anim);
+            if (data == null || data.TotalTicks == 0)
+                return new FrameData();
+            if (data.AnimLoops)
+                tick = ((tick % data.TotalTicks) + data.TotalTicks) % data.TotalTicks;
+            else
+                tick = Mathf.Clamp(tick, 0, data.TotalTicks - 1);
+            return data.Frames[tick];
         }
 
         public void SetSkin(int skinIndex)

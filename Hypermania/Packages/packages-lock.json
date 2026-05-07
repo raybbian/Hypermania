@@ -7,6 +7,20 @@
       "dependencies": {},
       "hash": "34432703a177c97631a4eb1d908f086037c67969"
     },
+    "com.hypermania.game": {
+      "version": "file:../../Hypermania.Game",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.hypermania.shared": "0.1.0"
+      }
+    },
+    "com.hypermania.shared": {
+      "version": "file:../../Hypermania.Shared",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.rlabrecque.steamworks.net": {
       "version": "https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net#2025.163.0",
       "depth": 0,
@@ -349,16 +363,6 @@
         "com.unity.shadergraph": "17.0.4",
         "com.unity.render-pipelines.core": "17.0.4"
       }
-    },
-    "com.unity.visualscripting": {
-      "version": "1.9.7",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.ugui": "1.0.0",
-        "com.unity.modules.jsonserialize": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

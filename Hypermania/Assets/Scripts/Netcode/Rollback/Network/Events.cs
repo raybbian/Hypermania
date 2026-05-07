@@ -1,3 +1,5 @@
+using Hypermania.Shared;
+
 namespace Netcode.Rollback.Network
 {
     public enum EventKind

@@ -1,7 +1,6 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using Utils.EnumArray;
-using Game.Sim;
+using Hypermania.Shared;
 
 namespace Game.View.Background
 {

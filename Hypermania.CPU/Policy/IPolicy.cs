@@ -1,5 +1,5 @@
 using System.IO;
-using Game.Sim;
+using Hypermania.Game;
 
 namespace Hypermania.CPU.Policy
 {

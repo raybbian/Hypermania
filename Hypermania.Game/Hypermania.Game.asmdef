@@ -1,0 +1,17 @@
+{
+    "name": "Hypermania.Game",
+    "rootNamespace": "",
+    "references": [
+        "Hypermania.Shared",
+        "Hypermania.Rollback"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

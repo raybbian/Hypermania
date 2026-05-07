@@ -1,7 +1,8 @@
-using Game.Sim;
-using Game.Sim.Configs;
 using UnityEngine;
 using Utils;
+using Hypermania.Game;
+using Hypermania.Game.Configs;
+using Hypermania.Shared;
 
 namespace Game.View.Projectiles
 {

@@ -1,6 +1,6 @@
 using System;
-using Game.Sim;
-using Netcode.Rollback;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Hypermania.CPU.Hosting
 {

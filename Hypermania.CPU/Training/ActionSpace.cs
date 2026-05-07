@@ -1,5 +1,5 @@
 using System;
-using Game.Sim;
+using Hypermania.Game;
 
 namespace Hypermania.CPU.Training
 {
@@ -52,6 +52,52 @@ namespace Hypermania.CPU.Training
             if ((uint)btnIndex >= (uint)NumButtons)
                 throw new ArgumentOutOfRangeException(nameof(btnIndex));
             return Directions[dirIndex] | Buttons[btnIndex];
+        }
+
+        // Bounds-checked direction lookup. Returns InputFlags.None for any
+        // out-of-range index (including the -1 sentinel for "no prior frame"),
+        // so the featurizer can resolve a previous-frame action without
+        // re-implementing the bounds check.
+        public static InputFlags DirectionFlagsAt(int dirIndex) =>
+            (uint)dirIndex < (uint)NumDirections ? Directions[dirIndex] : InputFlags.None;
+
+        const InputFlags DirMask =
+            InputFlags.Up | InputFlags.Down | InputFlags.Left | InputFlags.Right;
+        const InputFlags BtnMask =
+            InputFlags.LightAttack
+            | InputFlags.MediumAttack
+            | InputFlags.HeavyAttack
+            | InputFlags.SpecialAttack
+            | InputFlags.Dash
+            | InputFlags.Grab;
+
+        // Reverse of Decode. Splits flags into directional and button parts and
+        // searches the per-head tables. Unknown combinations (e.g. Up+Down)
+        // collapse to (0, 0) = neutral so callers can route any InputFlags
+        // through the action-history ring without special-casing.
+        public static (int dir, int btn) Encode(InputFlags flags)
+        {
+            InputFlags d = flags & DirMask;
+            InputFlags b = flags & BtnMask;
+            int dirIdx = 0;
+            for (int i = 0; i < NumDirections; i++)
+            {
+                if (Directions[i] == d)
+                {
+                    dirIdx = i;
+                    break;
+                }
+            }
+            int btnIdx = 0;
+            for (int i = 0; i < NumButtons; i++)
+            {
+                if (Buttons[i] == b)
+                {
+                    btnIdx = i;
+                    break;
+                }
+            }
+            return (dirIdx, btnIdx);
         }
     }
 }

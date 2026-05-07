@@ -1,8 +1,9 @@
-using Game.Sim;
 using TMPro;
 using UnityEngine;
 using Utils;
-using Game.Sim.Configs;
+using Hypermania.Game;
+using Hypermania.Game.Configs;
+using Hypermania.Shared;
 
 namespace Game.View.Overlay
 {
@@ -117,7 +118,7 @@ namespace Game.View.Overlay
                     else
                     {
                         _cells[i, baseIdx]
-                            .SetType(state.SimFrame, displayState, displayStateStart, options.Players[i].Character);
+                            .SetType(state.SimFrame, displayState, displayStateStart, options.Players[i].Hitboxes);
                     }
                 }
                 else if (_displayHitstopFrames && state.HitstopFramesRemaining > 0)
@@ -130,7 +131,7 @@ namespace Game.View.Overlay
                 }
                 else
                 {
-                    _cells[i, baseIdx].SetType(state.SimFrame, state.Fighters[i], options.Players[i].Character);
+                    _cells[i, baseIdx].SetType(state.SimFrame, state.Fighters[i], options.Players[i].Hitboxes);
                 }
                 _consecText[i, baseIdx].gameObject.SetActive(false);
                 int prevIdx = (baseIdx + _numColumns - 1) % _numColumns;

@@ -1,7 +1,8 @@
-using Game.Sim;
 using TMPro;
 using UnityEngine;
 using Utils;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 // Round Countdown View, designed to countdown at the start of a round.
 namespace Game.View.Overlay

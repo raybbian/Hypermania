@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using Game;
-using Game.Sim;
-using Game.Sim.Configs;
-using Game.Sim.Replay;
 using Game.View.Configs;
 using Scenes.Menus.InputSelect;
 using Scenes.Menus.MainMenu;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Hypermania.Game;
+using Hypermania.Game.Configs;
+using Hypermania.Game.Replay;
+using Hypermania.Shared;
 
 namespace Scenes.Session
 {

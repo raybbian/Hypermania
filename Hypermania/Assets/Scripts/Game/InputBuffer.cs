@@ -1,7 +1,6 @@
 using System;
-using Game.Sim;
 using Game.View.Configs.Input;
-using UnityEngine;
+using Hypermania.Game;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using Utils.EnumArray;

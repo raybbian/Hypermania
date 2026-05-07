@@ -1,8 +1,9 @@
 using Game;
-using Game.Sim;
 using Scenes.Menus.MainMenu;
 using Scenes.Session;
 using UnityEngine;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Scenes.Menus.InputSelect
 {
@@ -69,7 +70,6 @@ namespace Scenes.Menus.InputSelect
                     {
                         ShowFrameData = training,
                         ShowBoxes = training,
-                        VerifyComboPrediction = false,
                     },
                     AlwaysRhythmCancel = false,
                 },

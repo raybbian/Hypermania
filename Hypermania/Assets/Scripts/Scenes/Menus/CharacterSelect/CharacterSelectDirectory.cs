@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Game;
-using Game.Sim.Configs;
-using Game.Sim;
 using Game.View.Background;
 using Game.View.Configs;
 using Game.View.Configs.Input;
+using Hypermania.Shared;
 using Netcode.P2P;
 using Scenes.Menus.CharacterSelect.Controls;
 using Scenes.Menus.InputSelect;
@@ -18,6 +17,8 @@ using Steamworks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Utils.EnumArray;
+using Hypermania.Game;
+using Hypermania.Game.Configs;
 using SkinConfig = Game.View.Configs.SkinConfig;
 
 namespace Scenes.Menus.CharacterSelect
@@ -888,7 +889,6 @@ namespace Scenes.Menus.CharacterSelect
                     {
                         ShowFrameData = training,
                         ShowBoxes = training,
-                        VerifyComboPrediction = false,
                     },
                 Players = new PlayerSimOptions[2],
                 AlwaysRhythmCancel = false,
@@ -913,6 +913,7 @@ namespace Scenes.Menus.CharacterSelect
                     BurstMaxOnActionable = training,
                     Immortal = false,
                     Character = character?.Stats,
+                    Hitboxes = character?.Hitboxes,
                     ComboMode = slot.ComboMode,
                     ManiaDifficulty = slot.ManiaDifficulty,
                     SuperInputMode = slot.SuperInputMode,
@@ -921,6 +922,7 @@ namespace Scenes.Menus.CharacterSelect
                 {
                     Character = character,
                     SkinIndex = skinIndex,
+                    Username = ResolveUsername(i),
                 };
             }
 
@@ -930,6 +932,21 @@ namespace Scenes.Menus.CharacterSelect
                 Presentation = presentation,
                 Input = new InputOptions { Players = BuildLocalPlayers() },
             };
+        }
+
+        private string ResolveUsername(int slot)
+        {
+            if (_isOnline)
+            {
+                var lobby = OnlineDirectory.Players;
+                if (lobby != null && slot < lobby.Count)
+                {
+                    string name = SteamFriends.GetFriendPersonaName(lobby[slot]);
+                    if (!string.IsNullOrEmpty(name))
+                        return name;
+                }
+            }
+            return $"P{slot + 1}";
         }
 
         private PlayerInputBindings[] BuildLocalPlayers()

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Utils;
+using Hypermania.Shared;
 
 namespace Netcode.Rollback.Network
 {

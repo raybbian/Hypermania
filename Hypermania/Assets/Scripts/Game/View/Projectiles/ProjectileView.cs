@@ -1,9 +1,10 @@
-using Game.Sim.Configs;
-using Game.Sim;
 using Game.View.Configs;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
 using Utils;
+using Hypermania.Game;
+using Hypermania.Game.Configs;
+using Hypermania.Shared;
 
 namespace Game.View.Projectiles
 {

@@ -1,8 +1,9 @@
 using System;
-using Game.Sim;
 using UnityEngine;
 using UnityEngine.U2D.Animation;
 using Utils;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Game.View.Fighters
 {

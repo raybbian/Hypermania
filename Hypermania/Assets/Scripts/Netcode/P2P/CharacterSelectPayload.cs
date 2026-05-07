@@ -1,6 +1,7 @@
 using System.Globalization;
-using Game.Sim;
 using Scenes.Menus.CharacterSelect;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Netcode.P2P
 {

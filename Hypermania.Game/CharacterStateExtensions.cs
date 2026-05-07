@@ -1,0 +1,67 @@
+﻿namespace Hypermania.Game
+{
+    public static class CharacterStateExtensions
+    {
+        public static bool IsAerialAttack(this CharacterState state) =>
+            state == CharacterState.LightAerial
+            || state == CharacterState.MediumAerial
+            || state == CharacterState.HeavyAerial
+            || state == CharacterState.SpecialAerial
+            || state == CharacterState.SpecialAerialFollowUp
+            || state == CharacterState.HeavyAerialFollowUp;
+
+        public static bool IsAerial(this CharacterState state) =>
+            state.IsAerialAttack()
+            || state == CharacterState.Jump
+            || state == CharacterState.PreJump
+            || state == CharacterState.Falling;
+
+        public static bool IsGrounded(this CharacterState state) => !state.IsAerial();
+
+        public static bool IsDash(this CharacterState state) =>
+            state == CharacterState.BackAirDash
+            || state == CharacterState.ForwardAirDash
+            || state == CharacterState.ForwardDash
+            || state == CharacterState.BackDash;
+
+        public static bool IsGroundedActionable(this CharacterState state) =>
+            state == CharacterState.Idle
+            || state == CharacterState.ForwardWalk
+            || state == CharacterState.BackWalk
+            || state == CharacterState.Running
+            || state == CharacterState.Crouch;
+
+        public static bool IsActionable(this CharacterState state) =>
+            state == CharacterState.Jump || state == CharacterState.Falling || state.IsGroundedActionable();
+
+        public static bool IsKnockdown(this CharacterState state) =>
+            state == CharacterState.HeavyKnockdown
+            || state == CharacterState.SoftKnockdown
+            || state == CharacterState.GetUp;
+
+        public static bool IsStunned(this CharacterState state) =>
+            state == CharacterState.Hit
+            || state == CharacterState.BlockCrouch
+            || state == CharacterState.BlockStand
+            || state == CharacterState.Grabbed
+            || state == CharacterState.Death
+            || state.IsKnockdown();
+
+        public static bool IsCrouchingAttack(this CharacterState state) =>
+            state == CharacterState.LightCrouching
+            || state == CharacterState.MediumCrouching
+            || state == CharacterState.HeavyCrouching
+            || state == CharacterState.SpecialCrouching;
+
+        public static bool IsAttacking(this CharacterState state) =>
+            state == CharacterState.LightAttack
+            || state == CharacterState.MediumAttack
+            || state == CharacterState.HeavyAttack
+            || state == CharacterState.SpecialAttack
+            || state == CharacterState.MediumAttackFollowUp
+            || state.IsAerialAttack()
+            || state.IsCrouchingAttack()
+            || state == CharacterState.Grab
+            || state == CharacterState.Throw;
+    }
+}

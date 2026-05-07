@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Game.Runners;
-using Game.Sim;
-using Game.Sim.Replay;
 using Netcode.P2P;
 using Netcode.Rollback;
 using Steamworks;
 using UnityEngine;
+using Hypermania.Game;
+using Hypermania.Game.Replay;
 
 namespace Game
 {

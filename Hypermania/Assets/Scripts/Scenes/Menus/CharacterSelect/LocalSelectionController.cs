@@ -1,6 +1,7 @@
 using System;
-using Game.Sim;
 using UnityEngine.InputSystem;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Scenes.Menus.CharacterSelect
 {
@@ -411,7 +412,7 @@ namespace Scenes.Menus.CharacterSelect
                 return false;
             if (row == ControlsPreset && !isLocal)
                 return false;
-            if (state.ComboMode == Game.Sim.ComboMode.Freestyle && row == ManiaDifficulty)
+            if (state.ComboMode == Hypermania.Game.ComboMode.Freestyle && row == ManiaDifficulty)
                 return false;
             // Skin row is meaningless while the slot is on the Random tile —
             // the concrete skin isn't picked until commit.

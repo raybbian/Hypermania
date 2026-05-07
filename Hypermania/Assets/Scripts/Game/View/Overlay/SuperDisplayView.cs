@@ -1,12 +1,13 @@
 using System.Collections;
-using Game.Sim;
 using Game.View.Configs;
 using Game.View.Events;
 using Game.View.Fighters;
 using UnityEngine;
 using UnityEngine.UI;
 using Utils;
-using Utils.SoftFloat;
+using Hypermania.Game;
+using Hypermania.Shared.SoftFloat;
+using Hypermania.Shared;
 
 namespace Game.View.Overlay
 {

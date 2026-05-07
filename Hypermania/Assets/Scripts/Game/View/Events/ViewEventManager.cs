@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils;
+using Hypermania.Shared;
 
 namespace Game.View.Events
 {

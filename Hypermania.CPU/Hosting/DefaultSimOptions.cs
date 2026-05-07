@@ -1,5 +1,5 @@
 using System.IO;
-using Game.Sim;
+using Hypermania.Game;
 using MemoryPack;
 
 namespace Hypermania.CPU.Hosting

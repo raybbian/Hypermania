@@ -5,6 +5,7 @@ using Netcode.Rollback.Network;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Utils;
+using Hypermania.Shared;
 
 namespace Netcode.Rollback.Sessions
 {

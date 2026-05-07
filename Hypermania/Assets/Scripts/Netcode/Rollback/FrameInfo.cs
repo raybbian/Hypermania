@@ -1,4 +1,5 @@
 using Utils;
+using Hypermania.Shared;
 
 namespace Netcode.Rollback
 {

@@ -1,6 +1,6 @@
 using System;
-using Game.Sim;
-using Game.Sim.Configs;
+using Hypermania.Game;
+using Hypermania.Game.Configs;
 
 namespace Hypermania.CPU.Training
 {
@@ -13,26 +13,25 @@ namespace Hypermania.CPU.Training
         public float ApproachReward; // per (unit/tick) of horizontal velocity toward the opponent
         public float BlockReward; // per frame this fighter is in a successful block
         public float WhiffPenalty; // per recovery tick where the opponent isn't stunned
+        public float WhiffPunishMultiplier; // total damage-reward multiplier when hit lands while opponent was in recovery; 1.0 disables
 
         public static RewardConfig Default =>
             new RewardConfig
             {
-                DamageScale = 0.005f,
+                DamageScale = 0.0025f,
                 WinBonus = 1.0f,
                 LossPenalty = -1.0f,
-                StepPenalty = 0.0001f,
+                StepPenalty = 0.000025f,
                 // Dense per-frame shaping scaled so that a full 1500-frame
                 // round can't accumulate more total reward than the terminal
                 // ±1.0 win/loss signal.
                 ApproachReward = 0.00002f,
-                // Per-tick while in blockstun. Dominant shaping term by
-                // design: a single short block (~10 frames) ≈ 0.25, a
-                // heavy-block round (~150 blocked frames) ≈ 3.75 — well above
-                // the ±1.0 win/loss anchor. Forces blocking to emerge before
-                // the policy figures out winning, accepting that the agent
-                // may early on prefer eating shaping over closing matches.
-                BlockReward = 0.025f,
+                // Per-tick while in blockstun. Sized so a heavy-block round
+                // (~150 blocked frames) ≈ 0.375, well under the ±1.0
+                // win/loss anchor so the terminal signal stays dominant.
+                BlockReward = 0.00125f,
                 WhiffPenalty = 0.001f,
+                WhiffPunishMultiplier = 5.0f,
             };
     }
 
@@ -46,9 +45,10 @@ namespace Hypermania.CPU.Training
         public float Approach;
         public float Block;
         public float Whiff;
+        public float WhiffPunish;
         public float Terminal;
 
-        public float Total => Damage + Step + Approach + Block + Whiff + Terminal;
+        public float Total => Damage + Step + Approach + Block + Whiff + WhiffPunish + Terminal;
 
         public static RewardBreakdown operator +(RewardBreakdown a, RewardBreakdown b) =>
             new RewardBreakdown
@@ -58,6 +58,7 @@ namespace Hypermania.CPU.Training
                 Approach = a.Approach + b.Approach,
                 Block = a.Block + b.Block,
                 Whiff = a.Whiff + b.Whiff,
+                WhiffPunish = a.WhiffPunish + b.WhiffPunish,
                 Terminal = a.Terminal + b.Terminal,
             };
 
@@ -69,6 +70,7 @@ namespace Hypermania.CPU.Training
                 Approach = a.Approach / s,
                 Block = a.Block / s,
                 Whiff = a.Whiff / s,
+                WhiffPunish = a.WhiffPunish / s,
                 Terminal = a.Terminal / s,
             };
     }
@@ -81,6 +83,12 @@ namespace Hypermania.CPU.Training
         readonly RewardConfig _cfg;
         readonly SimOptions _simOptions;
         readonly float[] _prevHealth;
+        // Snapshot of "fighter is in the recovery portion of their move" at
+        // BeforeStep time. Read in AfterStep to detect whiff-punish hits: by
+        // the time AfterStep runs the defender has already transitioned into
+        // hitstun, so we need the pre-step state to know they were recovering
+        // when the hit connected.
+        readonly bool[] _prevInRecovery;
         GameMode _prevMode;
 
         public RewardShaper(SimOptions simOptions, RewardConfig cfg)
@@ -88,12 +96,16 @@ namespace Hypermania.CPU.Training
             _cfg = cfg;
             _simOptions = simOptions;
             _prevHealth = new float[simOptions.Players.Length];
+            _prevInRecovery = new bool[simOptions.Players.Length];
         }
 
         public void Reset()
         {
             for (int i = 0; i < _prevHealth.Length; i++)
+            {
                 _prevHealth[i] = 0f;
+                _prevInRecovery[i] = false;
+            }
             _prevMode = GameMode.Countdown;
         }
 
@@ -102,7 +114,14 @@ namespace Hypermania.CPU.Training
         public void BeforeStep(in GameState s)
         {
             for (int i = 0; i < _prevHealth.Length; i++)
+            {
                 _prevHealth[i] = (float)s.Fighters[i].Health;
+                PlayerSimOptions player = _simOptions.Players[i];
+                FrameData frameData = player
+                    ?.GetHitboxData(s.Fighters[i].State)
+                    ?.GetFrame(s.SimFrame - s.Fighters[i].StateStart);
+                _prevInRecovery[i] = frameData != null && frameData.FrameType == FrameType.Recovery;
+            }
             _prevMode = s.GameMode;
         }
 
@@ -134,6 +153,13 @@ namespace Hypermania.CPU.Training
                 float dmgDealt = Math.Max(0f, prevOpp - curOpp);
 
                 outBreakdowns[i].Damage = _cfg.DamageScale * (dmgDealt - dmgTaken);
+                // Whiff-punish bonus: if the opponent was in recovery the
+                // tick we connected, multiply just the dealt-damage term so
+                // the total damage signal becomes WhiffPunishMultiplier x
+                // (the dmgTaken side keeps its 1x weight).
+                if (_cfg.WhiffPunishMultiplier > 1f && dmgDealt > 0f && _prevInRecovery[opp])
+                    outBreakdowns[i].WhiffPunish =
+                        (_cfg.WhiffPunishMultiplier - 1f) * _cfg.DamageScale * dmgDealt;
                 outBreakdowns[i].Step = -_cfg.StepPenalty;
             }
 
@@ -186,10 +212,10 @@ namespace Hypermania.CPU.Training
                     int opp = 1 - i;
                     if (cur.Fighters[opp].State.IsStunned())
                         continue;
-                    CharacterStats stats = _simOptions.Players[i].Character;
-                    if (stats == null)
+                    PlayerSimOptions player = _simOptions.Players[i];
+                    if (player == null || player.Character == null)
                         continue;
-                    HitboxData curData = stats.GetHitboxData(cur.Fighters[i].State);
+                    HitboxData curData = player.GetHitboxData(cur.Fighters[i].State);
                     FrameData frameData = curData?.GetFrame(
                         cur.SimFrame - cur.Fighters[i].StateStart
                     );

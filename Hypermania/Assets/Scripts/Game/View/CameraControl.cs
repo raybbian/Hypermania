@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Game.Sim.Configs;
-using Game.Sim;
 using Game.View.Events;
 using UnityEngine;
+using Hypermania.Game;
+using Hypermania.Game.Configs;
+using Hypermania.Shared;
 
 namespace Game.View
 {

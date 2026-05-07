@@ -2,6 +2,7 @@ using System;
 using System.Buffers.Binary;
 using Netcode.Rollback.Sessions;
 using Utils;
+using Hypermania.Shared;
 
 namespace Netcode.Rollback.Network
 {

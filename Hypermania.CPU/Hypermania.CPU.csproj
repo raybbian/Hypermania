@@ -13,15 +13,12 @@
   <ItemGroup>
     <PackageReference Include="MemoryPack" Version="1.21.4" />
     <PackageReference Include="Spectre.Console" Version="0.49.1" />
-    <PackageReference Include="TorchSharp-cuda-linux" Version="0.105.0" />
+    <PackageReference Include="TorchSharp-cuda-linux" Version="0.106.0" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+    <PackageReference Include="TorchSharp-cuda-windows" Version="0.106.0" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\Hypermania\Assets\Scripts\Utils\**\*.cs" />
-    <Compile Include="..\Hypermania\Assets\Scripts\Game\Sim\**\*.cs" />
-    <Compile Include="..\Hypermania\Assets\Scripts\Netcode\Rollback\Rollback.Core.cs" />
-
-    <Compile Remove="..\Hypermania\**\Editor\**" />
-    <Compile Remove="..\Hypermania\Assets\Scripts\Utils\Build\**" />
+    <ProjectReference Include="..\Hypermania.Shared\Hypermania.Shared.csproj" />
+    <ProjectReference Include="..\Hypermania.Game\Hypermania.Game.csproj" />
   </ItemGroup>
 </Project>

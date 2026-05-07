@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Game.Sim;
 using Netcode.P2P;
 using Netcode.Rollback;
 using Scenes.Session;
 using Steamworks;
 using UnityEngine;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Scenes.Online
 {

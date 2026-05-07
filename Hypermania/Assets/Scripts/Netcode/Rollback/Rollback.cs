@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Netcode.Rollback.Network;
 using Utils;
+using Hypermania.Shared;
 
 // Session-layer rollback wiring (player handles, request/event envelopes,
 // network socket). Trainer-needed pieces (IInput, IState, InputStatus) live

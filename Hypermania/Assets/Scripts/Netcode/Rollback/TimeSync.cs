@@ -1,5 +1,6 @@
 using UnityEngine.Assertions;
 using Utils;
+using Hypermania.Shared;
 
 namespace Netcode.Rollback
 {

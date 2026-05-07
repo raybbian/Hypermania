@@ -1,7 +1,8 @@
 using System.Collections.Generic;
 using Game.View.Configs;
 using UnityEngine;
-using Game.Sim;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Scenes.Menus.CharacterSelect
 {

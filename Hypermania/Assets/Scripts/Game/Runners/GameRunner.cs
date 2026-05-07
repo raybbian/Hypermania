@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Game.Sim;
 using Game.View;
 using Game.View.Configs.Input;
 using Netcode.P2P;
 using Netcode.Rollback;
 using Steamworks;
 using UnityEngine;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Game.Runners
 {

@@ -1,6 +1,7 @@
 using System;
-using Game.Sim;
 using UnityEngine;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Game.View.Overlay
 {

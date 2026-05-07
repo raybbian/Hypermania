@@ -10,8 +10,9 @@ namespace Hypermania.CPU.Training
 {
     // Live-updating terminal UI for training. Compact sparklines per metric
     // (block characters), two columns (algorithm metrics, reward components),
-    // metrics footer (wins, frames, timing, ETA). Refreshes at ~10 Hz off a
-    // shared snapshot the trainer thread publishes via OnUpdate.
+    // and a recent-updates table with a rolling-throughput summary. Refreshes
+    // at ~10 Hz off a shared snapshot the trainer thread publishes via
+    // OnUpdate.
     //
     // Falls back to ConsoleReporter behavior on non-interactive terminals
     // (e.g. piped output) where AnsiConsole.Live wouldn't render usefully.
@@ -19,6 +20,7 @@ namespace Hypermania.CPU.Training
     {
         const int HistoryCap = 240;
         const int SparkWidth = 40;
+        const int RecentCap = 8;
         const string Blocks = "▁▂▃▄▅▆▇█";
 
         readonly object _lock = new object();
@@ -33,7 +35,11 @@ namespace Hypermania.CPU.Training
         readonly List<float> _approach = new List<float>();
         readonly List<float> _step = new List<float>();
         readonly List<float> _whiff = new List<float>();
+        readonly List<float> _whiffPunish = new List<float>();
         readonly List<float> _terminal = new List<float>();
+
+        // Last RecentCap updates verbatim, newest at the tail.
+        readonly Queue<TrainingMetrics> _recent = new Queue<TrainingMetrics>();
 
         TrainingMetrics _latest;
         bool _hasUpdate;
@@ -97,7 +103,11 @@ namespace Hypermania.CPU.Training
                 Push(_approach, m.AvgBreakdown.Approach);
                 Push(_step, m.AvgBreakdown.Step);
                 Push(_whiff, m.AvgBreakdown.Whiff);
+                Push(_whiffPunish, m.AvgBreakdown.WhiffPunish);
                 Push(_terminal, m.AvgBreakdown.Terminal);
+                _recent.Enqueue(m);
+                while (_recent.Count > RecentCap)
+                    _recent.Dequeue();
             }
         }
 
@@ -142,9 +152,10 @@ namespace Hypermania.CPU.Training
             TrainingMetrics m;
             string[] algoSparks = new string[4];
             string[] algoVals = new string[4];
-            string[] rewSparks = new string[6];
-            string[] rewVals = new string[6];
+            string[] rewSparks = new string[7];
+            string[] rewVals = new string[7];
             bool hasUpdate;
+            TrainingMetrics[] recentSnap;
             lock (_lock)
             {
                 m = _latest;
@@ -167,8 +178,11 @@ namespace Hypermania.CPU.Training
                 rewVals[3] = FmtCur(_step, "F3");
                 rewSparks[4] = Sparkline(_whiff, SparkWidth);
                 rewVals[4] = FmtCur(_whiff, "F4");
-                rewSparks[5] = Sparkline(_terminal, SparkWidth);
-                rewVals[5] = FmtCur(_terminal, "F3");
+                rewSparks[5] = Sparkline(_whiffPunish, SparkWidth);
+                rewVals[5] = FmtCur(_whiffPunish, "F4");
+                rewSparks[6] = Sparkline(_terminal, SparkWidth);
+                rewVals[6] = FmtCur(_terminal, "F3");
+                recentSnap = _recent.ToArray();
             }
 
             // Title bar.
@@ -177,12 +191,17 @@ namespace Hypermania.CPU.Training
             TimeSpan elapsed = DateTime.UtcNow - _startUtc;
             TimeSpan eta = EstimateEta(m, hasUpdate);
 
+            string oppText = hasUpdate
+                ? $"@{m.OpponentStep} ({m.OpponentWinRate * 100f:F0}%)"
+                : "-";
+
             Markup title = new Markup(
                 $"[bold]Hypermania PPO[/]  "
                     + $"[grey]run[/] {Markup.Escape(_runId)}  "
                     + $"[grey]device[/] {deviceLabel}  "
                     + $"[grey]obs[/] {_obsDim}  "
                     + $"[grey]step[/] {stepText}  "
+                    + $"[grey]opp[/] {oppText}  "
                     + $"[grey]elapsed[/] {FormatDuration(elapsed)}  "
                     + $"[grey]eta[/] {FormatDuration(eta)}"
             );
@@ -194,7 +213,7 @@ namespace Hypermania.CPU.Training
                 algoVals
             );
             Grid rewGrid = BuildMetricGrid(
-                new[] { "damage", "block", "approach", "step", "whiff", "terminal" },
+                new[] { "damage", "block", "approach", "step", "whiff", "whiff_punish", "terminal" },
                 rewSparks,
                 rewVals
             );
@@ -208,8 +227,8 @@ namespace Hypermania.CPU.Training
 
             Grid topRow = new Grid().AddColumn().AddColumn().AddRow(algoPanel, rewPanel);
 
-            // Metrics footer.
-            Panel metricsPanel = BuildMetricsPanel(m, hasUpdate, eta);
+            // Recent updates table + rolling-throughput summary.
+            Panel metricsPanel = BuildMetricsPanel(m, hasUpdate, eta, recentSnap);
 
             return new Rows(title, topRow, metricsPanel);
         }
@@ -222,6 +241,9 @@ namespace Hypermania.CPU.Training
                 .AddColumn(new GridColumn().Width(10).RightAligned().NoWrap());
             for (int i = 0; i < names.Length; i++)
             {
+                // Spacer so adjacent block-character sparklines don't merge.
+                if (i > 0)
+                    g.AddRow(new Markup(" "), new Markup(" "), new Markup(" "));
                 g.AddRow(
                     new Markup($"[grey]{Markup.Escape(names[i])}[/]"),
                     new Markup($"[cyan]{Markup.Escape(sparks[i])}[/]"),
@@ -231,51 +253,66 @@ namespace Hypermania.CPU.Training
             return g;
         }
 
-        Panel BuildMetricsPanel(TrainingMetrics m, bool hasUpdate, TimeSpan eta)
+        Panel BuildMetricsPanel(
+            TrainingMetrics m,
+            bool hasUpdate,
+            TimeSpan eta,
+            TrainingMetrics[] recent
+        )
         {
-            Grid g = new Grid()
-                .AddColumn(new GridColumn().Width(14).NoWrap())
-                .AddColumn(new GridColumn().NoWrap());
-            if (!hasUpdate)
+            if (!hasUpdate || recent.Length == 0)
             {
-                g.AddRow(new Markup("[grey]waiting for first update...[/]"), new Markup(""));
+                return new Panel(new Markup("[grey]waiting for first update...[/]"))
+                    .Header("[bold]recent updates[/]")
+                    .Border(BoxBorder.Rounded);
             }
-            else
+
+            Table table = new Table().Border(TableBorder.Minimal).Expand();
+            table.AddColumn(new TableColumn("[grey]step[/]").RightAligned().NoWrap());
+            table.AddColumn(new TableColumn("[grey]opp[/]").RightAligned().NoWrap());
+            table.AddColumn(new TableColumn("[grey]wr[/]").RightAligned().NoWrap());
+            table.AddColumn(new TableColumn("[grey]wins[/]").NoWrap());
+            table.AddColumn(new TableColumn("[grey]return[/]").RightAligned().NoWrap());
+            table.AddColumn(new TableColumn("[grey]p_loss[/]").RightAligned().NoWrap());
+            table.AddColumn(new TableColumn("[grey]v_loss[/]").RightAligned().NoWrap());
+            table.AddColumn(new TableColumn("[grey]entropy[/]").RightAligned().NoWrap());
+            table.AddColumn(new TableColumn("[grey]frames[/]").RightAligned().NoWrap());
+            table.AddColumn(new TableColumn("[grey]t/upd[/]").RightAligned().NoWrap());
+
+            // Newest first so the freshest update sits at the top of the panel.
+            for (int i = recent.Length - 1; i >= 0; i--)
             {
-                float winPct = m.Rollouts > 0 ? 100f * m.Wins / m.Rollouts : 0f;
-                g.AddRow(
-                    new Markup("[grey]wins[/]"),
-                    new Markup(Markup.Escape($"{m.Wins}/{m.Rollouts}  ({winPct:F0}%)"))
-                );
-                g.AddRow(
-                    new Markup("[grey]frames/ep[/]"),
-                    new Markup(
-                        Markup.Escape(
-                            $"{m.MeanFrames:F0} total, {m.MeanFightingFrames:F0} fighting"
-                        )
-                    )
-                );
-                g.AddRow(
-                    new Markup("[grey]t/update[/]"),
-                    new Markup(
-                        Markup.Escape(
-                            $"{m.UpdateTime.TotalSeconds:F2}s  "
-                                + $"(rollout {m.RolloutTime.TotalSeconds:F2}, "
-                                + $"opt {m.OptimizeTime.TotalSeconds:F2})"
-                        )
-                    )
-                );
-                float upm = m.UpdateSecondsEma > 0f ? 60f / m.UpdateSecondsEma : 0f;
-                g.AddRow(
-                    new Markup("[grey]updates/min[/]"),
-                    new Markup(Markup.Escape($"{upm:F1}  (ema {m.UpdateSecondsEma:F2}s)"))
-                );
-                g.AddRow(
-                    new Markup("[grey]eta[/]"),
-                    new Markup(Markup.Escape(FormatDuration(eta)))
+                TrainingMetrics r = recent[i];
+                float winPct = r.Rollouts > 0 ? 100f * r.Wins / r.Rollouts : 0f;
+                table.AddRow(
+                    Markup.Escape($"{r.Step}"),
+                    Markup.Escape($"{r.OpponentStep}"),
+                    Markup.Escape($"{r.OpponentWinRate * 100f:F0}%"),
+                    Markup.Escape($"{r.Wins}/{r.Rollouts} ({winPct:F0}%)"),
+                    Markup.Escape($"{r.MeanReturn:F3}"),
+                    Markup.Escape($"{r.PolicyLoss:F4}"),
+                    Markup.Escape($"{r.ValueLoss:F4}"),
+                    Markup.Escape($"{r.Entropy:F3}"),
+                    Markup.Escape($"{r.MeanFrames:F0}"),
+                    Markup.Escape($"{r.UpdateTime.TotalSeconds:F2}s")
                 );
             }
-            return new Panel(g).Header("[bold]metrics[/]").Border(BoxBorder.Rounded);
+
+            float upm = m.UpdateSecondsEma > 0f ? 60f / m.UpdateSecondsEma : 0f;
+            Markup summary = new Markup(
+                $"[grey]updates/min[/] {upm:F1}  "
+                    + $"[grey]ema[/] {m.UpdateSecondsEma:F2}s  "
+                    + $"[grey]rollout[/] {m.RolloutTime.TotalSeconds:F2}s "
+                    + $"([grey]feat[/] {m.FeaturizeTime.TotalSeconds:F2}s "
+                    + $"[grey]fwd[/] {m.ForwardTime.TotalSeconds:F2}s "
+                    + $"[grey]step[/] {m.StepTime.TotalSeconds:F2}s)  "
+                    + $"[grey]opt[/] {m.OptimizeTime.TotalSeconds:F2}s  "
+                    + $"[grey]eta[/] {Markup.Escape(FormatDuration(eta))}"
+            );
+
+            return new Panel(new Rows(table, summary))
+                .Header("[bold]recent updates[/]")
+                .Border(BoxBorder.Rounded);
         }
 
         TimeSpan EstimateEta(in TrainingMetrics m, bool hasUpdate)

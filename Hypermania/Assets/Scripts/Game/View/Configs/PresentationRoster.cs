@@ -1,7 +1,8 @@
 using Game;
 using UnityEngine;
 using Utils.EnumArray;
-using Game.Sim;
+using Hypermania.Shared;
+using Hypermania.Game;
 
 namespace Game.View.Configs
 {

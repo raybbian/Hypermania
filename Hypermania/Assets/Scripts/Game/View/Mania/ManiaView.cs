@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Game.Sim.Configs;
-using Game.Sim;
-using Game.View.Configs;
 using Game.View.Events;
 using Game.View.Events.Vfx;
-using Steamworks;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using Utils;
+using Hypermania.Game;
+using Hypermania.Shared;
 using ManiaArrowSpritePair = Game.View.Configs.ManiaArrowSpritePair;
 using SkinConfig = Game.View.Configs.SkinConfig;
 

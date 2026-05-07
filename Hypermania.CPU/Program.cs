@@ -1,11 +1,11 @@
 using System;
 using System.IO;
-using Game.Sim;
-using Game.Sim.Observation;
-using Game.Sim.Replay;
+using Hypermania.Game;
 using Hypermania.CPU.Hosting;
 using Hypermania.CPU.Policy;
 using Hypermania.CPU.Training;
+using Hypermania.Game.Replay;
+using Hypermania.Shared;
 using TorchSharp;
 
 namespace Hypermania.CPU
@@ -47,6 +47,9 @@ namespace Hypermania.CPU
         static int RunTrain(string[] args)
         {
             int episodes = 0; // 0 = use cfg.TotalUpdates default
+            int rollouts = 0; // 0 = use cfg.RolloutsPerUpdate default
+            int minibatch = 0; // envs per minibatch; 0 = use cfg.EnvsPerMinibatch default
+            int hidden = 0; // 0 = use cfg.Hidden default
             int seed = 0;
             int snapshotEvery = 50;
             int replayEvery = 50;
@@ -54,6 +57,11 @@ namespace Hypermania.CPU
             string presetPath = null;
             string resumeFrom = null;
             bool useTui = false;
+            bool cpuRollout = false;
+            bool includeWarmup = true;
+            OpponentSamplingMode? oppSampling = null;
+            float? pfspExp = null;
+            int? reactionLatency = null;
 
             for (int i = 1; i < args.Length; i++)
             {
@@ -61,6 +69,15 @@ namespace Hypermania.CPU
                 {
                     case "--episodes":
                         episodes = int.Parse(args[++i]);
+                        break;
+                    case "--rollouts":
+                        rollouts = int.Parse(args[++i]);
+                        break;
+                    case "--minibatch":
+                        minibatch = int.Parse(args[++i]);
+                        break;
+                    case "--hidden":
+                        hidden = int.Parse(args[++i]);
                         break;
                     case "--seed":
                         seed = int.Parse(args[++i]);
@@ -83,6 +100,30 @@ namespace Hypermania.CPU
                     case "--tui":
                         useTui = true;
                         break;
+                    case "--cpu-rollout":
+                        cpuRollout = true;
+                        break;
+                    case "--no-warmup":
+                        includeWarmup = false;
+                        break;
+                    case "--opp-sampling":
+                    {
+                        string mode = args[++i];
+                        oppSampling = mode.ToLowerInvariant() switch
+                        {
+                            "uniform" => OpponentSamplingMode.Uniform,
+                            "pfsp" => OpponentSamplingMode.Pfsp,
+                            _ => throw new ArgumentException(
+                                $"--opp-sampling: expected uniform|pfsp, got '{mode}'"),
+                        };
+                        break;
+                    }
+                    case "--pfsp-exp":
+                        pfspExp = float.Parse(args[++i]);
+                        break;
+                    case "--reaction-latency":
+                        reactionLatency = int.Parse(args[++i]);
+                        break;
                     default:
                         throw new ArgumentException($"unknown flag: {args[i]}");
                 }
@@ -97,13 +138,32 @@ namespace Hypermania.CPU
             };
             if (episodes > 0)
                 cfg.TotalUpdates = episodes;
+            if (rollouts > 0)
+                cfg.RolloutsPerUpdate = rollouts;
+            if (minibatch > 0)
+                cfg.EnvsPerMinibatch = minibatch;
+            if (hidden > 0)
+                cfg.Hidden = hidden;
+            if (oppSampling.HasValue)
+                cfg.OpponentSamplingMode = oppSampling.Value;
+            if (pfspExp.HasValue)
+                cfg.PfspExponent = pfspExp.Value;
+            if (reactionLatency.HasValue)
+                cfg.ReactionLatencyFrames = reactionLatency.Value;
 
             torch.Device device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
+            torch.Device rolloutDevice = cpuRollout ? torch.CPU : device;
             // The TUI takes over stdout - skip these intro lines so they don't
             // scroll above the live frame. ConsoleReporter prints its own.
             if (!useTui)
             {
-                Console.WriteLine($"device: {(device.type == DeviceType.CUDA ? "CUDA" : "CPU")}");
+                string optName = device.type == DeviceType.CUDA ? "CUDA" : "CPU";
+                string rolloutName = rolloutDevice.type == DeviceType.CUDA ? "CUDA" : "CPU";
+                Console.WriteLine(
+                    optName == rolloutName
+                        ? $"device: {optName}"
+                        : $"device: optimize={optName} rollout={rolloutName}"
+                );
                 Console.WriteLine($"obs dim: {Featurization.Featurizer.Length}");
                 Console.WriteLine($"schema hash: 0x{Featurization.Featurizer.SchemaHash:X16}");
             }
@@ -115,7 +175,9 @@ namespace Hypermania.CPU
                 device,
                 outDir,
                 seed,
-                resumeFrom: resumeFrom
+                resumeFrom: resumeFrom,
+                rolloutDevice: rolloutDevice,
+                includeWarmupOpponent: includeWarmup
             );
 
             ITrainingReporter reporter = useTui ? new TuiReporter() : new ConsoleReporter();
@@ -135,6 +197,7 @@ namespace Hypermania.CPU
             string opponentSpec = "random";
             int seed = 0;
             string presetPath = null;
+            int reactionLatency = new PpoConfig().ReactionLatencyFrames;
 
             for (int i = 2; i < args.Length; i++)
             {
@@ -152,6 +215,9 @@ namespace Hypermania.CPU
                     case "--config":
                         presetPath = args[++i];
                         break;
+                    case "--reaction-latency":
+                        reactionLatency = int.Parse(args[++i]);
+                        break;
                     default:
                         throw new ArgumentException($"unknown flag: {args[i]}");
                 }
@@ -160,14 +226,14 @@ namespace Hypermania.CPU
             SimOptions sim = ResolveSimOptions(presetPath);
             torch.Device device = torch.cuda.is_available() ? torch.CUDA : torch.CPU;
 
-            NeuralPolicy learner = new NeuralPolicy(Featurization.Featurizer.Length, device);
+            NeuralPolicy learner;
             using (FileStream fs = File.OpenRead(policyPath))
-                learner.Load(fs);
+                learner = NeuralPolicy.LoadFrom(fs, device);
 
             IPolicy opp = ResolveOpponent(opponentSpec, device, seed);
 
-            SelfPlayEnv env = new SelfPlayEnv(sim, RewardConfig.Default, device);
-            Trajectory traj = new Trajectory();
+            SelfPlayEnv env = new SelfPlayEnv(sim, RewardConfig.Default, device, reactionLatency);
+            Trajectory traj = new Trajectory(Featurization.Featurizer.Length);
             EpisodeResult ep = env.Run(0, learner.Net, opp, traj, greedyOpponent: true);
 
             Console.WriteLine(
@@ -178,8 +244,14 @@ namespace Hypermania.CPU
             {
                 Character p1Char = sim.Players[0].Character?.Character ?? Character.Nythea;
                 Character p2Char = sim.Players[1].Character?.Character ?? Character.Nythea;
+
+                string learnerName = Path.GetFileNameWithoutExtension(policyPath);
+                string opponentName = OpponentDisplayName(opponentSpec);
+                string p1Name = ep.LearnerIndex == 0 ? learnerName : opponentName;
+                string p2Name = ep.LearnerIndex == 0 ? opponentName : learnerName;
+
                 ReplayFile r = ReplayFile.Build(
-                    schemaHash: ObservationSchema.Hash(typeof(GameState)),
+                    schemaHash: Featurization.Featurizer.SchemaHash,
                     p1Char: p1Char,
                     p2Char: p2Char,
                     p1Skin: 0,
@@ -188,12 +260,23 @@ namespace Hypermania.CPU
                     p1Inputs: ep.P1Inputs.ToArray(),
                     p2Inputs: ep.P2Inputs.ToArray(),
                     source: $"eval:{Path.GetFileName(policyPath)}",
-                    simOptions: sim
+                    simOptions: sim,
+                    p1Player: p1Name,
+                    p2Player: p2Name
                 );
                 ReplayFile.Save(outPath, r);
                 Console.WriteLine($"replay -> {outPath}");
             }
             return 0;
+        }
+
+        static string OpponentDisplayName(string spec)
+        {
+            if (spec == "random")
+                return "Random AI";
+            if (spec == "warmup")
+                return "Warmup AI";
+            return Path.GetFileNameWithoutExtension(spec);
         }
 
         static int RunPlay(string[] args)
@@ -219,7 +302,14 @@ namespace Hypermania.CPU
             }
 
             ReplayFile r = ReplayFile.Load(replayPath);
-            ulong schemaHash = ObservationSchema.Hash(typeof(GameState));
+            if (r.Version != ReplayFile.CurrentVersion)
+            {
+                Console.Error.WriteLine(
+                    $"replay version mismatch: file v{r.Version} vs current v{ReplayFile.CurrentVersion}; re-record."
+                );
+                return 2;
+            }
+            ulong schemaHash = Featurization.Featurizer.SchemaHash;
             if (r.SchemaHash != schemaHash)
                 Console.Error.WriteLine(
                     $"warning: replay schema hash 0x{r.SchemaHash:X16} differs from current 0x{schemaHash:X16}; playback may diverge"
@@ -247,6 +337,9 @@ namespace Hypermania.CPU
             Console.WriteLine(
                 $"frames={frames} mode={env.State.GameMode} winner={winner} p1=({p1Lives}L,{p1Hp:F0}HP) p2=({p2Lives}L,{p2Hp:F0}HP)"
             );
+            Console.WriteLine($"players: P1={r.P1Player ?? ""} vs P2={r.P2Player ?? ""}");
+            DateTimeOffset recordedAt = DateTimeOffset.FromUnixTimeSeconds(r.RecordedAtUnix);
+            Console.WriteLine($"recorded: {recordedAt:u}  length: {r.MatchLengthTicks} ticks");
             Console.WriteLine($"source: {r.Source}");
             return 0;
         }
@@ -265,40 +358,40 @@ namespace Hypermania.CPU
         {
             if (spec == "random")
                 return new RandomPolicy(seed);
+            if (spec == "warmup")
+                return new WarmupPolicy(seed);
             if (File.Exists(spec))
             {
-                NeuralPolicy p = new NeuralPolicy(Featurization.Featurizer.Length, device);
                 using FileStream fs = File.OpenRead(spec);
-                p.Load(fs);
-                return p;
+                return NeuralPolicy.LoadFrom(fs, device);
             }
             throw new ArgumentException(
-                $"unknown opponent spec: {spec} (try 'random' or a path to a .hmpolicy)"
+                $"unknown opponent spec: {spec} (try 'random', 'warmup', or a path to a .hmpolicy)"
             );
         }
 
         static int DumpSchema()
         {
-            ObservationField[] fields = ObservationSchema.For(typeof(GameState));
-            Console.WriteLine($"GameState observation schema: {fields.Length} fields");
-            Console.WriteLine($"Schema hash: 0x{ObservationSchema.Hash(typeof(GameState)):X16}");
-            for (int i = 0; i < Math.Min(fields.Length, 40); i++)
-                Console.WriteLine($"  [{i, 3}] {fields[i].Path} : {fields[i].Type.Name}");
-            if (fields.Length > 40)
-                Console.WriteLine($"  ... ({fields.Length - 40} more)");
+            Console.WriteLine($"Observation length: {Featurization.Featurizer.Length}");
+            Console.WriteLine($"  state:   {Featurization.Featurizer.StateLength}");
+            Console.WriteLine($"  history: {Featurization.Featurizer.HistoryLength}");
+            Console.WriteLine($"Schema hash: 0x{Featurization.Featurizer.SchemaHash:X16}");
             return 0;
         }
 
         static void PrintHelp()
         {
             Console.WriteLine("Hypermania.CPU");
-            Console.WriteLine("  train  --config <preset.bin> [--episodes N] [--seed S]");
+            Console.WriteLine("  train  --config <preset.bin> [--episodes N] [--rollouts K] [--seed S]");
+            Console.WriteLine("         [--minibatch B] [--hidden H]");
             Console.WriteLine("         [--snapshot-every M] [--replay-every R] [--out-dir <dir>]");
             Console.WriteLine("         [--resume <policy.hmpolicy>] [--tui]");
+            Console.WriteLine("         [--reaction-latency N] [--cpu-rollout] [--no-warmup]");
             Console.WriteLine(
                 "  eval   <policy.hmpolicy> --config <preset.bin> [--out <replay.hmrep>]"
             );
-            Console.WriteLine("         [--opponent random|<other.hmpolicy>] [--seed S]");
+            Console.WriteLine("         [--opponent random|warmup|<other.hmpolicy>] [--seed S]");
+            Console.WriteLine("         [--reaction-latency N]");
             Console.WriteLine("  play   <replay.hmrep> --config <preset.bin>");
             Console.WriteLine("  schema");
             Console.WriteLine();

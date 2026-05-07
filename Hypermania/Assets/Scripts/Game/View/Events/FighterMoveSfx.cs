@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Utils.EnumArray;
-using Game.Sim;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Game.View.Events
 {

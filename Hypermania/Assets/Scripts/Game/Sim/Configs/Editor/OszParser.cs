@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using Hypermania.Game;
 using Utils;
-using Utils.SoftFloat;
+using Hypermania.Shared.SoftFloat;
+using Hypermania.Shared;
 
 namespace Game.Sim.Configs.Editor
 {

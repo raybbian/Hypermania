@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Game.Sim.Configs;
-using Game.Sim;
 using Game.View.Background;
 using Game.View.Configs;
 using Game.View.Events;
@@ -12,6 +10,9 @@ using Game.View.Overlay;
 using Game.View.Projectiles;
 using UnityEngine;
 using Utils;
+using Hypermania.Game;
+using Hypermania.Game.Configs;
+using Hypermania.Shared;
 using SkinConfig = Game.View.Configs.SkinConfig;
 
 
@@ -34,6 +35,7 @@ namespace Game.View
             public ComboCountView ComboCountView;
             public VictoryMarkView VictoryMarkView;
             public SuperDisplayView SuperDisplayView;
+            public UsernamePlateView UsernamePlateView;
         }
 
         [Serializable]
@@ -112,6 +114,8 @@ namespace Game.View
                 _playerParams[i].BurstBarView.SetMaxValue((float)stats.BurstMax);
                 _playerParams[i].SuperBarView.Init((float)global.SuperCost);
                 _playerParams[i].SuperDisplayView.Init(pres, skinIndex, global.SuperPostDisplayHitstopTicks);
+                if (_playerParams[i].UsernamePlateView != null)
+                    _playerParams[i].UsernamePlateView.Init(options.Presentation.Players[i].Username);
             }
 
             _projectileViews = new ProjectileView[GameState.MAX_PROJECTILES];

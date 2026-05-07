@@ -2,7 +2,8 @@ using Game.View.Configs;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Game.Sim;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Game.View.Overlay
 {

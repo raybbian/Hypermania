@@ -1,7 +1,5 @@
 using System;
 using Game;
-using Game.Sim;
-using Game.Sim.Replay;
 using Game.View.Configs;
 using Scenes;
 using Scenes.Session;
@@ -10,6 +8,9 @@ using UnityEngine;
 using UnityEngine.UI;
 #if UNITY_EDITOR
 using UnityEditor;
+using Hypermania.Game;
+using Hypermania.Game.Replay;
+using Hypermania.Shared;
 #endif
 
 namespace Scenes.Menus.MainMenu
@@ -118,6 +119,13 @@ namespace Scenes.Menus.MainMenu
                 );
                 return null;
             }
+            if (replay.Version != ReplayFile.CurrentVersion)
+            {
+                Debug.LogError(
+                    $"{nameof(PlayReplay)}: replay version mismatch (file v{replay.Version} vs current v{ReplayFile.CurrentVersion}); re-record."
+                );
+                return null;
+            }
 
             // Non-stats sim fields (InfoOptions, AlwaysRhythmCancel, per-player
             // training toggles, ComboMode/ManiaDifficulty/SuperInputMode) ride
@@ -149,6 +157,8 @@ namespace Scenes.Menus.MainMenu
             sim.Global = SessionDirectory.GlobalStats;
             sim.Players[0].Character = p1.Stats;
             sim.Players[1].Character = p2.Stats;
+            sim.Players[0].Hitboxes = p1.Hitboxes;
+            sim.Players[1].Hitboxes = p2.Hitboxes;
 
             ulong currentStatsHash = ReplayFile.ComputeStatsHash(sim.Global, p1.Stats, p2.Stats);
             if (currentStatsHash != replay.StatsHash)
@@ -163,8 +173,18 @@ namespace Scenes.Menus.MainMenu
             {
                 Players = new PlayerPresentation[]
                 {
-                    new PlayerPresentation { Character = p1, SkinIndex = ClampSkin(p1, replay.P1Skin) },
-                    new PlayerPresentation { Character = p2, SkinIndex = ClampSkin(p2, replay.P2Skin) },
+                    new PlayerPresentation
+                    {
+                        Character = p1,
+                        SkinIndex = ClampSkin(p1, replay.P1Skin),
+                        Username = replay.P1Player,
+                    },
+                    new PlayerPresentation
+                    {
+                        Character = p2,
+                        SkinIndex = ClampSkin(p2, replay.P2Skin),
+                        Username = replay.P2Player,
+                    },
                 },
                 Audio = SessionDirectory.AudioPresentation,
                 Stage = replay.Stage,

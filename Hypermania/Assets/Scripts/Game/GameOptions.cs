@@ -1,7 +1,8 @@
 using System;
-using Game.Sim;
 using Game.View.Configs;
 using Game.View.Configs.Input;
+using Hypermania.Game;
+using Hypermania.Shared;
 using UnityEngine.InputSystem;
 using Utils.EnumArray;
 
@@ -13,6 +14,7 @@ namespace Game
     {
         public CharacterPresentation Character;
         public int SkinIndex;
+        public string Username;
     }
 
     // The view-side authoring inputs - skins, prefabs, audio, stage. Runners

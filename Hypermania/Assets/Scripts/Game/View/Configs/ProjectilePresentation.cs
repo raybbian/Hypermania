@@ -1,6 +1,8 @@
-using Game.Sim.Configs;
 using Game.View.Projectiles;
 using UnityEngine;
+using Hypermania.Game.Configs;
+using Hypermania.Game;
+using Hypermania.Shared;
 
 namespace Game.View.Configs
 {

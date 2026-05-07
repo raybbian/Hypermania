@@ -1,10 +1,10 @@
 using System;
-using Game.Sim;
-using Game.Sim.Observation;
-using Game.Sim.Replay;
 using Netcode.Rollback;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Hypermania.Game;
+using Hypermania.Game.Replay;
+using Hypermania.Shared;
 
 namespace Game.Runners
 {
@@ -35,14 +35,6 @@ namespace Game.Runners
                 throw new ArgumentNullException(nameof(replay));
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
-
-            ulong currentHash = ObservationSchema.Hash(typeof(GameState));
-            if (replay.SchemaHash != currentHash)
-            {
-                Debug.LogWarning(
-                    $"ReplayRunner: schema hash mismatch (replay 0x{replay.SchemaHash:X16} vs current 0x{currentHash:X16}). Playback may diverge."
-                );
-            }
 
             _replay = replay;
             _options = options;

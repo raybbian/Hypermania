@@ -1,10 +1,11 @@
 using System;
-using Game.Sim.Configs;
-using Game.Sim;
 using Game.View.Configs;
 using UnityEngine;
 using Utils;
 using Utils.EnumArray;
+using Hypermania.Game;
+using Hypermania.Game.Configs;
+using Hypermania.Shared;
 
 namespace Game.View
 {
