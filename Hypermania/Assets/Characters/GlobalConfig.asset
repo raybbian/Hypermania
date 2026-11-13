@@ -43,10 +43,8 @@ MonoBehaviour:
     rawValue: 1120403456
   SuperTier1Beats: 8
   SuperTier2Beats: 16
-  CameraHalfHeight:
-    rawValue: 1070386381
-  CameraPadding:
-    rawValue: 1050253722
+  MaxFighterDistance:
+    rawValue: 1084413997
   RoundEndTicks: 240
   SuperDisplayHitstopTicks: 40
   SuperPostDisplayHitstopTicks: 10

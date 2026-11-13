@@ -920,12 +920,10 @@ namespace Game.Sim
                 Velocity = SVector2.zero;
             }
 
-            sfloat cameraMaxBounds =
-                otherFighterPos.x + 2 * (options.Global.CameraHalfWidth - options.Global.CameraPadding);
-            sfloat cameraMinBounds =
-                otherFighterPos.x - 2 * (options.Global.CameraHalfWidth - options.Global.CameraPadding);
-            sfloat maxBounds = Mathsf.Min(options.Global.WallsX, cameraMaxBounds);
-            sfloat minBounds = Mathsf.Max(-options.Global.WallsX, cameraMinBounds);
+            sfloat distMaxBounds = otherFighterPos.x + options.Global.MaxFighterDistance;
+            sfloat distMinBounds = otherFighterPos.x - options.Global.MaxFighterDistance;
+            sfloat maxBounds = Mathsf.Min(options.Global.WallsX, distMaxBounds);
+            sfloat minBounds = Mathsf.Max(-options.Global.WallsX, distMinBounds);
             bool stunned = State.IsStunned();
 
             if (Position.x >= maxBounds)

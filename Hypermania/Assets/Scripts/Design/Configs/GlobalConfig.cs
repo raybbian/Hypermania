@@ -51,8 +51,8 @@ namespace Design.Configs
         public sfloat SuperCost = (sfloat)100f;
         public int SuperTier1Beats = 8;
         public int SuperTier2Beats = 16;
-        public sfloat CameraHalfHeight = (sfloat)1.5f;
-        public sfloat CameraPadding = (sfloat)0.3f;
+        // Furthest apart the two fighters can get on the x axis.
+        public sfloat MaxFighterDistance = (sfloat)5f;
         public int RoundEndTicks = 120;
         public int SuperDisplayHitstopTicks = 60;
         public int SuperPostDisplayHitstopTicks = 0;
@@ -81,7 +81,6 @@ namespace Design.Configs
         /// Hard attackers deal full damage (implicit 1.0x).
         /// </summary>
         public sfloat NormalDifficultyDamageMultiplier = (sfloat)0.6f;
-        public sfloat CameraHalfWidth => CameraHalfHeight * (sfloat)1.7777777f;
 
         [SerializeField]
         private InputConfig _inputConfig;
