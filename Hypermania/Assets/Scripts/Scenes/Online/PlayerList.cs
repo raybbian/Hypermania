@@ -11,7 +11,7 @@ namespace Scenes.Online
 
         private List<PlayerListItem> _players = new();
 
-        public void UpdatePlayerList(List<CSteamID> players)
+        public void UpdatePlayerList(List<CSteamID> players, CSteamID host)
         {
             for (int i = 0; i < _players.Count; i++)
             {
@@ -29,7 +29,7 @@ namespace Scenes.Online
                     _players.Add(obj.GetComponent<PlayerListItem>());
                 }
                 _players[i].gameObject.SetActive(true);
-                _players[i].SetPlayer(players[i]);
+                _players[i].SetPlayer(players[i], players[i] == host);
             }
         }
     }

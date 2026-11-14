@@ -7,6 +7,7 @@ using Game;
 using Game.Sim;
 using Game.View.Background;
 using Netcode.P2P;
+using Scenes.Core;
 using Scenes.Menus.CharacterSelect.Controls;
 using Scenes.Menus.InputSelect;
 using Scenes.Menus.MainMenu;
@@ -90,6 +91,7 @@ namespace Scenes.Menus.CharacterSelect
             _exiting = false;
             _state = new CharacterSelectState();
             _isOnline = SessionDirectory.Config == GameConfig.Online;
+            SteamPresence.Set(SteamPresence.ModeName(SessionDirectory.Config) + ": Choosing a fighter");
             _roster = BuildRoster(_globalConfig);
             _controlsMenuSession = new ControlsMenuSession(IsProfileClaimedByOtherSlotState);
 

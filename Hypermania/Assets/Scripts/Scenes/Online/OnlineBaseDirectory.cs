@@ -1,4 +1,5 @@
 using Netcode.P2P;
+using Scenes.Core;
 using Steamworks;
 using UnityEngine;
 
@@ -30,6 +31,15 @@ namespace Scenes.Online
             Matchmaking = new SteamMatchmakingClient();
         }
 
+        // Steam lists friends in the same lobby together.
+        public void Update()
+        {
+            if (Matchmaking == null)
+                return;
+            CSteamID lobby = Matchmaking.CurrentLobby;
+            SteamPresence.SetGroup(lobby, lobby.IsValid() ? SteamMatchmaking.GetNumLobbyMembers(lobby) : 0);
+        }
+
         public void OnDestroy()
         {
             if (Matchmaking != null)
@@ -37,6 +47,7 @@ namespace Scenes.Online
                 Matchmaking.Leave();
                 Matchmaking = null;
             }
+            SteamPresence.SetGroup(default, 0);
         }
     }
 }

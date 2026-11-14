@@ -27,6 +27,18 @@ namespace Netcode.P2P
         }
     }
 
+    // Thrown from Join when Steam turns us away. Response says why.
+    public sealed class LobbyJoinFailedException : Exception
+    {
+        public EChatRoomEnterResponse Response { get; }
+
+        public LobbyJoinFailedException(EChatRoomEnterResponse response)
+            : base($"JoinLobby failed: {response}")
+        {
+            Response = response;
+        }
+    }
+
     public sealed class SteamMatchmakingClient
     {
         public const string LobbyVersionKey = "version";
@@ -101,7 +113,8 @@ namespace Netcode.P2P
             await Leave();
 
             _lobbyCreatedTcs = new TaskCompletionSource<CSteamID>(TaskCreationOptions.RunContinuationsAsynchronously);
-            var call = SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePrivate, maxMembers);
+            // Friends-only so Steam offers Join Game to friends. Private hid it from them.
+            var call = SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypeFriendsOnly, maxMembers);
             _lobbyCreatedCallResult.Set(call);
 
             Debug.Log("[Matchmaking] CreateLobby issued. Waiting for LobbyCreated_t...");
@@ -291,7 +304,6 @@ namespace Netcode.P2P
         private Callback<LobbyEnter_t> _lobbyEnterCb;
         private Callback<LobbyChatUpdate_t> _lobbyChatUpdateCb;
         private Callback<LobbyChatMsg_t> _lobbyChatMsgCb;
-        private Callback<GameLobbyJoinRequested_t> _joinRequestedCb;
         private CallResult<LobbyCreated_t> _lobbyCreatedCallResult;
         private Callback<LobbyDataUpdate_t> _lobbyDataUpdateCb;
 
@@ -304,7 +316,6 @@ namespace Netcode.P2P
             _lobbyEnterCb = Callback<LobbyEnter_t>.Create(OnLobbyEnter);
             _lobbyChatUpdateCb = Callback<LobbyChatUpdate_t>.Create(OnLobbyChatUpdate);
             _lobbyChatMsgCb = Callback<LobbyChatMsg_t>.Create(OnLobbyChatMessage);
-            _joinRequestedCb = Callback<GameLobbyJoinRequested_t>.Create(OnGameLobbyJoinRequested);
 
             _lobbyCreatedCallResult = CallResult<LobbyCreated_t>.Create(OnLobbyCreated);
             _lobbyDataUpdateCb = Callback<LobbyDataUpdate_t>.Create(OnLobbyDataUpdate);
@@ -343,9 +354,7 @@ namespace Netcode.P2P
             if (!ok)
             {
                 _lobbyEnterTcs?.TrySetException(
-                    new InvalidOperationException(
-                        $"JoinLobby failed: EChatRoomEnterResponse={data.m_EChatRoomEnterResponse}"
-                    )
+                    new LobbyJoinFailedException((EChatRoomEnterResponse)data.m_EChatRoomEnterResponse)
                 );
                 return;
             }
@@ -454,12 +463,6 @@ namespace Netcode.P2P
             );
 
             OnStartWithPlayers?.Invoke(players);
-        }
-
-        private void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t data)
-        {
-            Debug.Log($"[Matchmaking] OnGameLobbyJoinRequested: lobby={data.m_steamIDLobby.m_SteamID}");
-            // SteamMatchmaking.JoinLobby(data.m_steamIDLobby);
         }
 
         private void OnLobbyDataUpdate(LobbyDataUpdate_t data)

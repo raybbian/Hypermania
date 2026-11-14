@@ -1,5 +1,6 @@
 using Design.Configs;
 using Game.Sim;
+using Scenes.Core;
 using Scenes.Menus.MainMenu;
 using Scenes.Session;
 using UnityEngine;
@@ -14,6 +15,11 @@ namespace Scenes.Menus.InputSelect
 
         [SerializeField]
         private GlobalConfig _globalConfig;
+
+        private void OnEnable()
+        {
+            SteamPresence.Set("In the menus");
+        }
 
         public void StartGame()
         {
@@ -78,6 +84,8 @@ namespace Scenes.Menus.InputSelect
 
         public void Back()
         {
+            // If a Steam invite brought them here, backing out turns it down.
+            SteamJoinRequests.Drop();
             SceneLoader
                 .Instance.LoadNewScene()
                 .Load(SceneID.MainMenu, SceneDatabase.MAIN_MENU)

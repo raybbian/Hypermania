@@ -1,4 +1,5 @@
 using Scenes;
+using Scenes.Core;
 using Scenes.Session;
 using Steamworks;
 using UnityEngine;
@@ -19,6 +20,11 @@ namespace Scenes.Menus.MainMenu
     {
         [SerializeField]
         private Button _onlineButton;
+
+        private void OnEnable()
+        {
+            SteamPresence.Set("In the menus");
+        }
 
         public void StartLocal()
         {

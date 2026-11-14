@@ -1,0 +1,12 @@
+// Rich presence localization. Upload under Community > Rich Presence on the
+// Steamworks app page. The game fills in %status% itself (see SteamPresence.cs).
+"lang"
+{
+	"english"
+	{
+		"tokens"
+		{
+			"#Status"	"%status%"
+		}
+	}
+}

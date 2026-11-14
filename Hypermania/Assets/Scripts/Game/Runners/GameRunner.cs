@@ -31,6 +31,9 @@ namespace Game.Runners
         // decided locally" from a genuine mid-match disconnect.
         public bool MatchDecided => _curState?.GameMode == GameMode.End;
 
+        // For reading how the match is going. Null until it starts.
+        public GameState State => _curState;
+
         protected float _time;
 
         public virtual void Init(

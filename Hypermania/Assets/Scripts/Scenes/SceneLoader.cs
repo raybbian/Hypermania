@@ -69,6 +69,11 @@ namespace Scenes
             _sceneIDMap[id] = sceneName;
         }
 
+        public bool IsLoaded(SceneID id) => _sceneIDMap.ContainsKey(id);
+
+        // True while a transition is running or waiting its turn.
+        public bool Busy => _isBusy || _queuedPlans.Count > 0;
+
         public SceneLoadPlan LoadNewScene()
         {
             return new SceneLoadPlan();
