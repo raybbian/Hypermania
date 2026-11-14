@@ -3,7 +3,6 @@ Shader "Hypermania/FighterShadow"
     Properties
     {
         _ShadowColor ("Shadow Color", Color) = (0.01, 0, 0.04, 0.9)
-        _GroundY ("Ground Y", Float) = 0
         // How far back on the floor the shadow of something lands, per unit
         // of its height above the ground.
         _Squash ("Squash", Float) = 0.12
@@ -13,8 +12,7 @@ Shader "Hypermania/FighterShadow"
         _Softness ("Softness Per Unit Height", Float) = 0.02
         // Height above the ground at which a shadow has fully faded out.
         _FadeHeight ("Fade Height", Float) = 8
-        // Where the floor meets the back wall, so shadows do not climb it.
-        _FloorTopY ("Floor Top Y", Float) = 0.4
+        // How gradually shadows fade out where the floor meets the back wall.
         _FloorEdgeSoftness ("Floor Edge Softness", Float) = 0.06
     }
     SubShader
@@ -34,6 +32,7 @@ Shader "Hypermania/FighterShadow"
             #pragma fragment Frag
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Assets/VFX/Stage/StageFloor.hlsl"
 
             // Written every frame by FighterShadowProjector.
             TEXTURE2D(_FighterSilhouette0);
@@ -42,13 +41,11 @@ Shader "Hypermania/FighterShadow"
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _ShadowColor;
-                float _GroundY;
                 float _Squash;
                 float _Shear;
                 float _MinSoftness;
                 float _Softness;
                 float _FadeHeight;
-                float _FloorTopY;
                 float _FloorEdgeSoftness;
             CBUFFER_END
 
@@ -109,11 +106,11 @@ Shader "Hypermania/FighterShadow"
                 // pixel. Body height and jump height go through the same
                 // mapping, so an airborne fighter's shadow slides away from
                 // them exactly as far as the light direction says it should.
-                float h = (input.positionWS.y - _GroundY) / _Squash;
+                float h = (input.positionWS.y - STAGE_GROUND_Y) / _Squash;
                 clip(h);
                 clip(_FadeHeight - h);
 
-                float2 src = float2(input.positionWS.x - h * _Shear, _GroundY + h);
+                float2 src = float2(input.positionWS.x - h * _Shear, STAGE_GROUND_Y + h);
                 float2 uv = WorldToScreenUV(src, input.positionWS.z);
                 float2 uvPerWorldX = WorldToScreenUV(src + float2(1.0, 0.0), input.positionWS.z) - uv;
                 float2 uvPerWorldY = WorldToScreenUV(src + float2(0.0, 1.0), input.positionWS.z) - uv;
@@ -126,7 +123,8 @@ Shader "Hypermania/FighterShadow"
                 float a = max(a0, a1);
 
                 float fade = saturate(1.0 - h / _FadeHeight);
-                float floorEdge = saturate((_FloorTopY - input.positionWS.y) / max(_FloorEdgeSoftness, 1e-4));
+                // Shadows stop at the back wall instead of climbing it.
+                float floorEdge = saturate((STAGE_FLOOR_TOP_Y - input.positionWS.y) / max(_FloorEdgeSoftness, 1e-4));
                 return half4(_ShadowColor.rgb, _ShadowColor.a * a * fade * floorEdge);
             }
             ENDHLSL

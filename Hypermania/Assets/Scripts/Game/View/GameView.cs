@@ -133,7 +133,7 @@ namespace Game.View
             _rollbackStart = Frame.NullFrame;
 
             if (_params.BackgroundLoader != null)
-                _params.BackgroundLoader.Init(options.Stage);
+                _params.BackgroundLoader.Init(options.Stage, (float)options.Global.GroundY);
         }
 
         public void Render(float deltaTime, in GameState state, GameOptions options, InfoOverlayDetails overlayDetails)

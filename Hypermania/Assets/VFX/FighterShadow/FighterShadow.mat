@@ -25,12 +25,8 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _AirFadeHeight: 6
-    - _AirSoftness: 0.03
     - _FadeHeight: 8
     - _FloorEdgeSoftness: 0.06
-    - _FloorTopY: 0.4
-    - _GroundY: 0
     - _MinSoftness: 0.004
     - _Shear: 0.2
     - _Softness: 0.02

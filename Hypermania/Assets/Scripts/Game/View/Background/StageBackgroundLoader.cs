@@ -20,7 +20,7 @@ namespace Game.View.Background
 
         private GameObject _instance;
 
-        public void Init(Stage stage)
+        public void Init(Stage stage, float groundY)
         {
             GameObject prefab = _prefabs[stage];
             if (prefab == null)
@@ -28,6 +28,7 @@ namespace Game.View.Background
             _instance = Instantiate(prefab, transform, false);
             ParallaxController controller = _instance.GetComponent<ParallaxController>();
             controller.Init(_camera);
+            _instance.GetComponent<StageFloor>().Init(groundY);
         }
     }
 }
