@@ -109,6 +109,7 @@ namespace Game.View
                 _playerParams[i].HealthBarView.Init(config, options.Players[i].SkinIndex);
                 _playerParams[i].HealthBarView.SetOutlinePlayerIndex(i);
                 _playerParams[i].HealthBarView.SetMaxHealth((float)config.Health);
+                _playerParams[i].VictoryMarkView.Init(config, options.Players[i].SkinIndex);
                 _playerParams[i].BurstBarView.SetMaxValue((float)config.BurstMax);
                 _playerParams[i].SuperBarView.Init((float)options.Global.SuperCost);
                 _playerParams[i]
@@ -205,7 +206,7 @@ namespace Game.View
                 _playerParams[i].HealthBarView.SetHealth((int)state.Fighters[i].Health);
                 _playerParams[i].BurstBarView.SetValue((int)state.Fighters[i].Burst);
                 _playerParams[i].SuperBarView.SetValue((float)state.Fighters[i].Super);
-                _playerParams[i].VictoryMarkView.SetVictories(state.Fighters[i].Victories, (i == 0 ? -1 : 1));
+                _playerParams[i].VictoryMarkView.SetVictories(state.Fighters[i].Victories);
             }
 
             Vector2? countdownFocus = null;

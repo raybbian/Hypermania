@@ -1,5 +1,5 @@
+using Design.Configs;
 using UnityEngine;
-using Utils.EnumArray;
 
 namespace Game.View.Overlay
 {
@@ -10,67 +10,59 @@ namespace Game.View.Overlay
         Perfect,
     }
 
+    // A player's row of round wins, one mark per round they can take. The
+    // layout group on this object places the marks.
     public class VictoryMarkView : MonoBehaviour
     {
         [SerializeField]
-        private EnumArray<VictoryKind, GameObject> _assets;
-        private VictoryKind[] _victoryData;
-        private GameObject[] _victories;
+        private VictoryMark _markPrefab;
 
-        public void Awake() { }
+        private Texture _portrait;
+        private Color _outline;
+        private VictoryMark[] _marks;
 
-        private void CreateSprites(VictoryKind[] playerVictories, int direction)
+        public void Init(CharacterConfig config, int skinIndex)
         {
-            _victoryData = playerVictories;
-            if (_victories != null)
+            _portrait = config.Skins[skinIndex].Portrait;
+            // Same colour as the rim of the disc by their health bar.
+            _outline = config.Skins[skinIndex].AccentColor;
+            ClearMarks();
+        }
+
+        public void SetVictories(VictoryKind[] victories)
+        {
+            if (_marks == null || _marks.Length != victories.Length)
             {
-                foreach (GameObject gO in _victories)
-                {
-                    Destroy(gO);
-                }
+                CreateMarks(victories.Length);
             }
-            _victories = new GameObject[_victoryData.Length];
-            for (int i = 0; i < _victories.Length; i++)
+
+            for (int i = 0; i < victories.Length; i++)
             {
-                if (_victories[i] != null)
-                {
-                    _victories[i] = Instantiate(_assets[_victoryData[i]]);
-                }
-                else
-                {
-                    _victories[i] = Instantiate(_assets[_victoryData[0]]);
-                }
-                _victories[i].transform.SetParent(gameObject.transform);
-                _victories[i].transform.localScale = Vector3.one;
+                _marks[i].Show(victories[i]);
             }
         }
 
-        public void SetVictories(VictoryKind[] playerVictories, int direction)
+        private void CreateMarks(int count)
         {
-            if (_victoryData == null || _victoryData.Length != playerVictories.Length)
+            ClearMarks();
+            _marks = new VictoryMark[count];
+            for (int i = 0; i < count; i++)
             {
-                CreateSprites(playerVictories, direction);
+                _marks[i] = Instantiate(_markPrefab, transform);
+                _marks[i].Init(_portrait, _outline);
             }
+        }
 
-            for (int i = 0; i < playerVictories.Length; i++)
+        private void ClearMarks()
+        {
+            if (_marks == null)
+                return;
+
+            foreach (VictoryMark mark in _marks)
             {
-                if (_victoryData[i] != playerVictories[i])
-                {
-                    Destroy(_victories[i]);
-                    _victoryData[i] = playerVictories[i];
-                    if (_victories[i] != null)
-                    {
-                        _victories[i] = Instantiate(_assets[_victoryData[i]]);
-                    }
-                    else
-                    {
-                        _victories[i] = Instantiate(_assets[0]);
-                    }
-                    _victories[i].transform.SetParent(gameObject.transform);
-                    _victories[i].transform.localScale = Vector3.one;
-                    _victories[i].transform.localPosition = new Vector3(direction * i * 56, 0, 0);
-                }
+                Destroy(mark.gameObject);
             }
+            _marks = null;
         }
     }
 }
