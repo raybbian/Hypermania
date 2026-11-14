@@ -1,12 +1,11 @@
-Shader "Hypermania/UI/VictoryMark"
+Shader "Hypermania/UI/FighterIndicatorPin"
 {
     Properties
     {
-        [PerRendererData] _MainTex ("Portrait", 2D) = "white" {}
-        // Multiplied into the portrait. The ring takes the graphic's colour instead.
-        _FillColor ("Fill Color", Color) = (1, 1, 1, 1)
-        // How much of the radius the ring takes up.
-        _OutlineWidth ("Outline Width", Range(0, 0.5)) = 0.14
+        [PerRendererData] _MainTex ("Texture", 2D) = "white" {}
+        // Both are fractions of the distance from the middle of the rect to its edge.
+        _HeadRadius ("Head Radius", Range(0, 1)) = 0.5
+        _TipDistance ("Tip Distance", Range(0, 1)) = 0.8
 
         // What every UI shader needs to work under a Mask.
         [HideInInspector] _StencilComp ("Stencil Comparison", Float) = 8
@@ -44,7 +43,7 @@ Shader "Hypermania/UI/VictoryMark"
 
         Pass
         {
-            Name "VictoryMark"
+            Name "FighterIndicatorPin"
 
             HLSLPROGRAM
             #pragma vertex Vert
@@ -53,15 +52,12 @@ Shader "Hypermania/UI/VictoryMark"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
 
-            TEXTURE2D(_MainTex);
-            SAMPLER(sampler_MainTex);
-
             // Set by the canvas when it hands over vertex colours in gamma space.
             int _UIVertexColorAlwaysGammaSpace;
 
             CBUFFER_START(UnityPerMaterial)
-                half4 _FillColor;
-                float _OutlineWidth;
+                float _HeadRadius;
+                float _TipDistance;
             CBUFFER_END
 
             struct Attributes
@@ -93,15 +89,23 @@ Shader "Hypermania/UI/VictoryMark"
 
             half4 Frag(Varyings input) : SV_Target
             {
-                // 0 in the middle of the rect, 1 at the edge of the circle.
-                float d = length(input.uv - 0.5) * 2.0;
-                float aa = max(fwidth(d), 1e-4);
-                float circle = 1.0 - smoothstep(1.0 - aa, 1.0, d);
-                float ring = smoothstep(1.0 - _OutlineWidth - aa, 1.0 - _OutlineWidth, d);
+                // -1 to 1 across the rect. The head sits in the middle and the
+                // tail runs straight up to its tip.
+                float2 p = (input.uv - 0.5) * 2.0;
+                float fromMiddle = length(p);
 
-                half4 fill = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv) * _FillColor;
-                half4 color = lerp(fill, input.color, ring);
-                color.a *= circle;
+                // The tail's sides leave the head along its tangents, so the two
+                // meet without a corner. This is the direction to where they touch.
+                float rise = _HeadRadius / _TipDistance;
+                float2 touch = float2(sqrt(1.0 - rise * rise), rise);
+
+                float head = fromMiddle - _HeadRadius;
+                float tail = dot(float2(abs(p.x), p.y), touch) - _HeadRadius;
+                float edge = p.y > fromMiddle * rise ? tail : head;
+
+                float aa = max(fwidth(edge), 1e-4);
+                half4 color = input.color;
+                color.a *= 1.0 - smoothstep(-aa, 0.0, edge);
                 return color;
             }
             ENDHLSL

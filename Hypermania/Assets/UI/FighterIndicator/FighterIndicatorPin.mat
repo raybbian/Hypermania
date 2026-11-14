@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VictoryMark
-  m_Shader: {fileID: 4800000, guid: e24534d91730a8a42acb835c06c29825, type: 3}
+  m_Name: FighterIndicatorPin
+  m_Shader: {fileID: 4800000, guid: 120fc6519a6d40543b113ea3d5259ee1, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -30,13 +30,13 @@ Material:
     m_Ints: []
     m_Floats:
     - _ColorMask: 15
-    - _OutlineWidth: 0.14
+    - _HeadRadius: 0.5
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
-    m_Colors:
-    - _FillColor: {r: 1, g: 1, b: 1, a: 1}
+    - _TipDistance: 0.8
+    m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1

@@ -204,6 +204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TrackerPrefab: {fileID: 1957049039675880515, guid: 58f827795c598644583265eab584da02, type: 3}
   Camera: {fileID: 562816628700700724}
+  _edgeInset: 0.5
 --- !u!1 &128986390
 GameObject:
   m_ObjectHideFlags: 0
@@ -2590,7 +2591,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9142343962796379631, guid: f50beeed8c26ae36785135d649a26b69, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -50
+      value: -42
       objectReference: {fileID: 0}
     - target: {fileID: 9142343962796379631, guid: f50beeed8c26ae36785135d649a26b69, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3894,7 +3895,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4122005056519146167, guid: d494255ee5f47880bb324dc4dbe16f78, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -50
+      value: -42
       objectReference: {fileID: 0}
     - target: {fileID: 4122005056519146167, guid: d494255ee5f47880bb324dc4dbe16f78, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

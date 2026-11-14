@@ -10,7 +10,7 @@ namespace Game.View.Overlay
         [SerializeField]
         private GameObject _empty;
 
-        // Drawn with the VictoryMark shader, which takes its ring colour
+        // Drawn with the PortraitDisc shader, which takes its ring colour
         // from the graphic's colour.
         [SerializeField]
         private RawImage _portrait;

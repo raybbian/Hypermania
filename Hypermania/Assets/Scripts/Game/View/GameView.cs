@@ -131,6 +131,7 @@ namespace Game.View
                 _params.IntroView.Init(options);
             if (_params.ImpactFrameView != null)
                 _params.ImpactFrameView.Init(options);
+            _params.FighterIndicatorManager.Init(options);
 
             _conductor.Init(options);
             _conductor.SetFrame(Frame.FirstFrame);
