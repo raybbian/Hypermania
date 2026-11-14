@@ -115,12 +115,13 @@ namespace Scenes.Online
             SteamFriends.ActivateGameOverlayInviteDialog(Matchmaking.CurrentLobby);
         }
 
-        // Opens the Steam friends list, where Join Game on a friend in a
-        // lobby comes back to us through SteamJoinRequests.
+        // Opens the overlay itself. Asking for its friends dialog pops the
+        // desktop friends window instead. Join Game on a friend in a lobby
+        // comes back to us through SteamJoinRequests.
         public void JoinFriend()
         {
             if (OverlayAvailable())
-                SteamFriends.ActivateGameOverlay("friends");
+                SteamFriends.ActivateGameOverlay("");
         }
 
         // The overlay only exists when Steam launched the game, so never in the editor.
@@ -264,10 +265,7 @@ namespace Scenes.Online
             _createLobbyButton.interactable = !InLobby && !_busy;
             _joinLobbyButton.interactable = !InLobby && !_busy;
             _leaveLobbyButton.interactable = InLobby;
-            if (InLobby)
-            {
-                _createLobbyText.text = Matchmaking.CurrentLobby.ToString();
-            }
+            _createLobbyText.text = InLobby ? Matchmaking.CurrentLobby.ToString() : "";
 
             var players = Matchmaking.PlayersInLobby();
             CSteamID host = SteamMatchmaking.GetLobbyOwner(Matchmaking.CurrentLobby);

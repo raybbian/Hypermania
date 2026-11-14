@@ -51,6 +51,7 @@ namespace Design.Configs
         public sfloat SuperCost = (sfloat)100f;
         public int SuperTier1Beats = 8;
         public int SuperTier2Beats = 16;
+
         // Furthest apart the two fighters can get on the x axis.
         public sfloat MaxFighterDistance = (sfloat)5f;
         public int RoundEndTicks = 120;
