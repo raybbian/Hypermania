@@ -573,9 +573,9 @@ namespace Game.Sim
             AdvanceProjectiles(options);
             DoCollisionStep(options);
 
-            bool rhythmComboActive = GameMode == GameMode.Mania || GameMode == GameMode.ManiaStart;
-
-            if (SimFrame >= RoundEnd && !rhythmComboActive)
+            // Only time out mid-fight. RoundEnd is stale until the next countdown finishes, and
+            // running this after the reset zeroes whoever has the lower max health.
+            if (GameMode == GameMode.Fighting && SimFrame >= RoundEnd)
             {
                 if (Fighters[0].Health < Fighters[1].Health)
                 {
@@ -585,7 +585,7 @@ namespace Game.Sim
                 {
                     Fighters[1].Health = 0;
                 }
-                else if (GameMode == GameMode.Fighting)
+                else
                 {
                     // Tie at time-up: neither fighter earns a victory. Both
                     // lose a life and both NumVictories advance with an Empty
