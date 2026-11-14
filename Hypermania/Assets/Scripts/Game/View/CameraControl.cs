@@ -18,8 +18,18 @@ namespace Game.View
         {
             public float CameraSpeed;
             public float ZoomSpeed;
-            public float ManiaHalfHeight;
+
+            // Orthographic half-height during mania (most zoomed in).
+            public float MinZoom;
+
+            // Orthographic half-height during normal fighting (most zoomed out).
+            public float MaxZoom;
             public float CountdownFocusHalfHeight;
+
+            // Space kept around the interest points when framing them.
+            public float Padding;
+
+            // Only used for the arena bounds.
             public GlobalConfig Config;
 
             // Additional area outside the arena bounds that the camera is allowed to see
@@ -35,7 +45,7 @@ namespace Game.View
         void Start()
         {
             _interestPoints = new List<Vector2>();
-            _targetZoom = (float)_params.Config.CameraHalfHeight;
+            _targetZoom = _params.MaxZoom;
             _params.Camera.orthographicSize = _targetZoom;
         }
 
@@ -60,7 +70,7 @@ namespace Game.View
 
             _interestPoints = interestPoints;
             bool inMania = gameMode == GameMode.ManiaStart || gameMode == GameMode.Mania;
-            _targetZoom = inMania ? _params.ManiaHalfHeight : (float)_params.Config.CameraHalfHeight;
+            _targetZoom = inMania ? _params.MinZoom : _params.MaxZoom;
         }
 
         public void Update()
@@ -77,7 +87,7 @@ namespace Game.View
                 min = Vector2.Min(min, point);
                 max = Vector2.Max(max, point);
             }
-            Vector2 padding = new Vector2((float)_params.Config.CameraPadding, (float)_params.Config.CameraPadding);
+            Vector2 padding = new Vector2(_params.Padding, _params.Padding);
             min -= padding;
             max += padding;
 

@@ -168,7 +168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _params:
     CameraSpeed: 10
-    MaxZoom: 2.5
+    MaxZoom: 1.6
     MinZoom: 1.5
     Config: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
     Margin: 0.3

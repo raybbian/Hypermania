@@ -96,7 +96,7 @@ namespace Design.Animation.FrameDataWindow.Editor
 
         private static readonly float[] ProjectileWidths = { 180f, 55f, 65f, 55f, 55f, 50f, 40f, 55f, 65f, 50f };
 
-        [MenuItem("Hypermania/Frame Data Viewer")]
+        [MenuItem("Window/Hypermania/Frame Data Viewer")]
         public static void ShowWindow()
         {
             var window = GetWindow<FrameDataWindow>("Frame Data");
