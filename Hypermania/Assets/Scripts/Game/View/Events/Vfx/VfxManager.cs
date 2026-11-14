@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 using Utils;
 
 namespace Game.View.Events.Vfx
@@ -21,6 +23,53 @@ namespace Game.View.Events.Vfx
     {
         [SerializeField]
         private VfxLibrary _vfxLibrary;
+
+        // How many frames every effect gets drawn for while prewarming.
+        [SerializeField]
+        private int _prewarmFrames = 12;
+
+        // Sped up so the later parts of an effect get drawn in those frames too.
+        [SerializeField]
+        private float _prewarmPlayRate = 8f;
+
+        // Plays every effect once so its shaders are built up front. The
+        // first use of an effect otherwise stalls the game while they
+        // compile. The effects really are drawn, so the position has to be
+        // on camera, and this wants to run behind the load screen.
+        public IEnumerator Prewarm(Vector2 position)
+        {
+            List<VfxEffect> effects = new List<VfxEffect>();
+            foreach (VfxKind kind in Enum.GetValues(typeof(VfxKind)))
+            {
+                if (_vfxLibrary.Library[kind].Effect == null)
+                    continue;
+
+                VfxEvent ev = new VfxEvent
+                {
+                    Kind = kind,
+                    Position = position,
+                    Direction = Vector2.right,
+                };
+                VfxEffect effect = OnStartEffect(new ViewEvent<VfxEvent> { Event = ev });
+                foreach (VisualEffect graph in effect.GetComponentsInChildren<VisualEffect>())
+                {
+                    graph.playRate = _prewarmPlayRate;
+                }
+                effects.Add(effect);
+            }
+
+            for (int i = 0; i < _prewarmFrames; i++)
+            {
+                yield return null;
+            }
+
+            // The scene can be gone by now if the match was left right away.
+            foreach (VfxEffect effect in effects)
+            {
+                if (effect != null)
+                    OnEndEffect(effect);
+            }
+        }
 
         public override VfxEffect OnStartEffect(ViewEvent<VfxEvent> ev)
         {

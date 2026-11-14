@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Design.Configs;
 using Game.Sim;
@@ -33,6 +34,8 @@ namespace Game.Runners
 
         // For reading how the match is going. Null until it starts.
         public GameState State => _curState;
+
+        public IEnumerator Prewarm() => _view.Prewarm();
 
         protected float _time;
 

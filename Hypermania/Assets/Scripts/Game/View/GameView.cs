@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Design.Configs;
 using Game.Sim;
@@ -358,6 +359,12 @@ namespace Game.View
                     }
                 }
             }
+        }
+
+        // Meant for the load screen. Gets shaders built before the match needs them.
+        public IEnumerator Prewarm()
+        {
+            return _params.VfxManager.Prewarm(_params.CameraControl.transform.position);
         }
 
         public void DeInit()
