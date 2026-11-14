@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Netcode.P2P;
 using Netcode.Rollback;
+using Scenes.Core;
 using Steamworks;
 using TMPro;
 using UnityEngine;
@@ -37,6 +39,13 @@ namespace Scenes.Online
         [SerializeField]
         private TMP_InputField _createLobbyText;
 
+        // Says how creating or joining a lobby went.
+        [SerializeField]
+        private TextMeshProUGUI _statusText;
+
+        // True while a lobby is being created or joined.
+        private bool _busy;
+
         public static bool InLobby =>
             OnlineBaseDirectory.Matchmaking != null && OnlineBaseDirectory.Matchmaking.InLobby;
 
@@ -51,6 +60,8 @@ namespace Scenes.Online
         {
             if (Matchmaking != null)
                 Matchmaking.OnStartWithPlayers += OnStartWithPlayers;
+            _busy = false;
+            _statusText.text = "";
         }
 
         public void OnDisable()
@@ -71,14 +82,54 @@ namespace Scenes.Online
                 Debug.LogError("[Online] Matchmaking unavailable; OnlineBase scene missing or Steam not initialized.");
                 yield break;
             }
+            if (_busy)
+                yield break;
+            _busy = true;
             var task = Matchmaking.Create();
             while (!task.IsCompleted)
                 yield return null;
+            _busy = false;
             if (task.IsFaulted)
             {
+                _statusText.text = "Couldn't create a lobby.";
                 Debug.LogException(task.Exception);
                 yield break;
             }
+            _statusText.text = "";
+        }
+
+        // Opens Steam's invite dialog for the lobby.
+        public void InviteFriends() => StartCoroutine(InviteFriendsRoutine());
+
+        IEnumerator InviteFriendsRoutine()
+        {
+            if (Matchmaking == null || !OverlayAvailable())
+                yield break;
+            // Inviting before there's a lobby opens one to invite them to.
+            if (!InLobby)
+            {
+                yield return CreateLobbyRoutine();
+                if (!InLobby)
+                    yield break;
+            }
+            SteamFriends.ActivateGameOverlayInviteDialog(Matchmaking.CurrentLobby);
+        }
+
+        // Opens the Steam friends list, where Join Game on a friend in a
+        // lobby comes back to us through SteamJoinRequests.
+        public void JoinFriend()
+        {
+            if (OverlayAvailable())
+                SteamFriends.ActivateGameOverlay("friends");
+        }
+
+        // The overlay only exists when Steam launched the game, so never in the editor.
+        private bool OverlayAvailable()
+        {
+            if (SteamUtils.IsOverlayEnabled())
+                return true;
+            _statusText.text = "The Steam overlay isn't running. Invite or join from your Steam friends list instead.";
+            return false;
         }
 
         public void JoinLobby()
@@ -110,30 +161,50 @@ namespace Scenes.Online
                 return;
             }
 
-            StartCoroutine(JoinLobbyRoutine(lobbyId));
+            Join(lobbyId);
         }
+
+        private void Join(CSteamID lobbyId) => StartCoroutine(JoinLobbyRoutine(lobbyId));
 
         IEnumerator JoinLobbyRoutine(CSteamID lobbyId)
         {
+            if (Matchmaking == null || _busy)
+                yield break;
+            _busy = true;
+            _statusText.text = "Joining...";
             var task = Matchmaking.Join(lobbyId);
             while (!task.IsCompleted)
                 yield return null;
+            _busy = false;
             if (task.IsFaulted)
             {
-                LobbyVersionMismatchException mismatch = task
-                    .Exception?.Flatten()
-                    .InnerExceptions.OfType<LobbyVersionMismatchException>()
-                    .FirstOrDefault();
-                if (mismatch != null)
-                {
-                    Debug.LogError(
-                        $"[Online] Cannot join lobby: build mismatch. Your build is '{mismatch.Expected}', host is '{mismatch.Actual}'."
-                    );
-                    yield break;
-                }
-                Debug.LogException(task.Exception);
+                _statusText.text = DescribeJoinFailure(task.Exception);
+                Debug.LogWarning($"[Online] Couldn't join lobby {lobbyId.m_SteamID}: {task.Exception}");
                 yield break;
             }
+            _statusText.text = "";
+        }
+
+        private static string DescribeJoinFailure(AggregateException exception)
+        {
+            foreach (Exception inner in exception.Flatten().InnerExceptions)
+            {
+                if (inner is LobbyVersionMismatchException)
+                    return "That lobby is on a different version of the game.";
+                if (inner is LobbyJoinFailedException failed)
+                {
+                    switch (failed.Response)
+                    {
+                        case EChatRoomEnterResponse.k_EChatRoomEnterResponseFull:
+                            return "That lobby is full.";
+                        case EChatRoomEnterResponse.k_EChatRoomEnterResponseDoesntExist:
+                            return "That lobby has closed.";
+                        case EChatRoomEnterResponse.k_EChatRoomEnterResponseNotAllowed:
+                            return "That lobby is only open to the host's friends.";
+                    }
+                }
+            }
+            return "Couldn't join that lobby.";
         }
 
         public void LeaveLobby() => StartCoroutine(LeaveLobbyRoutine());
@@ -186,8 +257,12 @@ namespace Scenes.Online
 
             Matchmaking.SetSelfInOnlineLobby(true);
 
-            _createLobbyButton.interactable = !InLobby;
-            _joinLobbyButton.interactable = !InLobby;
+            // A lobby Steam asked us to join, from an invite or the friends list.
+            if (!_busy && SteamJoinRequests.TryTake(out CSteamID requested) && requested != Matchmaking.CurrentLobby)
+                Join(requested);
+
+            _createLobbyButton.interactable = !InLobby && !_busy;
+            _joinLobbyButton.interactable = !InLobby && !_busy;
             _leaveLobbyButton.interactable = InLobby;
             if (InLobby)
             {
@@ -195,9 +270,14 @@ namespace Scenes.Online
             }
 
             var players = Matchmaking.PlayersInLobby();
-            _playerList.UpdatePlayerList(players);
-
             CSteamID host = SteamMatchmaking.GetLobbyOwner(Matchmaking.CurrentLobby);
+            _playerList.UpdatePlayerList(players, host);
+
+            if (players == null)
+                SteamPresence.Set("Online: Setting up a match");
+            else
+                SteamPresence.Set(players.Count < 2 ? "Online: Waiting for an opponent" : "Online: In a lobby");
+
             _startGameButton.interactable =
                 players != null
                 && players.Count == 2

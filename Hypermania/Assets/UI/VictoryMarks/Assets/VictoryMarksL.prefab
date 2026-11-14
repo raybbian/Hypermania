@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9142343962796379631}
   - component: {fileID: 616921886792244453}
+  - component: {fileID: 4718203956120387415}
   - component: {fileID: 3473257501213126726}
   m_Layer: 5
   m_Name: VictoryMarksL
@@ -55,14 +56,28 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 4
-  m_Spacing: 0
-  m_ChildForceExpandWidth: 1
-  m_ChildForceExpandHeight: 1
-  m_ChildControlWidth: 1
+  m_Spacing: 6
+  m_ChildForceExpandWidth: 0
+  m_ChildForceExpandHeight: 0
+  m_ChildControlWidth: 0
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &4718203956120387415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9166338812627432232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 2
+  m_VerticalFit: 0
 --- !u!114 &3473257501213126726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75,8 +90,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e33cc5974281f4e498bdade636ba1695, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _assets:
-    values:
-    - {fileID: 6100096907578842827, guid: e19fe9aa96ce2934791ecb486458203d, type: 3}
-    - {fileID: 6100096907578842827, guid: ec28cfd36b48aa74b98909e7ae02c125, type: 3}
-    - {fileID: 6100096907578842827, guid: c4b5abc9f753d6c419c4f3442e14e1ee, type: 3}
+  _markPrefab: {fileID: 7906557647841481463, guid: 806e4c58d8edec24eb26b72c4f5ac27d, type: 3}

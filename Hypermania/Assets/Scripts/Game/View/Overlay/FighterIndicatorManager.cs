@@ -1,97 +1,77 @@
-using System.Collections.Generic;
+using Design.Configs;
 using Game.Sim;
 using UnityEngine;
 
 namespace Game.View.Overlay
 {
+    // Shows a pin at the edge of the screen for each fighter the camera
+    // can't see, pointing to where they are.
     public class FighterIndicatorManager : MonoBehaviour
     {
         [SerializeField]
         private GameObject TrackerPrefab;
 
-        private Dictionary<int, Vector2> NotVisibleFighters = new Dictionary<int, Vector2>();
-
-        private Dictionary<int, GameObject> Trackers = new Dictionary<int, GameObject>();
-
         [SerializeField]
         private Camera Camera;
 
-        public void Track(FighterState[] _fighters)
-        {
-            NotVisibleFighters.Clear();
+        // How far in from the screen edge a pin's head sits, in world units.
+        // Has to be longer than the pin's tail or its tip leaves the screen.
+        [SerializeField]
+        private float _edgeInset = 0.5f;
 
+        private GameOptions _options;
+        private FighterIndicator[] _indicators;
+
+        public void Init(GameOptions options)
+        {
+            _options = options;
+            if (_indicators != null)
+            {
+                foreach (FighterIndicator indicator in _indicators)
+                {
+                    if (indicator != null)
+                        Destroy(indicator.gameObject);
+                }
+            }
+            _indicators = new FighterIndicator[options.Players.Length];
+        }
+
+        public void Track(FighterState[] fighters)
+        {
             Vector2 camPos = Camera.transform.position;
             Vector2 halfBounds = new Vector2(Camera.orthographicSize * Camera.aspect, Camera.orthographicSize);
             Vector2 min = camPos - halfBounds;
             Vector2 max = camPos + halfBounds;
+            Vector2 inset = new Vector2(_edgeInset, _edgeInset);
 
-            for (int i = 0; i < _fighters.Length; i++)
+            for (int i = 0; i < fighters.Length; i++)
             {
-                Vector2 p = (Vector2)_fighters[i].Position;
-
+                Vector2 p = (Vector2)fighters[i].Position;
                 bool outside = p.x < min.x || p.x > max.x || p.y < min.y || p.y > max.y;
 
-                if (outside)
+                if (!outside)
                 {
-                    NotVisibleFighters.Add(i, p);
+                    // It keeps its last spot while it shrinks away.
+                    if (_indicators[i] != null)
+                        _indicators[i].SetVisible(false);
+                    continue;
                 }
+
+                if (_indicators[i] == null)
+                    _indicators[i] = CreateIndicator(i);
+
+                Vector2 head = Vector2.Max(min + inset, Vector2.Min(max - inset, p));
+                _indicators[i].SetVisible(true);
+                _indicators[i].PointAt(head, p - head);
             }
+        }
 
-            //Creating/updating trackers for nonvisible fighters
-            foreach (KeyValuePair<int, Vector2> f in NotVisibleFighters)
-            {
-                Vector3 fighterPos = f.Value;
-
-                // Convert to viewport coordinates
-                Vector3 vp = Camera.WorldToViewportPoint(fighterPos);
-
-                //If fighter is behind the camera, flip the viewport point
-                if (vp.z < 0)
-                    vp *= -1;
-
-                //Clamp viewport to screen edges
-                vp.x = Mathf.Clamp(vp.x, 0.05f, 0.95f);
-                vp.y = Mathf.Clamp(vp.y, 0.05f, 0.95f);
-                vp.z = Mathf.Abs(vp.z);
-
-                //Convert back to world position for tracker
-                Vector3 newPos = Camera.ViewportToWorldPoint(vp);
-
-                //Rotate tracker toward fighter
-                Vector3 toFighter = fighterPos - newPos;
-                float angle = Mathf.Atan2(toFighter.y, toFighter.x) * Mathf.Rad2Deg;
-                Quaternion rot = Quaternion.Euler(0f, 0f, angle - 90f);
-
-                //Apply position and rotation
-                GameObject t;
-                if (!Trackers.ContainsKey(f.Key))
-                {
-                    t = Instantiate(TrackerPrefab, newPos, rot);
-                    t.transform.SetParent(transform, true);
-                    Trackers.Add(f.Key, t);
-                }
-                else
-                {
-                    t = Trackers[f.Key];
-                    t.transform.position = newPos;
-                    t.transform.rotation = rot;
-                }
-            }
-
-            //Clearing out trackers for visible fighters
-            List<int> toRemove = new List<int>();
-
-            foreach (var kvp in Trackers)
-            {
-                if (!NotVisibleFighters.ContainsKey(kvp.Key))
-                    toRemove.Add(kvp.Key);
-            }
-
-            foreach (int key in toRemove)
-            {
-                Destroy(Trackers[key]);
-                Trackers.Remove(key);
-            }
+        private FighterIndicator CreateIndicator(int player)
+        {
+            SkinConfig skin = _options.Players[player].Character.Skins[_options.Players[player].SkinIndex];
+            FighterIndicator indicator = Instantiate(TrackerPrefab, transform).GetComponent<FighterIndicator>();
+            indicator.Init(Camera, skin.Portrait, skin.MainColor, skin.AccentColor);
+            return indicator;
         }
     }
 }

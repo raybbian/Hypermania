@@ -3,7 +3,9 @@ using System.Runtime.InteropServices;
 using Game;
 using Game.Runners;
 using Game.Sim;
+using Game.View.Overlay;
 using Netcode.Rollback;
+using Scenes.Core;
 using Scenes.Menus.MainMenu;
 using Scenes.Online;
 using Scenes.Session;
@@ -37,8 +39,14 @@ namespace Scenes.Battle
             (new PlayerHandle(1), PlayerKind.Local, default),
         };
 
+        // The Steam status is only rewritten when one of these moves.
+        private int _statusRounds;
+        private int _statusMinutes;
+
         public void OnEnable()
         {
+            _statusRounds = -1;
+            _statusMinutes = -1;
             _gameManager.OnGameFinished += OnGameFinished;
             _gameManager.OnGameDisconnected += OnGameDisconnected;
             switch (SessionDirectory.Config)
@@ -70,6 +78,51 @@ namespace Scenes.Battle
                     );
                     break;
             }
+        }
+
+        private void Update()
+        {
+            GameState state = _gameManager.Runner != null ? _gameManager.Runner.State : null;
+            if (state == null)
+                return;
+
+            // The local player comes first, so friends read it from their side.
+            int me = LocalPlayer();
+            int mine = RoundsWon(state.Fighters[me]);
+            int theirs = RoundsWon(state.Fighters[1 - me]);
+            int rounds = mine * 16 + theirs;
+            int minutes = state.RealFrame.No / (GameManager.TPS * 60);
+            if (rounds == _statusRounds && minutes == _statusMinutes)
+                return;
+            _statusRounds = rounds;
+            _statusMinutes = minutes;
+
+            PlayerOptions[] players = SessionDirectory.Options.Players;
+            string status = SteamPresence.ModeName(SessionDirectory.Config) + ": " + players[me].Character.Character;
+            if (SessionDirectory.Config != GameConfig.Training)
+                status += $" vs {players[1 - me].Character.Character}, {mine}-{theirs}";
+            if (minutes > 0)
+                status += $", {minutes} min";
+            SteamPresence.Set(status);
+        }
+
+        private static int LocalPlayer()
+        {
+            if (SessionDirectory.Config != GameConfig.Online)
+                return 0;
+            int index = LiveConnectionDirectory._players.FindIndex(p => p.playerKind == PlayerKind.Local);
+            return index < 0 ? 0 : index;
+        }
+
+        private static int RoundsWon(in FighterState fighter)
+        {
+            int won = 0;
+            for (int i = 0; i < fighter.NumVictories; i++)
+            {
+                if (fighter.Victories[i] != VictoryKind.Empty)
+                    won++;
+            }
+            return won;
         }
 
         public void OnGameFinished()

@@ -12,6 +12,10 @@ namespace Game.View.Events.Vfx
         [SerializeField]
         private bool _rotateWithDirection = true;
 
+        // Above 1 the effect plays, and so clears, faster.
+        [SerializeField]
+        private float _playRate = 1f;
+
         private VisualEffect _vfx;
 
         public override void StartEffect(ViewEvent<VfxEvent> ev)
@@ -29,6 +33,7 @@ namespace Game.View.Events.Vfx
             }
 
             _vfx = GetComponent<VisualEffect>();
+            _vfx.playRate = _playRate;
             _vfx.Play();
         }
 

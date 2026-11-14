@@ -49,6 +49,7 @@ namespace Game.View
             public IntroView IntroView;
             public HypeBarView HypeBarView;
             public KOScreenView KOScreenView;
+            public ImpactFrameView ImpactFrameView;
             public BoxVisualizer BoxVisualizer;
             public OutlineGlowView OutlineGlowView;
             public StageBackgroundLoader BackgroundLoader;
@@ -108,6 +109,7 @@ namespace Game.View
                 _playerParams[i].HealthBarView.Init(config, options.Players[i].SkinIndex);
                 _playerParams[i].HealthBarView.SetOutlinePlayerIndex(i);
                 _playerParams[i].HealthBarView.SetMaxHealth((float)config.Health);
+                _playerParams[i].VictoryMarkView.Init(config, options.Players[i].SkinIndex);
                 _playerParams[i].BurstBarView.SetMaxValue((float)config.BurstMax);
                 _playerParams[i].SuperBarView.Init((float)options.Global.SuperCost);
                 _playerParams[i]
@@ -127,13 +129,16 @@ namespace Game.View
             );
             if (_params.IntroView != null)
                 _params.IntroView.Init(options);
+            if (_params.ImpactFrameView != null)
+                _params.ImpactFrameView.Init(options);
+            _params.FighterIndicatorManager.Init(options);
 
             _conductor.Init(options);
             _conductor.SetFrame(Frame.FirstFrame);
             _rollbackStart = Frame.NullFrame;
 
             if (_params.BackgroundLoader != null)
-                _params.BackgroundLoader.Init(options.Stage);
+                _params.BackgroundLoader.Init(options.Stage, (float)options.Global.GroundY);
         }
 
         public void Render(float deltaTime, in GameState state, GameOptions options, InfoOverlayDetails overlayDetails)
@@ -202,7 +207,7 @@ namespace Game.View
                 _playerParams[i].HealthBarView.SetHealth((int)state.Fighters[i].Health);
                 _playerParams[i].BurstBarView.SetValue((int)state.Fighters[i].Burst);
                 _playerParams[i].SuperBarView.SetValue((float)state.Fighters[i].Super);
-                _playerParams[i].VictoryMarkView.SetVictories(state.Fighters[i].Victories, (i == 0 ? -1 : 1));
+                _playerParams[i].VictoryMarkView.SetVictories(state.Fighters[i].Victories);
             }
 
             Vector2? countdownFocus = null;
@@ -223,7 +228,15 @@ namespace Game.View
                         + new Vector2(0, (float)_options.Players[focusPlayer].Character.CharacterHeight);
                 }
             }
-            _params.CameraControl.UpdateCamera(interestPoints, state.GameMode, countdownFocus);
+
+            Vector2? killFocus = null;
+            if (_params.ImpactFrameView != null)
+            {
+                _params.ImpactFrameView.Render(state);
+                _conductor.Volume = _params.ImpactFrameView.MusicVolume;
+                killFocus = _params.ImpactFrameView.CameraFocus;
+            }
+            _params.CameraControl.UpdateCamera(interestPoints, state.GameMode, countdownFocus, killFocus);
             _params.FighterIndicatorManager.Track(state.Fighters);
 
             for (int i = 0; i < _options.Players.Length; i++)
@@ -287,6 +300,8 @@ namespace Game.View
 
         private void DoViewEvents(in GameState state)
         {
+            if (_params.ImpactFrameView != null)
+                _params.ImpactFrameView.RollbackRender(state);
             // TODO: refactor me, im thinking some listener pattern
             for (int i = 0; i < _options.Players.Length; i++)
             {

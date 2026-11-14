@@ -26,6 +26,9 @@ namespace Game.View
             public float MaxZoom;
             public float CountdownFocusHalfHeight;
 
+            // Orthographic half-height while the camera stays on a killing blow.
+            public float KillFocusHalfHeight;
+
             // Space kept around the interest points when framing them.
             public float Padding;
 
@@ -59,8 +62,23 @@ namespace Game.View
             }
         }
 
-        public void UpdateCamera(List<Vector2> interestPoints, GameMode gameMode, Vector2? focusPoint = null)
+        public void UpdateCamera(
+            List<Vector2> interestPoints,
+            GameMode gameMode,
+            Vector2? focusPoint = null,
+            Vector2? killFocus = null
+        )
         {
+            if (killFocus.HasValue)
+            {
+                // Framing hangs down from the highest interest point, so lift
+                // the point far enough to put the hit mid-screen.
+                float lift = _params.KillFocusHalfHeight - _params.Padding;
+                _interestPoints = new List<Vector2> { killFocus.Value + new Vector2(0, lift) };
+                _targetZoom = _params.KillFocusHalfHeight;
+                return;
+            }
+
             if (focusPoint.HasValue)
             {
                 _interestPoints = new List<Vector2> { focusPoint.Value };

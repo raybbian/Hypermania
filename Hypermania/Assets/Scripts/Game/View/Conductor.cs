@@ -29,6 +29,11 @@ namespace Game.View
 
         public float t;
 
+        // Music gain. Eased on the audio thread so a sudden change doesn't click.
+        public float Volume { get; set; } = 1f;
+        private float _gain = 1f;
+        private const float GainEaseSeconds = 0.02f;
+
         [SerializeField]
         private float _msOffset = -83f;
 
@@ -47,6 +52,8 @@ namespace Game.View
             _sourceFrameCursor = 0.0;
             _targetSourceFrame = 0.0;
             t = 0.0f;
+            Volume = 1f;
+            _gain = 1f;
             _hasStarted = false;
             _startDelayTicks = options.Global.PreGameDelayTicks;
 
@@ -194,10 +201,12 @@ namespace Game.View
             lock (_lock)
             {
                 int outputFrames = data.Length / outputChannels;
+                float gainStep = 1f / (GainEaseSeconds * _outputSampleRate);
 
                 for (int frame = 0; frame < outputFrames; frame++)
                 {
                     int dstBase = frame * outputChannels;
+                    _gain = Mathf.MoveTowards(_gain, Volume, gainStep);
 
                     if (!_hasStarted)
                     {
@@ -252,7 +261,7 @@ namespace Game.View
                 int srcCh = GetMappedChannel(ch);
                 float a = SampleTrackLinear(fromTrackPcm, sourceFrame, srcCh);
                 float b = SampleTrackLinear(toTrackPcm, sourceFrame, srcCh);
-                data[dstBase + ch] = a * gainFrom + b * gainTo;
+                data[dstBase + ch] = (a * gainFrom + b * gainTo) * _gain;
             }
         }
 

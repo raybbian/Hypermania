@@ -34,9 +34,6 @@ namespace Game.View.Fighters
         [SerializeField]
         private float _thinHitKnockbackMagnitude = 0.04f;
 
-        [SerializeField]
-        private FighterShadow _shadow;
-
         private int _jitterFramesRemaining;
 
         public virtual void Init(CharacterConfig characterConfig, int skinIndex)
@@ -101,9 +98,6 @@ namespace Game.View.Fighters
                 desired.z = transform.position.z;
                 transform.position = desired - animWorld;
             }
-
-            if (_shadow != null)
-                _shadow.Render();
         }
 
         public virtual void RollbackRender(
@@ -155,16 +149,13 @@ namespace Game.View.Fighters
 
             if (state.DashedLastRealFrame)
             {
-                Vector2 dir = (Vector2)(
-                    state.State == CharacterState.ForwardDash ? state.ForwardVector : state.BackwardVector
-                );
-
-                vfxManager.AddDesired(
-                    VfxKind.DashDust,
-                    realFrame,
-                    position: (Vector2)state.Position + dir * _dustEmitterLocation.localPosition.x,
-                    direction: dir
-                );
+                AddDust(vfxManager, VfxKind.DashDust, realFrame, state, state.State == CharacterState.ForwardDash);
+            }
+            else if (state.StateChangedThisRealFrame && IsWalkOrRun(state.State))
+            {
+                // Starting to walk or run kicks up a smaller puff. Turning
+                // around mid-walk swaps walk states, so it gets one too.
+                AddDust(vfxManager, VfxKind.StepDust, realFrame, state, state.State != CharacterState.BackWalk);
             }
 
             if (state.StateChangedThisRealFrame && state.State == CharacterState.Burst)
@@ -177,6 +168,22 @@ namespace Game.View.Fighters
                 vfxManager.AddDesired(VfxKind.Burst, realFrame, position: _visualCenter.position);
             }
         }
+
+        private void AddDust(VfxManager vfxManager, VfxKind kind, Frame realFrame, in FighterState state, bool forward)
+        {
+            Vector2 dir = (Vector2)(forward ? state.ForwardVector : state.BackwardVector);
+            vfxManager.AddDesired(
+                kind,
+                realFrame,
+                // Keeps both fighters' dust apart when they move on the same frame.
+                hash: state.Index,
+                position: (Vector2)state.Position + dir * _dustEmitterLocation.localPosition.x,
+                direction: dir
+            );
+        }
+
+        private static bool IsWalkOrRun(CharacterState s) =>
+            s == CharacterState.ForwardWalk || s == CharacterState.BackWalk || s == CharacterState.Running;
 
         private static bool IsHitRecipient(CharacterState s) =>
             s == CharacterState.Hit

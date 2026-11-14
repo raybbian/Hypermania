@@ -10,9 +10,10 @@ namespace Scenes.Online
         [SerializeField]
         private TextMeshProUGUI _text;
 
-        public void SetPlayer(CSteamID player)
+        public void SetPlayer(CSteamID player, bool isHost)
         {
-            _text.text = player.m_SteamID.ToString();
+            string name = SteamFriends.GetFriendPersonaName(player);
+            _text.text = isHost ? name + " (Host)" : name;
         }
     }
 }

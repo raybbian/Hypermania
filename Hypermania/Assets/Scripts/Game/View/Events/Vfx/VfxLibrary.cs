@@ -16,6 +16,7 @@ namespace Game.View.Events.Vfx
         Clank,
         Burst,
         Tech,
+        StepDust,
     }
 
     [Serializable]
