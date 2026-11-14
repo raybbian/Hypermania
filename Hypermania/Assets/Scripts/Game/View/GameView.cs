@@ -49,6 +49,7 @@ namespace Game.View
             public IntroView IntroView;
             public HypeBarView HypeBarView;
             public KOScreenView KOScreenView;
+            public ImpactFrameView ImpactFrameView;
             public BoxVisualizer BoxVisualizer;
             public OutlineGlowView OutlineGlowView;
             public StageBackgroundLoader BackgroundLoader;
@@ -127,6 +128,8 @@ namespace Game.View
             );
             if (_params.IntroView != null)
                 _params.IntroView.Init(options);
+            if (_params.ImpactFrameView != null)
+                _params.ImpactFrameView.Init(options);
 
             _conductor.Init(options);
             _conductor.SetFrame(Frame.FirstFrame);
@@ -223,7 +226,15 @@ namespace Game.View
                         + new Vector2(0, (float)_options.Players[focusPlayer].Character.CharacterHeight);
                 }
             }
-            _params.CameraControl.UpdateCamera(interestPoints, state.GameMode, countdownFocus);
+
+            Vector2? killFocus = null;
+            if (_params.ImpactFrameView != null)
+            {
+                _params.ImpactFrameView.Render(state);
+                _conductor.Volume = _params.ImpactFrameView.MusicVolume;
+                killFocus = _params.ImpactFrameView.CameraFocus;
+            }
+            _params.CameraControl.UpdateCamera(interestPoints, state.GameMode, countdownFocus, killFocus);
             _params.FighterIndicatorManager.Track(state.Fighters);
 
             for (int i = 0; i < _options.Players.Length; i++)
@@ -287,6 +298,8 @@ namespace Game.View
 
         private void DoViewEvents(in GameState state)
         {
+            if (_params.ImpactFrameView != null)
+                _params.ImpactFrameView.RollbackRender(state);
             // TODO: refactor me, im thinking some listener pattern
             for (int i = 0; i < _options.Players.Length; i++)
             {

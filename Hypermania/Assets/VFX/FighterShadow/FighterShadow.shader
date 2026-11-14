@@ -33,11 +33,7 @@ Shader "Hypermania/FighterShadow"
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Assets/VFX/Stage/StageFloor.hlsl"
-
-            // Written every frame by FighterShadowProjector.
-            TEXTURE2D(_FighterSilhouette0);
-            TEXTURE2D(_FighterSilhouette1);
-            SAMPLER(sampler_FighterSilhouette0);
+            #include "Assets/VFX/FighterSilhouette/FighterSilhouettes.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _ShadowColor;

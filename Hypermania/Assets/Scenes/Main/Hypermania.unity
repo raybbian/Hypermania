@@ -172,6 +172,7 @@ MonoBehaviour:
     MinZoom: 1.55
     MaxZoom: 1.6
     CountdownFocusHalfHeight: 1.4
+    KillFocusHalfHeight: 1.25
     Padding: 0.3
     Config: {fileID: 11400000, guid: 097b22ad0bf6d4d8fab37f2f2510eefb, type: 2}
     Margin: 0.3
@@ -949,12 +950,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 411beefaa478a634bb206855c8a1e201, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _camera: {fileID: 562816628700700724}
-  _casterLayers:
-  - serializedVersion: 2
-    m_Bits: 64
-  - serializedVersion: 2
-    m_Bits: 128
   _sortingLayer: Character
   _sortingOrder: -100
 --- !u!23 &918426785
@@ -2190,6 +2185,7 @@ MonoBehaviour:
     IntroView: {fileID: 1816236747}
     HypeBarView: {fileID: 2901949813414236108}
     KOScreenView: {fileID: 5203012344204750237}
+    ImpactFrameView: {fileID: 562816628700700725}
     BoxVisualizer: {fileID: 1640311675}
     OutlineGlowView: {fileID: 2114326938}
     BackgroundLoader: {fileID: 941168055}
@@ -2360,6 +2356,8 @@ GameObject:
   - component: {fileID: 562816628700700722}
   - component: {fileID: 562816628700700724}
   - component: {fileID: 562816628700700723}
+  - component: {fileID: 562816628700700726}
+  - component: {fileID: 562816628700700725}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -2481,6 +2479,43 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &562816628700700725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562816628700700719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84e1a6f54e74541449ee133f9843fe4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _material: {fileID: 2100000, guid: b78feade7f3f5814281f8f53041ddd8b, type: 2}
+  _flashes: 3
+  _ticksPerFlash: 6
+  _punchZoom: 1.25
+  _musicVolume: 0.25
+  _musicReturnTicks: 30
+  _cameraHoldTicks: 75
+--- !u!114 &562816628700700726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 562816628700700719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef0c82668002e194e9f1fae3c733041e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fighterLayers:
+  - serializedVersion: 2
+    m_Bits: 64
+  - serializedVersion: 2
+    m_Bits: 128
+  _sortingLayer: Character
 --- !u!1001 &2413326179213812509
 PrefabInstance:
   m_ObjectHideFlags: 0
