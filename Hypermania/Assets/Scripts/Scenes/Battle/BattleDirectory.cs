@@ -78,6 +78,10 @@ namespace Scenes.Battle
                     );
                     break;
             }
+
+            // Skipped when the scene is played directly, with no load screen to hide it.
+            if (SceneLoader.Instance != null)
+                SceneLoader.Instance.HoldReveal(_gameManager.Runner.Prewarm());
         }
 
         private void Update()
